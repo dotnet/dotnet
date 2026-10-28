@@ -220,7 +220,7 @@
       </trans-unit>
       <trans-unit id="Error_FloatingVersionsNotAllowedWithPackageSourceCooldown">
         <source>The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</source>
-        <target state="translated">Los siguientes elementos PackageReference no pueden especificar una versión flotante porque la recuperación del origen del paquete está habilitada: {0}.</target>
+        <target state="new">The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</target>
         <note>
       0 - The comma delimited list of package names that specified a floating version.
       Do not localize `PackageReference`
@@ -1239,7 +1239,7 @@ Actualice el SDK de .NET o quite RestoreUseLegacyDependencyResolver para usar es
       </trans-unit>
       <trans-unit id="SourcesCommandMinPublishAgeHoursOutOfRange">
         <source>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</source>
-        <target state="translated">La antigüedad mínima de publicación de {0} horas no es válida. El valor debe estar comprendido entre 0 y {1}.</target>
+        <target state="new">The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</target>
         <note>0 - the invalid number of hours. 1 - the maximum supported number of hours.</note>
       </trans-unit>
       <trans-unit id="SourcesCommandNoMatchingSourcesFound">
@@ -1499,14 +1499,14 @@ Actualice el SDK de .NET o quite RestoreUseLegacyDependencyResolver para usar es
         <source>The following is a 'Non-HTTPS' source: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
         <target state="translated">El siguiente es un origen 'no HTTPS': {0}
-NuGet requiere orígenes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para más información.</target>
+NuGet requiere orígenes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para obtener más información.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_List_HttpSources">
         <source>The following are 'Non-HTTPS' sources: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
         <target state="translated">Los siguientes son orígenes 'no HTTPS': {0}
-NuGet requiere orígenes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para más información.</target>
+NuGet requiere orígenes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para obtener más información.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_MinVersionDoesNotExist">

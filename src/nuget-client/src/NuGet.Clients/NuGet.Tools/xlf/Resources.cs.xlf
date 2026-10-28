@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="ErrorDialogBoxTitle">
         <source>Operation failed</source>
-        <target state="translated">Operace se nepovedla</target>
+        <target state="translated">Operace neproběhla úspěšně</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_CopilotAccessDenied">
@@ -94,7 +94,7 @@
       </trans-unit>
       <trans-unit id="Error_SupplyChainSecurityToolNotAvailable">
         <source>The Review Supply Chain Security tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
-        <target state="translated">Nástroj pro kontrolu zabezpečení dodavatelského řetězce není k dispozici. Povolte NuGet MCP Server v okně chatu GitHub Copilota a zkuste to znovu.</target>
+        <target state="new">The Review Supply Chain Security tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -174,7 +174,7 @@
       </trans-unit>
       <trans-unit id="Prompt_ReviewPackageSourceMapping">
         <source>Review this repository's package source mappings.</source>
-        <target state="translated">Zkontrolujte mapování zdrojů balíčků tohoto úložiště.</target>
+        <target state="new">Review this repository's package source mappings.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
@@ -304,12 +304,12 @@
       </trans-unit>
       <trans-unit id="Title_ResolveSupplyChainSecurityWithCopilot">
         <source>Resolve Supply Chain Security with GitHub Copilot</source>
-        <target state="translated">Vyřešte zabezpečení dodavatelského řetězce pomocí GitHub Copilota.</target>
+        <target state="new">Resolve Supply Chain Security with GitHub Copilot</target>
         <note>Do not translate "GitHub Copilot"</note>
       </trans-unit>
       <trans-unit id="VSOptions_Button_PackageSourceMappingReview">
         <source>Review with GitHub Copilot</source>
-        <target state="translated">Kontrola s využitím GitHub Copilota</target>
+        <target state="new">Review with GitHub Copilot</target>
         <note>Do not translate "GitHub Copilot"</note>
       </trans-unit>
       <trans-unit id="clearLocalResources">

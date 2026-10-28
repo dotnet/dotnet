@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="MSSignCommandCertificateFingerprintDescription">
         <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a p7b file for the certificate.</source>
-        <target state="translated">用來為憑證搜尋 p7b 檔案的憑證 SHA-256、SHA-384 或 SHA-512 指紋。</target>
+        <target state="translated">用來搜尋 p7b 憑證檔案的憑證 SHA-256、SHA-384 或 SHA-512 指紋。</target>
         <note />
       </trans-unit>
       <trans-unit id="MSSignCommandDescription">

@@ -94,7 +94,7 @@
       </trans-unit>
       <trans-unit id="Error_SupplyChainSecurityToolNotAvailable">
         <source>The Review Supply Chain Security tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
-        <target state="translated">Tedarik Zinciri Güvenliğini İnceleme aracı kullanılamıyor. GitHub Copilot sohbet penceresinde NuGet MCP Sunucusu’nu etkinleştirin ve yeniden deneyin.</target>
+        <target state="new">The Review Supply Chain Security tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -174,7 +174,7 @@
       </trans-unit>
       <trans-unit id="Prompt_ReviewPackageSourceMapping">
         <source>Review this repository's package source mappings.</source>
-        <target state="translated">Bu deponun paket kaynak eşlemelerini gözden geçirin.</target>
+        <target state="new">Review this repository's package source mappings.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
@@ -304,12 +304,12 @@
       </trans-unit>
       <trans-unit id="Title_ResolveSupplyChainSecurityWithCopilot">
         <source>Resolve Supply Chain Security with GitHub Copilot</source>
-        <target state="translated">GitHub Copilot ile Tedarik Zinciri Güvenliğini Çözün</target>
+        <target state="new">Resolve Supply Chain Security with GitHub Copilot</target>
         <note>Do not translate "GitHub Copilot"</note>
       </trans-unit>
       <trans-unit id="VSOptions_Button_PackageSourceMappingReview">
         <source>Review with GitHub Copilot</source>
-        <target state="translated">GitHub Copilot ile gözden geçirme</target>
+        <target state="new">Review with GitHub Copilot</target>
         <note>Do not translate "GitHub Copilot"</note>
       </trans-unit>
       <trans-unit id="clearLocalResources">

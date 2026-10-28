@@ -459,7 +459,7 @@
       </trans-unit>
       <trans-unit id="InfoBar_FixVulnerabilitiesWithCopilot">
         <source>Fix with GitHub Copilot</source>
-        <target state="translated">GitHub Copilot ile düzelt</target>
+        <target state="new">Fix with GitHub Copilot</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Label_Action">
@@ -589,7 +589,7 @@
       </trans-unit>
       <trans-unit id="Label_Installed_VulnerableWarning_Single">
         <source>You have 1 vulnerable package version installed.</source>
-        <target state="translated">Güvenlik açığı bulunan 1 yüklü paket sürümünüz var.</target>
+        <target state="new">You have 1 vulnerable package version installed.</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_License">
@@ -599,7 +599,7 @@
       </trans-unit>
       <trans-unit id="Label_MultiplePackageVulnerableVersionToolTip">
         <source>These installed package versions contain vulnerabilities: {0}</source>
-        <target state="translated">Bu kurulu paket sürümleri şu güvenlik açıklarını içeriyor: {0}</target>
+        <target state="translated">Bu yüklü paket sürümleri güvenlik açıkları içeriyor: {0}</target>
         <note>{0} are package versions</note>
       </trans-unit>
       <trans-unit id="Label_NetworkError">
@@ -839,7 +839,7 @@
       </trans-unit>
       <trans-unit id="Preview_PackageUpdate">
         <source>{0} version {1} to {2} version {3}</source>
-        <target state="translated">{0} sürüm {1} - {2} sürüm {3}</target>
+        <target state="translated">{0} kimlikli {1} sürümünden {2} kimlikli {3} sürümüne</target>
         <note>{0} = Old package ID, {1} = Old package version, {2} = New package ID, {3} = New package version</note>
       </trans-unit>
       <trans-unit id="Preview_UnknownProject">
@@ -918,7 +918,7 @@ Hata: {1}</target>
       </trans-unit>
       <trans-unit id="Status_Canceled">
         <source>Canceled loading packages</source>
-        <target state="translated">Paketleri yükleme işlemi iptal edildi</target>
+        <target state="translated">Paket yükleme iptal edildi</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
@@ -928,7 +928,7 @@ Hata: {1}</target>
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
         <source>End of package list loaded</source>
-        <target state="translated">Yüklenen paket listesinin sonu</target>
+        <target state="translated">Paket listesinin sonu yüklendi</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Ready">
@@ -938,7 +938,7 @@ Hata: {1}</target>
       </trans-unit>
       <trans-unit id="Text_By">
         <source>by</source>
-        <target state="translated">yazar</target>
+        <target state="translated">hazırlayan</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ByAuthor">
@@ -1288,7 +1288,7 @@ Hata: {1}</target>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled. Select OK to continue.</source>
-        <target state="translated">Bu eylem başlatıldıktan sonra iptal edilemez. Devam etmek için Tamam'ı seçin.</target>
+        <target state="new">Once started, this action cannot be cancelled. Select OK to continue.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

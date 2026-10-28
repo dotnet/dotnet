@@ -369,7 +369,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</source>
-        <target state="translated">NuGet에 HTTPS 원본이 필요합니다. HTTP 소스를 사용하려면 NuGet.Config 파일에서 'allowInsecureConnections'를 명시적으로 true로 설정해야 합니다.</target>
+        <target state="translated">NuGet에 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGet.Config 파일에서 'allowInsecureConnections'를 명시적으로 true로 설정해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_MetadataNotFound">
@@ -459,7 +459,7 @@
       </trans-unit>
       <trans-unit id="InfoBar_FixVulnerabilitiesWithCopilot">
         <source>Fix with GitHub Copilot</source>
-        <target state="translated">GitHub Copilot으로 수정</target>
+        <target state="new">Fix with GitHub Copilot</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Label_Action">
@@ -589,7 +589,7 @@
       </trans-unit>
       <trans-unit id="Label_Installed_VulnerableWarning_Single">
         <source>You have 1 vulnerable package version installed.</source>
-        <target state="translated">취약한 패키지 버전 1개가 설치되어 있습니다.</target>
+        <target state="new">You have 1 vulnerable package version installed.</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_License">
@@ -918,7 +918,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Status_Canceled">
         <source>Canceled loading packages</source>
-        <target state="translated">패키지 로드를 취소함</target>
+        <target state="translated">패키지 로드가 취소됨</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
@@ -1053,7 +1053,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_PackageFormatApply">
         <source>The package manager format will apply to the following projects in this Solution</source>
-        <target state="translated">패키지 관리자 형식은 이 Solution의 다음 프로젝트에 적용됩니다.</target>
+        <target state="translated">패키지 관리자 형식은 이 솔루션의 다음 프로젝트에 적용됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageLevelTopLevel">
@@ -1288,7 +1288,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled. Select OK to continue.</source>
-        <target state="translated">이 작업은 일단 시작되면 취소할 수 없습니다. 계속하려면 확인을 선택하세요.</target>
+        <target state="new">Once started, this action cannot be cancelled. Select OK to continue.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

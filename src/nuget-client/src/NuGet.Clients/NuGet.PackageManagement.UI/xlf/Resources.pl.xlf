@@ -459,7 +459,7 @@
       </trans-unit>
       <trans-unit id="InfoBar_FixVulnerabilitiesWithCopilot">
         <source>Fix with GitHub Copilot</source>
-        <target state="translated">Napraw za pomocą usługi GitHub Copilot</target>
+        <target state="new">Fix with GitHub Copilot</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Label_Action">
@@ -589,7 +589,7 @@
       </trans-unit>
       <trans-unit id="Label_Installed_VulnerableWarning_Single">
         <source>You have 1 vulnerable package version installed.</source>
-        <target state="translated">Masz zainstalowaną 1 narażoną wersję pakietu.</target>
+        <target state="new">You have 1 vulnerable package version installed.</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_License">
@@ -928,12 +928,12 @@ Błąd: {1}</target>
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
         <source>End of package list loaded</source>
-        <target state="translated">Załadowano koniec listy pakietów</target>
+        <target state="translated">Koniec załadowanej listy pakietów</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Ready">
         <source>Package list loaded</source>
-        <target state="translated">Załadowano listę pakietów</target>
+        <target state="translated">Załadowana lista pakietów</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_By">
@@ -1053,7 +1053,7 @@ Błąd: {1}</target>
       </trans-unit>
       <trans-unit id="Text_PackageFormatApply">
         <source>The package manager format will apply to the following projects in this Solution</source>
-        <target state="translated">Format menedżera pakietów zostanie zastosowany do poniższych projektów w tym elemencie Solution</target>
+        <target state="translated">Format menedżera pakietów zostanie zastosowany do poniższych projektów w tym rozwiązaniu</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageLevelTopLevel">
@@ -1288,7 +1288,7 @@ Błąd: {1}</target>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled. Select OK to continue.</source>
-        <target state="translated">Po uruchomieniu nie można anulować tej akcji. Wybierz przycisk OK, aby kontynuować.</target>
+        <target state="new">Once started, this action cannot be cancelled. Select OK to continue.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

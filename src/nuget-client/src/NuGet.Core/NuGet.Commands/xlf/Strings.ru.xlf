@@ -220,7 +220,7 @@
       </trans-unit>
       <trans-unit id="Error_FloatingVersionsNotAllowedWithPackageSourceCooldown">
         <source>The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</source>
-        <target state="translated">Следующие элементы PackageReference не могут указывать плавающую версию, так как включена задержка источника пакетов: {0}.</target>
+        <target state="new">The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</target>
         <note>
       0 - The comma delimited list of package names that specified a floating version.
       Do not localize `PackageReference`
@@ -699,8 +699,8 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
         <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
 Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
-        <target state="translated">Проект {0} пытается восстановить дублирующиеся платформы, которые поддерживаются только в стандартном сопоставителе зависимостей при версии пакета SDK для .NET {1} или более поздней.
-Обновите пакет SDK для .NET или удалите RestoreUseLegacyDependencyResolver, чтобы использовать эту функцию.</target>
+        <target state="translated">Проект {0} пытается восстановить дублирующиеся платформы, которые поддерживаются только в стандартном сопоставителе зависимостей при версии пакета SDK для .NET не ниже {1}.
+Чтобы использовать эту функцию, установите более новую версию пакета SDK для .NET или удалите RestoreUseLegacyDependencyResolver.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_AllProjectsUpToDate">
@@ -1239,7 +1239,7 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
       </trans-unit>
       <trans-unit id="SourcesCommandMinPublishAgeHoursOutOfRange">
         <source>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</source>
-        <target state="translated">Минимальный возраст публикации в {0} часов является недопустимым. Значение должно находиться в диапазоне от 0 до {1}.</target>
+        <target state="new">The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</target>
         <note>0 - the invalid number of hours. 1 - the maximum supported number of hours.</note>
       </trans-unit>
       <trans-unit id="SourcesCommandNoMatchingSourcesFound">
@@ -1442,22 +1442,22 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_Critical">
         <source>critical</source>
-        <target state="translated">критический уровень</target>
+        <target state="translated">критический</target>
         <note>As in "This package has a critical severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_High">
         <source>high</source>
-        <target state="translated">высокий уровень</target>
+        <target state="translated">высокий</target>
         <note>As in "This package has a high severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_Low">
         <source>low</source>
-        <target state="translated">низкий уровень</target>
+        <target state="translated">низкий</target>
         <note>As in "This package has a low severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_Moderate">
         <source>moderate</source>
-        <target state="translated">средний уровень</target>
+        <target state="translated">средний</target>
         <note>As in "This package has a moderate severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_unknown">

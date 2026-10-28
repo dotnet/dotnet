@@ -94,7 +94,7 @@
       </trans-unit>
       <trans-unit id="Error_SupplyChainSecurityToolNotAvailable">
         <source>The Review Supply Chain Security tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
-        <target state="translated">サプライ チェーン セキュリティのレビュー ツールは使用できません。GitHub Copilot Chat ウィンドウで NuGet MCP Server を有効にして、もう一度お試しください。</target>
+        <target state="new">The Review Supply Chain Security tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -174,7 +174,7 @@
       </trans-unit>
       <trans-unit id="Prompt_ReviewPackageSourceMapping">
         <source>Review this repository's package source mappings.</source>
-        <target state="translated">このリポジトリのパッケージ ソース マッピングをレビューします。</target>
+        <target state="new">Review this repository's package source mappings.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
@@ -184,7 +184,7 @@
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
-        <target state="translated">ソリューションが保存されていません。ソリューションを保存してから NuGet パッケージを管理してください。</target>
+        <target state="translated">ソリューションが保存されていません。NuGet パッケージを管理する前に、ソリューションを保存してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AllowInsecureConnections_Header">
@@ -304,12 +304,12 @@
       </trans-unit>
       <trans-unit id="Title_ResolveSupplyChainSecurityWithCopilot">
         <source>Resolve Supply Chain Security with GitHub Copilot</source>
-        <target state="translated">GitHub Copilot でサプライ チェーン セキュリティを解決する</target>
+        <target state="new">Resolve Supply Chain Security with GitHub Copilot</target>
         <note>Do not translate "GitHub Copilot"</note>
       </trans-unit>
       <trans-unit id="VSOptions_Button_PackageSourceMappingReview">
         <source>Review with GitHub Copilot</source>
-        <target state="translated">GitHub Copilot でレビューする</target>
+        <target state="new">Review with GitHub Copilot</target>
         <note>Do not translate "GitHub Copilot"</note>
       </trans-unit>
       <trans-unit id="clearLocalResources">

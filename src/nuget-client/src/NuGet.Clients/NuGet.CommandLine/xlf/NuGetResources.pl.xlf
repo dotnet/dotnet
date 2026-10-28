@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="AddCommand_PackageAlreadyExists">
         <source>Package '{0}' already exists at feed '{1}'.</source>
-        <target state="translated">Pakiet „{0}” już istnieje w kanale informacyjnym „{1}”.</target>
+        <target state="translated">Pakiet „{0}” już istnieje w źródle danych „{1}”.</target>
         <note />
       </trans-unit>
       <trans-unit id="AddCommand_SourceNotProvided">
@@ -257,7 +257,7 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
         <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
 Consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
-        <target state="translated">Pakiet „`project.json` jest wyłączony w bieżącej wersji menedżera pakietów NuGet, i zostanie trwale usunięty w przyszłej wersji.
+        <target state="translated">Pakiet `project.json` jest wyłączony w bieżącej wersji menedżera pakietów NuGet, i zostanie trwale usunięty w przyszłej wersji.
 Rozważ przeprowadzenie migracji pakietu „{0}” do elementu `PackageReference` i użycie elementów docelowych pakietu.
 Możesz ustawić zmienną środowiskową „{1}” na wartość „true”, aby tymczasowo ponownie włączyć tę funkcję.</target>
         <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
@@ -604,7 +604,7 @@ Możesz ustawić zmienną środowiskową „{1}” na wartość „true”, aby 
       </trans-unit>
       <trans-unit id="OutputNuGetVersion">
         <source>{0} Version: {1}</source>
-        <target state="translated">wersja{0} : {1}</target>
+        <target state="translated">{0} wersja {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageCommandAddedFile">
@@ -802,7 +802,7 @@ Aby uniemożliwić menedżerowi NuGet pobieranie pakietów podczas kompilacji, o
       </trans-unit>
       <trans-unit id="SolutionRestoreCommandNoPackagesConfigOrProjectJson">
         <source>Nothing to do. None of the projects in this solution specify any packages for NuGet to restore.</source>
-        <target state="translated">Nic do zrobienia. Żaden z projektów w tym rozwiązaniu nie określa żadnych pakietów do przywrócenia przez NuGet.</target>
+        <target state="translated">Nie ma nic do zrobienia. Żaden z projektów w tym rozwiązaniu nie określa żadnych pakietów do przywrócenia przez NuGet.</target>
         <note />
       </trans-unit>
       <trans-unit id="Source_NotFound">
@@ -989,7 +989,7 @@ Aby uniemożliwić menedżerowi NuGet pobieranie pakietów podczas kompilacji, o
       </trans-unit>
       <trans-unit id="Warning_ReadingProjectsFailed">
         <source>Error reading msbuild project information, ensure that your input solution or project file is valid. NETCore and UAP projects will be skipped, only packages.config files will be restored.</source>
-        <target state="translated">Błąd podczas odczytywania informacji o projekcie msbuild. Upewnij się, że dane wejściowe rozwiązania lub pliku projektu są prawidłowe. Projekty NETCore i UAP zostaną pominięte. Zostaną przywrócone tylko pliki packages.config.</target>
+        <target state="translated">Błąd podczas odczytywania informacji o projekcie msbuild. Upewnij się, że wejściowy plik rozwiązania lub projektu jest prawidłowy. Projekty NETCore i UAP zostaną pominięte. Zostaną przywrócone tylko pliki packages.config.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_SemanticVersion">

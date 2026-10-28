@@ -59,27 +59,27 @@
       </trans-unit>
       <trans-unit id="Debug_AddedFile">
         <source>Added file '{0}'.</source>
-        <target state="translated">Byl přidaný soubor {0}.</target>
+        <target state="translated">Přidal se soubor {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_AddedFileToFolder">
         <source>Added file '{0}' to folder '{1}'.</source>
-        <target state="translated">Byl přidaný soubor {0} do složky {1}.</target>
+        <target state="translated">Přidal se soubor {0} do složky {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFile">
         <source>Removed file '{0}'.</source>
-        <target state="translated">Byl odebraný soubor {0}.</target>
+        <target state="translated">Odebral se soubor {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFileFromFolder">
         <source>Removed file '{0}' from folder '{1}'.</source>
-        <target state="translated">Soubor {0} byl přesunutý ze složky {1}.</target>
+        <target state="translated">Soubor {0} se odebral ze složky {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
         <source>Removed folder '{0}'.</source>
-        <target state="translated">Byla odebraná složka {0}.</target>
+        <target state="translated">Odebrala se složka {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_TargetFrameworkInfo">
@@ -114,7 +114,7 @@
       </trans-unit>
       <trans-unit id="ErrorWritingPackagesConfig">
         <source>An error occurred while writing file '{0}': {1}</source>
-        <target state="translated">Došlo k chybě při zápisu souboru {0}: {1}.</target>
+        <target state="translated">Došlo k chybě při zápisu souboru {0}: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_DirectoryDoesNotExist">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Máte spuštěnu operaci {0} se zdrojem HTTP: {1}. NuGet vyžaduje zdroje HTTPS. Pokud chcete použít zdroj HTTP, musíte v souboru NuGet.Config explicitně nastavit možnost allowInsecureConnections na true. Další informace najdete na https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Máte spuštěnu operaci {0} se zdrojem HTTP: {1}. NuGet vyžaduje zdroje HTTPS. Pokud chcete použít zdroj HTTP, musíte v souboru NuGet.Config explicitně nastavit parametr allowInsecureConnections na true. Další informace najdete na https://aka.ms/nuget-https-everywhere.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server uri.</note>
       </trans-unit>
       <trans-unit id="Error_InvalidLockFileInput">
@@ -336,12 +336,12 @@
       </trans-unit>
       <trans-unit id="RemovedPackageFromFolder">
         <source>Removed package '{0}' from folder '{1}'</source>
-        <target state="translated">Ze složky {1} byl odebraný balíček {0}.</target>
+        <target state="translated">Ze složky {1} se odebral balíček {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="RemovedPackageFromPackagesConfig">
         <source>Removed package '{0}' from '{1}'</source>
-        <target state="translated">Z {1} byl odebraný balíček {0}.</target>
+        <target state="translated">Z {1} se odebral balíček {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="RemovingPackageFromFolder">
@@ -497,7 +497,7 @@
       </trans-unit>
       <trans-unit id="Warning_FileModified">
         <source>Skipping '{0}' because it was modified.</source>
-        <target state="translated">Soubor {0} se přeskočí, protože byl upravený.</target>
+        <target state="translated">Soubor {0} se přeskočí, protože se upravil.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">

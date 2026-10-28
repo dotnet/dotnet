@@ -330,7 +330,7 @@ Do not translate "PackageVersion"</note>
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}
 NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
         <target state="translated">L'operazione '{0}' è in esecuzione con origini 'HTTP': {1}
-NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario impostare esplicitamente 'allowInsecureConnections' su true nel file NuGet.Config. Vedi https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
+NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario impostare esplicitamente 'allowInsecureConnections' su true nel file NuGet.Config. Vedere https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server uris</note>
       </trans-unit>
       <trans-unit id="Error_InvalidCultureInfo">
@@ -395,7 +395,7 @@ NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario imposta
       </trans-unit>
       <trans-unit id="Error_NotPRProject">
         <source>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</source>
-        <target state="translated">Il progetto '{0}' non è un progetto PackageReference. Questo comando supporta solo progetti NuGet PackageReference.</target>
+        <target state="new">The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</target>
         <note>{0} - Path to the project with the error, {Locked="PackageReference"}</note>
       </trans-unit>
       <trans-unit id="Error_PackageDownload_VersionNotFound">
@@ -405,7 +405,7 @@ NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario imposta
       </trans-unit>
       <trans-unit id="Error_PackagePublishDateMissing">
         <source>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</source>
-        <target state="translated">Il '{0}' di origine del pacchetto non ha fornito una data di pubblicazione per la versione '{2}' del pacchetto '{1}', che è necessaria perché per l'origine è configurata una validità minima della pubblicazione.</target>
+        <target state="new">Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</target>
         <note>{0} - package source name
 {1} - package ID
 {2} - package version</note>
@@ -444,7 +444,7 @@ NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario imposta
       </trans-unit>
       <trans-unit id="Error_ProjectAssetsFilePropertyNotFound">
         <source>Project '{0}' does not have MSBuild property ProjectAssetsFile defined. This may indicate that this project does not support NuGet PackageReference, or that project customization has prevented the .NET SDK setting default values.</source>
-        <target state="translated">Non è stata definita la proprietà ProjectAssetsFile di MSBuild per il progetto ‘{0}’.. Ciò può significare che il progetto non supporta PackageReference di NuGet oppure che la personalizzazione del progetto ha impedito l'impostazione dei valori predefiniti di .NET SDK.</target>
+        <target state="translated">Non è stata definita la proprietà ProjectAssetsFile di MSBuild per il progetto ‘{0}'.. Ciò può significare che il progetto non supporta PackageReference di NuGet oppure che la personalizzazione del progetto ha impedito l'impostazione dei valori predefiniti di .NET SDK.</target>
         <note>{0} - Path to the project with the error</note>
       </trans-unit>
       <trans-unit id="Error_TrustFingerPrintAlreadyExist">
@@ -800,7 +800,7 @@ NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario imposta
 usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
         <target state="translated">Non è possibile usare contemporaneamente nello stesso comando le operazioni --list e --clear. Specificare una sola operazione.
-sintassi: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+utilizzo: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 Per altre informazioni, visitare https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
@@ -818,7 +818,7 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
 usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
         <target state="translated">Specificare un'operazione, ad esempio --list o --clear.
-sintassi: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+utilizzo: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 Per altre informazioni, visitare https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
@@ -1041,7 +1041,7 @@ Per altre informazioni, visitare https://docs.nuget.org/docs/reference/command-l
       </trans-unit>
       <trans-unit id="PackageUpdate_PackagesAwaitingCooldown">
         <source>Packages with newer versions that have not reached the configured minimum publish age: {0}.</source>
-        <target state="translated">Pacchetti con versioni più recenti che non hanno raggiunto la validità minima configurata per la pubblicazione: {0}.</target>
+        <target state="new">Packages with newer versions that have not reached the configured minimum publish age: {0}.</target>
         <note>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
@@ -1251,7 +1251,7 @@ La ricerca viene eseguita in un confronto di stringhe senza distinzione tra maiu
       </trans-unit>
       <trans-unit id="SourcesCommandAllowInsecureConnectionsDescription">
         <source>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Consente le connessioni HTTP per aggiungere o aggiornare i pacchetti. Nota: questo metodo non è sicuro. Per ulteriori informazioni sulle opzioni di sicurezza, vedere https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Consente connessioni HTTP per l'aggiunta o l'aggiornamento di pacchetti. Nota: questo metodo non è sicuro. Per le opzioni di sicurezza, vedere https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandFormatDescription">
@@ -1261,7 +1261,7 @@ La ricerca viene eseguita in un confronto di stringhe senza distinzione tra maiu
       </trans-unit>
       <trans-unit id="SourcesCommandMinPublishAgeHoursDescription">
         <source>The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</source>
-        <target state="translated">Numero minimo di ore dopo la pubblicazione di un pacchetto prima che sia possibile selezionarlo per l'aggiornamento. Impostare su 0 per rimuovere il valore.</target>
+        <target state="new">The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandNameDescription">
@@ -1346,12 +1346,12 @@ La ricerca viene eseguita in un confronto di stringhe senza distinzione tra maiu
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_UnsupportedPackage">
         <source>The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</source>
-        <target state="translated">Il file '{0}' non è un pacchetto supportato. Specificare un file con estensione nupkg, snupkg o symbols.nupkg.</target>
+        <target state="new">The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_GroupOption_Description">
         <source>Uploads the package into the specified staging group.</source>
-        <target state="translated">Carica il pacchetto nel gruppo di gestione temporanea specificato.</target>
+        <target state="new">Uploads the package into the specified staging group.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_NoSymbolsOption_Description">
@@ -1537,7 +1537,7 @@ La ricerca viene eseguita in un confronto di stringhe senza distinzione tra maiu
       </trans-unit>
       <trans-unit id="Warn_AddPkgNonCompliantPackageId">
         <source>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</source>
-        <target state="translated">L'ID pacchetto '{0}' non soddisfa gli standard per l'ID pacchetto NuGet. Gli ID pacchetto non devono contenere più di 100 caratteri, iniziare con una lettera, un numero o un carattere di sottolineatura e contenere solo lettere ASCII, numeri, punti (.), trattini (-) e caratteri di sottolineatura (_). I punti e i trattini non possono essere visualizzati consecutivamente o alla fine.</target>
+        <target state="new">The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</target>
         <note>{0} - Package Id</note>
       </trans-unit>
       <trans-unit id="Warn_AddPkgWithoutRestore">

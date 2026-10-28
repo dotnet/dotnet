@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
         <source>Argument cannot be null or empty</source>
-        <target state="translated">引數不能為 Null 或空白</target>
+        <target state="translated">引數不得為 Null 或空白</target>
         <note />
       </trans-unit>
       <trans-unit id="CreatedDependencyGraphSpec">
@@ -89,7 +89,7 @@
       <trans-unit id="Error_StaticGraphUnhandledException">
         <source>Static graph-based restore encountered an unhandled exception. Please file an issue at https://github.com/NuGet/Home.  The exception was:
 {0}</source>
-        <target state="translated">靜態圖形式還原發生未處理的例外狀況。請在 https://github.com/NuGet/Home 提出問題。例外狀況為:
+        <target state="translated">靜態圖形式還原發生未處理的例外狀況。請在 https://github.com/NuGet/Home 提出問題。 例外狀況為:
 {0}</target>
         <note>0 - The exception as a string.</note>
       </trans-unit>
@@ -154,7 +154,7 @@
       </trans-unit>
       <trans-unit id="RestoreNoSolutionFound">
         <source>No solution found. Restore against a solution or pass in /p:SolutionDir</source>
-        <target state="translated">找不到任何方案。請根據方案還原或傳遞至 /p:SolutionDir</target>
+        <target state="translated">找不到任何解決方案。請根據解決方案還原或傳遞至 /p:SolutionDir</target>
         <note />
       </trans-unit>
       <trans-unit id="UnsupportedFallbackFramework">

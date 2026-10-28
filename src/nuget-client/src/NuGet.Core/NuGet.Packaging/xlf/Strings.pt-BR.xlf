@@ -815,7 +815,7 @@
       </trans-unit>
       <trans-unit id="SignedPackageUnableToAccessSignature">
         <source>The package was not opened correctly to perform signature operations. Use a Stream-based constructor to have access to signature attributes of the package.</source>
-        <target state="translated">O pacote não foi aberto corretamente para executar operações de assinatura. Use um construtor baseado em fluxo para ter acesso aos atributos de assinatura do pacote.</target>
+        <target state="translated">O pacote não foi aberto corretamente para realizar operações de assinatura. Use um construtor baseado em Stream para ter acesso aos atributos de assinatura do pacote.</target>
         <note />
       </trans-unit>
       <trans-unit id="SigningCannotBeDoneInPlace">

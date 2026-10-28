@@ -104,7 +104,7 @@
       </trans-unit>
       <trans-unit id="DefaultSymbolServer">
         <source>the symbol server</source>
-        <target state="translated">il server dei simboli</target>
+        <target state="translated">server dei simboli</target>
         <note />
       </trans-unit>
       <trans-unit id="Error">
@@ -175,12 +175,12 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Si sta eseguendo l'operazione "{0}" con un'origine "HTTP": {1}. NuGet richiede origini HTTPS. Per usare un'origine HTTP, è necessario impostare in modo esplicito "allowInsecureConnections" su "true" nel file NuGet.Config. Per ulteriori informazioni, vedere https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Si sta eseguendo l'operazione '{0}' con un'origine 'HTTP': {1}. NuGet richiede origini HTTPS. Per usare un'origine HTTP, è necessario impostare in modo esplicito 'allowInsecureConnections' su true nel file NuGet.Config. Vedere https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Si sta eseguendo l'operazione "{0}" con origini "HTTP": {1}. NuGet richiede origini HTTPS. Per usare le origini HTTP, è necessario impostare in modo esplicito "allowInsecureConnections" su "true" nel file NuGet.Config. Per ulteriori informazioni, vedere https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Si sta eseguendo l'operazione '{0}' con origini 'HTTP': {1}. NuGet richiede origini HTTPS. Per usare origini HTTP, è necessario impostare in modo esplicito 'allowInsecureConnections' su true nel file NuGet.Config. Vedere https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_InvalidCharactersInPathSegment">
@@ -259,7 +259,7 @@ Consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
         <target state="translated">Il pacchetto `project.json` è disabilitato nella versione corrente di NuGet e verrà rimosso definitivamente in una versione futura.
 Valutare la possibilità di eseguire la migrazione di '{0}' a `PackageReference` e usare le destinazioni del pacchetto.
-È possibile impostare la variabile di ambiente '{1}' su 'true' per riabilitare temporaneamente la funzionalità.</target>
+Puoi impostare la variabile di ambiente '{1}' su 'true' per riabilitare temporaneamente questa funzionalità.</target>
         <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
       </trans-unit>
       <trans-unit id="Error_ResponseFileDoesNotExist">
@@ -329,7 +329,7 @@ Valutare la possibilità di eseguire la migrazione di '{0}' a `PackageReference`
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsBuildForSolutionFilter">
         <source>This version of MSBuild not support Solution filter: '{0}'. Use a MSBuild version greater than or equal to 16.7 to use this feature.</source>
-        <target state="translated">Questa versione di MSBuild non supporta il filtro soluzioni: '{0}'. Usare una versione di MSBuild maggiore o uguale alla 16.7 per utilizzare la funzionalità.</target>
+        <target state="translated">Questa versione di MSBuild non supporta il filtro delle soluzioni: '{0}'. Usa una versione di MSBuild maggiore o uguale alla 16.7 per utilizzare la funzionalità.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsbuild">
@@ -474,7 +474,7 @@ Valutare la possibilità di eseguire la migrazione di '{0}' a `PackageReference`
       </trans-unit>
       <trans-unit id="LiveFeed">
         <source>the NuGet gallery</source>
-        <target state="translated">la raccolta NuGet</target>
+        <target state="translated">raccolta NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="LocalsCommand_ClearFailed">
@@ -740,7 +740,7 @@ Valutare la possibilità di eseguire la migrazione di '{0}' a `PackageReference`
       </trans-unit>
       <trans-unit id="RestoreCommandCannotDeterminePackagesFolder">
         <source>Cannot determine the packages folder to restore NuGet packages. Specify either -PackagesDirectory or -SolutionDirectory.</source>
-        <target state="translated">Non è possibile determinare la cartella dei pacchetti per il ripristino dei pacchetti NuGet. Specificare -PackagesDirectory o -SolutionDirectory.</target>
+        <target state="translated">Non è possibile determinare la cartella per il ripristino dei pacchetti NuGet. Specifica -PackagesDirectory o -SolutionDirectory.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandFileNotFound">

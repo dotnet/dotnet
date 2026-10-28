@@ -369,7 +369,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</source>
-        <target state="translated">NuGet には HTTPS ソースが必要です。HTTP ソースを使用するには、NuGet.Config ファイルで 'allowInsecureConnections' を [true] に明示的に設定する必要があります。</target>
+        <target state="translated">NuGet には HTTPS ソースが必要です。HTTP ソースを使用するには、NuGet.Config ファイルで 'allowInsecureConnections' を true に明示的に設定する必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_MetadataNotFound">
@@ -444,7 +444,7 @@
       </trans-unit>
       <trans-unit id="Hyperlink_Readme">
         <source>Readme</source>
-        <target state="translated">Readme</target>
+        <target state="translated">お読みください</target>
         <note />
       </trans-unit>
       <trans-unit id="Hyperlink_ReportAbuse">
@@ -459,7 +459,7 @@
       </trans-unit>
       <trans-unit id="InfoBar_FixVulnerabilitiesWithCopilot">
         <source>Fix with GitHub Copilot</source>
-        <target state="translated">GitHub Copilot を使用して修正する</target>
+        <target state="new">Fix with GitHub Copilot</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Label_Action">
@@ -589,7 +589,7 @@
       </trans-unit>
       <trans-unit id="Label_Installed_VulnerableWarning_Single">
         <source>You have 1 vulnerable package version installed.</source>
-        <target state="translated">脆弱性のあるパッケージが 1 個インストールされています。</target>
+        <target state="new">You have 1 vulnerable package version installed.</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_License">
@@ -1053,7 +1053,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_PackageFormatApply">
         <source>The package manager format will apply to the following projects in this Solution</source>
-        <target state="translated">パッケージ マネージャーの形式は、この Solution の次のプロジェクトに適用されます</target>
+        <target state="translated">パッケージ マネージャーの形式は、このソリューションの次のプロジェクトに適用されます</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageLevelTopLevel">
@@ -1213,7 +1213,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="ToolTip_TransitivePathHelp">
         <source>To learn more about transitive paths, see</source>
-        <target state="translated">推移的なパスの詳細については、次を参照してください</target>
+        <target state="translated">推移的なパスについて詳しくは、次を参照してください</target>
         <note />
       </trans-unit>
       <trans-unit id="ToolTip_UninstallButton">
@@ -1288,7 +1288,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled. Select OK to continue.</source>
-        <target state="translated">この操作は一旦開始すると取り消すことはできません。続行するには [OK] を選択します。</target>
+        <target state="new">Once started, this action cannot be cancelled. Select OK to continue.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

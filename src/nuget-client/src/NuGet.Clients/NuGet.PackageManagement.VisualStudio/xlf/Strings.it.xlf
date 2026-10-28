@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="AggregateSourceName">
         <source>All</source>
-        <target state="translated">Tutti</target>
+        <target state="translated">Tutto</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
@@ -24,12 +24,12 @@
       </trans-unit>
       <trans-unit id="CredentialPrompt_PackageSourceCaption">
         <source>NuGet Package Source Authentication</source>
-        <target state="translated">Autenticazione dell'origine dei pacchetti NuGet</target>
+        <target state="new">NuGet Package Source Authentication</target>
         <note />
       </trans-unit>
       <trans-unit id="CredentialPrompt_PackageSourceMessage">
         <source>Enter credentials for the package source '{0}'.</source>
-        <target state="translated">Immetti le credenziali per l'origine del pacchetto ''{0}''.</target>
+        <target state="new">Enter credentials for the package source '{0}'.</target>
         <note>{0} is the package source URI.</note>
       </trans-unit>
       <trans-unit id="CredentialProviderFailed_DefaultCredentialsCredentialProvider">
@@ -98,7 +98,7 @@
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
         <source>Removed folder '{0}'.</source>
-        <target state="translated">Cartella '{0}' rimossa.</target>
+        <target state="translated">La cartella '{0}' è stata rimossa.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_FailedToCreateParentFolder">
@@ -276,7 +276,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">La directory '{0}' non è vuota. Operazione ignorata...</target>
+        <target state="translated">La directory '{0}' non è vuota. L'operazione verrà ignorata...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">
@@ -301,7 +301,7 @@
       </trans-unit>
       <trans-unit id="Warning_FileAlreadyExists">
         <source>'{0}' already exists. Skipping...</source>
-        <target state="translated">'{0}' esiste già. Operazione ignorata...</target>
+        <target state="translated">'{0}' esiste già. L'operazione verrà ignorata...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_NoExactMatchForReference">

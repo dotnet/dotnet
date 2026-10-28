@@ -89,7 +89,7 @@
       </trans-unit>
       <trans-unit id="Manifest_InvalidReference">
         <source>Invalid assembly reference '{0}'. Ensure that a file named '{0}' exists in the lib directory.</source>
-        <target state="translated">Geçersiz derleme başvurusu '{0}'. lib dizininde '{0}' adında bir dosya olduğundan emin olun.</target>
+        <target state="translated">Geçersiz derleme başvurusu '{0}'. Kitaplık dizininde '{0}' adında bir dosya olduğundan emin olun.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_InvalidReferenceFile">
