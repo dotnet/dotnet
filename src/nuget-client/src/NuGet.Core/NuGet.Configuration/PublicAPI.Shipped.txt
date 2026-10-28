@@ -99,6 +99,19 @@ NuGet.Configuration.ISettings.GetSection(string! sectionName) -> NuGet.Configura
 NuGet.Configuration.ISettings.Remove(string! sectionName, NuGet.Configuration.SettingItem! item) -> void
 NuGet.Configuration.ISettings.SaveToDisk() -> void
 NuGet.Configuration.ISettings.SettingsChanged -> System.EventHandler?
+NuGet.Configuration.MinPublishAgeExceptionItem
+NuGet.Configuration.MinPublishAgeExceptionItem.MinPublishAgeExceptionItem() -> void
+NuGet.Configuration.MinPublishAgeExceptionItem.Pattern.get -> string!
+NuGet.Configuration.MinPublishAgeExceptionItem.Pattern.init -> void
+NuGet.Configuration.MinPublishAgeExceptions
+NuGet.Configuration.MinPublishAgeExceptions.FindException(string! packageId) -> NuGet.Configuration.MinPublishAgeExceptionItem?
+NuGet.Configuration.MinPublishAgeExceptions.IsEnabled.get -> bool
+NuGet.Configuration.MinPublishAgeExceptions.MinPublishAgeExceptions(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.MinPublishAgeExceptionItem!>! items) -> void
+NuGet.Configuration.MinPublishAgeExceptionsProvider
+NuGet.Configuration.MinPublishAgeExceptionsProvider.GetMinPublishAgeExceptionItems() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.MinPublishAgeExceptionItem!>!
+NuGet.Configuration.MinPublishAgeExceptionsProvider.MinPublishAgeExceptionsProvider(NuGet.Configuration.ISettings! settings) -> void
+NuGet.Configuration.MinPublishAgeExceptionsProvider.RemoveMinPublishAgeExceptions() -> void
+NuGet.Configuration.MinPublishAgeExceptionsProvider.SaveMinPublishAgeExceptions(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.MinPublishAgeExceptionItem!>! exceptions) -> void
 NuGet.Configuration.NuGetConfigurationException
 NuGet.Configuration.NuGetConfigurationException.NuGetConfigurationException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
 NuGet.Configuration.NuGetConfigurationException.NuGetConfigurationException(string! message) -> void
@@ -153,6 +166,8 @@ NuGet.Configuration.PackageSource.IsOfficial.set -> void
 NuGet.Configuration.PackageSource.IsPersistable.get -> bool
 NuGet.Configuration.PackageSource.MaxHttpRequestsPerSource.get -> int
 NuGet.Configuration.PackageSource.MaxHttpRequestsPerSource.set -> void
+NuGet.Configuration.PackageSource.MinPublishAge.get -> System.TimeSpan
+NuGet.Configuration.PackageSource.MinPublishAge.set -> void
 NuGet.Configuration.PackageSource.Name.get -> string!
 NuGet.Configuration.PackageSource.PackageSource(string! source) -> void
 NuGet.Configuration.PackageSource.PackageSource(string! source, string! name) -> void
@@ -251,6 +266,7 @@ NuGet.Configuration.SettingElementType.Clear = 12 -> NuGet.Configuration.Setting
 NuGet.Configuration.SettingElementType.Config = 4 -> NuGet.Configuration.SettingElementType
 NuGet.Configuration.SettingElementType.Configuration = 1 -> NuGet.Configuration.SettingElementType
 NuGet.Configuration.SettingElementType.FileCert = 15 -> NuGet.Configuration.SettingElementType
+NuGet.Configuration.SettingElementType.MinPublishAgeExceptions = 21 -> NuGet.Configuration.SettingElementType
 NuGet.Configuration.SettingElementType.Owners = 13 -> NuGet.Configuration.SettingElementType
 NuGet.Configuration.SettingElementType.Package = 19 -> NuGet.Configuration.SettingElementType
 NuGet.Configuration.SettingElementType.PackageManagement = 5 -> NuGet.Configuration.SettingElementType
@@ -300,6 +316,8 @@ NuGet.Configuration.SourceItem.AllowInsecureConnections.get -> string?
 NuGet.Configuration.SourceItem.AllowInsecureConnections.set -> void
 NuGet.Configuration.SourceItem.DisableTLSCertificateValidation.get -> string?
 NuGet.Configuration.SourceItem.DisableTLSCertificateValidation.set -> void
+NuGet.Configuration.SourceItem.MinPublishAgeHours.get -> string?
+NuGet.Configuration.SourceItem.MinPublishAgeHours.set -> void
 NuGet.Configuration.SourceItem.ProtocolVersion.get -> string?
 NuGet.Configuration.SourceItem.ProtocolVersion.set -> void
 NuGet.Configuration.SourceItem.SourceItem(string! key, string! value) -> void
@@ -370,6 +388,10 @@ override NuGet.Configuration.CredentialsItem.IsEmpty() -> bool
 override NuGet.Configuration.FileClientCertItem.Clone() -> NuGet.Configuration.SettingBase!
 override NuGet.Configuration.FileClientCertItem.ElementName.get -> string!
 override NuGet.Configuration.FileClientCertItem.Search() -> System.Collections.Generic.IEnumerable<System.Security.Cryptography.X509Certificates.X509Certificate!>!
+override NuGet.Configuration.MinPublishAgeExceptionItem.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.MinPublishAgeExceptionItem.ElementName.get -> string!
+override NuGet.Configuration.MinPublishAgeExceptionItem.Equals(object? other) -> bool
+override NuGet.Configuration.MinPublishAgeExceptionItem.GetHashCode() -> int
 override NuGet.Configuration.OwnersItem.Clone() -> NuGet.Configuration.SettingBase!
 override NuGet.Configuration.OwnersItem.ElementName.get -> string!
 override NuGet.Configuration.OwnersItem.Equals(object? other) -> bool
@@ -419,6 +441,7 @@ static NuGet.Configuration.ConfigurationConstants.GetConfigKeys() -> System.Coll
 static NuGet.Configuration.ConfigurationDefaults.Instance.get -> NuGet.Configuration.ConfigurationDefaults!
 static NuGet.Configuration.EncryptionUtility.DecryptString(string! encryptedString) -> string!
 static NuGet.Configuration.EncryptionUtility.EncryptString(string! value) -> string!
+static NuGet.Configuration.MinPublishAgeExceptions.GetMinPublishAgeExceptions(NuGet.Configuration.ISettings! settings) -> NuGet.Configuration.MinPublishAgeExceptions!
 static NuGet.Configuration.NuGetPathContext.Create(NuGet.Configuration.ISettings! settings) -> NuGet.Configuration.NuGetPathContext!
 static NuGet.Configuration.NuGetPathContext.Create(string! settingsRoot) -> NuGet.Configuration.NuGetPathContext!
 static NuGet.Configuration.NullSettings.Instance.get -> NuGet.Configuration.NullSettings!
@@ -437,6 +460,7 @@ static NuGet.Configuration.Settings.LoadSettingsGivenConfigPaths(System.Collecti
 static NuGet.Configuration.Settings.LoadSpecificSettings(string? root, string! configFileName) -> NuGet.Configuration.ISettings!
 static NuGet.Configuration.SettingsUtility.DeleteConfigValue(NuGet.Configuration.ISettings! settings, string! key) -> bool
 static NuGet.Configuration.SettingsUtility.DeleteValue(NuGet.Configuration.ISettings! settings, string! section, string! attributeKey, string! attributeValue) -> bool
+static NuGet.Configuration.SettingsUtility.GetApiKey(NuGet.Configuration.ISettings! settings, string! endpoint, string! source) -> string?
 static NuGet.Configuration.SettingsUtility.GetConfigValue(NuGet.Configuration.ISettings! settings, string! key, bool decrypt = false, bool isPath = false) -> string?
 static NuGet.Configuration.SettingsUtility.GetDecryptedValueForAddItem(NuGet.Configuration.ISettings! settings, string! section, string! key, bool isPath = false) -> string?
 static NuGet.Configuration.SettingsUtility.GetDefaultPushSource(NuGet.Configuration.ISettings! settings) -> string?
@@ -496,6 +520,8 @@ static readonly NuGet.Configuration.ConfigurationConstants.HashAlgorithm -> stri
 static readonly NuGet.Configuration.ConfigurationConstants.HostKey -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.KeyAttribute -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.MaxHttpRequestsPerSource -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.MinPublishAgeExceptions -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.MinPublishAgeHours -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.NameAttribute -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.NoProxy -> string!
 static readonly NuGet.Configuration.ConfigurationConstants.Owners -> string!

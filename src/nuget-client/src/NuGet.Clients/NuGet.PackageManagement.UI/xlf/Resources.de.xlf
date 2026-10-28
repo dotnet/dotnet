@@ -953,7 +953,7 @@ Fehler: {1}</target>
       </trans-unit>
       <trans-unit id="Text_Changes">
         <source>Visual Studio is about to make changes to this solution:</source>
-        <target state="translated">Visual Studio ist im Begriff, Änderungen an dieser Lösung vorzunehmen:</target>
+        <target state="translated">Visual Studio ist im Begriff, Änderungen an dieser Projektmappe vorzunehmen:</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_DirectDependencies">
@@ -1053,7 +1053,7 @@ Fehler: {1}</target>
       </trans-unit>
       <trans-unit id="Text_PackageFormatApply">
         <source>The package manager format will apply to the following projects in this Solution</source>
-        <target state="translated">Das Paket-Manager-Format wird auf die folgenden Projekte in "Solution" angewendet:</target>
+        <target state="translated">Das Paket-Manager-Format wird auf die folgenden Projekte in dieser Projektmappe angewendet</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageLevelTopLevel">
