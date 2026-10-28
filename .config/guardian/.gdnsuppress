@@ -1,0 +1,67 @@
+{
+  "hydrated": true,
+  "properties": {
+    "helpUri": "https://eng.ms/docs/microsoft-security/security/azure-security/cloudai-security-fundamentals-engineering/security-integration/guardian-wiki/microsoft-guardian/general/suppressions"
+  },
+  "version": "1.0.0",
+  "suppressionSets": {
+    "default": {
+      "name": "default",
+      "createdDate": "2026-10-28 15:04:31Z",
+      "lastUpdatedDate": "2026-10-28 15:04:31Z"
+    }
+  },
+  "results": {
+    "71c5088c6f7582f7428520c4707c86a177e38fbed249283b9e9a235300cc8f3d": {
+      "signature": "71c5088c6f7582f7428520c4707c86a177e38fbed249283b9e9a235300cc8f3d",
+      "alternativeSignatures": [
+        "cc80ab01f4a11e5b536ee8a086fbdb45655a7082873b72ecf07dee4b8b9ee264",
+        "e581d6b9a9290dcb6ef399e4dc17912e49fbf5aeb92192e689c96cbc63b8b737",
+        "434f275db8007468b487c2d889a2a0e34f1d0d6c5c1b44a5c72aa8753fc23fb6"
+      ],
+      "target": "lib/net11.0/DirectWriteForwarder.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/wpf/runtime_win-x86_Microsoft_DotNet_Wpf_GitHub_12_0_0-alpha_1_26527_117_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2004",
+      "justification": "C++/CLI managed assembly references without source checksums are incorrectly reported as insecure source hashing. Verified with the fix in https://github.com/microsoft/binskim/pull/1261. Remove when the fixed BinSkim is deployed.",
+      "createdDate": "2026-10-28 15:04:31Z"
+    },
+    "194f082007ef271136156b7033beadc85338b4af5c01bc9118a4d5c86a80b3d5": {
+      "signature": "194f082007ef271136156b7033beadc85338b4af5c01bc9118a4d5c86a80b3d5",
+      "alternativeSignatures": [
+        "afe22b1a23c6bc3823322d28ef1313be088138f731a8d4dad6a4260227365f73",
+        "44e37dfd808e3bbe2ce81f3bc6550267c776a44268860ef8ea85299cab34cee9",
+        "6d83f9b40d4c2eec934d302014ed70ae6999187139f627658948480a92a57613"
+      ],
+      "target": "lib/net11.0/System.Printing.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/wpf/runtime_win-arm64_Microsoft_DotNet_Wpf_GitHub_12_0_0-alpha_1_26527_117_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2004",
+      "justification": "C++/CLI managed assembly references without source checksums are incorrectly reported as insecure source hashing. Verified with the fix in https://github.com/microsoft/binskim/pull/1261. Remove when the fixed BinSkim is deployed.",
+      "createdDate": "2026-10-28 15:04:31Z"
+    },
+    "44e448917213002e32b46695116687faeb53083bfdf5175e454e151136d3f0bb": {
+      "signature": "44e448917213002e32b46695116687faeb53083bfdf5175e454e151136d3f0bb",
+      "alternativeSignatures": [
+        "acd80ec20f9ab67dca6cb09728785eaebc1d78540fd83d172466c1dbd5229355",
+        "55f111be4f158f3da93eace9a2a4336167b8745ac2a243f588614eb799505b8d",
+        "60fd65b6979828c1bfbea320210e34bf983a6d230e955ffed1dd56733f507bf5"
+      ],
+      "target": "runtimes/win-x64/lib/net12.0/DirectWriteForwarder.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/windowsdesktop/Microsoft_WindowsDesktop_App_Runtime_win-x64_12_0_0-alpha_1_26527_117_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2004",
+      "justification": "C++/CLI managed assembly references without source checksums are incorrectly reported as insecure source hashing. Verified with the fix in https://github.com/microsoft/binskim/pull/1261. Remove when the fixed BinSkim is deployed.",
+      "createdDate": "2026-10-28 15:04:31Z"
+    }
+  }
+}
