@@ -91,6 +91,14 @@ function Verify-Nuget-Packages {
             }
             if ($expectedNumOfFiles[$packageKey] -ne $actualNumOfFiles) {
                 $errors += "Number of files are not equal for '$packageBaseName', expected: $($expectedNumOfFiles[$packageKey]) actual: $actualNumOfFiles"
+
+                # A bare count tells you something moved but not what, which costs another full
+                # build just to learn the file names. List them here so the log is self-sufficient.
+                Write-Host "Actual files in '$packageBaseName' ($actualNumOfFiles):"
+                Get-ChildItem -Recurse -File -Path $unzipNugetPackageDir |
+                    ForEach-Object { $_.FullName.Substring($unzipNugetPackageDir.Length + 1) } |
+                    Sort-Object |
+                    ForEach-Object { Write-Host "    $_" }
             }
 
             if ($packageKey -eq "Microsoft.TestPlatform") {

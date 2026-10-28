@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 namespace Microsoft.VisualStudio.TestPlatform.Common.ExtensionDecorators;
+
 internal class ExtensionDecoratorFactory
 {
     private readonly IFeatureFlag _featureFlag;

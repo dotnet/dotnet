@@ -7,8 +7,8 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Runtime.Serialization.Json;
+using System.Text;
 
 namespace Microsoft.VisualStudio.TestPlatform.ObjectModel;
 

@@ -3,15 +3,16 @@
 
 using System;
 using System.IO;
+using System.Linq;
+
+using FluentAssertions;
 
 using Microsoft.TestPlatform.TestUtilities;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestPlatform.Common;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using TestPlatform.TestUtilities;
-using System.Linq;
-using Microsoft.VisualStudio.TestPlatform.Common;
-using FluentAssertions;
 
 namespace Microsoft.TestPlatform.AcceptanceTests;
 

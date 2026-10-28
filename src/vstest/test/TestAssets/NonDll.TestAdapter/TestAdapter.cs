@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 
 namespace NonDll.TestAdapter;
+
 [FileExtension(".js")]
 [DefaultExecutorUri(Uri)]
 [ExtensionUri(Uri)]

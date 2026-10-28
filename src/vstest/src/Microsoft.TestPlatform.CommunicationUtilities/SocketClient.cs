@@ -98,6 +98,12 @@ public class SocketClient : ICommunicationEndPoint
             return;
         }
 
+        if (_cancellation.IsCancellationRequested)
+        {
+            _tcpClient.Close();
+            return;
+        }
+
         _channel = _channelFactory(_tcpClient.GetStream());
         Connected.SafeInvoke(this, new ConnectedEventArgs(_channel), "SocketClient: ServerConnected");
 
@@ -129,4 +135,5 @@ public class SocketClient : ICommunicationEndPoint
             Disconnected?.SafeInvoke(this, new DisconnectedEventArgs(), "SocketClient: ServerDisconnected");
         }
     }
+
 }

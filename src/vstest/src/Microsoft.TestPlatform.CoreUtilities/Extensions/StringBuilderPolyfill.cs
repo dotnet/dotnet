@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace System.Text;
+
 internal static class StringBuilderPolyfill
 {
 #if !NET7_0_OR_GREATER

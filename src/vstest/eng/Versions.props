@@ -13,8 +13,8 @@
       from appending +<commitId>, which breaks DTAAgent.
     -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    <VersionPrefix>17.12.0</VersionPrefix>
-    <PreReleaseVersionLabel>release</PreReleaseVersionLabel>
+    <VersionPrefix>17.12.1</VersionPrefix>
+    <PreReleaseVersionLabel>hotfix</PreReleaseVersionLabel>
   </PropertyGroup>
   <PropertyGroup Label="Arcade settings">
     <!-- Ensure we use xliff task tool - true is the default but we make it explicit here -->
@@ -41,6 +41,43 @@
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>3.11.0-beta1.23525.2</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <MicrosoftCodeCoverageIOVersion>17.7.0</MicrosoftCodeCoverageIOVersion>
     <MicrosoftDiagnosticsNETCoreClientVersion>0.2.0-preview.24416.1</MicrosoftDiagnosticsNETCoreClientVersion>
+    <!--
+      Pinned to 3.1.0 deliberately, and it must stay on a 3.x while this line targets netcoreapp3.1.
+
+      Microsoft.Extensions.DependencyModel 6.0.0 has a hard reference to System.Text.Json 6.0.0.0.
+      netcoreapp3.1 carries System.Text.Json in-box at 4.0.0.0, and the CLI/Portable/TestPlatform
+      packages copy only `$(PkgMicrosoft_Extensions_DependencyModel)\lib\netstandard2.0\*` — a flat
+      file copy with no transitive closure — so System.Text.Json 6.0.0 is never packaged. The result
+      is a FileNotFoundException inside DotnetTestHostManager.GetTestHostPath, vstest.console aborts
+      the run before it launches any testhost, and every netcoreapp3.1 acceptance row fails.
+
+      Measured on build 3067587: 41 acceptance failures, all of them TargetFramework=netcoreapp3.1
+      and zero on any other TFM. Controls: shipped Microsoft.TestPlatform.CLI 17.12.0 contains the
+      3.0.0 DependencyModel (67 960 bytes, FileVersion 3.0.19.46305), not 6.0.0 (75 888 bytes,
+      FileVersion 6.0.21.52210); and 17.11 pins 3.0.0 and passes these same rows on the same infra.
+
+      3.1.0 rather than 3.0.0, and the reason is measured rather than chosen. Build 3067628 pinned
+      3.0.0 and failed restore in 5.5 minutes with
+        NU1605 Warning As Error: Detected package downgrade: Microsoft.Extensions.DependencyModel
+        from 3.1.0 to 3.0.0 … Microsoft.TestPlatform -> Microsoft.CodeCoverage.Instrumentation
+        17.12.5 -> Microsoft.Extensions.DependencyModel (>= 3.1.0)
+      This line pins MicrosoftInternalCodeCoverageVersion 17.12.5, whose Instrumentation package
+      floors DependencyModel at 3.1.0; 17.11 pins 17.11.4, which does not, which is the whole reason
+      3.0.0 is legal there and illegal here. 3.1.0 is the lowest version that satisfies that floor.
+
+      It keeps every property the fix depends on. Measured on the packages themselves:
+        3.0.0  lib/net451 64 888 B, lib/netstandard2.0 67 960 B, netstandard2.0 -> System.Text.Json 4.6.0
+        3.1.0  lib/net451 64 888 B, lib/netstandard2.0 67 960 B, netstandard2.0 -> System.Text.Json 4.7.0
+        6.0.0  lib/net461 75 888 B, lib/netstandard2.0 75 888 B, both        -> System.Text.Json 6.0.0
+      Both 3.x flavours are the same size as what shipped in 17.12.0 and bind to a System.Text.Json
+      4.x, i.e. assembly version 4.0.0.0, which netcoreapp3.1 supplies in-box. Only 6.0.0 needs a
+      System.Text.Json that is not there.
+
+      Declared divergence from bar (f), deliberately accepted: the packaged DLL is FileVersion
+      3.100.19.56502 / AssemblyVersion 3.1.0.0 where shipped 17.12.0 carries 3.0.19.46305 / 3.0.0.0.
+      Identical file sizes on both lib flavours. This is strictly closer to what shipped than the
+      6.0.0 this branch was carrying, and 3.0.0 cannot be restored on this line at all.
+    -->
     <MicrosoftExtensionsDependencyModelPackageVersion>3.1.0</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftFakesVersion>17.9.0-beta.24058.4</MicrosoftFakesVersion>
@@ -58,6 +95,7 @@
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
     <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
     <SystemReflectionMetadataVersion>1.6.0</SystemReflectionMetadataVersion>
+    <SystemRuntimeCompilerServicesUnsafePackageVersion>6.0.0</SystemRuntimeCompilerServicesUnsafePackageVersion>
     <SystemUriVersion>4.3.2</SystemUriVersion>
     <TestPlatformExternalsVersion>17.10.0-preview-2-34602-162</TestPlatformExternalsVersion>
     <MicrosoftInternalTestPlatformExtensions>17.10.0-preview-2-34602-162</MicrosoftInternalTestPlatformExtensions>

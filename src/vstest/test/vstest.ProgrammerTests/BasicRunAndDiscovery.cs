@@ -1,16 +1,20 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
+
 using FluentAssertions;
+
+using Intent;
+
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 
 using vstest.ProgrammerTests.Fakes;
-using Intent;
-using System.Diagnostics.CodeAnalysis;
 
 #pragma warning disable IDE1006 // Naming Styles
 namespace vstest.ProgrammerTests;
+
 #pragma warning restore IDE1006 // Naming Styles
 
 // Tests are run by Intent library that is executed from our Program.Main. To debug press F5 in VS, and maybe mark just a single test with [Only].

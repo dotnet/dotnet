@@ -9,14 +9,15 @@ using System.Globalization;
 using System.Linq;
 using System.Xml;
 
+using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
+using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
+
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Processors.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Common;
 using Microsoft.VisualStudio.TestPlatform.Common.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities;
-using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
-using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
