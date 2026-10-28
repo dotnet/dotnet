@@ -24,12 +24,12 @@
       </trans-unit>
       <trans-unit id="CredentialPrompt_PackageSourceCaption">
         <source>NuGet Package Source Authentication</source>
-        <target state="translated">NuGet 包源身份验证</target>
+        <target state="new">NuGet Package Source Authentication</target>
         <note />
       </trans-unit>
       <trans-unit id="CredentialPrompt_PackageSourceMessage">
         <source>Enter credentials for the package source '{0}'.</source>
-        <target state="translated">输入包源“{0}”的凭据。</target>
+        <target state="new">Enter credentials for the package source '{0}'.</target>
         <note>{0} is the package source URI.</note>
       </trans-unit>
       <trans-unit id="CredentialProviderFailed_DefaultCredentialsCredentialProvider">
@@ -224,7 +224,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">‘{0}’ 不得为 null。</target>
+        <target state="translated">"{0}" 不能是 null。</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -239,7 +239,7 @@
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink_After">
         <source>.</source>
-        <target state="translated">。</target>
+        <target state="translated">.</target>
         <note>This test goes immediately after the document link.</note>
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink_Before">

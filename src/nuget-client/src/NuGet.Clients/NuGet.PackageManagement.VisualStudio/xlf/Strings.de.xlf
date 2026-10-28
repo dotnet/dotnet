@@ -24,12 +24,12 @@
       </trans-unit>
       <trans-unit id="CredentialPrompt_PackageSourceCaption">
         <source>NuGet Package Source Authentication</source>
-        <target state="translated">Authentifizierung für NuGet-Paketquelle</target>
+        <target state="new">NuGet Package Source Authentication</target>
         <note />
       </trans-unit>
       <trans-unit id="CredentialPrompt_PackageSourceMessage">
         <source>Enter credentials for the package source '{0}'.</source>
-        <target state="translated">Geben Sie die Anmeldeinformationen für die Paketquelle „{0}“ ein.</target>
+        <target state="new">Enter credentials for the package source '{0}'.</target>
         <note>{0} is the package source URI.</note>
       </trans-unit>
       <trans-unit id="CredentialProviderFailed_DefaultCredentialsCredentialProvider">
@@ -229,7 +229,7 @@
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
-        <target state="translated">Die Lösung wurde nicht gespeichert. Speichern Sie Ihre Lösung, bevor Sie NuGet-Pakete verwalten.</target>
+        <target state="translated">Projektmappe nicht gespeichert. Speichern Sie Ihre Projektmappe, bevor Sie NuGet-Pakete verwalten.</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink">
@@ -276,7 +276,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">Das Verzeichnis "{0}" ist nicht leer. Es wird übersprungen...</target>
+        <target state="translated">Das Verzeichnis "{0}" ist nicht leer und wird übersprungen...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">

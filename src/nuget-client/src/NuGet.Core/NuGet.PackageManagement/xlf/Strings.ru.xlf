@@ -4,22 +4,22 @@
     <body>
       <trans-unit id="AddedPackageToFolder">
         <source>Added package '{0}' to folder '{1}'</source>
-        <target state="translated">Пакет «{0}» добавлен в папку «{1}»</target>
+        <target state="translated">Пакет "{0}" добавлен в папку "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="AddedPackageToFolderFromSource">
         <source>Added package '{0}' to folder '{1}' from source '{2}'</source>
-        <target state="translated">Пакет "{0}" из источника "{2}" добавлен в папку "{1}"</target>
+        <target state="translated">Пакет "{0}" добавлен в папку "{1}" из источника "{2}"</target>
         <note />
       </trans-unit>
       <trans-unit id="AddedPackageToPackagesConfig">
         <source>Added package '{0}' to '{1}'</source>
-        <target state="translated">Пакет «{0}» добавлен в «{1}»</target>
+        <target state="translated">Пакет "{0}" добавлен в "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="AddingPackageToFolder">
         <source>Adding package '{0}' to folder '{1}'</source>
-        <target state="translated">Добавление пакета «{0}» в папку «{1}»</target>
+        <target state="translated">Добавление пакета "{0}" в папку "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="AddingPackageWithOnlyDependencies">
@@ -59,32 +59,32 @@
       </trans-unit>
       <trans-unit id="Debug_AddedFile">
         <source>Added file '{0}'.</source>
-        <target state="translated">Добавлен файл "{0}".</target>
+        <target state="translated">Файл "{0}" добавлен.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_AddedFileToFolder">
         <source>Added file '{0}' to folder '{1}'.</source>
-        <target state="translated">Файл «{0}» добавлен в папку «{1}».</target>
+        <target state="translated">Файл "{0}" добавлен в папку "{1}".</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFile">
         <source>Removed file '{0}'.</source>
-        <target state="translated">Файл «{0}» удален.</target>
+        <target state="translated">Файл "{0}" удален.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFileFromFolder">
         <source>Removed file '{0}' from folder '{1}'.</source>
-        <target state="translated">Файл «{0}» удален из папки «{1}».</target>
+        <target state="translated">Файл "{0}" удален из папки "{1}".</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
         <source>Removed folder '{0}'.</source>
-        <target state="translated">Папка «{0}» удалена.</target>
+        <target state="translated">Папка "{0}" удалена.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_TargetFrameworkInfo">
         <source>&gt;&gt; {0} are being added from '{1}'{2}</source>
-        <target state="translated">&gt;&gt; {0} добавляется из «{1}» {2}</target>
+        <target state="translated">&gt;&gt; {0} добавляются из "{1}" {2}</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_TargetFrameworkInfoPrefix">
@@ -94,7 +94,7 @@
       </trans-unit>
       <trans-unit id="DependencyDoesNotHaveValidVersion">
         <source>Dependency '{0}' has invalid version specification.</source>
-        <target state="translated">У зависимости «{0}» недопустимая спецификация версии.</target>
+        <target state="translated">Недопустимая спецификация версии у зависимости "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="DownloadResourceNotFound">
@@ -109,7 +109,7 @@
       </trans-unit>
       <trans-unit id="ErrorLoadingPackagesConfig">
         <source>An error occurred while reading file '{0}': {1}</source>
-        <target state="translated">При чтении файла «{0}» произошла ошибка: {1}</target>
+        <target state="translated">Произошла ошибка при чтении файла "{0}": {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorWritingPackagesConfig">
@@ -159,7 +159,7 @@
       </trans-unit>
       <trans-unit id="FileConflictMessage">
         <source>File '{0}' already exists in project '{1}'. Do you want to overwrite it?</source>
-        <target state="translated">В проекте «{1}» уже существует файл «{0}». Вы хотите перезаписать его?</target>
+        <target state="translated">В проекте "{1}" уже существует файл "{0}". Перезаписать его?</target>
         <note />
       </trans-unit>
       <trans-unit id="FoundPackageInPackagesFolder">
@@ -174,7 +174,7 @@
       </trans-unit>
       <trans-unit id="Info_OverwritingExistingFile">
         <source>Overwriting existing file '{0}'..</source>
-        <target state="translated">Перезапись существующего файла «{0}».</target>
+        <target state="translated">Перезапись существующего файла "{0}"…</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidProjectName">
@@ -219,17 +219,17 @@
       </trans-unit>
       <trans-unit id="PackageAlreadyExistsInFolder">
         <source>Package '{0}' already exists in folder '{1}'</source>
-        <target state="translated">В папке «{1}» уже существует пакет «{0}»</target>
+        <target state="translated">В папке "{1}" уже существует пакет "{0}"</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageAlreadyExistsInPackagesConfig">
         <source>Package '{0}' already exists in '{1}'</source>
-        <target state="translated">В «{1}» уже существует пакет «{0}»</target>
+        <target state="translated">В "{1}" уже существует пакет "{0}"</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageAlreadyExistsInProject">
         <source>Package '{0}' already exists in project '{1}'</source>
-        <target state="translated">В проекте «{1}» уже существует пакет «{0}»</target>
+        <target state="translated">В проекте "{1}" уже существует пакет "{0}"</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageCancelledFromSource">
@@ -244,17 +244,17 @@
       </trans-unit>
       <trans-unit id="PackageDoesNotExistInFolder">
         <source>Package '{0}' does not exist in folder '{1}'</source>
-        <target state="translated">В папке «{1}» не существует пакета «{0}»</target>
+        <target state="translated">В папке "{1}" не существует пакет "{0}"</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageDoesNotExistInProject">
         <source>Package '{0}' does not exist in project '{1}'</source>
-        <target state="translated">В проекте «{1}» не существует пакета «{0}»</target>
+        <target state="translated">В проекте "{1}" не существует пакет "{0}"</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageDoesNotExisttInPackagesConfig">
         <source>Package '{0}' does not exists in '{1}'</source>
-        <target state="translated">В «{1}» не существует пакета «{0}»</target>
+        <target state="translated">В "{1}" не существует пакет "{0}"</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageHasDependent">
@@ -336,17 +336,17 @@
       </trans-unit>
       <trans-unit id="RemovedPackageFromFolder">
         <source>Removed package '{0}' from folder '{1}'</source>
-        <target state="translated">Пакет «{0}» удален из папки «{1}»</target>
+        <target state="translated">Пакет "{0}" удален из папки "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="RemovedPackageFromPackagesConfig">
         <source>Removed package '{0}' from '{1}'</source>
-        <target state="translated">Пакет «{0}» удален из «{1}»</target>
+        <target state="translated">Пакет "{0}" удален из "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="RemovingPackageFromFolder">
         <source>Removing package '{0}' from folder '{1}'</source>
-        <target state="translated">Удаление пакета «{0}» из папки «{1}»</target>
+        <target state="translated">Удаление пакета "{0}" из папки "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="ResolutionSuccessfulNoAction">
@@ -481,7 +481,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">Каталог «{0}» не пуст. Пропуск…</target>
+        <target state="translated">Каталог "{0}" не пуст. Пропуск…</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_ErrorFindingRepository">
@@ -497,7 +497,7 @@
       </trans-unit>
       <trans-unit id="Warning_FileModified">
         <source>Skipping '{0}' because it was modified.</source>
-        <target state="translated">«{0}» пропускается, так как он был изменен.</target>
+        <target state="translated">Файл "{0}" будет пропущен, так как он был изменен.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">

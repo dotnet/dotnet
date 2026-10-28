@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="NewPackageSourceLabel.Text">
         <source>&amp;Source:</source>
-        <target state="translated">Źró&amp;dło:</target>
+        <target state="translated">&amp;Źródło:</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageSourcesListBox.AccessibleName">

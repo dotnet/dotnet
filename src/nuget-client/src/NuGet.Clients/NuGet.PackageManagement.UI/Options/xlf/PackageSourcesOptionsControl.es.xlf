@@ -79,7 +79,7 @@
       </trans-unit>
       <trans-unit id="updateButton.Text">
         <source>&amp;Update</source>
-        <target state="translated">Actuali&amp;zar</target>
+        <target state="translated">&amp;Actualizar</target>
         <note />
       </trans-unit>
     </body>

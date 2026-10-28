@@ -369,7 +369,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</source>
-        <target state="translated">NuGet richiede origini HTTPS. Per usare un'origine HTTP, devi impostare in modo esplicito "allowInsecureConnections" su "Vero" nel file NuGet.Config.</target>
+        <target state="translated">NuGet richiede origini HTTPS. Per usare un'origine HTTP, è necessario impostare in modo esplicito "allowInsecureConnections" su "true" nel file NuGet.Config.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_MetadataNotFound">
@@ -459,7 +459,7 @@
       </trans-unit>
       <trans-unit id="InfoBar_FixVulnerabilitiesWithCopilot">
         <source>Fix with GitHub Copilot</source>
-        <target state="translated">Correggi con GitHub Copilot</target>
+        <target state="new">Fix with GitHub Copilot</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Label_Action">
@@ -589,7 +589,7 @@
       </trans-unit>
       <trans-unit id="Label_Installed_VulnerableWarning_Single">
         <source>You have 1 vulnerable package version installed.</source>
-        <target state="translated">È presente 1 versione del pacchetto vulnerabile.</target>
+        <target state="new">You have 1 vulnerable package version installed.</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_License">
@@ -1053,7 +1053,7 @@ Errore: {1}</target>
       </trans-unit>
       <trans-unit id="Text_PackageFormatApply">
         <source>The package manager format will apply to the following projects in this Solution</source>
-        <target state="translated">Il formato di gestione pacchetti verrà applicato ai progetti seguenti in questo elemento Solution</target>
+        <target state="translated">Il formato di gestione pacchetti verrà applicato ai progetti seguenti in questa soluzione</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageLevelTopLevel">
@@ -1288,7 +1288,7 @@ Errore: {1}</target>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled. Select OK to continue.</source>
-        <target state="translated">Una volta avviata, questa azione non può essere annullata. Selezionare OK per continuare.</target>
+        <target state="new">Once started, this action cannot be cancelled. Select OK to continue.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

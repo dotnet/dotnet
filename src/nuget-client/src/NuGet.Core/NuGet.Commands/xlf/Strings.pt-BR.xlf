@@ -220,7 +220,7 @@
       </trans-unit>
       <trans-unit id="Error_FloatingVersionsNotAllowedWithPackageSourceCooldown">
         <source>The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</source>
-        <target state="translated">Os seguintes itens PackageReference não podem especificar uma versão flutuante porque o resfriamento da origem do pacote está habilitado: {0}.</target>
+        <target state="new">The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</target>
         <note>
       0 - The comma delimited list of package names that specified a floating version.
       Do not localize `PackageReference`
@@ -228,17 +228,17 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Você está executando a operação "{0}" com uma fonte "HTTP": {1}. O NuGet exige fontes HTTPS. Para usar uma fonte HTTP, você deve definir explicitamente "allowInsecureConnections" como true no arquivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para obter mais informações.</target>
+        <target state="translated">Você está executando a operação "{0}" com uma fonte "HTTP": {1}. O NuGet requer fontes HTTPS. Para usar uma fonte HTTP, você deve definir explicitamente 'allowInsecureConnections' como verdadeiro no seu arquivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para mais informações.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single_Short">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Você está executando a operação "{0}" com uma fonte "HTTP": {1}. O NuGet exige fontes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para obter mais informações.</target>
+        <target state="translated">Você está executando a operação "{0}" com uma fonte "HTTP": {1}. O NuGet requer fontes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para mais informações.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Você está executando a operação "{0}" com fontes 'HTTP': {1}. O NuGet exige fontes HTTPS. Para usar fontes HTTP, você deve definir explicitamente "allowInsecureConnections" como true no arquivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para obter mais informações.</target>
+        <target state="translated">Você está executando a operação '{0}' com fontes 'HTTP': {1}. O NuGet requer fontes HTTPS. Para usar fontes HTTP, você deve definir explicitamente 'allowInsecureConnections' como verdadeiro no seu arquivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para mais informações.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Error_IncompatiblePackageType">
@@ -1239,7 +1239,7 @@ Atualize o SDK do .NET ou remova RestoreUseLegacyDependencyResolver para usar es
       </trans-unit>
       <trans-unit id="SourcesCommandMinPublishAgeHoursOutOfRange">
         <source>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</source>
-        <target state="translated">O tempo mínimo de publicação de {0} horas é inválido. O valor deve estar entre 0 e {1}.</target>
+        <target state="new">The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</target>
         <note>0 - the invalid number of hours. 1 - the maximum supported number of hours.</note>
       </trans-unit>
       <trans-unit id="SourcesCommandNoMatchingSourcesFound">
@@ -1472,7 +1472,7 @@ Atualize o SDK do .NET ou remova RestoreUseLegacyDependencyResolver para usar es
       </trans-unit>
       <trans-unit id="Warning_AuditSourceWithoutVulnerabilityData">
         <source>Audit source '{0}' did not provide any vulnerability data.</source>
-        <target state="translated">A fonte de auditoria '{0}' não forneceu nenhum dado de vulnerabilidade.</target>
+        <target state="translated">A fonte de Auditoria '{0}' não forneceu dados de vulnerabilidade.</target>
         <note>{0} is the source name</note>
       </trans-unit>
       <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
@@ -1498,15 +1498,15 @@ Atualize o SDK do .NET ou remova RestoreUseLegacyDependencyResolver para usar es
       <trans-unit id="Warning_List_HttpSource">
         <source>The following is a 'Non-HTTPS' source: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">A seguir está uma fonte 'Não HTTPS': {0}
-O NuGet exige fontes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para obter mais informações.</target>
+        <target state="translated">Veja a seguir uma origem "Não HTTPS": {0}
+O NuGet requer fontes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para mais informações.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_List_HttpSources">
         <source>The following are 'Non-HTTPS' sources: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">As seguintes são fontes 'Não HTTPS': {0}
-O NuGet exige fontes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para obter mais informações.</target>
+        <target state="translated">A seguir estão as fontes "Não HTTPS": {0}
+O NuGet requer fontes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para mais informações.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_MinVersionDoesNotExist">

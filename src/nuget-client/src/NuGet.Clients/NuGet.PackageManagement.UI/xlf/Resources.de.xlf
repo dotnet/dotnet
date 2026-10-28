@@ -459,7 +459,7 @@
       </trans-unit>
       <trans-unit id="InfoBar_FixVulnerabilitiesWithCopilot">
         <source>Fix with GitHub Copilot</source>
-        <target state="translated">Mit GitHub Copilot beheben</target>
+        <target state="new">Fix with GitHub Copilot</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Label_Action">
@@ -589,7 +589,7 @@
       </trans-unit>
       <trans-unit id="Label_Installed_VulnerableWarning_Single">
         <source>You have 1 vulnerable package version installed.</source>
-        <target state="translated">Es ist 1 anfällige Paketversion installiert.</target>
+        <target state="new">You have 1 vulnerable package version installed.</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_License">
@@ -839,7 +839,7 @@
       </trans-unit>
       <trans-unit id="Preview_PackageUpdate">
         <source>{0} version {1} to {2} version {3}</source>
-        <target state="translated">Von {0}, Version {1}, auf {2}, Version {3}</target>
+        <target state="translated">Von {0}, Version {1} auf {2}, Version {3}</target>
         <note>{0} = Old package ID, {1} = Old package version, {2} = New package ID, {3} = New package version</note>
       </trans-unit>
       <trans-unit id="Preview_UnknownProject">
@@ -918,12 +918,12 @@ Fehler: {1}</target>
       </trans-unit>
       <trans-unit id="Status_Canceled">
         <source>Canceled loading packages</source>
-        <target state="translated">Das Laden von Paketen wurde abgebrochen.</target>
+        <target state="translated">Laden von Paketen abgebrochen</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
         <source>An error occurred while loading packages</source>
-        <target state="translated">Fehler beim Laden von Paketen.</target>
+        <target state="translated">Fehler beim Laden der Pakete</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
@@ -953,7 +953,7 @@ Fehler: {1}</target>
       </trans-unit>
       <trans-unit id="Text_Changes">
         <source>Visual Studio is about to make changes to this solution:</source>
-        <target state="translated">Visual Studio ist im Begriff, Änderungen an dieser Lösung vorzunehmen:</target>
+        <target state="translated">Visual Studio ist im Begriff, Änderungen an dieser Projektmappe vorzunehmen:</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_DirectDependencies">
@@ -1053,7 +1053,7 @@ Fehler: {1}</target>
       </trans-unit>
       <trans-unit id="Text_PackageFormatApply">
         <source>The package manager format will apply to the following projects in this Solution</source>
-        <target state="translated">Das Paket-Manager-Format wird auf die folgenden Projekte in "Solution" angewendet:</target>
+        <target state="translated">Das Paket-Manager-Format wird auf die folgenden Projekte in dieser Projektmappe angewendet</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageLevelTopLevel">
@@ -1288,7 +1288,7 @@ Fehler: {1}</target>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled. Select OK to continue.</source>
-        <target state="translated">Nach dem Start kann diese Aktion nicht abgebrochen werden. Wählen Sie OK aus, um fortzufahren.</target>
+        <target state="new">Once started, this action cannot be cancelled. Select OK to continue.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

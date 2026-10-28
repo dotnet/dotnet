@@ -274,7 +274,7 @@
       </trans-unit>
       <trans-unit id="Checkbox_Show_Vulnerable_Only">
         <source>Show only vulnerable</source>
-        <target state="translated">Zobrazit jen zranitelné</target>
+        <target state="translated">Zobrazit pouze zranitelné</target>
         <note />
       </trans-unit>
       <trans-unit id="ColumnHeader_InstalledVersion">
@@ -459,7 +459,7 @@
       </trans-unit>
       <trans-unit id="InfoBar_FixVulnerabilitiesWithCopilot">
         <source>Fix with GitHub Copilot</source>
-        <target state="translated">Opravit pomocí GitHub Copilota</target>
+        <target state="new">Fix with GitHub Copilot</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Label_Action">
@@ -589,7 +589,7 @@
       </trans-unit>
       <trans-unit id="Label_Installed_VulnerableWarning_Single">
         <source>You have 1 vulnerable package version installed.</source>
-        <target state="translated">Máte nainstalovanou 1 zranitelnou verzi balíčku.</target>
+        <target state="new">You have 1 vulnerable package version installed.</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_License">
@@ -759,7 +759,7 @@
       </trans-unit>
       <trans-unit id="Link_configuration">
         <source>Common NuGet configurations; How settings are applied.</source>
-        <target state="translated">Běžné konfigurace NuGet: Způsob použití nastavení</target>
+        <target state="translated">Běžné konfigurace NuGet: Způsob použití nastavení.</target>
         <note />
       </trans-unit>
       <trans-unit id="Migrator_PackageIdColumnHeader">
@@ -918,7 +918,7 @@ Chyba: {1}</target>
       </trans-unit>
       <trans-unit id="Status_Canceled">
         <source>Canceled loading packages</source>
-        <target state="translated">Načítání balíčku se zrušilo.</target>
+        <target state="translated">Zrušeno načítání balíčků</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
@@ -928,12 +928,12 @@ Chyba: {1}</target>
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
         <source>End of package list loaded</source>
-        <target state="translated">Konec načteného seznamu balíčků</target>
+        <target state="translated">Konec načítání seznamu balíčků</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Ready">
         <source>Package list loaded</source>
-        <target state="translated">Načtený seznam balíčků</target>
+        <target state="translated">Seznam balíčků načten</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_By">
@@ -1288,7 +1288,7 @@ Chyba: {1}</target>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled. Select OK to continue.</source>
-        <target state="translated">Po spuštění se tato akce nedá zrušit. Pokračujte výběrem OK.</target>
+        <target state="new">Once started, this action cannot be cancelled. Select OK to continue.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">
