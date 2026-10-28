@@ -1053,7 +1053,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_PackageFormatApply">
         <source>The package manager format will apply to the following projects in this Solution</source>
-        <target state="translated">套件管理器格式會套用到此 Solution 中的下列專案</target>
+        <target state="translated">套件管理器格式會套用至此解決方案內以下的專案</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageLevelTopLevel">
