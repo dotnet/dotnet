@@ -25,8 +25,8 @@
     <PackageVersion Include="BenchmarkDotNet" Version="$(_BenchmarkDotNetPackageVersion)" />
     <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="$(_BenchmarkDotNetPackageVersion)" />
     <PackageVersion Include="DiffPlex" Version="1.7.2" />
-    <PackageVersion Include="MessagePack" Version="2.5.301" /> <!-- Update transitive vulnerable package -->
-    <PackageVersion Include="Microsoft.AspNetCore.App.Runtime.$(NetCoreSDKRuntimeIdentifier)" Version="8.0.29" />
+    <PackageVersion Include="MessagePack" Version="2.5.303" /> <!-- Update transitive vulnerable package -->
+    <PackageVersion Include="Microsoft.AspNetCore.App.Runtime.$(NetCoreSDKRuntimeIdentifier)" Version="8.0.32" />
     <PackageVersion Include="Microsoft.Build.Framework" Version="$(_MicrosoftBuildPackageVersion)" />
     <PackageVersion Include="Microsoft.Build.Locator" Version="1.10.2" />
     <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="$(_MicrosoftBuildPackageVersion)" />
@@ -63,7 +63,6 @@
     <PackageVersion Include="Microsoft.Extensions.ObjectPool" Version="$(MicrosoftExtensionsObjectPoolPackageVersion)" />
     <PackageVersion Include="Microsoft.Internal.VisualStudio.Shell.Framework" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
     <PackageVersion Include="Microsoft.Internal.VisualStudio.Interop" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
-    <PackageVersion Include="Microsoft.NET.Sdk.Razor" Version="$(MicrosoftNETSdkRazorPackageVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Copilot" Version="0.2.28-beta" />
     <PackageVersion Include="Microsoft.VisualStudio.Editor" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Extensibility.Testing.Xunit" Version="$(_MicrosoftVisualStudioExtensibilityTestingVersion)" />
@@ -108,7 +107,7 @@
     <PackageVersion Include="System.Private.Uri" Version="4.3.2" /> <!-- Update transitive vulnerable package -->
     <PackageVersion Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataPackageVersion)" />
     <PackageVersion Include="System.Resources.Extensions" Version="9.0.0" />
-    <PackageVersion Include="System.Security.Cryptography.Xml" Version="8.0.4" />
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="8.0.5" />
     <PackageVersion Include="System.Text.Encodings.Web" Version="9.0.0" />
     <PackageVersion Include="System.Text.Json" Version="9.0.0" />
     <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" /> <!-- Update transitive vulnerable package -->

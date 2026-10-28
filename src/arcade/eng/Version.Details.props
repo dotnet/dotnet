@@ -6,8 +6,8 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet-arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26431.5</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetHelixSdkPackageVersion>10.0.0-beta.26431.5</MicrosoftDotNetHelixSdkPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26478.1</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetHelixSdkPackageVersion>10.0.0-beta.26478.1</MicrosoftDotNetHelixSdkPackageVersion>
     <!-- dotnet-arcade-services dependencies -->
     <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.25424.1</MicrosoftDotNetDarcLibPackageVersion>
     <MicrosoftDotNetProductConstructionServiceClientPackageVersion>1.1.0-beta.25424.1</MicrosoftDotNetProductConstructionServiceClientPackageVersion>
@@ -28,23 +28,23 @@ This file should be imported by eng/Versions.props
     <MicrosoftCodeAnalysisCSharpPackageVersion>4.8.0</MicrosoftCodeAnalysisCSharpPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>4.8.0</MicrosoftNetCompilersToolsetPackageVersion>
     <!-- dotnet-runtime dependencies -->
-    <MicrosoftBclAsyncInterfacesPackageVersion>9.0.0-rc.2.24473.5</MicrosoftBclAsyncInterfacesPackageVersion>
-    <MicrosoftExtensionsDependencyInjectionPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsDependencyInjectionPackageVersion>
-    <MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>
-    <MicrosoftExtensionsDependencyModelPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsDependencyModelPackageVersion>
-    <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
-    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
-    <MicrosoftExtensionsHttpPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsHttpPackageVersion>
-    <MicrosoftExtensionsLoggingAbstractionsPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsLoggingAbstractionsPackageVersion>
-    <MicrosoftExtensionsLoggingConsolePackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsLoggingConsolePackageVersion>
-    <SystemCollectionsImmutablePackageVersion>9.0.0-rc.2.24473.5</SystemCollectionsImmutablePackageVersion>
-    <SystemFormatsAsn1PackageVersion>9.0.0-rc.2.24473.5</SystemFormatsAsn1PackageVersion>
-    <SystemIOPackagingPackageVersion>9.0.0-rc.2.24473.5</SystemIOPackagingPackageVersion>
-    <SystemReflectionMetadataPackageVersion>9.0.0-rc.2.24473.5</SystemReflectionMetadataPackageVersion>
-    <SystemSecurityCryptographyPkcsPackageVersion>9.0.0-rc.2.24473.5</SystemSecurityCryptographyPkcsPackageVersion>
-    <SystemSecurityCryptographyXmlPackageVersion>9.0.0-rc.2.24473.5</SystemSecurityCryptographyXmlPackageVersion>
-    <SystemTextEncodingsWebPackageVersion>9.0.0-rc.2.24473.5</SystemTextEncodingsWebPackageVersion>
-    <SystemTextJsonPackageVersion>9.0.0-rc.2.24473.5</SystemTextJsonPackageVersion>
+    <MicrosoftBclAsyncInterfacesPackageVersion>10.0.13</MicrosoftBclAsyncInterfacesPackageVersion>
+    <MicrosoftExtensionsDependencyInjectionPackageVersion>10.0.13</MicrosoftExtensionsDependencyInjectionPackageVersion>
+    <MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>10.0.13</MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>
+    <MicrosoftExtensionsDependencyModelPackageVersion>10.0.13</MicrosoftExtensionsDependencyModelPackageVersion>
+    <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>10.0.13</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.13</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
+    <MicrosoftExtensionsHttpPackageVersion>10.0.13</MicrosoftExtensionsHttpPackageVersion>
+    <MicrosoftExtensionsLoggingAbstractionsPackageVersion>10.0.13</MicrosoftExtensionsLoggingAbstractionsPackageVersion>
+    <MicrosoftExtensionsLoggingConsolePackageVersion>10.0.13</MicrosoftExtensionsLoggingConsolePackageVersion>
+    <SystemCollectionsImmutablePackageVersion>10.0.13</SystemCollectionsImmutablePackageVersion>
+    <SystemFormatsAsn1PackageVersion>10.0.13</SystemFormatsAsn1PackageVersion>
+    <SystemIOPackagingPackageVersion>10.0.13</SystemIOPackagingPackageVersion>
+    <SystemReflectionMetadataPackageVersion>10.0.13</SystemReflectionMetadataPackageVersion>
+    <SystemSecurityCryptographyPkcsPackageVersion>10.0.13</SystemSecurityCryptographyPkcsPackageVersion>
+    <SystemSecurityCryptographyXmlPackageVersion>10.0.13</SystemSecurityCryptographyXmlPackageVersion>
+    <SystemTextEncodingsWebPackageVersion>10.0.13</SystemTextEncodingsWebPackageVersion>
+    <SystemTextJsonPackageVersion>10.0.13</SystemTextJsonPackageVersion>
     <!-- dotnet-sdk dependencies -->
     <MicrosoftNETSdkWorkloadManifestReaderPackageVersion>9.0.100-preview.6.24328.19</MicrosoftNETSdkWorkloadManifestReaderPackageVersion>
     <!-- dotnet-symreader-converter dependencies -->
