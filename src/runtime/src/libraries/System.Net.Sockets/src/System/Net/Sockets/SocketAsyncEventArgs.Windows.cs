@@ -992,12 +992,14 @@ namespace System.Net.Sockets
             // SocketAsyncEventArgs reused across sockets), so grow it if the previously allocated size is too small.
             if (_socketAddressPtr == IntPtr.Zero || size > _socketAddressBufferSize)
             {
+                IntPtr newSocketAddressPtr = (IntPtr)NativeMemory.Alloc((uint)(size + sizeof(IntPtr)));
+
                 if (_socketAddressPtr != IntPtr.Zero)
                 {
                     NativeMemory.Free((void*)_socketAddressPtr);
                 }
 
-                _socketAddressPtr = (IntPtr)NativeMemory.Alloc((uint)(size + sizeof(IntPtr)));
+                _socketAddressPtr = newSocketAddressPtr;
                 _socketAddressBufferSize = size;
             }
 
