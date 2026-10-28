@@ -4,6 +4,7 @@
     <TestProject>true</TestProject>
     <IsTestProject>true</IsTestProject>
     <UseBannedApiAnalyzers>true</UseBannedApiAnalyzers>
+    <TestRunSettingsFile Condition="'$(TestRunSettingsFile)' == ''">$(MSBuildThisFileDirectory)acceptance.runsettings</TestRunSettingsFile>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -43,6 +44,7 @@
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <Reference Include="System" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />

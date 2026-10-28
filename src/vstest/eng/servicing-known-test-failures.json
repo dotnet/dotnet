@@ -1,0 +1,458 @@
+[
+  {
+    "test": "Microsoft.TestPlatform.CoreUtilities.UnitTests.Output.OutputExtensionsTests.OutputErrorForSimpleMessageShouldSetConsoleColorToRed",
+    "outcome": "NotExecuted",
+    "signature": "Assert.Inconclusive failed. Can't set Console foreground color",
+    "cause": "By design, and not a skip. OutputExtensionsTests.cs:149 calls Assert.Inconclusive(\"Can't set Console foreground color. Might be because process output redirect to file.\") when the console foreground colour cannot be set, and MSTest maps Inconclusive to NotExecuted. The test RUNS and then declares itself inconclusive on an agent whose output is redirected. Measured on this line: build 3067220's gate printed that exact message for these four names. The identical classification is carried by the COMPLETE 15.9, 16.11 and 17.14 lines and by 17.3.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CoreUtilities.UnitTests.Output.OutputExtensionsTests.OutputWarningForSimpleMessageShouldSetConsoleColorToYellow",
+    "outcome": "NotExecuted",
+    "signature": "Assert.Inconclusive failed. Can't set Console foreground color",
+    "cause": "By design, and not a skip. OutputExtensionsTests.cs:149 calls Assert.Inconclusive(\"Can't set Console foreground color. Might be because process output redirect to file.\") when the console foreground colour cannot be set, and MSTest maps Inconclusive to NotExecuted. The test RUNS and then declares itself inconclusive on an agent whose output is redirected. Measured on this line: build 3067220's gate printed that exact message for these four names. The identical classification is carried by the COMPLETE 15.9, 16.11 and 17.14 lines and by 17.3.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CoreUtilities.UnitTests.Output.OutputExtensionsTests.OutputInformationForSimpleMessageShouldSetConsoleColorToGivenColor",
+    "outcome": "NotExecuted",
+    "signature": "Assert.Inconclusive failed. Can't set Console foreground color",
+    "cause": "By design, and not a skip. OutputExtensionsTests.cs:149 calls Assert.Inconclusive(\"Can't set Console foreground color. Might be because process output redirect to file.\") when the console foreground colour cannot be set, and MSTest maps Inconclusive to NotExecuted. The test RUNS and then declares itself inconclusive on an agent whose output is redirected. Measured on this line: build 3067220's gate printed that exact message for these four names. The identical classification is carried by the COMPLETE 15.9, 16.11 and 17.14 lines and by 17.3.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CoreUtilities.UnitTests.Output.OutputExtensionsTests.OutputInformationShouldNotChangeConsoleOutputColor",
+    "outcome": "NotExecuted",
+    "signature": "Assert.Inconclusive failed. Can't set Console foreground color",
+    "cause": "By design, and not a skip. OutputExtensionsTests.cs:149 calls Assert.Inconclusive(\"Can't set Console foreground color. Might be because process output redirect to file.\") when the console foreground colour cannot be set, and MSTest maps Inconclusive to NotExecuted. The test RUNS and then declares itself inconclusive on an agent whose output is redirected. Measured on this line: build 3067220's gate printed that exact message for these four names. The identical classification is carried by the COMPLETE 15.9, 16.11 and 17.14 lines and by 17.3.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketClientTests.SocketClientShouldRaiseClientDisconnectedEventIfConnectionIsBroken",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky tests\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketClientTests.cs:18 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. This is a decision taken in the shipped 17.8 source, not a condition of this rebuild, and changing it would alter shipped test behaviour on a branch whose mandate is to build shipped source unmodified.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketClientTests.SocketClientStartShouldConnectToLoopbackOnGivenPort",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky tests\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketClientTests.cs:18 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. This is a decision taken in the shipped 17.8 source, not a condition of this rebuild, and changing it would alter shipped test behaviour on a branch whose mandate is to build shipped source unmodified.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketClientTests.SocketClientStartShouldThrowIfServerIsNotListening",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky tests\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketClientTests.cs:18 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. This is a decision taken in the shipped 17.8 source, not a condition of this rebuild, and changing it would alter shipped test behaviour on a branch whose mandate is to build shipped source unmodified.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketClientTests.SocketClientStopShouldCloseChannel",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky tests\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketClientTests.cs:18 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. This is a decision taken in the shipped 17.8 source, not a condition of this rebuild, and changing it would alter shipped test behaviour on a branch whose mandate is to build shipped source unmodified.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketClientTests.SocketClientStopShouldRaiseClientDisconnectedEventOnClientDisconnection",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky tests\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketClientTests.cs:18 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. This is a decision taken in the shipped 17.8 source, not a condition of this rebuild, and changing it would alter shipped test behaviour on a branch whose mandate is to build shipped source unmodified.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketClientTests.SocketClientStopShouldStopCommunication",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky tests\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketClientTests.cs:18 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. This is a decision taken in the shipped 17.8 source, not a condition of this rebuild, and changing it would alter shipped test behaviour on a branch whose mandate is to build shipped source unmodified.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketClientTests.SocketEndpointShouldNotifyChannelOnDataAvailable",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky tests\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketClientTests.cs:18 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. This is a decision taken in the shipped 17.8 source, not a condition of this rebuild, and changing it would alter shipped test behaviour on a branch whose mandate is to build shipped source unmodified.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketClientTests.SocketEndpointStartShouldRaiseServerConnectedEventOnServerConnection",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky tests\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketClientTests.cs:18 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. This is a decision taken in the shipped 17.8 source, not a condition of this rebuild, and changing it would alter shipped test behaviour on a branch whose mandate is to build shipped source unmodified.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketServerTests.SocketEndpointShouldInitializeChannelOnServerConnection",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketServerTests.cs:19 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. Decision taken in the shipped 17.8 source, not a condition of this rebuild.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketServerTests.SocketEndpointShouldNotifyChannelOnDataAvailable",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketServerTests.cs:19 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. Decision taken in the shipped 17.8 source, not a condition of this rebuild.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketServerTests.SocketEndpointStartShouldRaiseServerConnectedEventOnServerConnection",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketServerTests.cs:19 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. Decision taken in the shipped 17.8 source, not a condition of this rebuild.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketServerTests.SocketServerShouldRaiseClientDisconnectedEventIfConnectionIsBroken",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketServerTests.cs:19 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. Decision taken in the shipped 17.8 source, not a condition of this rebuild.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketServerTests.SocketServerStartShouldHostServer",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketServerTests.cs:19 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. Decision taken in the shipped 17.8 source, not a condition of this rebuild.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketServerTests.SocketServerStopShouldCloseChannel",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketServerTests.cs:19 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. Decision taken in the shipped 17.8 source, not a condition of this rebuild.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketServerTests.SocketServerStopShouldCloseClient",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketServerTests.cs:19 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. Decision taken in the shipped 17.8 source, not a condition of this rebuild.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketServerTests.SocketServerStopShouldRaiseClientDisconnectedEventOnClientDisconnection",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketServerTests.cs:19 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. Decision taken in the shipped 17.8 source, not a condition of this rebuild.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.CommunicationUtilities.PlatformTests.SocketServerTests.SocketServerStopShouldStopListening",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore(\"Flaky\")] at test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/SocketServerTests.cs:19 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. Decision taken in the shipped 17.8 source, not a condition of this rebuild.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests.EventLogContainerTests.OnEventLogEntryWrittenShouldAddLogs",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore] with the comment \"TODO: Gets stuck when running with other tests.\" at test/DataCollectors/Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests/EventLogContainerTests.cs:16 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. The same [Ignore] is classified on the COMPLETE 16.11 line and on 17.3.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests.EventLogContainerTests.OnEventLogEntryWrittenShouldFilterLogsBasedOnEventTypeAndEventSource",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore] with the comment \"TODO: Gets stuck when running with other tests.\" at test/DataCollectors/Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests/EventLogContainerTests.cs:16 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. The same [Ignore] is classified on the COMPLETE 16.11 line and on 17.3.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests.EventLogContainerTests.OnEventLogEntryWrittenShouldNotAddLogsIfEventSourceIsDifferent",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore] with the comment \"TODO: Gets stuck when running with other tests.\" at test/DataCollectors/Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests/EventLogContainerTests.cs:16 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. The same [Ignore] is classified on the COMPLETE 16.11 line and on 17.3.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests.EventLogContainerTests.OnEventLogEntryWrittenShouldNotAddLogsIfEventTypeIsDifferent",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore] with the comment \"TODO: Gets stuck when running with other tests.\" at test/DataCollectors/Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests/EventLogContainerTests.cs:16 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. The same [Ignore] is classified on the COMPLETE 16.11 line and on 17.3.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests.EventLogContainerTests.OnEventLogEntryWrittenShouldNotAddLogsIfNoNewEntryIsPresent",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Class-level [Ignore] with the comment \"TODO: Gets stuck when running with other tests.\" at test/DataCollectors/Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests/EventLogContainerTests.cs:16 on this branch at df70a9c68. Every method in the class is therefore reported NotExecuted. The same [Ignore] is classified on the COMPLETE 16.11 line and on 17.3.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "TestPlatform.Common.UnitTests.ExtensionFramework.TestPluginCacheTests.GetTestExtensionsShouldShouldThrowIfDiscovererThrows",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Per-method [Ignore] at test/Microsoft.TestPlatform.Common.UnitTests/ExtensionFramework/TestPluginCacheTests.cs:331 on this branch at df70a9c68. Disabled in the shipped source; the same [Ignore] is classified on the COMPLETE 16.11 line and on 17.3. Not an environmental condition and not a regression.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "TestPlatform.Common.UnitTests.ExtensionFramework.TestPluginCacheTests.UpdateAdditionalExtensionsShouldResetExtensionsDiscoveredFlag",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Per-method [Ignore] at test/Microsoft.TestPlatform.Common.UnitTests/ExtensionFramework/TestPluginCacheTests.cs:120 on this branch at df70a9c68. Disabled in the shipped source; the same [Ignore] is classified on the COMPLETE 16.11 line and on 17.3. Not an environmental condition and not a regression.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.ExecutorUnitTests.ExecutorShouldPrintDotnetVSTestDeprecationMessage",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Per-method [Ignore(\"TODO: gets stuck when running with other tests in ExecutorUnitTests\")] at test/vstest.console.UnitTests/ExecutorUnitTests.cs:189 on this branch at df70a9c68. The method is data-driven ([DataRow] x2), which is why one name accounts for more than one not-executed row per target framework.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "TestPlatform.CrossPlatEngine.UnitTests.Adapter.FrameworkHandleTests.LaunchProcessWithDebuggerAttachedShouldThrowIfNotInDebugContext",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Per-method [Ignore(\"TODO: Enable method once we fix the \\\"IsDebug\\\" in TestExecutionContext\")] at test/Microsoft.TestPlatform.CrossPlatEngine.UnitTests/Adapter/FrameworkHandleTests.cs:51 on this branch at df70a9c68. Disabled in the shipped source, not a condition of this rebuild.",
+    "classifiedOnRun": "3067220",
+    "classifiedOn": "2026-09-05"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.BlameDataCollectorTests.BlameDataCollectorAeDebuggerShouldCollectDump",
+    "outcome": "NotExecuted",
+    "signature": "Assert.Inconclusive failed. User is not administrator, cannot setup the debugger, and cannot check the functionality.",
+    "cause": "Existing administrator guard in BlameDataCollectorTests.cs:262-264. The local process is not elevated; four rows declare themselves inconclusive before installing the debugger.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.CuitTest.CuitRunAllTests",
+    "outcome": "NotExecuted",
+    "signature": "Assert.Inconclusive failed. CUIT tests are not supported with .NET Core runner.",
+    "cause": "Existing IsNetRunner guard in CUITTest.cs:24-26. The unsupported runner row is inconclusive; supported desktop rows ran.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.DiaSessionTests.DiaSessionPerfTest",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Existing per-method Ignore in DiaSessionTests.cs:103, documented there as an unreliable timing threshold. The result contains no message.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.DifferentTestFrameworkSimpleTests.CodedWebTestRunAllTests",
+    "outcome": "NotExecuted",
+    "signature": "Test expects .NETFramework,Version=v4.5.2 support but the minimum one is .NETFramework,Version=v4.6.2",
+    "cause": "Existing per-method Ignore in DifferentTestFrameworkSimpleTests.cs:131. The test requires a framework below the shipped minimum.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.DifferentTestFrameworkSimpleTests.CPPRunAllTestExecutionPlatformx64Net",
+    "outcome": "NotExecuted",
+    "signature": "TODO: this does not work in already shipped dotnet test either, investigate",
+    "cause": "Existing per-method Ignore in DifferentTestFrameworkSimpleTests.cs:59. The source documents the unsupported C++ adapter/runtime combination.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.DifferentTestFrameworkSimpleTests.WebTestRunAllTestsWithRunSettings",
+    "outcome": "NotExecuted",
+    "signature": "After the bump of TestPlatformRemoteExternalsVersion to 17.6 it doesn't work anymore, it's a test for the legacy platform and fails for wrong Microsoft.VisualStudio.Telemetry version.",
+    "cause": "Existing per-method Ignore in DifferentTestFrameworkSimpleTests.cs:73. The legacy telemetry dependency mismatch was already documented in source.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.DisableAppdomainTests.DisableAppdomainTest",
+    "outcome": "NotExecuted",
+    "signature": "Assert.Inconclusive failed. This test is not meant for .netcore.",
+    "cause": "Existing IsNetRunner guard in DisableAppdomainTests.RunTests, DisableAppdomainTests.cs:44-46. Desktop rows ran; the .NET Core row is inconclusive.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.DisableAppdomainTests.NewtonSoftDependencyWithDisableAppdomainTest",
+    "outcome": "NotExecuted",
+    "signature": "Assert.Inconclusive failed. This test is not meant for .netcore.",
+    "cause": "Existing IsNetRunner guard in DisableAppdomainTests.RunTests, DisableAppdomainTests.cs:44-46. Desktop rows ran; the .NET Core row is inconclusive.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.DotnetArchitectureSwitchTests.DOTNET_ROOTS_EnvironmentVariables",
+    "outcome": "NotExecuted",
+    "signature": "Manual tests(for now). Tests in this class need some .NET SDK global installations",
+    "cause": "Existing class-level Ignore in DotnetArchitectureSwitchTests.cs:23. These manual tests require global SDK installations; no installation settings were changed.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.DotnetArchitectureSwitchTests.GlobalInstallation",
+    "outcome": "NotExecuted",
+    "signature": "Manual tests(for now). Tests in this class need some .NET SDK global installations",
+    "cause": "Existing class-level Ignore in DotnetArchitectureSwitchTests.cs:23. This is a manual global-installation test.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.DotnetArchitectureSwitchTests.PrivateX64BuildToDOTNET_ROOTS_EnvironmentVariables",
+    "outcome": "NotExecuted",
+    "signature": "Manual tests(for now). Tests in this class need some .NET SDK global installations",
+    "cause": "Existing class-level Ignore in DotnetArchitectureSwitchTests.cs:23. This is a manual global-installation test.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.DotnetArchitectureSwitchTests.PrivateX64BuildToGlobalArmInstallation",
+    "outcome": "NotExecuted",
+    "signature": "Manual tests(for now). Tests in this class need some .NET SDK global installations",
+    "cause": "Existing class-level Ignore in DotnetArchitectureSwitchTests.cs:23. This is a manual global-installation test.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.DotnetArchitectureSwitchTests.SilentlyForceX64",
+    "outcome": "NotExecuted",
+    "signature": "Manual tests(for now). Tests in this class need some .NET SDK global installations",
+    "cause": "Existing class-level Ignore in DotnetArchitectureSwitchTests.cs:23. This is a manual global-installation test.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.DotnetTestTests.RunDotnetTestWithCsproj",
+    "outcome": "NotExecuted",
+    "signature": "TODO: Re-enable when https://github.com/microsoft/vstest/issues/4014 is fixed",
+    "cause": "Existing per-method Ignore in DotnetTestTests.cs:15. The test was not enabled by the servicing validation changes.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.DotnetTestTests.RunDotnetTestWithCsprojPassInlineSettings",
+    "outcome": "NotExecuted",
+    "signature": "TODO: Re-enable when https://github.com/microsoft/vstest/issues/4014 is fixed",
+    "cause": "Existing per-method Ignore in DotnetTestTests.cs:51. The test was not enabled by the servicing validation changes.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.DotnetTestTests.RunDotnetTestWithDll",
+    "outcome": "NotExecuted",
+    "signature": "TODO: Re-enable when https://github.com/microsoft/vstest/issues/4014 is fixed",
+    "cause": "Existing per-method Ignore in DotnetTestTests.cs:33. The test was not enabled by the servicing validation changes.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.DotnetTestTests.RunDotnetTestWithNativeDll",
+    "outcome": "NotExecuted",
+    "signature": "TODO: This scenario is broken in real environment as well (running with shipped `dotnet test`. Old tests (before arcade) use location of vstest.console that have more dlls in place than what we ship, and they make it work.",
+    "cause": "Existing per-method Ignore in DotnetTestTests.cs:85. The shipped raw-package scenario was already disabled.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.EventLogCollectorTests.EventLogDataCollectorShoudCreateLogFileHavingEvents",
+    "outcome": "NotExecuted",
+    "signature": "",
+    "cause": "Existing per-method Ignore in EventLogCollectorTests.cs:20, preceded by links to historical flaky runs. The result contains no message.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.ExecutionTests.StackOverflowExceptionShouldBeLoggedToConsoleAndDiagLogFile",
+    "outcome": "NotExecuted",
+    "signature": "Assert.Inconclusive failed. On StackOverflowException testhost not exited in release configuration.",
+    "cause": "Existing Release guard in ExecutionTests.cs:208-212. The source documents tail-call optimization preventing the intended stack overflow.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.ExecutionThreadApartmentStateTests.CancelTestExectionShouldWorkWhenApartmentStateIsSTA",
+    "outcome": "NotExecuted",
+    "signature": "Issue with TestSessionTimeout:  https://github.com/Microsoft/vstest/issues/980",
+    "cause": "Existing per-method Ignore in ExecutionThreadApartmentStateTests.cs:55. The cancellation test remains disabled as in the shipped source.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.TelemetryTests.DiscoverTestsShouldPublishMetrics",
+    "outcome": "NotExecuted",
+    "signature": "Assert.Inconclusive failed. Telemetry API is not supported for .NetCore runner",
+    "cause": "Existing IsNetRunner guard in TelemetryTests.DiscoverTests, TelemetryTests.cs:65-67. Unsupported runner rows are inconclusive; desktop rows ran.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.TelemetryTests.RunTestsShouldPublishMetrics",
+    "outcome": "NotExecuted",
+    "signature": "Assert.Inconclusive failed. Telemetry API is not supported for .NetCore runner",
+    "cause": "Existing IsNetRunner guard in TelemetryTests.RunTests, TelemetryTests.cs:44-46. Unsupported runner rows are inconclusive; desktop rows ran.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.TestCaseFilterTests.DiscoverMstestV1TestsWithAndOperatorTrait",
+    "outcome": "NotExecuted",
+    "signature": "Assert.Inconclusive failed. Mstest v1 tests not supported with .NET Core runner.",
+    "cause": "Existing IsNetRunner guard in TestCaseFilterTests.cs:164-166. The MSTest v1 scenario is not supported by the .NET Core runner.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.TestCaseFilterTests.DiscoverTmiTestsWithOnlyPropertyValue",
+    "outcome": "NotExecuted",
+    "signature": "Temporary ignoring, because of incomplete interop work for legacy TP",
+    "cause": "Existing per-method Ignore in TestCaseFilterTests.cs:192. Legacy TMI interop remains disabled as in the shipped source.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.TranslationLayerTests.DiscoverTests.CancelTestDiscovery",
+    "outcome": "NotExecuted",
+    "signature": "Flaky on CI",
+    "cause": "Existing per-method Ignore in TranslationLayerTests/DiscoverTests.cs:217. All five data rows remain ignored.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.TranslationLayerTests.RunTests.RunTestsShouldThrowOnStackOverflowException",
+    "outcome": "NotExecuted",
+    "signature": "Assert.Inconclusive failed. On StackOverflowException testhost not exited in release configuration.",
+    "cause": "Existing Release guard in TranslationLayerTests/RunTests.cs:187-191. The source documents tail-call optimization preventing the intended stack overflow.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  },
+  {
+    "test": "Microsoft.TestPlatform.AcceptanceTests.TranslationLayerTests.RunTestsWithDifferentConfigurationTests.RunTestsWithTestSettings",
+    "outcome": "NotExecuted",
+    "signature": "Assert.Inconclusive failed. VsTestConsoleWrapper does not support .Net Core Runner",
+    "cause": "Existing unsupported-runner check in TranslationLayerTests/RunTestsWithDifferentConfigurationTests.cs:108, implemented by IntegrationTestBase.cs:280-284. The .NET Core row is inconclusive.",
+    "classifiedOnRun": "local net6.0 acceptance; 17-8-net6-short-output.trx",
+    "classifiedOn": "2026-09-17"
+  }
+]

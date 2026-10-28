@@ -64,6 +64,8 @@
     <!-- Naming is based on dotnet/runtime one -->
     <NetFrameworkMinimum>net462</NetFrameworkMinimum>
     <NetCoreAppMinimum>netcoreapp3.1</NetCoreAppMinimum>
+    <!-- The source-build net11.0 leg still needs these references for the older shipping TFMs. -->
+    <RestoreEnablePackagePruning Condition="'$(DotNetBuildFromSource)' == 'true'">false</RestoreEnablePackagePruning>
   </PropertyGroup>
 
   <!-- Build & pack config -->
@@ -90,8 +92,17 @@
   <!-- Test config -->
   <PropertyGroup>
     <TestRunnerName>MSTest</TestRunnerName>
-    <!-- Skip windows only tests on non-windows systems. -->
-    <TestRunnerAdditionalArguments Condition=" '$(OS)' != 'Windows_NT' ">$(TestRunnerAdditionalArguments) --filter "TestCategory!=Windows&amp;TestCategory!=Windows-Review"</TestRunnerAdditionalArguments>
+    <!-- dotnet test only accepts a single filter argument (observed in build 3098836: "Option 'filter'
+         expects a single argument but 2 were provided", which aborted the Windows run before any test ran
+         and produced zero .trx files). Each condition below is therefore keyed to exactly one OS, so exactly
+         one of these three lines, and so exactly one filter argument combining every exclusion that OS
+         needs, can ever fire. -->
+    <!-- Windows: skip the Linux-only and macOS-only tests; its own Windows/Windows-Review tests run here. -->
+    <TestRunnerAdditionalArguments Condition="$([MSBuild]::IsOSPlatform(`Windows`))">$(TestRunnerAdditionalArguments) --filter "TestCategory!=Linux&amp;TestCategory!=macOS"</TestRunnerAdditionalArguments>
+    <!-- Linux: skip the Windows-only, Windows-Review-only, and macOS-only tests; its own Linux tests run here. -->
+    <TestRunnerAdditionalArguments Condition="$([MSBuild]::IsOSPlatform(`Linux`))">$(TestRunnerAdditionalArguments) --filter "TestCategory!=Windows&amp;TestCategory!=Windows-Review&amp;TestCategory!=macOS"</TestRunnerAdditionalArguments>
+    <!-- macOS: skip the Windows-only, Windows-Review-only, and Linux-only tests; its own macOS tests run here. -->
+    <TestRunnerAdditionalArguments Condition="$([MSBuild]::IsOSPlatform(`OSX`))">$(TestRunnerAdditionalArguments) --filter "TestCategory!=Windows&amp;TestCategory!=Windows-Review&amp;TestCategory!=Linux"</TestRunnerAdditionalArguments>
   </PropertyGroup>
 
 </Project>

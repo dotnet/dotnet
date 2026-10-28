@@ -18,7 +18,13 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' != '$(NetFrameworkMinimum)' ">
     <PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.3.0" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="4.0.0" />
+    <!-- netcoreapp3.1's Microsoft.NETCore.App declares Microsoft.Win32.Registry as a framework-provided
+         package, so a 4.0.0 reference is suppressed and nothing reaches the compile line; the ref pack's
+         type forwards then resolve to nothing and every Registry type fails with CS1069. 5.0.0 is above
+         that override, so the compile asset survives. Only this TFM is raised - the others build today
+         and their package content must stay equivalent to the shipped 17.8 artifacts. -->
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.0.0" Condition=" '$(TargetFramework)' != '$(NetCoreAppMinimum)' " />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" Condition=" '$(TargetFramework)' == '$(NetCoreAppMinimum)' " />
   </ItemGroup>
 
   <ItemGroup>

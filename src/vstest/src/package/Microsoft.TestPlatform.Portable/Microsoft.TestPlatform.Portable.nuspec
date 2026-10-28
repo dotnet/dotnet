@@ -292,6 +292,7 @@
     <file src="net472\zh-Hant\vstest.console.resources.dll"	target="tools\net462\zh-Hant\vstest.console.resources.dll" />
 
     <!-- netcoreapp3.1 -->
+    <file src="netcoreapp3.1\runtimes\**\*" target="tools\netcoreapp3.1\runtimes" />
     <file src="netcoreapp3.1\datacollector.deps.json"	target="tools\netcoreapp3.1\datacollector.deps.json" />
     <file src="netcoreapp3.1\datacollector.dll"	target="tools\netcoreapp3.1\datacollector.dll" />
     <file src="netcoreapp3.1\datacollector.dll.config"	target="tools\netcoreapp3.1\datacollector.dll.config" />

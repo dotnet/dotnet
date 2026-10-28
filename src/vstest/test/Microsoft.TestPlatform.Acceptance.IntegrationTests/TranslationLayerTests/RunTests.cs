@@ -3,10 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 using FluentAssertions;
 
@@ -31,9 +31,9 @@ public class RunTests : AcceptanceTestBase
     private RunEventHandler? _runEventHandler;
 
     [MemberNotNull(nameof(_vstestConsoleWrapper), nameof(_runEventHandler))]
-    private void Setup()
+    private void Setup(Action? onProcessExited = null)
     {
-        _vstestConsoleWrapper = GetVsTestConsoleWrapper();
+        _vstestConsoleWrapper = GetVsTestConsoleWrapper(onProcessExited: onProcessExited);
         _runEventHandler = new RunEventHandler();
     }
 
@@ -45,6 +45,7 @@ public class RunTests : AcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
+    [TestCategory("Compatibility")]
     [RunnerCompatibilityDataSource]
     public void RunAllTests(RunnerInfo runnerInfo)
     {
@@ -63,6 +64,7 @@ public class RunTests : AcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
+    [TestCategory("Compatibility")]
     [RunnerCompatibilityDataSource(BeforeFeature = Features.MULTI_TFM)]
     public void RunAllTestsWithMixedTFMsWillFailToRunTestsFromTheIncompatibleTFMDll(RunnerInfo runnerInfo)
     {
@@ -85,6 +87,7 @@ public class RunTests : AcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
+    [TestCategory("Compatibility")]
     [TestHostCompatibilityDataSource]
     [RunnerCompatibilityDataSource(AfterFeature = Features.MULTI_TFM)]
     public void RunAllTestsWithMixedTFMsWillRunTestsFromAllProvidedDllEvenWhenTheyMixTFMs(RunnerInfo runnerInfo)
@@ -113,21 +116,16 @@ public class RunTests : AcceptanceTestBase
     [DoNotParallelize]
     public void EndSessionShouldEnsureVstestConsoleProcessDies(RunnerInfo runnerInfo)
     {
-        var numOfProcesses = Process.GetProcessesByName("vstest.console").Length;
+        var processExited = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         SetTestEnvironment(_testEnvironment, runnerInfo);
-        Setup();
+        Setup(() => processExited.TrySetResult(true));
 
         _vstestConsoleWrapper.RunTests(GetTestAssemblies(), GetDefaultRunSettings(), _runEventHandler);
         _vstestConsoleWrapper?.EndSession();
-
-        // Assert
-        // TODO: This still works reliably, but it is accidental. Correctly we should look at our "tree" of processes
-        // but there is no such thing on Windows. We can still replicate it quite well. There is code for it in blame
-        // hang collector.
-        Assert.AreEqual(numOfProcesses, Process.GetProcessesByName("vstest.console").Length);
-
         _vstestConsoleWrapper = null;
+
+        Assert.IsTrue(processExited.Task.Wait(TimeSpan.FromSeconds(5)), "The console started by this test did not exit after EndSession.");
     }
 
     [TestMethod]

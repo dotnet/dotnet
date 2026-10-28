@@ -31,6 +31,7 @@ public class CustomTestHostTests : AcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
+    [TestCategory("Compatibility")]
     [RunnerCompatibilityDataSource(BeforeFeature = Features.ATTACH_DEBUGGER_FLOW)]
     // This does not work with testhosts that are earlier than when the feature was introduced,
     // when latest runner is used, because the latest runner does not downgrade the messages when
@@ -60,6 +61,7 @@ public class CustomTestHostTests : AcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
+    [TestCategory("Compatibility")]
     // [RunnerCompatibilityDataSource(BeforeFeature = Features.ATTACH_DEBUGGER_FLOW)]
     [TestHostCompatibilityDataSource(DEFAULT_RUNNER_NETFX, DEFAULT_RUNNER_NETCORE, "LegacyStable", BeforeFeature = Features.ATTACH_DEBUGGER_FLOW, DebugVSTestConsole = true)]
     [Ignore("This is not working for any testhost prior 16.7.0 where the change was introduced. The launch testhost flow was replaced with AttachDebugger in runner, and the new callback to AttachDebugger happens in testhost."
@@ -90,6 +92,7 @@ public class CustomTestHostTests : AcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
+    [TestCategory("Compatibility")]
     [RunnerCompatibilityDataSource(AfterFeature = Features.ATTACH_DEBUGGER_FLOW)]
     // [TestHostCompatibilityDataSource(AfterFeature = Features.ATTACH_DEBUGGER_FLOW)]
     public void RunTestsWithCustomTestHostLauncherAttachesToDebuggerUsingTheProvidedLauncher(RunnerInfo runnerInfo)
@@ -114,6 +117,7 @@ public class CustomTestHostTests : AcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
+    [TestCategory("Compatibility")]
     [Ignore("This is not working. The compatibility code only checks the protocol version (in handler), which is dictated by testhost. "
         + "It sees 6 but does not realize that the provided CustomTesthostLauncher is not supporting the new feature, it ends up calling back to EditoAttachDebugger" +
         "in translation layer, and that just silently skips the call.")]
@@ -140,6 +144,7 @@ public class CustomTestHostTests : AcceptanceTestBase
     [TestMethod]
     [TestCategory("Windows-Review")]
     [TestCategory("Feature")]
+    [TestCategory("Compatibility")]
     [RunnerCompatibilityDataSource(AfterFeature = Features.MULTI_TFM)]
     public void RunAllTestsWithMixedTFMsWillProvideAdditionalInformationToTheDebugger(RunnerInfo runnerInfo)
     {
@@ -169,6 +174,7 @@ public class CustomTestHostTests : AcceptanceTestBase
     [TestMethod]
     [TestCategory("Windows-Review")]
     [TestCategory("BackwardCompatibilityWithRunner")]
+    [TestCategory("Compatibility")]
     // "Just row" used here because mstest does not cooperate with older versions of vstest.console correctly, so we test with just the single version available
     // before the multi tfm feature.
     [RunnerCompatibilityDataSource(BeforeFeature = Features.MULTI_TFM, JustRow = 0)]
@@ -302,4 +308,3 @@ public class CustomTestHostTests : AcceptanceTestBase
     }
 }
 #pragma warning restore CS0618 // Type or member is obsolete
-

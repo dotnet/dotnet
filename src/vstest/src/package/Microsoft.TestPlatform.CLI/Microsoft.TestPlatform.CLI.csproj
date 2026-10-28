@@ -3,6 +3,10 @@
     <TargetFrameworks>$(NetCoreAppMinimum);$(NetFrameworkMinimum);net47;net471;net472;net48</TargetFrameworks>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)' == '$(NetCoreAppMinimum)' and '$(DotNetBuildFromSource)' != 'true'">
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
   <Choose>
     <When Condition=" '$(DotNetBuildFromSource)' == 'true' ">
       <PropertyGroup>

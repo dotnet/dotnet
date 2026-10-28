@@ -8,8 +8,8 @@
         is trying to parse that version and will consider any version with more than 4 `.` in it as invalid. 
     -->
     <SemanticVersioningV1>true</SemanticVersioningV1>
-    <VersionPrefix>17.8.0</VersionPrefix>
-    <PreReleaseVersionLabel>release</PreReleaseVersionLabel>
+    <VersionPrefix>17.8.1</VersionPrefix>
+    <PreReleaseVersionLabel>hotfix</PreReleaseVersionLabel>
   </PropertyGroup>
   <PropertyGroup Label="Arcade settings">
     <!-- Ensure we use xliff task tool - true is the default but we make it explicit here -->
@@ -31,7 +31,7 @@
     <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftFakesVersion>17.4.0-beta.22478.3</MicrosoftFakesVersion>
     <MicrosoftInternalCodeCoverageVersion>17.8.6</MicrosoftInternalCodeCoverageVersion>
-    <MicrosoftNetCompilersToolsetVersion>4.7.0-3.23315.4</MicrosoftNetCompilersToolsetVersion>
+    <MicrosoftNetCompilersToolsetVersion>4.8.0-3.23475.1</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.6.33910.51</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
     <MicrosoftVisualStudioInteropVersion>17.3.32622.426</MicrosoftVisualStudioInteropVersion>

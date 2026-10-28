@@ -1,0 +1,77 @@
+stages:
+- stage: Validate
+  dependsOn: build
+  displayName: Validate Build Assets
+  variables:
+  - template: /eng/common/core-templates/post-build/common-variables.yml
+  - template: /eng/common/core-templates/variables/pool-providers.yml
+    parameters:
+      is1ESPipeline: true
+  jobs:
+  - job: NuGetValidation
+    displayName: NuGet Validation
+    condition: succeededOrFailed()
+    pool:
+      name: $(DncEngInternalBuildPool)
+      image: windows.vs2026.amd64
+      os: windows
+    steps:
+    - template: /eng/common/core-templates/post-build/setup-maestro-vars.yml
+      parameters:
+        is1ESPipeline: true
+    - task: DownloadBuildArtifacts@0
+      displayName: Download Package Artifacts
+      inputs:
+        buildType: specific
+        buildVersionToDownload: specific
+        project: $(AzDOProjectName)
+        pipeline: $(AzDOPipelineId)
+        buildId: $(AzDOBuildId)
+        artifactName: PackageArtifacts
+        checkDownloadedFiles: true
+    - task: PowerShell@2
+      displayName: Validate
+      inputs:
+        filePath: $(System.DefaultWorkingDirectory)/eng/common/post-build/nuget-validation.ps1
+        arguments: -PackagesPath $(Build.ArtifactStagingDirectory)/PackageArtifacts/
+
+  - job: SigningValidation
+    displayName: Signing Validation
+    condition: and(succeededOrFailed(), ne(variables['PostBuildSign'], 'true'))
+    pool:
+      name: $(DncEngInternalBuildPool)
+      image: windows.vs2026.amd64
+      os: windows
+    steps:
+    - template: /eng/common/core-templates/post-build/setup-maestro-vars.yml
+      parameters:
+        is1ESPipeline: true
+    - task: DownloadBuildArtifacts@0
+      displayName: Download Package Artifacts
+      inputs:
+        buildType: specific
+        buildVersionToDownload: specific
+        project: $(AzDOProjectName)
+        pipeline: $(AzDOPipelineId)
+        buildId: $(AzDOBuildId)
+        artifactName: PackageArtifacts
+        itemPattern: |
+          **
+          !**/Microsoft.SourceBuild.Intermediate.*.nupkg
+        checkDownloadedFiles: true
+    - task: NuGetAuthenticate@1
+      displayName: Authenticate to AzDO Feeds
+    - task: PowerShell@2
+      displayName: Validate
+      inputs:
+        filePath: eng\common\sdk-task.ps1
+        arguments: -task SigningValidation -restore -msbuildEngine dotnet
+          /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts'
+          /p:SignCheckExclusionsFile='$(System.DefaultWorkingDirectory)/eng/SignCheckExclusionsFile.txt'
+    - template: /eng/common/core-templates/steps/publish-logs.yml
+      parameters:
+        is1ESPipeline: true
+        StageLabel: Validation
+        JobLabel: Signing
+        BinlogToolVersion: $(BinlogToolVersion)
+        enableInternalRuntimes: false

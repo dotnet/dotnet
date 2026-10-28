@@ -18,14 +18,18 @@ function Verify-Nuget-Packages {
         "Microsoft.NET.Test.Sdk"                      = 16;
         "Microsoft.TestPlatform"                      = 608;
         "Microsoft.TestPlatform.Build"                = 21;
-        "Microsoft.TestPlatform.CLI"                  = 473;
+        "Microsoft.TestPlatform.CLI"                  = 477;
         "Microsoft.TestPlatform.Extensions.TrxLogger" = 35;
         "Microsoft.TestPlatform.ObjectModel"          = 93;
         "Microsoft.TestPlatform.AdapterUtilities"     = 34;
-        "Microsoft.TestPlatform.Portable"             = 595;
+        "Microsoft.TestPlatform.Portable"             = 599;
         "Microsoft.TestPlatform.TestHost"             = 63;
         "Microsoft.TestPlatform.TranslationLayer"     = 123;
         "Microsoft.TestPlatform.Internal.Uwp"         = 39;
+    }
+    $runtimePackageRoots = @{
+        "Microsoft.TestPlatform.CLI" = "contentFiles\any\netcoreapp3.1";
+        "Microsoft.TestPlatform.Portable" = "tools\netcoreapp3.1";
     }
 
     $packageDirectory = Resolve-Path "$PSScriptRoot/../artifacts/packages/$configuration"
@@ -88,6 +92,28 @@ function Verify-Nuget-Packages {
             }
             if ($expectedNumOfFiles[$packageKey] -ne $actualNumOfFiles) {
                 $errors += "Number of files are not equal for '$packageBaseName', expected: $($expectedNumOfFiles[$packageKey]) actual: $actualNumOfFiles"
+            }
+
+            if ($runtimePackageRoots.ContainsKey($packageKey)) {
+                $runtimeRoot = Join-Path $unzipNugetPackageDir $runtimePackageRoots[$packageKey]
+                $depsPath = Join-Path $runtimeRoot 'vstest.console.deps.json'
+                if (-not (Test-Path -LiteralPath $depsPath -PathType Leaf)) {
+                    $errors += "Dependency manifest is missing from '$packageBaseName': $depsPath"
+                    continue
+                }
+
+                $deps = Get-Content -LiteralPath $depsPath -Raw | ConvertFrom-Json
+                foreach ($target in $deps.targets.PSObject.Properties) {
+                    foreach ($library in $target.Value.PSObject.Properties) {
+                        foreach ($asset in $library.Value.runtimeTargets.PSObject.Properties) {
+                            if ($asset.Name.EndsWith('/_._')) { continue }
+                            $assetPath = Join-Path $runtimeRoot $asset.Name.Replace('/', '\')
+                            if (-not (Test-Path -LiteralPath $assetPath -PathType Leaf)) {
+                                $errors += "Runtime asset '$($asset.Name)' required by '$($library.Name)' is missing from '$packageBaseName'."
+                            }
+                        }
+                    }
+                }
             }
         }
         finally {

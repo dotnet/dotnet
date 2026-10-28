@@ -35,6 +35,7 @@
     <file src="netcoreapp3.1\Newtonsoft.Json\Newtonsoft.Json.dll" target="contentFiles\any\netcoreapp3.1" />
     <file src="netcoreapp3.1\NuGet.Frameworks\NuGet.Frameworks.dll" target="contentFiles\any\netcoreapp3.1" />
     <file src="netcoreapp3.1\System.ComponentModel.Composition.dll" target="contentFiles\any\netcoreapp3.1" />
+    <file src="netcoreapp3.1\runtimes\**\*" target="contentFiles\any\netcoreapp3.1\runtimes" />
 
     <file src="$TesthostRuntimeconfig$\testhost-1.0.runtimeconfig.json" target="contentFiles\any\netcoreapp3.1" />
     <file src="$TesthostRuntimeconfig$\testhost-1.1.runtimeconfig.json" target="contentFiles\any\netcoreapp3.1" />

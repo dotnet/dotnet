@@ -10,6 +10,7 @@
       </group>
 
       <group targetFramework="netcoreapp3.1">
+        <dependency id="Microsoft.Win32.Registry" version="5.0.0" />
         <dependency id="System.Reflection.Metadata" version="[1.6.0, )" />
         <dependency id="NuGet.Frameworks" version="[6.5.0, )" />
       </group>

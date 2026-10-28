@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImportDirectoryBuildProps>false</ImportDirectoryBuildProps>
+    <ImportDirectoryBuildTargets>false</ImportDirectoryBuildTargets>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageDownload Include="Microsoft.DotNet.Arcade.Sdk" Version="[8.0.0-beta.26168.3]" />
+    <PackageDownload Include="Microsoft.DotNet.SourceBuild.Tasks" Version="[8.0.0-beta.26168.3]" />
+    <PackageDownload Include="Microsoft.DotNet.Build.Tasks.Feed" Version="[8.0.0-beta.26168.3]" />
+  </ItemGroup>
+</Project>

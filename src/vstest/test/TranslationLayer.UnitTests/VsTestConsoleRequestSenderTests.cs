@@ -43,6 +43,9 @@ public class VsTestConsoleRequestSenderTests
     public VsTestConsoleRequestSenderTests()
     {
         _mockCommunicationManager = new Mock<ICommunicationManager>();
+        _mockCommunicationManager
+            .Setup(cm => cm.WaitForClientConnection(It.IsAny<int>()))
+            .Returns(true);
         _requestSender = new VsTestConsoleRequestSender(
             _mockCommunicationManager.Object,
             JsonDataSerializer.Instance,
@@ -62,6 +65,20 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Verify(cm => cm.WaitForClientConnection(Timeout.Infinite), Times.Once);
         _mockCommunicationManager.Verify(cm => cm.ReceiveMessage(), Times.Exactly(2));
         _mockCommunicationManager.Verify(cm => cm.SendMessage(MessageType.VersionCheck, _protocolVersion), Times.Once);
+    }
+
+    [TestMethod]
+    public void InitializeCommunicationShouldNotHandshakeWhenClientConnectionFails()
+    {
+        _mockCommunicationManager.Setup(cm => cm.HostServer(It.IsAny<IPEndPoint>()))
+            .Returns(new IPEndPoint(IPAddress.Loopback, 123));
+        _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
+            .Returns(false);
+
+        Assert.AreEqual(123, _requestSender.InitializeCommunication());
+        Assert.IsFalse(_requestSender.WaitForRequestHandlerConnection(_waitTimeout));
+        _mockCommunicationManager.Verify(cm => cm.ReceiveMessage(), Times.Never);
+        _mockCommunicationManager.Verify(cm => cm.SendMessage(It.IsAny<string>(), It.IsAny<object>()), Times.Never);
     }
 
     [TestMethod]
@@ -114,7 +131,8 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.HostServer(new IPEndPoint(IPAddress.Loopback, 0))).Returns(new IPEndPoint(IPAddress.Loopback, dummyPortInput));
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
         _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
-            .Callback((int timeout) => Task.Delay(200).Wait());
+            .Callback((int timeout) => Task.Delay(200).Wait())
+            .Returns(true);
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessage()).Throws(new Exception("Fail"));
 
         var portOutput = _requestSender.InitializeCommunication();
@@ -153,7 +171,8 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.HostServer(new IPEndPoint(IPAddress.Loopback, 0))).Returns(new IPEndPoint(IPAddress.Loopback, dummyPortInput));
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
         _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
-            .Callback((int timeout) => Task.Delay(200).Wait());
+            .Callback((int timeout) => Task.Delay(200).Wait())
+            .Returns(true);
 
         var discoveryMessage = new Message() { MessageType = MessageType.StartDiscovery };
 
@@ -201,7 +220,8 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.HostServer(new IPEndPoint(IPAddress.Loopback, 0))).Returns(new IPEndPoint(IPAddress.Loopback, dummyPortInput));
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
         _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
-            .Callback((int timeout) => Task.Delay(200).Wait());
+            .Callback((int timeout) => Task.Delay(200).Wait())
+            .Returns(true);
 
         var sessionConnected = new Message() { MessageType = MessageType.SessionConnected };
 
@@ -252,7 +272,8 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
 
         _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
-            .Callback((int timeout) => Task.Delay(200).Wait());
+            .Callback((int timeout) => Task.Delay(200).Wait())
+            .Returns(true);
 
         var sessionConnected = new Message() { MessageType = MessageType.SessionConnected };
 
@@ -2822,7 +2843,8 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
 
         _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
-            .Callback((int timeout) => Task.Delay(200).Wait());
+            .Callback((int timeout) => Task.Delay(200).Wait())
+            .Returns(true);
 
         var sessionConnected = new Message() { MessageType = MessageType.SessionConnected };
         var versionCheck = new Message() { MessageType = MessageType.VersionCheck, Payload = protocolVersion };

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <RunConfiguration>
+    <TestCaseFilter>TestCategory!=Compatibility&amp;FullyQualifiedName!~Microsoft.TestPlatform.AcceptanceTests.Performance.</TestCaseFilter>
+    <TreatNoTestsAsError>true</TreatNoTestsAsError>
+  </RunConfiguration>
+  <TestRunParameters>
+    <Parameter name="BuildCompatibility" value="false" />
+  </TestRunParameters>
+</RunSettings>
