@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="cmdidAddPackagesForSolution|ButtonText">
         <source>Manage &amp;NuGet Packages for Solution...</source>
-        <target state="translated">管理方案的 NuGet 套件(&amp;N)...</target>
+        <target state="translated">管理解決方案的 NuGet 套件(&amp;N)...</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidAddPackagesForSolution|CommandName">

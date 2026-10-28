@@ -329,7 +329,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsBuildForSolutionFilter">
         <source>This version of MSBuild not support Solution filter: '{0}'. Use a MSBuild version greater than or equal to 16.7 to use this feature.</source>
-        <target state="translated">此版本的 MSBuild 不支援解決方案篩選: '{0}'。使用 16.7 或更新的 MSBuild 版本以使用此功能。</target>
+        <target state="translated">此版本的 MSBuild 不支援解決方案篩選條件: '{0}'。使用 16.7 或更新的 MSBuild 版本以使用此功能。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsbuild">

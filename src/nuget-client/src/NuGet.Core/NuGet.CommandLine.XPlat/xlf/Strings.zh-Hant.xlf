@@ -370,7 +370,7 @@ NuGet 需要 HTTPS 來源。您必須在 NuGet.Config 檔案中將 'allowInsecur
       </trans-unit>
       <trans-unit id="Error_MultipleProjectOrSolutionFilesInDirectory">
         <source>The directory '{0}' contains multiple project or solution files. Specify which project or solution file to use.</source>
-        <target state="translated">目錄 '{0}' 包含多個專案檔或方案檔。指定要使用的專案檔或方案檔。</target>
+        <target state="translated">目錄 '{0}' 包含多個專案檔或解決方案檔。指定要使用的專案檔或解決方案檔。</target>
         <note>{0} - Directory</note>
       </trans-unit>
       <trans-unit id="Error_NoDgSpec">
@@ -380,7 +380,7 @@ NuGet 需要 HTTPS 來源。您必須在 NuGet.Config 檔案中將 'allowInsecur
       </trans-unit>
       <trans-unit id="Error_NoProjectOrSolutionFilesInDirectory">
         <source>The directory '{0}' does not contain any project or solution files.</source>
-        <target state="translated">目錄 '{0}' 未包含任何專案檔或方案檔。</target>
+        <target state="translated">目錄 '{0}' 未包含任何專案檔或解決方案檔。</target>
         <note>{0} - Directory</note>
       </trans-unit>
       <trans-unit id="Error_NoSource">

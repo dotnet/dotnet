@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 335913,
+      "barId": 338750,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "ff0ca5dff8fdd2966be49f7f9d6bece62b19cd2c"
+      "commitSha": "e79126f1076b9b86ee5de7d37e4a78bc3516bcae"
     },
     {
       "barId": 288647,
@@ -13,10 +13,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 336396,
+      "barId": 337701,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "584235ceef07d037d40ba4dd222aaf930dfcce52"
+      "commitSha": "4c88e1089dbd15bda273d713940cf8401b2293b5"
     },
     {
       "barId": 330796,
@@ -25,10 +25,10 @@
       "commitSha": "7664dbc52ce33f96c899680fd1bcac85ba059eda"
     },
     {
-      "barId": 334046,
+      "barId": 338609,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "5e412cb36e810b0b35a26bc6eff34451536d1414"
+      "commitSha": "7b530bbaea507486950990901fbeb721d6357530"
     },
     {
       "barId": 309789,
@@ -49,22 +49,22 @@
       "commitSha": "e4fee26e96b91d018fe2be50bbd0adad528c0d67"
     },
     {
-      "barId": 336259,
+      "barId": 338368,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "3b57968a41d18888c71dd71c3d08334e569a98e9"
+      "commitSha": "c3958137afeb5265ef1928aea2137afffa73114a"
     },
     {
-      "barId": 335895,
+      "barId": 338362,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "f09606b1dc5a934976a89fe495e7e4f31851631d"
+      "commitSha": "e78a9a3936a1f4e268a3797368da72396b7ea0c5"
     },
     {
-      "barId": 327379,
+      "barId": 337645,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "f5806edd10714f8fdadd0dac1f44fb896ae61e7f"
+      "commitSha": "b377628a84d389a0c3ca52fa166b3fb9389bd45b"
     },
     {
       "barId": 334597,

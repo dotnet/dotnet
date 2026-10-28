@@ -1058,7 +1058,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_PackageFormatApply">
         <source>The package manager format will apply to the following projects in this Solution</source>
-        <target state="translated">在此 Solution 中，将向以下项目应用包管理器格式</target>
+        <target state="translated">在此解决方案中，将向以下项目应用包管理器格式</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageLevelTopLevel">
