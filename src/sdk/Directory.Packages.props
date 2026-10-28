@@ -23,6 +23,8 @@
     <PackageVersion Include="Microsoft.Build.NuGetSdkResolver" Version="$(MicrosoftBuildNuGetSdkResolverPackageVersion)" />
     <PackageVersion Include="Microsoft.Build.TaskAuthoring.Analyzer" Version="$(MicrosoftBuildTaskAuthoringAnalyzerPackageVersion)" />
     <PackageVersion Include="OpenTelemetry" Version="$(OpenTelemetryDotnetPackageVersion)" />
+    <PackageVersion Include="OpenTelemetry.Api" Version="$(OpenTelemetryDotnetPackageVersion)" />
+    <PackageVersion Include="OpenTelemetry.Api.ProviderBuilderExtensions" Version="$(OpenTelemetryDotnetPackageVersion)" />
     <PackageVersion Include="OpenTelemetry.Exporter.InMemory" Version="$(OpenTelemetryDotnetPackageVersion)" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="$(OpenTelemetryDotnetPackageVersion)" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OpenTelemetryInstrumentationHttpPackageVersion)" />
@@ -63,6 +65,7 @@
     <PackageVersion Include="Microsoft.DotNet.Installer.Windows.Security.TestData" Version="$(MicrosoftDotNetInstallerWindowsSecurityTestDataPackageVersion)" />
     <PackageVersion Include="Microsoft.DotNet.SignCheckTask" Version="$(ArcadeSdkVersion)" />
     <PackageVersion Include="Microsoft.DotNet.XUnitV3Extensions" Version="$(MicrosoftDotNetXUnitV3ExtensionsPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion)" />
     <PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion)" />
     <PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="$(MicrosoftExtensionsFileProvidersAbstractionsPackageVersion)" />
@@ -76,6 +79,7 @@
     <PackageVersion Include="Microsoft.Net.Compilers.Toolset.Framework" Version="$(MicrosoftNetCompilersToolsetFrameworkPackageVersion)" />
     <PackageVersion Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
     <PackageVersion Include="Microsoft.NET.HostModel" Version="$(MicrosoftNETHostModelVersion)" />
+    <PackageVersion Include="Microsoft.NET.ProjectData.Tasks" Version="$(MicrosoftNETProjectDataTasksPackageVersion)" />
     <PackageVersion Include="Microsoft.NET.Sdk.Razor.SourceGenerators.Transport" Version="$(MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion)" />
     <PackageVersion Include="Microsoft.NETCore.App.Runtime.win-x86" Version="$(MicrosoftNETCoreAppRuntimePackageVersion)" />
     <PackageVersion Include="Microsoft.NETCore.App.Runtime.win-x64" Version="$(MicrosoftNETCoreAppRuntimePackageVersion)" />

@@ -689,7 +689,7 @@ namespace Microsoft.Build.ProjectCache
                     // TODO: This should be indented by the console logger. That requires making these log events structured.
                     if (!buildRequestConfiguration.IsTraversal)
                     {
-                        _loggingService.LogComment(buildEventContext, MessageImportance.High, "ProjectCacheHitWithOutputs", buildRequest.ProjectInstance!.GetPropertyValue(ReservedPropertyNames.projectName));
+                        _loggingService.LogComment(buildEventContext, MessageImportance.High, "ProjectCacheHitWithOutputs", buildRequest.ProjectInstance!.GetPropertyValue(ReservedPropertyNames.ProjectName));
                     }
 
                     break;
@@ -1075,7 +1075,7 @@ namespace Microsoft.Build.ProjectCache
             {
                 _loggingService.LogWarningFromText(
                     _buildEventContext,
-                    subcategoryResourceName: null,
+                    DiagnosticSubcategory.None,
                     warningCode: null,
                     helpKeyword: null,
                     _elementLocation,
@@ -1088,7 +1088,7 @@ namespace Microsoft.Build.ProjectCache
 
                 _loggingService.LogErrorFromText(
                     _buildEventContext,
-                    subcategoryResourceName: null,
+                    DiagnosticSubcategory.None,
                     errorCode: null,
                     helpKeyword: null,
                     _elementLocation,
@@ -1130,7 +1130,7 @@ namespace Microsoft.Build.ProjectCache
             {
                 _loggingService.LogWarningFromText(
                     _buildEventContext,
-                    subcategoryResourceName: null,
+                    DiagnosticSubcategory.None,
                     warningCode: null,
                     helpKeyword: null,
                     _elementLocation,
@@ -1143,7 +1143,7 @@ namespace Microsoft.Build.ProjectCache
 
                 _loggingService.LogErrorFromText(
                     _buildEventContext,
-                    subcategoryResourceName: null,
+                    DiagnosticSubcategory.None,
                     errorCode: null,
                     helpKeyword: null,
                     _elementLocation,

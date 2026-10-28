@@ -1,4 +1,4 @@
-From 812c81987b033b9b284f1d336d6fbfccf0bff6b9 Mon Sep 17 00:00:00 2001
+From ec532d5dae638a717d36ad25c58f57f590dd43bb Mon Sep 17 00:00:00 2001
 From: Chet Husk <chusk3@gmail.com>
 Date: Thu, 30 Apr 2026 17:32:05 +0200
 Subject: [PATCH] Source-build: add conditional TFM overrides and analyzer
@@ -13,10 +13,10 @@ Add DotNetBuildSourceOnly conditions to:
  2 files changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/build/Common.prod.props b/build/Common.prod.props
-index a0de59e9..b844ce97 100644
+index aa3b976e8..42c432dd4 100644
 --- a/build/Common.prod.props
 +++ b/build/Common.prod.props
-@@ -37,8 +37,8 @@
+@@ -41,8 +41,8 @@
  
    <ItemGroup>
      <PackageReference Include="MinVer" PrivateAssets="All" Condition="'$(IntegrationBuild)' != 'true'" />
@@ -28,10 +28,10 @@ index a0de59e9..b844ce97 100644
  
    <ItemGroup>
 diff --git a/build/Common.props b/build/Common.props
-index 48a94bc9..4bf48dd4 100644
+index 9a0a5b134..a746933f7 100644
 --- a/build/Common.props
 +++ b/build/Common.props
-@@ -31,7 +31,9 @@
+@@ -98,7 +98,9 @@ finally
  
      <!-- production TFMs -->
      <TargetFrameworksForLibraries>net10.0;net9.0;net8.0;netstandard2.0;$(NetFrameworkMinimumSupportedVersion)</TargetFrameworksForLibraries>
@@ -41,7 +41,7 @@ index 48a94bc9..4bf48dd4 100644
      <TargetFrameworksForPrometheusAspNetCore>net10.0;net9.0;net8.0</TargetFrameworksForPrometheusAspNetCore>
      <TargetFrameworksRequiringSystemTextJsonDirectReference>netstandard2.1;netstandard2.0;$(NetFrameworkMinimumSupportedVersion)</TargetFrameworksRequiringSystemTextJsonDirectReference>
  
-@@ -63,7 +65,7 @@
+@@ -130,7 +132,7 @@ finally
    </ItemGroup>
  
    <ItemGroup>
@@ -51,5 +51,5 @@ index 48a94bc9..4bf48dd4 100644
    </ItemGroup>
  
 -- 
-2.53.0.windows.3
+2.54.0 (Apple Git-157)
 
