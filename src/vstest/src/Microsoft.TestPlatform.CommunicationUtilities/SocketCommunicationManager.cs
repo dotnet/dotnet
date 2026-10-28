@@ -111,14 +111,15 @@ public class SocketCommunicationManager : ICommunicationManager
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task AcceptClientAsync()
     {
-        if (_tcpListener == null)
+        var listener = _tcpListener;
+        if (listener is null)
         {
             return;
         }
 
         _clientConnectedEvent.Reset();
 
-        var client = await _tcpListener.AcceptTcpClientAsync();
+        var client = await listener.AcceptTcpClientAsync();
         _socket = client.Client;
         _socket.NoDelay = true;
 

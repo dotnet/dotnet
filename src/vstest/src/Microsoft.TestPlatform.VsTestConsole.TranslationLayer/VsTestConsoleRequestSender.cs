@@ -95,8 +95,8 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
 
             Task.Run(() =>
             {
-                _communicationManager.WaitForClientConnection(Timeout.Infinite);
-                _handShakeSuccessful = HandShakeWithVsTestConsole();
+                _handShakeSuccessful = _communicationManager.WaitForClientConnection(Timeout.Infinite)
+                    && HandShakeWithVsTestConsole();
                 _handShakeComplete.Set();
             });
         }

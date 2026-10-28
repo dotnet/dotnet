@@ -17,6 +17,12 @@ public static class ProcessStartInfoExtensions
     /// <param name="value">Environment Variable value.</param>
     public static void AddEnvironmentVariable(this ProcessStartInfo startInfo, string name, string? value)
     {
+        if (value is null)
+        {
+            startInfo.Environment.Remove(name);
+            return;
+        }
+
         startInfo.Environment[name] = value;
     }
 }

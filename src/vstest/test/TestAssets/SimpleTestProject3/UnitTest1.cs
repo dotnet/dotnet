@@ -7,9 +7,6 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Threading;
-#if NETFRAMEWORK
-using System.Windows.Forms;
-#endif
 
 namespace SampleUnitTestProject3
 {
@@ -43,13 +40,13 @@ namespace SampleUnitTestProject3
         [TestMethod]
         public void UITestMethod()
         {
-            Clipboard.SetText("Clipboard");
+            Assert.AreEqual(ApartmentState.STA, Thread.CurrentThread.GetApartmentState());
         }
 
         [TestMethod]
         public void UITestWithSleep1()
         {
-            Clipboard.SetText("Clipboard");
+            Assert.AreEqual(ApartmentState.STA, Thread.CurrentThread.GetApartmentState());
             Thread.Sleep(1000 * 3);
         }
 #endif

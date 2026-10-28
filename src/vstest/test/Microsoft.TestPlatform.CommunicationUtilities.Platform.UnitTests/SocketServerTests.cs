@@ -177,3 +177,32 @@ public class SocketServerTests : SocketTestsBase, IDisposable
 #pragma warning restore MSTEST0049
     }
 }
+
+[TestClass]
+public class SocketServerStopTests
+{
+    [TestMethod]
+    public async Task SocketServerShouldReleaseListenerWhenStopped()
+    {
+        var socketServer = new SocketServer();
+        using var client = new TcpClient();
+        var connected = new TaskCompletionSource<ConnectedEventArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
+        socketServer.Connected += (_, args) => connected.TrySetResult(args);
+        try
+        {
+            var endpoint = socketServer.Start(IPAddress.Loopback + ":0").GetIpEndPoint();
+            socketServer.Stop();
+
+#pragma warning disable MSTEST0049 // ConnectAsync CancellationToken overload is unavailable on .NET Framework.
+            await Assert.ThrowsExactlyAsync<SocketException>(() => client.ConnectAsync(endpoint.Address, endpoint.Port));
+#pragma warning restore MSTEST0049
+
+            Assert.IsFalse(connected.Task.IsCompleted);
+        }
+        finally
+        {
+            socketServer.Stop();
+        }
+    }
+
+}

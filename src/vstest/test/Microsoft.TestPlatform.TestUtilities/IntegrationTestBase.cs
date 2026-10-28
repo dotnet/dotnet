@@ -1139,4 +1139,83 @@ public class IntegrationTestBase
     {
         StdErr?.Trim().Should().Be("Test Run Failed.");
     }
+
+    /// <summary>
+    /// Returns a template-engine home that only this caller uses.
+    /// </summary>
+    ///
+    /// <remarks>
+    /// `dotnet new` keeps its template cache at
+    /// %DOTNET_CLI_HOME%\.templateengine\&lt;sdk version&gt;\templatecache.json, a single per-user
+    /// file. Two scaffolding tests running at once fight over it:
+    ///
+    ///     Failed to store template cache, details: The process cannot access the file
+    ///     '...\.templateengine\...\templatecache.json' because it is being used by another process.
+    ///
+    /// seen three times each on 18.11 and 18.10, and not at all on 18.7, so it is a race rather
+    /// than a deterministic failure. Giving each caller its own DOTNET_CLI_HOME moves the whole
+    /// .templateengine tree under it, so there is no shared file left to contend on. Measured:
+    /// two homes produce two independent caches and both scaffolds succeed.
+    ///
+    /// The cost is a cold cache on first use in each home. That is paid once per test here, which
+    /// is acceptable for three tests; if more scaffolding tests appear, share one home per class.
+    /// </remarks>
+    protected static string CreateIsolatedTemplateEngineHome(string parentDirectory)
+    {
+        var home = Path.Combine(parentDirectory, "clihome");
+        Directory.CreateDirectory(home);
+        return home;
+    }
+
+    /// <summary>
+    /// Points a project scaffolded by <c>dotnet new</c> at the Microsoft.NET.Test.Sdk this build
+    /// produced, instead of the published one the SDK's template references.
+    /// </summary>
+    ///
+    /// <remarks>
+    /// The template pins whatever version shipped with the installed SDK. Running such a project
+    /// through a locally built vstest.console pairs a new runner with a published testhost, so the
+    /// test may measure version compatibility rather than the thing it was written for.
+    ///
+    /// Pins the reference in the generated csproj rather than layering a Directory.Build file over
+    /// it. Both .props and .targets were tried first and neither works: .props is imported before
+    /// the project declares its PackageReference items so an Update matches nothing, and .targets
+    /// did not take either. The current template references only the MSTest metapackage and gets
+    /// Microsoft.NET.Test.Sdk transitively, so this adds a direct reference, which wins. The
+    /// NuGet.config carries the local package source so the version it now asks for can be
+    /// restored.
+    /// </remarks>
+    protected static void UseLocallyBuiltTestSdk(string projectDirectory)
+    {
+        var projectFile = Directory.GetFiles(projectDirectory, "*.csproj").Single();
+        var project = File.ReadAllText(projectFile);
+        if (project.IndexOf("Microsoft.NET.Test.Sdk", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            project = Regex.Replace(
+                project,
+                @"(<PackageReference\s+Include=""Microsoft\.NET\.Test\.Sdk""\s+Version="")[^""]+("")",
+                "${1}" + IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion + "${2}");
+        }
+        else
+        {
+            // The current template references only the MSTest metapackage and gets
+            // Microsoft.NET.Test.Sdk transitively, so there is nothing to rewrite. A direct
+            // reference wins over a transitive one, which is what pins the version here.
+            var reference = $@"  <ItemGroup>
+    <PackageReference Include=""Microsoft.NET.Test.Sdk"" Version=""{IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}"" />
+  </ItemGroup>
+
+</Project>";
+            if (!project.Contains("</Project>"))
+            {
+                throw new InvalidOperationException($"Cannot pin Microsoft.NET.Test.Sdk in {projectFile}: no closing Project element.");
+            }
+            project = project.Replace("</Project>", reference);
+        }
+        File.WriteAllText(projectFile, project);
+
+        var nugetConfig = File.ReadAllText(Path.Combine(IntegrationTestEnvironment.RepoRootDirectory, "NuGet.config"))
+            .Replace("</packageSources>", $@"<add key=""localy-built-packages"" value=""{IntegrationTestEnvironment.LocalPackageSource}"" /></packageSources>");
+        File.WriteAllText(Path.Combine(projectDirectory, "NuGet.config"), nugetConfig);
+    }
 }
