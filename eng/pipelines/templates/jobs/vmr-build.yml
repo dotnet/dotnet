@@ -737,7 +737,7 @@ jobs:
             # Prefer downloadedArtifactsDir (used when reuseBuildArtifactsFrom has items),
             # but fall back to prereqs/packages/archive when it is not available.
             sdkSearchDir="$(downloadedArtifactsDir)"
-            fallbackSdkDir="$(Build.SourcesDirectory)/prereqs/packages/archive"
+            fallbackSdkDir="$(sourcesPath)/prereqs/packages/archive"
             
             # If the primary directory does not exist or does not contain an SDK tarball,
             # fall back to the prereqs/packages/archive location.
