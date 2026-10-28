@@ -7,7 +7,7 @@
     <BuildCommand>$(ProjectDirectory)\eng\common\build$(ShellExtension) $(BuildCommandArgs)</BuildCommand>
     <DeterministicBuildOptOut>true</DeterministicBuildOptOut>
     <!-- IDE0090: https://github.com/microsoft/vstest/pull/4674 -->
-    <RepoNoWarns>IDE0090</RepoNoWarns>
+    <RepoNoWarns>IDE0090;IDE0032;IDE0055;IDE0005</RepoNoWarns>
   </PropertyGroup>
 
   <ItemGroup>

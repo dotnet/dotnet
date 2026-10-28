@@ -584,7 +584,12 @@ function MSBuild {
   fi
 
   function RunBuildTool {
-    export ARCADE_BUILD_TOOL_COMMAND="$_InitializeBuildTool $@"
+    local arg
+    ARCADE_BUILD_TOOL_COMMAND=''
+    for arg in "$_InitializeBuildTool" "$@"; do
+      ARCADE_BUILD_TOOL_COMMAND+="'${arg//\'/\'\"\'\"\'}' "
+    done
+    export ARCADE_BUILD_TOOL_COMMAND="${ARCADE_BUILD_TOOL_COMMAND//%/%25}"
 
     "$_InitializeBuildTool" "$@" || {
       local exit_code=$?

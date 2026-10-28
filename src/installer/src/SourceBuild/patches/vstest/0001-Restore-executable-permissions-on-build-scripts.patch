@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Matt Thalman <mthalman@microsoft.com>
+Date: Thu, 22 Oct 2026 10:59:22 -0500
+Subject: [PATCH] Restore executable permissions and escape build commands
+
+---
+ eng/common/build.sh          | 0
+ eng/common/dotnet-install.sh | 0
+ eng/common/tools.sh          | 7 ++++++-
+ 3 files changed, 6 insertions(+), 1 deletion(-)
+ mode change 100644 => 100755 eng/common/build.sh
+ mode change 100644 => 100755 eng/common/dotnet-install.sh
+
+diff --git a/eng/common/build.sh b/eng/common/build.sh
+old mode 100644
+new mode 100755
+diff --git a/eng/common/dotnet-install.sh b/eng/common/dotnet-install.sh
+old mode 100644
+new mode 100755
+diff --git a/eng/common/tools.sh b/eng/common/tools.sh
+--- a/eng/common/tools.sh
++++ b/eng/common/tools.sh
+@@ -584,7 +584,12 @@ function MSBuild {
+   fi
+ 
+   function RunBuildTool {
+-    export ARCADE_BUILD_TOOL_COMMAND="$_InitializeBuildTool $@"
++    local arg
++    ARCADE_BUILD_TOOL_COMMAND=''
++    for arg in "$_InitializeBuildTool" "$@"; do
++      ARCADE_BUILD_TOOL_COMMAND+="'${arg//\'/\'\"\'\"\'}' "
++    done
++    export ARCADE_BUILD_TOOL_COMMAND="${ARCADE_BUILD_TOOL_COMMAND//%/%25}"
+ 
+     "$_InitializeBuildTool" "$@" || {
+       local exit_code=$?
