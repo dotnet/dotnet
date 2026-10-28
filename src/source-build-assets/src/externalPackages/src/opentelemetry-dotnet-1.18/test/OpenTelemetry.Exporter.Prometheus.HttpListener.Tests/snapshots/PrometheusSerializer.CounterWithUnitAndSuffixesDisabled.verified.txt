@@ -1,3 +1,0 @@
-# TYPE http_server_duration counter
-http_server_duration{} 1
-http_server_duration_created{} <TIMESTAMP>
