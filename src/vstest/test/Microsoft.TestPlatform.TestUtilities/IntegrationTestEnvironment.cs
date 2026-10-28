@@ -260,7 +260,7 @@ public class IntegrationTestEnvironment
     {
         var packagePath = Path.Combine(LocalPackageDirectory, packageSuffix);
 
-        Assert.IsTrue(Directory.Exists(packagePath), "GetNugetPackage: Directory not found: {0}.", packagePath);
+        Assert.IsTrue(Directory.Exists(packagePath), "GetNugetPackage: Directory not found: {0}.", packagePath); // CodeQL [SM00414] Test-only code; not shipped and not part of the product attack surface.
 
         return packagePath;
     }
