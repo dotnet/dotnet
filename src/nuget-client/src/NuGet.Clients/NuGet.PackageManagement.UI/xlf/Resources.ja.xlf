@@ -1058,7 +1058,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_PackageFormatApply">
         <source>The package manager format will apply to the following projects in this Solution</source>
-        <target state="translated">パッケージ マネージャーの形式は、この Solution の次のプロジェクトに適用されます</target>
+        <target state="translated">パッケージ マネージャーの形式は、このソリューションの次のプロジェクトに適用されます</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageLevelTopLevel">

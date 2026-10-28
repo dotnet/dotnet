@@ -1237,7 +1237,7 @@ nuget trusted-signers Remove -Name TrustedRepo</target>
       </trans-unit>
       <trans-unit id="UpdateCommandDependencyVersion">
         <source>Overrides the default dependency resolution behavior.</source>
-        <target state="translated">替代默认的依赖项解析行为。</target>
+        <target state="translated">重写默认依赖项解析行为。</target>
         <note />
       </trans-unit>
       <trans-unit id="UpdateCommandDescription">

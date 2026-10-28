@@ -1058,7 +1058,7 @@ Błąd: {1}</target>
       </trans-unit>
       <trans-unit id="Text_PackageFormatApply">
         <source>The package manager format will apply to the following projects in this Solution</source>
-        <target state="translated">Format menedżera pakietów zostanie zastosowany do poniższych projektów w tym elemencie Solution</target>
+        <target state="translated">Format menedżera pakietów zostanie zastosowany do poniższych projektów w tym rozwiązaniu</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageLevelTopLevel">

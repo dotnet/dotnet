@@ -116,7 +116,7 @@ Wenn Sie verhindern möchten, dass NuGet Pakete während des Builds wiederherste
       </trans-unit>
       <trans-unit id="RelativeGlobalPackagesFolder">
         <source>'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Save your solution or configure a 'globalPackagesFolder' which is a full path.</source>
-        <target state="translated">„globalPackagesFolder“ aus der Datei „nuget.config“ oder der Umgebungsvariablen ist „{0}“, ein relativer Pfad, und die Lösung ist nicht gespeichert. Speichern Sie Ihre Lösung, oder konfigurieren Sie einen Ordner „globalPackagesFolder“, der einen vollständigen Pfad darstellt.</target>
+        <target state="translated">'globalPackagesFolder' aus der nuget.config-Datei oder der Umgebungsvariablen ist '{0}', ein relativer Pfad, und die Projektmappe ist nicht gespeichert. Speichern Sie Ihre Projektmappe, oder konfigurieren Sie einen 'globalPackagesFolder', der einen vollständigen Pfad darstellt.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoredPackage">
