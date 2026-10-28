@@ -241,7 +241,7 @@ This limitation is designed for two reasons:
 
 ## How to get onboard
 
-1. This feature depends on the Build Analysis feature. Therefore, you need to have the `Build Analysis` GitHub application installed in the repo where you want to use Known Issues. </br> To install the application, you can contact the [.NET Core Engineering Services team](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/107/How-to-get-a-hold-of-Engineering-Servicing)
+1. This feature depends on the Build Analysis feature. Therefore, you need to have the `Build Analysis` GitHub application installed in the repo where you want to use Known Issues. </br> To install the application, you can contact the [.NET Core Engineering Services team](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/1907/Contact-Engineering-Services)
 1. For infrastructure issues, there are no additional steps because they are part of dotnet/dnceng.
 1. For repository issues, you need to [Create a label](https://docs.github.com/en/enterprise-server@3.1/issues/using-labels-and-milestones-to-track-work/managing-labels#creating-a-label) on the repo where you want to open the Repository issue. <br> The name of the label must be `Known Build Error`
 

@@ -244,6 +244,8 @@ NuGet.ProjectModel.LockFileTarget.LockFileTarget() -> void
 ~NuGet.ProjectModel.LockFileTarget.TargetFramework.get -> NuGet.Frameworks.NuGetFramework
 ~NuGet.ProjectModel.LockFileTarget.TargetFramework.set -> void
 NuGet.ProjectModel.LockFileTargetLibrary
+NuGet.ProjectModel.LockFileTargetLibrary.AnalyzerAssets.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem!>!
+NuGet.ProjectModel.LockFileTargetLibrary.AnalyzerAssets.set -> void
 NuGet.ProjectModel.LockFileTargetLibrary.Build.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem!>!
 NuGet.ProjectModel.LockFileTargetLibrary.Build.set -> void
 NuGet.ProjectModel.LockFileTargetLibrary.BuildMultiTargeting.get -> System.Collections.Generic.IList<NuGet.ProjectModel.LockFileItem!>!
@@ -414,6 +416,8 @@ NuGet.ProjectModel.ProjectRestoreMetadata.ProjectStyle.set -> void
 ~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreAuditProperties.set -> void
 NuGet.ProjectModel.ProjectRestoreMetadata.RestoreDoNotWriteDependencyGraphSpec.get -> bool
 NuGet.ProjectModel.ProjectRestoreMetadata.RestoreDoNotWriteDependencyGraphSpec.set -> void
+NuGet.ProjectModel.ProjectRestoreMetadata.RestoreEnableAnalyzerAssets.get -> bool
+NuGet.ProjectModel.ProjectRestoreMetadata.RestoreEnableAnalyzerAssets.set -> void
 ~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreLockProperties.get -> NuGet.ProjectModel.RestoreLockProperties
 ~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreLockProperties.set -> void
 ~NuGet.ProjectModel.ProjectRestoreMetadata.SdkAnalysisLevel.get -> NuGet.Versioning.NuGetVersion
@@ -690,6 +694,7 @@ static readonly NuGet.ProjectModel.LockFileContentFile.PPOutputPathProperty -> s
 ~static readonly NuGet.ProjectModel.LockFileFormat.AssetsFileName -> string
 static readonly NuGet.ProjectModel.LockFileFormat.Version -> int
 static readonly NuGet.ProjectModel.LockFileItem.AliasesProperty -> string!
+static readonly NuGet.ProjectModel.LockFileItem.CompilerApiVersionProperty -> string!
 static readonly NuGet.ProjectModel.LockFileRuntimeTarget.AssetTypeProperty -> string!
 static readonly NuGet.ProjectModel.LockFileRuntimeTarget.RidProperty -> string!
 ~static readonly NuGet.ProjectModel.PackageSpec.DefaultVersion -> NuGet.Versioning.NuGetVersion

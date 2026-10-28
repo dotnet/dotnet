@@ -1,0 +1,46 @@
+{
+  "$schema": "VMR QB routing registry - the ONE place the test/ owner, redirects, channels, support destinations and category routing are defined. There is no default owner: a failure that maps to no team says \"No identified owner\". Repo -> owner, the list of real teams and repo-name handle aliases are NOT here: they are read from the Repo Ownership table in docs/VMR-QB-Guide.md. The report instructions and the docs read from these two sources; do not restate them elsewhere.",
+  "schemaVersion": 1,
+  "verifiedOn": "2026-10-07",
+  "verification": "Nothing derived from the Guide is listed here. Real teams and repo owners are the Repo Ownership table of docs/VMR-QB-Guide.md, copied to local/knowledge/guide-ownership.json on first use; a repo name used as a handle (@dotnet/runtime) resolves to that repo's owner from the same table (add \"handleAliases\" or \"teams\" only for something the Guide lacks). Each key under 'preferredRedirects' IS a real team that routing deliberately narrows to a better audience. People are in the local team-contacts.json. A category names its owners with \"ownerRepos\" (repos whose owner the Guide gives, so a Guide change reaches the category) and/or \"owners\" (teams chosen outright).",
+  "preferredRedirects": {
+    "@dotnet/roslyn": "@dotnet/roslyn-infrastructure"
+  },
+  "vmrTestsOwner": "@dotnet/source-build",
+  "channels": {
+    "vmrWide": "Unified Build Technical and General Discussions",
+    "helix": "First Responders",
+    "coordination": ".NET Tactics chat",
+    "previewRc": "Preview/RC chat",
+    "servicing": "Servicing chat"
+  },
+  "channelRules": {
+    "First Responders": "HELIX ISSUES ONLY (Helix test execution, Helix queues/machines). Never route 1ES pipeline-template tasks, SBoM/Guardian tooling, NuGet feed auth, credential providers or agent-pool problems there.",
+    "Unified Build Technical and General Discussions": "VMR-specific hot issues: all builds broken, a badly stale PR, snap-blocking problems.",
+    "Servicing chat": "Servicing-branch coordination. Do not treat every release branch as preview/RC.",
+    "Preview/RC chat": "Verified preview/RC work only."
+  },
+  "supportDestinations": [
+    {
+      "id": "1es",
+      "name": "1ES support",
+      "url": "https://aka.ms/1esptdocs",
+      "note": "1ES Pipeline Template task failures (SBoM, Guardian, 1ES PT Run Task, binary analysis)"
+    }
+  ],
+  "categories": [
+    {
+      "id": "test-timeouts",
+      "name": "Test timeouts",
+      "ownerRepos": ["templating"],
+      "owners": ["@dotnet/prodconsvcs"],
+      "note": "Source-build validation Run Tests timeouts. NOT the 150-minute RepoBuild timeouts: attribute those to the repo whose 'Building <repo>' marker has no matching 'done' line in the timed-out leg's log, never to a repo that merely logged an error in the same file."
+    },
+    {
+      "id": "darc-promotion",
+      "name": "Darc promotion failures",
+      "owners": ["@dotnet/dnceng"]
+    }
+  ],
+  "unmappedLabel": "No identified owner"
+}

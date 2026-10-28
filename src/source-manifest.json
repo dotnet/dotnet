@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 335931,
+      "barId": 338490,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "7dad90156e9d69e991ad499ece9cf805cabcf506"
+      "commitSha": "337343720594259474a8a4b390610feadd518229"
     },
     {
       "barId": 336188,
@@ -19,10 +19,10 @@
       "commitSha": "8b8bdd0e7a8ca16c0f58020276835d1aef712e9e"
     },
     {
-      "barId": 336223,
+      "barId": 337646,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "d06ff716f77d3187145ac735606eb92ce5739279"
+      "commitSha": "eef106df3e5e74fae30236e1449cc3f4e955207a"
     },
     {
       "barId": 329538,
@@ -31,52 +31,52 @@
       "commitSha": "2ee21e1b8f7721ea9cb89cd4db4f589b37b579d7"
     },
     {
-      "barId": 337080,
+      "barId": 338620,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "1d95e75015fa3ccd063a59ed3d0bfe26040a6637"
+      "commitSha": "1aa8f0b82b2553829d109721e51ee0d105f52ba9"
     },
     {
-      "barId": 337483,
+      "barId": 338450,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "ff9c81ec9710952861f1ee6e11c69aeab563584c"
+      "commitSha": "bf50db4f490e1bcb686ada2b3fe011c66b3fceeb"
     },
     {
-      "barId": 337369,
+      "barId": 338525,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "f8c4d01a5d5009121caea5f7a468dd07e7d183f7"
+      "commitSha": "c414b8b078e739c59a42d72aee932fe19bed6cc0"
     },
     {
-      "barId": 337257,
+      "barId": 337899,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "018295d668a61fb2449356c1bba99a3a27ff6837"
+      "commitSha": "d12022d6d0ec9c3355fbb3ae293f67c6babd2c84"
     },
     {
-      "barId": 337354,
+      "barId": 338560,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "a202579f4205143f4678f5610a71a7e6ba696b29"
+      "commitSha": "4f3669e6c4d4f1aaaf2bd52eed8337a2c0f9fe52"
     },
     {
-      "barId": 337012,
+      "barId": 338613,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "4c4510d29a64fcbcba6360e29c3a1e8288a87f9f"
+      "commitSha": "fa48a4bbf3827ec3eafdf4bd24a141829d4a6f28"
     },
     {
-      "barId": 337244,
+      "barId": 338608,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "2c1964599c1c6a428519ee9decce69f68284ec99"
+      "commitSha": "406deba91f42e16246259a90e94a9b410c626b30"
     },
     {
-      "barId": 337495,
+      "barId": 338440,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "dedc9b3df1b2d579e15d0765f73613bf3ff9c663"
+      "commitSha": "e7a08e5f6027286f02ba30ff6b9146f555cb9092"
     },
     {
       "barId": 335115,
@@ -109,10 +109,10 @@
       "commitSha": "55900b031f11a607e2a99a49a450b26a7ef522d8"
     },
     {
-      "barId": 336777,
+      "barId": 338497,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "a29631cbd11a5d8381e7fd9feacf1b92715293aa"
+      "commitSha": "894e56331737594946eeed220144dd120432c904"
     },
     {
       "barId": 335429,
@@ -121,16 +121,16 @@
       "commitSha": "e95b692aa80fb9aee711ad6847b1a8dd0a5d786a"
     },
     {
-      "barId": 336725,
+      "barId": 338573,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "c4891de0851184dcbe95d16ca543969fe2540245"
+      "commitSha": "d2737c7c7fc077c56297576e90670f4c9aa9d3e3"
     },
     {
-      "barId": 336572,
+      "barId": 337661,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "65d15adece1df9a73e3d1abc11f8bbf99e9fc7a9"
+      "commitSha": "0e20ab52b574b83d81ec96f299093a22a6197b28"
     },
     {
       "barId": 337099,

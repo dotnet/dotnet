@@ -55,11 +55,10 @@
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <!--
-      Use the N-1 Roslyn packages so analyzers and source generators shipped in the SDK have dependencies
-      compatible with the bootstrap compiler and its runtime. Current source-built packages can depend on
-      newer runtime assemblies that the bootstrap compiler cannot load.
+      Use current source-built Roslyn packages for general references. Compiler-hosted analyzers and source
+      generators use separate overrides below to remain compatible with the bootstrap compiler and its runtime.
     -->
-    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisCommonPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisCommonVersion)" />
 
     <!-- Use the Roslyn version contained in the N-1 build because ASP.NET Core needs to build and execute a source generator which
       must be built targeting a version of Roslyn contained in the executing SDK.
@@ -75,7 +74,18 @@
       By not lifting the M.CA version to the current version and instead using the N-1 version, we guarantee that it will match the version
       containing in the executed SDK and avoiding this error.
     -->
-    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisSourceGeneratorVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="SourceGenerator_MicrosoftCodeAnalysisCommonVersion" Version="%24(MicrosoftCodeAnalysisCommonPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="SourceGenerator_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="SourceGenerator_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesPreviousVersion)" />
+
+    <!-- Current source-built Roslyn packages can depend on runtime assemblies that the bootstrap compiler
+         cannot load. Newer analyzers and code fixes need the same N-1 dependencies as source generators. -->
+    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisFeaturesExternalAccessVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisFeaturesExternalAccessPreviousVersion)" />
+
+    <!-- In normal builds, these analyzers use older Roslyn packages for compatibility with older VS versions, separately
+         from the newer source generators above. Source-build uses N-1 packages for both. -->
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesPreviousVersion)" />
 

@@ -308,9 +308,7 @@ namespace NuGet.Packaging
                 var normalizedPath = Uri.UnescapeDataString(packageFileName.Replace('/', Path.DirectorySeparatorChar));
 
                 destination = NormalizeDirectoryPath(destination);
-                ValidatePackageEntry(destination, normalizedPath, packageIdentity);
-
-                var targetFilePath = Path.Combine(destination, normalizedPath);
+                var targetFilePath = GetValidatedPackageEntryPath(destination, normalizedPath, packageIdentity);
 
                 using (var stream = entry.Open())
                 using (var sizedStream = new SizedArchiveEntryStream(stream, entry.Length))
