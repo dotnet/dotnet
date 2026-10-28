@@ -410,7 +410,7 @@ NuGet erfordert HTTPS-Quellen. Um HTTP-Quellen zu verwenden, müssen Sie „allo
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
         <source>Missing or invalid path '{0}'. Provide a path to a project, solution file, file-based app, or project directory.</source>
-        <target state="translated">Fehlende oder ungültige Eingabe „{0}“. Geben Sie einen Pfad zu einem Projekt, einer Lösungsdatei, einer dateibasierten App oder einem Projektverzeichnis an.</target>
+        <target state="translated">Fehlender oder ungültiger Pfad '{0}'. Geben Sie einen Pfad zu einem Projekt, einer Projektmappendatei, einer dateibasierten App oder einem Projektverzeichnis an.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
       <trans-unit id="Error_PathNotFound">

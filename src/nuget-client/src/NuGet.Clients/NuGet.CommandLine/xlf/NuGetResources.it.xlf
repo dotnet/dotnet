@@ -329,7 +329,7 @@ Puoi impostare la variabile di ambiente '{1}' su 'true' per riabilitare temporan
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsBuildForSolutionFilter">
         <source>This version of MSBuild not support Solution filter: '{0}'. Use a MSBuild version greater than or equal to 16.7 to use this feature.</source>
-        <target state="translated">Questa versione di MSBuild non supporta il filtro soluzioni: '{0}'. Usare una versione di MSBuild maggiore o uguale alla 16.7 per utilizzare la funzionalità.</target>
+        <target state="translated">Questa versione di MSBuild non supporta il filtro delle soluzioni: '{0}'. Usa una versione di MSBuild maggiore o uguale alla 16.7 per utilizzare la funzionalità.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsbuild">
@@ -740,7 +740,7 @@ Puoi impostare la variabile di ambiente '{1}' su 'true' per riabilitare temporan
       </trans-unit>
       <trans-unit id="RestoreCommandCannotDeterminePackagesFolder">
         <source>Cannot determine the packages folder to restore NuGet packages. Specify either -PackagesDirectory or -SolutionDirectory.</source>
-        <target state="translated">Non è possibile determinare la cartella dei pacchetti per il ripristino dei pacchetti NuGet. Specificare -PackagesDirectory o -SolutionDirectory.</target>
+        <target state="translated">Non è possibile determinare la cartella per il ripristino dei pacchetti NuGet. Specifica -PackagesDirectory o -SolutionDirectory.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandFileNotFound">

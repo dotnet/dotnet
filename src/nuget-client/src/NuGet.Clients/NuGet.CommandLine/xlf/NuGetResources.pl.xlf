@@ -802,7 +802,7 @@ Aby uniemożliwić menedżerowi NuGet pobieranie pakietów podczas kompilacji, o
       </trans-unit>
       <trans-unit id="SolutionRestoreCommandNoPackagesConfigOrProjectJson">
         <source>Nothing to do. None of the projects in this solution specify any packages for NuGet to restore.</source>
-        <target state="translated">Nic do zrobienia. Żaden z projektów w tym rozwiązaniu nie określa żadnych pakietów do przywrócenia przez NuGet.</target>
+        <target state="translated">Nie ma nic do zrobienia. Żaden z projektów w tym rozwiązaniu nie określa żadnych pakietów do przywrócenia przez NuGet.</target>
         <note />
       </trans-unit>
       <trans-unit id="Source_NotFound">
@@ -989,7 +989,7 @@ Aby uniemożliwić menedżerowi NuGet pobieranie pakietów podczas kompilacji, o
       </trans-unit>
       <trans-unit id="Warning_ReadingProjectsFailed">
         <source>Error reading msbuild project information, ensure that your input solution or project file is valid. NETCore and UAP projects will be skipped, only packages.config files will be restored.</source>
-        <target state="translated">Błąd podczas odczytywania informacji o projekcie msbuild. Upewnij się, że dane wejściowe rozwiązania lub pliku projektu są prawidłowe. Projekty NETCore i UAP zostaną pominięte. Zostaną przywrócone tylko pliki packages.config.</target>
+        <target state="translated">Błąd podczas odczytywania informacji o projekcie msbuild. Upewnij się, że wejściowy plik rozwiązania lub projektu jest prawidłowy. Projekty NETCore i UAP zostaną pominięte. Zostaną przywrócone tylko pliki packages.config.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_SemanticVersion">

@@ -373,7 +373,7 @@ nuget init \\foo\packages \\bar\packages</target>
       </trans-unit>
       <trans-unit id="InstallCommandDependencyVersion">
         <source>Overrides the default dependency resolution behavior.</source>
-        <target state="translated">기본 종속성 확인 동작을 재정의합니다.</target>
+        <target state="translated">기본 종속성 해결 동작을 재정의합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="InstallCommandDescription">
@@ -1237,7 +1237,7 @@ nuget trusted-signers Remove -Name TrustedRepo</target>
       </trans-unit>
       <trans-unit id="UpdateCommandDependencyVersion">
         <source>Overrides the default dependency resolution behavior.</source>
-        <target state="translated">기본 종속성 확인 동작을 재정의합니다.</target>
+        <target state="translated">기본 종속성 해결 동작을 재정의합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UpdateCommandDescription">
