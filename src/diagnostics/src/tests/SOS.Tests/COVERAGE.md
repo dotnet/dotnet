@@ -43,6 +43,8 @@ in dumps. `DumpGen.script` is retired by a deterministic generation-population
 target that preserves its exact gen0/gen1/gen2/LOH/POH and filter assertions.
 `Overflow.script` and `MiniDumpLocalVarLookup.script` are retired by focused
 stack-overflow exception and Mini-dump ICorDebug local-variable tests.
+`VarargPInvokeInteropMD.script` is retired by a live native-breakpoint test of
+vararg P/Invoke frame identity and IL-stub resolution/disassembly.
 The remaining legacy runner and scenarios stay in place.
 
 ## Legacy-to-new map
@@ -57,7 +59,7 @@ The remaining legacy runner and scenarios stay in place.
 | `DumpGCData.script` | Retired | `DiagnosticCommandTests.DumpGcData_ReportsInducedCompactionAfterCollection` checks that each heap's `induced compacting GC` count increases after an explicitly forced, blocking, compacting collection. This exercises per-heap statistics without treating `pre and post pin` as a pinned-object count or depending on runtime-owned pinned objects (dotnet/runtime#136190). An isolated debuggee preserves the .NET 10+ regression oracle with live workstation coverage and workstation/server dump coverage across native and dotnet-dump hosts. `DumpGcData_ReportsGcStatistics` retains generic command coverage on the broader matrix. |
 | `DumpGen.script` | Retired | `GcInspectionTests.DumpGen_ReportsExactGenerationPopulations` preserves the exact 10/3/5 `DumpSampleClass` populations in gen0/gen1/gen2, the LOH sample array, the POH pinned byte array, and positive/empty `-type`/`-mt` filters. `DumpGen_ListsGenerationObjects` and `DumpGen_ArgumentsAndFilters` retain broader matrix coverage on the consolidated scenario target. |
 | `DynamicMethod.script` | Retired | `DynamicMethodTests` finds the debuggee's emitted Fibonacci method, checks its exact IL sequence, and uses the ICorDebug `dynamicMethod` local to select and disassemble the same object. |
-| `FindRootsOlderGeneration.script` | Gap | `GcRoot_FindsRootsForLive_NoneForDead` improves ordinary root correctness, but the live `findroots -gen any` notification/continue sequence and older-generation result are not represented. |
+| `FindRootsOlderGeneration.script` | Retired | `GcInspectionTests.FindRoots_SearchesOlderGenerations` preserves the live `findroots -gen any`/GC notification sequence and verifies exactly one root through the older LOH array to a young object under workstation and server GC. CDB covers .NET 10+; LLDB covers .NET 11+, after dotnet/runtime#120083 removed notification setup's target-memory allocation requirement. |
 | `GCPOH.script` | Retired | `DumpHeapGenerationsTests`, `DumpArrayTests`, `GcHandles`, `VerifyHeap`, `EeHeapTests`, and stack-root tests use deterministic objects and structured assertions; the original POH script remains active. |
 | `GCTests.script` | Retired | Object fields, `gcwhere`, stack objects, heap statistics, roots, handles, finalization, and verification are split into focused tests with exact object oracles. |
 | `InterpreterStackInterleavedTest.script` | Retained | No generic target can replace the interleaved interpreter/JIT frame sequence; legacy ownership is intentional. |
@@ -76,7 +78,7 @@ The remaining legacy runner and scenarios stay in place.
 | `TaskNestedException.script` | Retired | `PrintExceptionTests.PrintException_TaskExceptionChain` follows `AggregateException -> FormatException -> InvalidOperationException` addresses, checks messages, ordered task/caller/throw frames and source lines, and requires no further inner exception across live and Heap/Mini dump rows. The original sources and separately built library are included in the modern payload; the app project moves to the standard debuggee-folder location. |
 | `TestExtensions.script` | Retained | This validates extension-command interception and dispatch rather than SOS product output; it remains a legacy harness integration test. |
 | `ThreadApartment.script` | Retired | `ClrThreadsTests.ClrThreads_ReportsApartmentStates` identifies the named STA/MTA workers in `clrstack -all`, matches their OS thread IDs to `clrthreads`, and asserts each worker's expected apartment on Windows. |
-| `VarargPInvokeInteropMD.script` | Retained | Vararg P/Invoke, IL stubs, native breakpointing, `ip2md`, and `clru -il` form one specialized interop scenario. Generic `ip2md` and `clru` have new structured tests. |
+| `VarargPInvokeInteropMD.script` | Retired | `VarargPInvokeTests.VarargPInvoke_ReportsInteropMethodAndDisassemblesStub` retains the debuggee and Windows/CDB live Core/SingleFile coverage, including the x86 exclusion (#5883). It stops at native `msvcrt!printf`, verifies the vararg `InlinedCallFrame` and exact IL-stub signature, resolves the stub IP with `ip2md`, and checks structured native disassembly with and without `clru -il`, including the absence of IL-read errors. |
 | `WebApp.script` | Retained | Timers, ASP.NET/WebApp stacks, args/registers, and GC stress-log behavior remain in the specialized Windows legacy target; generic command equivalents are covered. |
 
 The focused gaps fixed in this review are the `dumpstack -EE` variant and
