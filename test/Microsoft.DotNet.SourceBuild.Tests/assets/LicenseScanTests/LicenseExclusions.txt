@@ -51,8 +51,7 @@ src/deployment-tools/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 #
 
 # False positive
-src/diagnostics/src/dbi/runtime/src/native/external/libunwind/doc/libunwind-ia64.man|generic-exception
-src/diagnostics/src/dbi/runtime/src/native/external/libunwind/doc/libunwind-ia64.tex|generic-exception
+src/diagnostics/src/dbi/runtime/src/native/external/libunwind/doc/libunwind-ia64.*|generic-exception
 
 #
 # efcore
