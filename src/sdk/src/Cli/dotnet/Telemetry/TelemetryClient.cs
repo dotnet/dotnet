@@ -280,17 +280,17 @@ public class TelemetryClient : ITelemetryClient
         }
         else
         {
-            s_tracerProvider?.Shutdown();
+            s_tracerProvider?.Shutdown(timeoutMilliseconds: 10);
             s_metricsProvider?.Shutdown(timeoutMilliseconds: 10);
         }
     }
 
     internal static void ForceFlushProviders()
     {
-        int timeout = s_isCIEnvironment || s_enableOtlpExporter ? s_shutdownTimeoutMs : Timeout.Infinite;
+        int timeout = s_isCIEnvironment || s_enableOtlpExporter ? s_shutdownTimeoutMs : 10;
         long started = Stopwatch.GetTimestamp();
         s_tracerProvider?.ForceFlush(timeout);
-        int remaining = timeout == Timeout.Infinite ? 10 : Math.Max(0, timeout - (int)Stopwatch.GetElapsedTime(started).TotalMilliseconds);
+        int remaining = Math.Max(0, timeout - (int)Stopwatch.GetElapsedTime(started).TotalMilliseconds);
         s_metricsProvider?.ForceFlush(remaining);
     }
 
