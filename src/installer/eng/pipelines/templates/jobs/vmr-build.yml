@@ -270,21 +270,12 @@ jobs:
       dockerVolumeArgs="-v $(sourcesPath):/vmr"
       dockerEnvArgs="-e SMOKE_TESTS_EXCLUDE_OMNISHARP=${{ parameters.excludeOmniSharpTests }} -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=true -e SMOKE_TESTS_RUNNING_IN_CI=true"
       poisonArg=''
-      extraBuildProperties=''
-
-      if [[ '$(System.TeamProject)' == 'internal' ]]; then
-        testSdkHotfixVersion='17.8.1-hotfix-26509-15'
-        extraBuildProperties="$extraBuildProperties /p:SmokeTestsTestSdkVersion=$testSdkHotfixVersion"
-        if [[ -n '${{ parameters.reuseBuildArtifactsFrom }}' && '${{ parameters.withPreviousSDK }}' != 'True' ]]; then
-          extraBuildProperties="$extraBuildProperties /p:MicrosoftNETTestSdkVersion=$testSdkHotfixVersion"
-        fi
-      fi
 
       if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
         poisonArg='--poison'
       fi
 
-      docker run --rm $dockerVolumeArgs -w /vmr $dockerEnvArgs ${{ parameters.container }} ./build.sh $poisonArg --run-smoke-test $(additionalBuildArgs) -- -p:SmokeTestConsoleVerbosity=detailed $extraBuildProperties ${{ parameters.extraProperties }}
+      docker run --rm $dockerVolumeArgs -w /vmr $dockerEnvArgs ${{ parameters.container }} ./build.sh $poisonArg --run-smoke-test $(additionalBuildArgs) -- -p:SmokeTestConsoleVerbosity=detailed ${{ parameters.extraProperties }}
     displayName: Run Tests
 
   # Don't use CopyFiles@2 as it encounters permissions issues because it indexes all files in the source directory graph.

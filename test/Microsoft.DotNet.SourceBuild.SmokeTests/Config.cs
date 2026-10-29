@@ -18,7 +18,6 @@ internal static class Config
     public const string CustomPackagesPathEnv = "SMOKE_TESTS_CUSTOM_PACKAGES_PATH";
     public const string SdkTarballPathEnv = "SMOKE_TESTS_SDK_TARBALL_PATH";
     public const string SourceBuiltArtifactsPathEnv = "SMOKE_TESTS_SOURCEBUILT_ARTIFACTS_PATH";
-    public const string TestSdkVersionEnv = "SMOKE_TESTS_TEST_SDK_VERSION";
     public const string TargetRidEnv = "SMOKE_TESTS_TARGET_RID";
     public const string WarnSdkContentDiffsEnv = "SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS";
     public const string WarnLicenseScanDiffsEnv = "SMOKE_TESTS_WARN_LICENSE_SCAN_DIFFS";
@@ -37,7 +36,6 @@ internal static class Config
     public static string? CustomPackagesPath { get; } = Environment.GetEnvironmentVariable(CustomPackagesPathEnv);
     public static string? SdkTarballPath { get; } = Environment.GetEnvironmentVariable(SdkTarballPathEnv);
     public static string? SourceBuiltArtifactsPath { get; } = Environment.GetEnvironmentVariable(SourceBuiltArtifactsPathEnv);
-    public static string? TestSdkVersion { get; } = Environment.GetEnvironmentVariable(TestSdkVersionEnv);
     public static string TargetRid { get; } = Environment.GetEnvironmentVariable(TargetRidEnv) ??
         throw new InvalidOperationException($"'{Config.TargetRidEnv}' must be specified");
     public static string TargetArchitecture { get; } = TargetRid.Split('-')[1];
