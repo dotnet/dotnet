@@ -1,0 +1,25 @@
+name: OSSF Scorecard
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "24 5 * * 0" # Once a week
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  analysis:
+    name: Scorecard analysis
+    if: github.event_name != 'schedule' || (github.event_name == 'schedule' && github.event.repository.fork == false)
+    permissions:
+      contents: read # for actions/checkout
+      id-token: write # for Scorecard to publish results
+      security-events: write # for the SARIF upload to code scanning
+    uses: open-telemetry/shared-workflows/.github/workflows/scorecard.yml@8079110d7e793bd38b1a5219ef8f8280dab9139e # v0.7.0

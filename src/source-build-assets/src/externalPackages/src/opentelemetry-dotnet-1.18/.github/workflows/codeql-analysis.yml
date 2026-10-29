@@ -1,0 +1,19 @@
+name: "CodeQL"
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Once a day at 00:00 UTC
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  code-ql:
+    if: github.event_name != 'schedule' || (github.event_name == 'schedule' && github.event.repository.fork == false)
+    uses: ./.github/workflows/codeql-analysis-steps.yml
+    permissions:
+      actions: read # Scan GitHub Actions workflows
+      contents: read # Checkout the repository
+      security-events: write # Store results in the Security tab
+    with:
+      trigger: ${{ github.event_name }}

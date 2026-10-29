@@ -1,0 +1,592 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+using System.Buffers;
+using System.Buffers.Binary;
+using System.Diagnostics;
+#if NETFRAMEWORK || NETSTANDARD2_0
+using System.Diagnostics.CodeAnalysis;
+#endif
+using System.Runtime.CompilerServices;
+using System.Text;
+
+namespace OpenTelemetry.Exporter.OpenTelemetryProtocol.Implementation.Serializer;
+
+internal static class ProtobufSerializer
+{
+    /// <summary>
+    /// The size in bytes a serialization buffer is initially requested at.
+    /// The buffer is always at least this large, so it is also the smallest
+    /// meaningful maximum size.
+    /// </summary>
+    /// <remarks>
+    /// Note: <see cref="ArrayPool{T}"/> rounds a request of this size up to
+    /// 1 MiB, so the growth sequence is in fact 1 MiB, 2 MiB, 4 MiB, and so on.
+    /// </remarks>
+    internal const int InitialBufferSize = 750_000;
+
+    /// <summary>
+    /// The largest size in bytes a serialization buffer may grow to (256 MiB).
+    /// </summary>
+    /// <remarks>
+    /// Nested message lengths are back-filled by <see
+    /// cref="WriteReservedLength"/> into a fixed four byte varint, which can only
+    /// represent lengths up to <c>2^28 - 1</c>. The outermost message is always
+    /// preceded by its own tag and reserved length, so its content is at least
+    /// five bytes shorter than the buffer and a buffer of exactly <c>2^28</c>
+    /// still encodes correctly. Keeping this a power of two also means <see
+    /// cref="ArrayPool{T}"/> returns it exactly rather than rounding up, so the
+    /// buffer never exceeds this size.
+    /// </remarks>
+    internal const int MaxBufferSize = 256 * 1024 * 1024;
+
+    /// <summary>
+    /// The number of bytes to reserve for a length prefix that will be filled in by
+    /// <see cref="WriteCompactLength"/>.
+    /// </summary>
+    internal const int ReserveSizeForCompactLength = 1;
+
+    private const uint UInt128 = 0x80;
+    private const ulong ULong128 = 0x80;
+    private const int Fixed32Size = 4;
+    private const int Fixed64Size = 8;
+    private const int MaskBitsLow = 0b_0111_1111;
+    private const int MaskBitHigh = 0b_1000_0000;
+
+    // A UTF-16 character encodes to at most 3 UTF-8 bytes (a surrogate pair encodes to 4
+    // bytes across 2 characters, so 3 is the per-character worst case), so any string of
+    // this length or shorter encodes to at most MaskBitsLow bytes and its protobuf length
+    // prefix therefore always fits in a single varint byte.
+    private const int MaxCharsWithSingleByteUtf8Length = MaskBitsLow / 3;
+#if NETFRAMEWORK || NETSTANDARD2_0
+    private const int MaxThreadStaticCharBufferSize = 1024;
+#endif
+
+    private static readonly Encoding Utf8Encoding = Encoding.UTF8;
+
+#if NETFRAMEWORK || NETSTANDARD2_0
+    [ThreadStatic]
+    private static char[]? threadCharBuffer;
+#endif
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static uint GetTagValue(int fieldNumber, ProtobufWireType wireType) => ((uint)(fieldNumber << 3)) | (uint)wireType;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteTag(byte[] buffer, int writePosition, int fieldNumber, ProtobufWireType type) => WriteVarInt32(buffer, writePosition, GetTagValue(fieldNumber, type));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteLength(byte[] buffer, int writePosition, int length) => WriteVarInt32(buffer, writePosition, (uint)length);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteTagAndLength(byte[] buffer, int writePosition, int contentLength, int fieldNumber, ProtobufWireType type)
+    {
+        writePosition = WriteTag(buffer, writePosition, fieldNumber, type);
+        writePosition = WriteLength(buffer, writePosition, contentLength);
+
+        return writePosition;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static void WriteReservedLength(byte[] buffer, int writePosition, int length)
+    {
+        var slice = buffer.AsSpan(writePosition, 4);
+        slice[0] = (byte)((length & MaskBitsLow) | MaskBitHigh);
+        slice[1] = (byte)(((length >> 7) & MaskBitsLow) | MaskBitHigh);
+        slice[2] = (byte)(((length >> 14) & MaskBitsLow) | MaskBitHigh);
+        slice[3] = (byte)((length >> 21) & MaskBitsLow);
+    }
+
+    /// <summary>
+    /// Fills in the length of a nested message whose length prefix was reserved with
+    /// <see cref="ReserveSizeForCompactLength"/>, using the smallest varint that fits.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <see cref="WriteReservedLength"/> always emits four bytes, padding the varint with
+    /// redundant continuation bits. That costs nothing to write, but it puts up to three
+    /// wasted bytes on the wire for every nested message, which is a large share of the
+    /// payload for messages that are individually small - and attributes, span events and
+    /// span links are small and numerous.
+    /// </para>
+    /// <para>
+    /// This reserves a single byte instead, which is correct without any further work for
+    /// content under 128 bytes. Longer content has to be moved to make room for a wider
+    /// prefix, so this should only be used where the content is normally short.
+    /// </para>
+    /// </remarks>
+    /// <param name="buffer">The buffer being written to.</param>
+    /// <param name="lengthPosition">The position reserved for the length prefix.</param>
+    /// <param name="writePosition">The position just past the message content.</param>
+    /// <returns>The new write position, which moves when the content had to be shifted.</returns>
+    internal static int WriteCompactLength(byte[] buffer, int lengthPosition, int writePosition)
+    {
+        var contentLength = writePosition - (lengthPosition + ReserveSizeForCompactLength);
+
+        Debug.Assert(contentLength >= 0, "contentLength was negative");
+
+        if (contentLength <= MaskBitsLow)
+        {
+            buffer[lengthPosition] = (byte)contentLength;
+            return writePosition;
+        }
+
+        // The reserved byte is not enough. Shift the content along to make room for the
+        // full varint. Span.CopyTo handles the overlap, and throws when the buffer is too
+        // small, which the callers turn into a resize and a retry.
+        var shift = ComputeVarInt32Size((uint)contentLength) - ReserveSizeForCompactLength;
+        var contentPosition = lengthPosition + ReserveSizeForCompactLength;
+
+        buffer.AsSpan(contentPosition, contentLength).CopyTo(buffer.AsSpan(contentPosition + shift));
+
+        var endOfLength = WriteVarInt32(buffer, lengthPosition, (uint)contentLength);
+
+        Debug.Assert(endOfLength == contentPosition + shift, "The length prefix did not end where the content starts");
+
+        return writePosition + shift;
+    }
+
+    internal static int ComputeVarInt32Size(uint value)
+    {
+        var size = 1;
+
+        while (value >= 0x80)
+        {
+            size++;
+            value >>= 7;
+        }
+
+        return size;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteBoolWithTag(byte[] buffer, int writePosition, int fieldNumber, bool value)
+    {
+        writePosition = WriteTag(buffer, writePosition, fieldNumber, ProtobufWireType.VARINT);
+        buffer[writePosition++] = value ? (byte)1 : (byte)0;
+        return writePosition;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteEnumWithTag(byte[] buffer, int writePosition, int fieldNumber, int value)
+    {
+        writePosition = WriteTag(buffer, writePosition, fieldNumber, ProtobufWireType.VARINT);
+        buffer[writePosition++] = (byte)value;
+        return writePosition;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteFixed32LittleEndianFormat(byte[] buffer, int writePosition, uint value)
+    {
+        Span<byte> span = new(buffer, writePosition, Fixed32Size);
+        BinaryPrimitives.WriteUInt32LittleEndian(span, value);
+        writePosition += Fixed32Size;
+
+        return writePosition;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteFixed64LittleEndianFormat(byte[] buffer, int writePosition, ulong value)
+    {
+        Span<byte> span = new(buffer, writePosition, Fixed64Size);
+        BinaryPrimitives.WriteUInt64LittleEndian(span, value);
+        writePosition += Fixed64Size;
+
+        return writePosition;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteFixed32WithTag(byte[] buffer, int writePosition, int fieldNumber, uint value)
+    {
+        writePosition = WriteTag(buffer, writePosition, fieldNumber, ProtobufWireType.I32);
+        writePosition = WriteFixed32LittleEndianFormat(buffer, writePosition, value);
+
+        return writePosition;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteFixed64WithTag(byte[] buffer, int writePosition, int fieldNumber, ulong value)
+    {
+        writePosition = WriteTag(buffer, writePosition, fieldNumber, ProtobufWireType.I64);
+        writePosition = WriteFixed64LittleEndianFormat(buffer, writePosition, value);
+
+        return writePosition;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteSInt32WithTag(byte[] buffer, int writePosition, int fieldNumber, int value)
+    {
+        writePosition = WriteTag(buffer, writePosition, fieldNumber, ProtobufWireType.VARINT);
+
+        // https://protobuf.dev/programming-guides/encoding/#signed-ints
+        writePosition = WriteVarInt32(buffer, writePosition, (uint)((value << 1) ^ (value >> 31)));
+
+        return writePosition;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteVarInt32(byte[] buffer, int writePosition, uint value)
+    {
+        while (value >= UInt128)
+        {
+            buffer[writePosition++] = (byte)(MaskBitHigh | (value & MaskBitsLow));
+            value >>= 7;
+        }
+
+        buffer[writePosition++] = (byte)value;
+        return writePosition;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteVarInt64(byte[] buffer, int writePosition, ulong value)
+    {
+        while (value >= ULong128)
+        {
+            buffer[writePosition++] = (byte)(MaskBitHigh | (value & MaskBitsLow));
+            value >>= 7;
+        }
+
+        buffer[writePosition++] = (byte)value;
+        return writePosition;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteInt64WithTag(byte[] buffer, int writePosition, int fieldNumber, ulong value)
+    {
+        writePosition = WriteTag(buffer, writePosition, fieldNumber, ProtobufWireType.VARINT);
+        writePosition = WriteVarInt64(buffer, writePosition, value);
+
+        return writePosition;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteDoubleWithTag(byte[] buffer, int writePosition, int fieldNumber, double value)
+    {
+        writePosition = WriteTag(buffer, writePosition, fieldNumber, ProtobufWireType.I64);
+        writePosition = WriteFixed64LittleEndianFormat(buffer, writePosition, (ulong)BitConverter.DoubleToInt64Bits(value));
+
+        return writePosition;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteDouble(byte[] buffer, int writePosition, double value)
+        => WriteFixed64LittleEndianFormat(buffer, writePosition, (ulong)BitConverter.DoubleToInt64Bits(value));
+
+    /// <summary>
+    /// Computes the number of bytes required to encode a 64-bit unsigned integer in Protocol Buffers' varint format.
+    /// </summary>
+    /// <remarks>
+    /// Protocol Buffers uses variable-length encoding (varint) to serialize integers efficiently:
+    /// - Each byte uses 7 bits to encode the number and 1 bit (MSB) to indicate if more bytes follow
+    /// - The algorithm checks how many significant bits the number contains by shifting and masking
+    /// - Numbers are encoded in groups of 7 bits, from least to most significant
+    /// - Each group requires one byte, so the method returns the number of 7-bit groups needed
+    ///
+    /// Examples:
+    /// - Values 0-127 (7 bits) require 1 byte
+    /// - Values 128-16383 (14 bits) require 2 bytes
+    /// - Values 16384-2097151 (21 bits) require 3 bytes
+    /// And so on...
+    ///
+    /// For more details, see:
+    /// - Protocol Buffers encoding reference: https://developers.google.com/protocol-buffers/docs/encoding#varints.
+    /// </remarks>
+    /// <param name="value">The unsigned 64-bit integer to be encoded.</param>
+    /// <returns>Number of bytes needed to encode the value.</returns>
+    internal static int ComputeVarInt64Size(ulong value)
+    {
+        if ((value & (0xffffffffffffffffL << 7)) == 0)
+        {
+            return 1;
+        }
+
+        if ((value & (0xffffffffffffffffL << 14)) == 0)
+        {
+            return 2;
+        }
+
+        if ((value & (0xffffffffffffffffL << 21)) == 0)
+        {
+            return 3;
+        }
+
+        if ((value & (0xffffffffffffffffL << 28)) == 0)
+        {
+            return 4;
+        }
+
+        if ((value & (0xffffffffffffffffL << 35)) == 0)
+        {
+            return 5;
+        }
+
+        if ((value & (0xffffffffffffffffL << 42)) == 0)
+        {
+            return 6;
+        }
+
+        if ((value & (0xffffffffffffffffL << 49)) == 0)
+        {
+            return 7;
+        }
+
+        if ((value & (0xffffffffffffffffL << 56)) == 0)
+        {
+            return 8;
+        }
+
+        if ((value & (0xffffffffffffffffL << 63)) == 0)
+        {
+            return 9;
+        }
+
+        return 10;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteByteArrayWithTag(byte[] buffer, int writePosition, int fieldNumber, ReadOnlySpan<byte> value)
+    {
+        writePosition = WriteTag(buffer, writePosition, fieldNumber, ProtobufWireType.LEN);
+        writePosition = WriteLength(buffer, writePosition, value.Length);
+        value.CopyTo(buffer.AsSpan(writePosition));
+
+        writePosition += value.Length;
+        return writePosition;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteStringWithTag(byte[] buffer, int writePosition, int fieldNumber, string value)
+    {
+        // A string this short cannot encode to more than MaskBitsLow bytes, so its length
+        // prefix is always a single varint byte. Reserving that byte and filling it in once
+        // the characters have been encoded removes the separate GetByteCount pass, roughly
+        // halving the cost of writing a short string. Attribute keys and span names go
+        // through here, so this runs many times per exported item.
+        if (value.Length <= MaxCharsWithSingleByteUtf8Length)
+        {
+            writePosition = WriteTag(buffer, writePosition, fieldNumber, ProtobufWireType.LEN);
+
+            var lengthPosition = writePosition++;
+
+            // Claim the reserved byte before encoding. It keeps the out-of-space
+            // failure as IndexOutOfRangeException the same as the slower path.
+            buffer[lengthPosition] = 0;
+
+#if NETFRAMEWORK || NETSTANDARD2_0
+            var bytesWritten = Utf8Encoding.GetBytes(value, 0, value.Length, buffer, writePosition);
+#else
+            var bytesWritten = Utf8Encoding.GetBytes(value.AsSpan(), buffer.AsSpan(writePosition));
+#endif
+
+            Debug.Assert(bytesWritten <= MaskBitsLow, "bytesWritten did not fit in a single byte varint");
+
+            buffer[lengthPosition] = (byte)bytesWritten;
+
+            return writePosition + bytesWritten;
+        }
+
+        var numberOfUtf8CharsInString = GetNumberOfUtf8CharsInString(value);
+        return WriteStringWithTag(buffer, writePosition, fieldNumber, numberOfUtf8CharsInString, value);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int GetNumberOfUtf8CharsInString(string value)
+    {
+        Debug.Assert(value != null, "value was null");
+        return Utf8Encoding.GetByteCount(value);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int GetNumberOfUtf8CharsInString(ReadOnlySpan<char> value)
+    {
+#if NETFRAMEWORK || NETSTANDARD2_0
+        if (value.Length == 0)
+        {
+            return 0;
+        }
+
+        var buffer = GetCharBuffer(value.Length);
+        value.CopyTo(buffer);
+        return Utf8Encoding.GetByteCount(buffer, 0, value.Length);
+#else
+        return Utf8Encoding.GetByteCount(value);
+#endif
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteStringWithTag(byte[] buffer, int writePosition, int fieldNumber, ReadOnlySpan<char> value)
+    {
+        var numberOfUtf8CharsInString = GetNumberOfUtf8CharsInString(value);
+        return WriteStringWithTag(buffer, writePosition, fieldNumber, numberOfUtf8CharsInString, value);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteStringWithTag(byte[] buffer, int writePosition, int fieldNumber, int numberOfUtf8CharsInString, string value)
+    {
+        writePosition = WriteTag(buffer, writePosition, fieldNumber, ProtobufWireType.LEN);
+        writePosition = WriteLength(buffer, writePosition, numberOfUtf8CharsInString);
+
+#if NETFRAMEWORK || NETSTANDARD2_0
+        if (buffer.Length - writePosition < numberOfUtf8CharsInString)
+        {
+            // Note: Validate there is enough space in the buffer to hold the
+            // string otherwise throw to trigger a resize of the buffer.
+            ThrowBufferTooSmallException(nameof(buffer));
+        }
+
+        var bytesWritten = Utf8Encoding.GetBytes(value, 0, value.Length, buffer, writePosition);
+        Debug.Assert(bytesWritten == numberOfUtf8CharsInString, "bytesWritten did not match numberOfUtf8CharsInString");
+#else
+        var bytesWritten = Utf8Encoding.GetBytes(value.AsSpan(), buffer.AsSpan(writePosition));
+        Debug.Assert(bytesWritten == numberOfUtf8CharsInString, "bytesWritten did not match numberOfUtf8CharsInString");
+#endif
+
+        writePosition += numberOfUtf8CharsInString;
+        return writePosition;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int WriteStringWithTag(byte[] buffer, int writePosition, int fieldNumber, int numberOfUtf8CharsInString, ReadOnlySpan<char> value)
+    {
+        writePosition = WriteTag(buffer, writePosition, fieldNumber, ProtobufWireType.LEN);
+        writePosition = WriteLength(buffer, writePosition, numberOfUtf8CharsInString);
+
+#if NETFRAMEWORK || NETSTANDARD2_0
+        if (value.Length == 0)
+        {
+            return writePosition;
+        }
+
+        if (buffer.Length - writePosition < numberOfUtf8CharsInString)
+        {
+            // Note: Validate there is enough space in the buffer to hold the
+            // string otherwise throw to trigger a resize of the buffer.
+            ThrowBufferTooSmallException(nameof(buffer));
+        }
+
+        var charBuffer = GetCharBuffer(value.Length);
+        value.CopyTo(charBuffer);
+        var bytesWritten = Utf8Encoding.GetBytes(charBuffer, 0, value.Length, buffer, writePosition);
+        Debug.Assert(bytesWritten == numberOfUtf8CharsInString, "bytesWritten did not match numberOfUtf8CharsInString");
+#else
+        var bytesWritten = Utf8Encoding.GetBytes(value, buffer.AsSpan(writePosition));
+        Debug.Assert(bytesWritten == numberOfUtf8CharsInString, "bytesWritten did not match numberOfUtf8CharsInString");
+#endif
+
+        writePosition += numberOfUtf8CharsInString;
+        return writePosition;
+    }
+
+    /// <summary>
+    /// Rents a serialization buffer of at least <paramref name="minimumSize"/>
+    /// bytes from the pool. The returned array may be larger than requested and
+    /// its contents are not cleared.
+    /// </summary>
+    /// <param name="minimumSize">The minimum required buffer size in bytes.</param>
+    /// <returns>A pooled buffer that must be handed back via <see cref="ReturnBuffer(byte[])"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static byte[] RentBuffer(int minimumSize) => RentBuffer(ArrayPool<byte>.Shared, minimumSize);
+
+    /// <inheritdoc cref="RentBuffer(int)"/>
+    /// <param name="pool">The pool to rent the buffer from.</param>
+    /// <param name="minimumSize">The minimum required buffer size in bytes.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static byte[] RentBuffer(ArrayPool<byte> pool, int minimumSize) => pool.Rent(minimumSize);
+
+    /// <summary>
+    /// Returns a buffer previously obtained from <see cref="RentBuffer(int)"/> or
+    /// grown by <see cref="IncreaseBufferSize"/> back to the pool after clearing
+    /// its contents.
+    /// </summary>
+    /// <param name="buffer">The buffer to return.</param>
+    internal static void ReturnBuffer(byte[] buffer) => ReturnBuffer(ArrayPool<byte>.Shared, buffer);
+
+    internal static void ReturnBuffer(ArrayPool<byte> pool, byte[] buffer) => pool.Return(buffer, clearArray: true);
+
+    /// <summary>
+    /// Returns a buffer previously obtained from <see cref="RentBuffer(int)"/> back to the
+    /// pool, scrubbing only the leading <paramref name="writtenLength"/> bytes.
+    /// </summary>
+    /// <param name="buffer">The buffer to return.</param>
+    /// <param name="writtenLength">The number of leading bytes that may contain data.</param>
+    internal static void ReturnBuffer(byte[] buffer, int writtenLength)
+        => ReturnBuffer(ArrayPool<byte>.Shared, buffer, writtenLength);
+
+    /// <inheritdoc cref="ReturnBuffer(byte[], int)"/>
+    /// <param name="pool">The pool to return the buffer to.</param>
+    /// <param name="buffer">The buffer to return.</param>
+    /// <param name="writtenLength">The number of leading bytes that may contain data.</param>
+    internal static void ReturnBuffer(ArrayPool<byte> pool, byte[] buffer, int writtenLength)
+    {
+        Debug.Assert((uint)writtenLength <= (uint)buffer.Length, "writtenLength was out of range");
+
+        if (writtenLength > 0)
+        {
+            buffer.AsSpan(0, writtenLength).Clear();
+        }
+
+        pool.Return(buffer, clearArray: false);
+    }
+
+    internal static bool IncreaseBufferSize(ref byte[] buffer, OtlpSignalType otlpSignalType, int maxBufferSize = MaxBufferSize)
+    {
+        if (buffer.Length >= maxBufferSize)
+        {
+            OpenTelemetryProtocolExporterEventSource.Log.BufferExceededMaxSize(otlpSignalType.ToString(), buffer.Length);
+            return false;
+        }
+
+        // Grow by doubling, but never ask for more than the configured maximum.
+        // Clamping to the maximum (rather than refusing the grow outright when
+        // the doubled size would overshoot) means the entire configured budget
+        // is usable, with no unreachable remainder. The pool rounds the request
+        // up to its next size class, so the buffer still ends up at least this big.
+        var nextBufferSize = (int)Math.Min((long)buffer.Length * 2, maxBufferSize);
+
+        var pool = ArrayPool<byte>.Shared;
+
+        byte[] largerBuffer;
+        try
+        {
+            largerBuffer = pool.Rent(nextBufferSize);
+        }
+        catch (OutOfMemoryException)
+        {
+            OpenTelemetryProtocolExporterEventSource.Log.BufferResizeFailedDueToMemory(otlpSignalType.ToString());
+            return false;
+        }
+
+        // Swap in the larger buffer first, then return the smaller one to the
+        // pool for reuse. The serializer restarts from the beginning after a
+        // resize, so the existing contents need not be copied.
+        var smallerBuffer = buffer;
+        buffer = largerBuffer;
+
+        ReturnBuffer(pool, smallerBuffer);
+
+        return true;
+    }
+
+#if NETFRAMEWORK || NETSTANDARD2_0
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static char[] GetCharBuffer(int minimumLength)
+    {
+        if (minimumLength > MaxThreadStaticCharBufferSize)
+        {
+            return new char[minimumLength];
+        }
+
+        var buffer = threadCharBuffer;
+        if (buffer == null || buffer.Length < minimumLength)
+        {
+            threadCharBuffer = buffer = new char[Math.Max(minimumLength, 256)];
+        }
+
+        return buffer;
+    }
+
+    [DoesNotReturn]
+    private static void ThrowBufferTooSmallException(string paramName)
+        => throw new ArgumentException("The buffer is too small to hold the data being written.", paramName);
+#endif
+}

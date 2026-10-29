@@ -91,10 +91,10 @@
       "commitSha": "bdf6a59a376b141815580500d147c31b95d63a64"
     },
     {
-      "barId": 336930,
+      "barId": 338544,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "2b0a53c9c2a12fa32c1c2f52da740156cd6c3dac"
+      "commitSha": "8a2c9040054af8f98c1fa208ee3be84af943a7ec"
     },
     {
       "barId": 336290,
@@ -204,6 +204,11 @@
       "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet",
       "remoteUri": "https://github.com/open-telemetry/opentelemetry-dotnet",
       "commitSha": "611868a27afda59761da60b98610f8d3b85497dc"
+    },
+    {
+      "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet-1.18",
+      "remoteUri": "https://github.com/open-telemetry/opentelemetry-dotnet",
+      "commitSha": "9db92a4e978b4ae432183c790259be48a475578f"
     },
     {
       "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet-contrib",
