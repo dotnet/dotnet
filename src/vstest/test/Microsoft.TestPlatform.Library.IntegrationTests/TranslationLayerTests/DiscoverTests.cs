@@ -44,6 +44,19 @@ public class DiscoverTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [TestCategory("Smoke")]
+    [TestMatrix(testHost: Net)]
+    public async Task StartSessionAsyncShouldConnectToConsole(RunnerInfo runnerInfo)
+    {
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+        _vstestConsoleWrapper = GetVsTestConsoleWrapper(startSession: false);
+
+#pragma warning disable CS0618
+        await _vstestConsoleWrapper.StartSessionAsync();
+#pragma warning restore CS0618
+    }
+
+    [TestMethod]
     // WrapperCompatibilityDataSource includes the .NET Framework runner, which is not available on Linux/macOS.
     [TestCategory("Windows-Review")]
     [CompatibilityMatrix(CompatScenario.Wrapper)]

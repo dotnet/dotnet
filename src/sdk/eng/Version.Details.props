@@ -85,7 +85,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETRuntimeEmscriptenInternalPackageVersion>11.0.0-rtm.26473.115</MicrosoftNETRuntimeEmscriptenInternalPackageVersion>
     <MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>11.1.0-preview.26473.115</MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>
     <MicrosoftNETSdkWindowsDesktopPackageVersion>11.0.0-rtm.26473.115</MicrosoftNETSdkWindowsDesktopPackageVersion>
-    <MicrosoftNETTestSdkPackageVersion>18.11.0-release-26473-115</MicrosoftNETTestSdkPackageVersion>
+    <MicrosoftNETTestSdkPackageVersion>18.12.0-hotfix-26528-38</MicrosoftNETTestSdkPackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>11.0.0-rtm.26473.115</MicrosoftNETCoreAppRefPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>11.0.0-rtm.26473.115</MicrosoftNETCorePlatformsPackageVersion>
     <MicrosoftSourceLinkAzureReposGitPackageVersion>11.0.100-rtm.26473.115</MicrosoftSourceLinkAzureReposGitPackageVersion>
@@ -93,8 +93,8 @@ This file should be imported by eng/Versions.props
     <MicrosoftSourceLinkCommonPackageVersion>11.0.100-rtm.26473.115</MicrosoftSourceLinkCommonPackageVersion>
     <MicrosoftSourceLinkGitHubPackageVersion>11.0.100-rtm.26473.115</MicrosoftSourceLinkGitHubPackageVersion>
     <MicrosoftSourceLinkGitLabPackageVersion>11.0.100-rtm.26473.115</MicrosoftSourceLinkGitLabPackageVersion>
-    <MicrosoftTestPlatformBuildPackageVersion>18.11.0-release-26473-115</MicrosoftTestPlatformBuildPackageVersion>
-    <MicrosoftTestPlatformCLIPackageVersion>18.11.0-release-26473-115</MicrosoftTestPlatformCLIPackageVersion>
+    <MicrosoftTestPlatformBuildPackageVersion>18.12.0-hotfix-26528-38</MicrosoftTestPlatformBuildPackageVersion>
+    <MicrosoftTestPlatformCLIPackageVersion>18.12.0-hotfix-26528-38</MicrosoftTestPlatformCLIPackageVersion>
     <MicrosoftWebXdtPackageVersion>3.3.0-rtm.26473.115</MicrosoftWebXdtPackageVersion>
     <MicrosoftWin32SystemEventsPackageVersion>11.0.0-rtm.26473.115</MicrosoftWin32SystemEventsPackageVersion>
     <MicrosoftWindowsDesktopAppInternalPackageVersion>11.0.0-rtm.26473.115</MicrosoftWindowsDesktopAppInternalPackageVersion>
