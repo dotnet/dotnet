@@ -201,17 +201,17 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>3073618cc1ab03586872e1cf3035afd377d66df6</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Test.Sdk" Version="18.7.0-release-26466-105">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>3073618cc1ab03586872e1cf3035afd377d66df6</Sha>
+    <Dependency Name="Microsoft.NET.Test.Sdk" Version="18.7.1-hotfix-26528-41">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/microsoft-vstest</Uri>
+      <Sha>c05ffe01c4d436921d4f93d32645d4d0bb511fd5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TestPlatform.CLI" Version="18.7.0-release-26466-105">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>3073618cc1ab03586872e1cf3035afd377d66df6</Sha>
+    <Dependency Name="Microsoft.TestPlatform.CLI" Version="18.7.1-hotfix-26528-41">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/microsoft-vstest</Uri>
+      <Sha>c05ffe01c4d436921d4f93d32645d4d0bb511fd5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TestPlatform.Build" Version="18.7.0-release-26466-105">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>3073618cc1ab03586872e1cf3035afd377d66df6</Sha>
+    <Dependency Name="Microsoft.TestPlatform.Build" Version="18.7.1-hotfix-26528-41">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/microsoft-vstest</Uri>
+      <Sha>c05ffe01c4d436921d4f93d32645d4d0bb511fd5</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="10.0.15">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
