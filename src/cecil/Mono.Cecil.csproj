@@ -2,6 +2,8 @@
   <PropertyGroup>
     <TargetFrameworks>$(ToolsFramework);$(NetMinimum)</TargetFrameworks>
     <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">true</IsAotCompatible>
+    <!-- Repo-local source-build lacks the VMR's ILLink packages needed for AOT analysis. -->
+    <IsAotCompatible Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' != 'true'">false</IsAotCompatible>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ProjectInfo.cs" />
