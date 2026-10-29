@@ -182,6 +182,36 @@ namespace NuGet.Protocol.Tests
         }
 
         [Fact]
+        public async Task V2FeedParser_Search_WhenSourceReturnsInvalidXml_ThrowsFatalProtocolException()
+        {
+            // Arrange
+            var serviceAddress = ProtocolUtility.CreateServiceAddress();
+            var searchUri = serviceAddress + "Search()?$filter=IsLatestVersion&searchTerm='azure'&targetFramework='net40-client'" +
+                "&includePrerelease=false&$skip=0&$top=1&semVerLevel=2.0.0";
+
+            var responses = new Dictionary<string, string>();
+            // An HTML page instead of a feed, like the one a web UI URL returns when it's used as a source
+            responses.Add(searchUri, "<html><body><a href=\"/feed?a=1&b=2\">feed</a></body></html>");
+            responses.Add(serviceAddress, string.Empty);
+
+            var httpSource = new TestHttpSource(new PackageSource(serviceAddress), responses);
+
+            V2FeedParser parser = new V2FeedParser(httpSource, serviceAddress);
+            var searchFilter = new SearchFilter(includePrerelease: false)
+            {
+                SupportedFrameworks = new string[] { "net40-Client" }
+            };
+
+            // Act
+            var exception = await Assert.ThrowsAsync<FatalProtocolException>(
+                () => parser.Search("azure", searchFilter, 0, 1, NullLogger.Instance, CancellationToken.None));
+
+            // Assert
+            Assert.StartsWith(string.Format(CultureInfo.CurrentCulture, Strings.Log_FailedToFetchV2FeedHttp, searchUri, string.Empty), exception.Message);
+            Assert.IsType<System.Xml.XmlException>(exception.InnerException);
+        }
+
+        [Fact]
         public async Task V2FeedParser_Search()
         {
             // Arrange
