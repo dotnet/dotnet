@@ -7,7 +7,6 @@ using System;
 
 namespace NuGet.PackageManagement
 {
-    [Serializable]
     public class PackageAlreadyInstalledException : Exception
     {
         public PackageAlreadyInstalledException(string message)

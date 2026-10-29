@@ -8,7 +8,6 @@ using System.Formats.Asn1;
 
 namespace Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1
 {
-    [Serializable]
     public sealed class InvalidAsn1Exception : AsnContentException
     {
         public InvalidAsn1Exception() { }

@@ -312,11 +312,6 @@
         <target state="new">Allow object expressions without overrides</target>
         <note />
       </trans-unit>
-      <trans-unit id="featureAttributesToRightOfModuleKeyword">
-        <source>attributes to the right of the 'module' keyword</source>
-        <target state="translated">атрибуты справа от ключевого слова "module"</target>
-        <note />
-      </trans-unit>
       <trans-unit id="featureBetterAnonymousRecordParsing">
         <source>Support for better anonymous record parsing</source>
         <target state="new">Support for better anonymous record parsing</target>
@@ -325,16 +320,6 @@
       <trans-unit id="featureBooleanReturningAndReturnTypeDirectedPartialActivePattern">
         <source>Boolean-returning and return-type-directed partial active patterns</source>
         <target state="translated">Логические возвращаемые и направленные на возвращаемый тип частичные активные шаблоны</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="featureCSharpExtensionAttributeNotRequired">
-        <source>Allow implicit Extension attribute on declaring types, modules</source>
-        <target state="translated">Разрешить атрибут неявного расширения для объявляющих типов, модулей</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="featureChkNotTailRecursive">
-        <source>Raises warnings if a member or function has the 'TailCall' attribute, but is not being used in a tail recursive way.</source>
-        <target state="translated">Выдает предупреждения, если элемент или функция имеет атрибут "TailCall", но не используется в рекурсивном хвостовом режиме.</target>
         <note />
       </trans-unit>
       <trans-unit id="featureChkTailCallAttrOnNonRec">
@@ -372,11 +357,6 @@
         <target state="new">Error when bitwise operators are used on enums whose underlying type is not an integer type (e.g. char).</target>
         <note />
       </trans-unit>
-      <trans-unit id="featureErrorOnDeprecatedRequireQualifiedAccess">
-        <source>give error on deprecated access of construct with RequireQualifiedAccess attribute</source>
-        <target state="translated">выдать ошибку при устаревшем доступе к конструкции с атрибутом RequireQualifiedAccess</target>
-        <note />
-      </trans-unit>
       <trans-unit id="featureErrorOnInvalidDeclsInTypeDefinitions">
         <source>Error when invalid declarations are used in type definitions.</source>
         <target state="new">Error when invalid declarations are used in type definitions.</target>
@@ -385,11 +365,6 @@
       <trans-unit id="featureErrorOnMissingSignatureAttribute">
         <source>error (rather than warning) when an enforced compiler-semantic attribute is present in the .fs but missing from the .fsi</source>
         <target state="new">error (rather than warning) when an enforced compiler-semantic attribute is present in the .fs but missing from the .fsi</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="featureExpandedMeasurables">
-        <source>more types support units of measure</source>
-        <target state="translated">другие типы поддерживают единицы измерения</target>
         <note />
       </trans-unit>
       <trans-unit id="featureExtensionConstraintSolutions">
@@ -425,11 +400,6 @@
       <trans-unit id="featureLowerSimpleMappingsInComprehensionsToFastLoops">
         <source>Lowers [for x in xs -&gt; f x] and [|for x in xs -&gt; f x|] to fast loops when xs is a list or an array, respectively.</source>
         <target state="new">Lowers [for x in xs -&gt; f x] and [|for x in xs -&gt; f x|] to fast loops when xs is a list or an array, respectively.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="featureMatchNotAllowedForUnionCaseWithNoData">
-        <source>Pattern match discard is not allowed for union case that takes no data.</source>
-        <target state="translated">Отмена сопоставления с шаблоном не разрешена для случая объединения, не принимающего данные.</target>
         <note />
       </trans-unit>
       <trans-unit id="featureMoreConcreteTiebreaker">
@@ -560,21 +530,6 @@
       <trans-unit id="featureWarningIndexedPropertiesGetSetSameType">
         <source>Indexed properties getter and setter must have the same type</source>
         <target state="translated">Методы получения и установки индексированных свойств должны иметь один и тот же тип.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="featureWarningWhenCopyAndUpdateRecordChangesAllFields">
-        <source>Raises warnings when an copy-and-update record expression changes all fields of a record.</source>
-        <target state="translated">Создает предупреждения, когда выражение копирования и обновления записи изменяет все поля записи.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="featureWarningWhenMultipleRecdTypeChoice">
-        <source>Raises warnings when multiple record type matches were found during name resolution because of overlapping field names.</source>
-        <target state="translated">Выдает предупреждения, когда при разрешении имен обнаружено несколько совпадений типов записи из-за перекрывающихся имен полей.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="featureWitnessPassing">
-        <source>witness passing for trait constraints in F# quotations</source>
-        <target state="translated">Передача свидетеля для ограничений признаков в цитированиях F#</target>
         <note />
       </trans-unit>
       <trans-unit id="followingPatternMatchClauseHasWrongTypeTuple">
@@ -882,6 +837,11 @@
         <target state="translated">Значение "{0}" было помечено "InlineIfLambda", но не определено как содержащее значение лямбда-выражения. Это предупреждение приводится исключительно для информации.</target>
         <note />
       </trans-unit>
+      <trans-unit id="optInlineMemberCannotUseBase">
+        <source>An inline member cannot use 'base' or protected members unless those uses can be eliminated before the member itself is inlined.</source>
+        <target state="new">An inline member cannot use 'base' or protected members unless those uses can be eliminated before the member itself is inlined.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="optsAllSigs">
         <source>Print the inferred interfaces of all compilation files to associated signature files</source>
         <target state="translated">Печать определяемых интерфейсов всех файлов компиляции в связанные файлы подписей</target>
@@ -928,8 +888,8 @@
         <note />
       </trans-unit>
       <trans-unit id="optsLangVersionOutOfSupport">
-        <source>Language version '{0}' is out of support. The last .NET SDK supporting it is available at https://dotnet.microsoft.com/en-us/download/dotnet/{1}</source>
-        <target state="new">Language version '{0}' is out of support. The last .NET SDK supporting it is available at https://dotnet.microsoft.com/en-us/download/dotnet/{1}</target>
+        <source>Language version '{0}' is out of support. The last compatible SDK feature band is .NET SDK 10.0.1xx. Download it at https://dotnet.microsoft.com/en-us/download/dotnet/{1}.</source>
+        <target state="new">Language version '{0}' is out of support. The last compatible SDK feature band is .NET SDK 10.0.1xx. Download it at https://dotnet.microsoft.com/en-us/download/dotnet/{1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="optsOptimizationData">
@@ -1335,6 +1295,11 @@
       <trans-unit id="tcAnonRecdSingleFieldNameSuperset">
         <source>This anonymous record has an extra field. Remove field '{0}'.</source>
         <target state="translated">Эта анонимная запись содержит дополнительное поле. Удалите поле "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="tcAnonRecdStructMismatch">
+        <source>One anonymous record type is a struct, the other is a reference type</source>
+        <target state="new">One anonymous record type is a struct, the other is a reference type</target>
         <note />
       </trans-unit>
       <trans-unit id="tcAnonRecdTypeDuplicateFieldId">

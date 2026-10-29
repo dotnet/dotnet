@@ -17,13 +17,20 @@ internal sealed class AzureBlobClientFactory : IBlobClientFactory
             return new AzureBlobClient(new BlobClient(new Uri(blobUri), options));
         }
 
-        string strippedUri = blobUri.Contains('?') ? blobUri.Substring(0, blobUri.LastIndexOf('?')) : blobUri;
-        return new AzureBlobClient(new BlobClient(new Uri(strippedUri), new AzureSasCredential(sasToken), options));
+        int queryIndex = blobUri.IndexOf('?');
+        string strippedUri = queryIndex >= 0 ? blobUri.Substring(0, queryIndex) : blobUri;
+        string trimmedSasToken = sasToken.StartsWith("?", StringComparison.Ordinal)
+            ? sasToken.Substring(1)
+            : sasToken;
+        return new AzureBlobClient(new BlobClient(new Uri(strippedUri), new AzureSasCredential(trimmedSasToken), options));
     }
 
     public IBlobClient CreateBlobClient(Uri containerUri, string blobName, string sasToken)
     {
-        var containerClient = new BlobContainerClient(containerUri, new AzureSasCredential(sasToken));
+        string trimmedSasToken = !string.IsNullOrEmpty(sasToken) && sasToken.StartsWith("?", StringComparison.Ordinal)
+            ? sasToken.Substring(1)
+            : sasToken;
+        var containerClient = new BlobContainerClient(containerUri, new AzureSasCredential(trimmedSasToken));
         return new AzureBlobClient(containerClient.GetBlobClient(blobName));
     }
 

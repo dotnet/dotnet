@@ -9706,49 +9706,6 @@ namespace NuGet.CommandLine.Test
             }
         }
 
-        [PlatformFact(Platform.Windows)]
-        public async Task RestoreNetCore_WithCustomAliases_WritesConditionWithCorrectAlias()
-        {
-            // Arrange
-            using (var pathContext = new SimpleTestPathContext())
-            {
-                // Set up solution, project, and packages
-                var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
-
-                var packageX = new SimpleTestPackageContext()
-                {
-                    Id = "x",
-                    Version = "1.0.0"
-                };
-
-                var projects = new List<SimpleTestProjectContext>();
-
-                var project = SimpleTestProjectContext.CreateNETCoreWithSDK(
-                    "proj",
-                    pathContext.SolutionRoot,
-                    $"net10.0-windows");
-
-                project.AddPackageToAllFrameworks(packageX);
-                solution.Projects.Add(project);
-                solution.Create();
-
-                await SimpleTestPackageUtility.CreateFolderFeedV3Async(
-                    pathContext.PackageSource,
-                    PackageSaveMode.Defaultv3,
-                    packageX);
-
-                // Act
-                var r = Util.RestoreSolution(pathContext, testOutputHelper: _testOutputHelper);
-                Assert.Equal(0, r.ExitCode);
-                Assert.True(File.Exists(project.PropsOutput), r.Output);
-                var propsXML = XDocument.Parse(File.ReadAllText(project.PropsOutput));
-
-                var propsItemGroups = propsXML.Root.Elements().Where(e => e.Name.LocalName == "ItemGroup").ToList();
-
-                Assert.Contains($"'$(TargetFramework)' == 'net10.0-windows' AND '$(ExcludeRestorePackageImports)' != 'true'", propsItemGroups[1].Attribute(XName.Get("Condition")).Value.Trim());
-            }
-        }
-
         [Fact]
         public async Task RestoreNetCore_CPVMProject_TransitiveDependenciesAreNotPinned()
         {

@@ -3181,6 +3181,45 @@ FROM [Entities1] AS [e]
 """);
     }
 
+    public override async Task Correlated_collection_uses_csharp_semantics(bool async)
+    {
+        await base.Correlated_collection_uses_csharp_semantics(async);
+
+        AssertSql(
+            """
+SELECT [e].[Id], [e0].[Id]
+FROM [Entities1] AS [e]
+LEFT JOIN [Entities2] AS [e0] ON [e].[NullableIntA] = [e0].[NullableIntB] OR ([e].[NullableIntA] IS NULL AND [e0].[NullableIntB] IS NULL)
+ORDER BY [e].[Id]
+""");
+    }
+
+    public override async Task Correlated_collection_uses_csharp_semantics_with_composite_correlation(bool async)
+    {
+        await base.Correlated_collection_uses_csharp_semantics_with_composite_correlation(async);
+
+        AssertSql(
+            """
+SELECT [e].[Id], [e0].[Id]
+FROM [Entities1] AS [e]
+LEFT JOIN [Entities2] AS [e0] ON ([e].[NullableIntA] = [e0].[NullableIntB] OR ([e].[NullableIntA] IS NULL AND [e0].[NullableIntB] IS NULL)) AND ([e].[NullableStringA] = [e0].[NullableStringB] OR ([e].[NullableStringA] IS NULL AND [e0].[NullableStringB] IS NULL))
+ORDER BY [e].[Id]
+""");
+    }
+
+    public override void Correlated_collection_using_relational_null_semantics()
+    {
+        base.Correlated_collection_using_relational_null_semantics();
+
+        AssertSql(
+            """
+SELECT [e].[NullableIntA], [e].[Id], [e0].[Id]
+FROM [Entities1] AS [e]
+LEFT JOIN [Entities2] AS [e0] ON [e].[NullableIntA] = [e0].[NullableIntB]
+ORDER BY [e].[Id]
+""");
+    }
+
     public override void Where_equal_using_relational_null_semantics()
     {
         base.Where_equal_using_relational_null_semantics();
@@ -3899,6 +3938,38 @@ WHERE NOT EXISTS (
     SELECT 1
     FROM [Entities2] AS [e0]
     WHERE [e0].[NullableStringA] = [e].[StringA])
+""");
+    }
+
+    public override async Task Null_semantics_contains_with_subquery_projecting_nullable_comparison(bool async)
+    {
+        await base.Null_semantics_contains_with_subquery_projecting_nullable_comparison(async);
+
+        AssertSql(
+            """
+SELECT [e].[Id]
+FROM [Entities1] AS [e]
+WHERE CAST(0 AS bit) IN (
+    SELECT CASE
+        WHEN [e0].[NullableIntA] > 1 THEN CAST(1 AS bit)
+        ELSE CAST(0 AS bit)
+    END
+    FROM [Entities2] AS [e0]
+    WHERE [e0].[Id] = [e].[Id]
+)
+""",
+            //
+            """
+SELECT [e].[Id]
+FROM [Entities1] AS [e]
+WHERE [e].[BoolA] IN (
+    SELECT CASE
+        WHEN [e0].[NullableIntA] > 1 THEN CAST(1 AS bit)
+        ELSE CAST(0 AS bit)
+    END
+    FROM [Entities2] AS [e0]
+    WHERE [e0].[Id] = [e].[Id]
+)
 """);
     }
 

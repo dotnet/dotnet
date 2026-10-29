@@ -22,6 +22,17 @@ namespace Microsoft.EntityFrameworkCore.Metadata
                 Assert.Throws<InvalidOperationException>(() => ((IModel)modelBuilder.Model).GetRelationalModel()).Message);
         }
 
+        [Fact]
+        public void GetRelationalModel_does_not_throw_if_relational_model_is_created_concurrently()
+        {
+            var model = new ConcurrentlyInitializedModel();
+            var relationalModel = new RelationalModel(model);
+            model.AddRuntimeAnnotation(
+                RelationalAnnotationNames.RelationalModelFactory, (Func<IRelationalModel>)(() => relationalModel));
+
+            Assert.Same(relationalModel, model.GetRelationalModel());
+        }
+
         [Theory]
         [InlineData(DeleteBehavior.Cascade, ReferentialAction.Cascade)]
         [InlineData(DeleteBehavior.SetNull, ReferentialAction.SetNull)]
@@ -546,11 +557,14 @@ namespace Microsoft.EntityFrameworkCore.Metadata
 
                     Assert.Null(customerView.EntityTypeMappings.Single().IsSharedTablePrincipal);
                     Assert.Null(customerView.EntityTypeMappings.Single().IsSplitEntityTypePrincipal);
-                    Assert.Equal(5, customerView.Columns.Count());
+                    Assert.Equal(6, customerView.Columns.Count());
+                    Assert.Same(
+                        abstractBaseType.FindComplexProperty(nameof(AbstractBase.Tag))!.ComplexType.FindProperty(nameof(Tag.Name)),
+                        Assert.Single(customerView.FindColumn("Tag_Name")!.PropertyMappings).Property);
 
                     Assert.Single(specialCustomerView.EntityTypeMappings);
 
-                    Assert.Equal(9, specialCustomerView.Columns.Count());
+                    Assert.Equal(10, specialCustomerView.Columns.Count());
 
                     Assert.False(specialtyColumn.IsNullable);
 
@@ -560,7 +574,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
                     Assert.False(extraSpecialCustomerView.EntityTypeMappings.Last().IsSharedTablePrincipal);
                     Assert.Null(extraSpecialCustomerView.EntityTypeMappings.Last().IsSplitEntityTypePrincipal);
 
-                    Assert.Equal(11, extraSpecialCustomerView.Columns.Count());
+                    Assert.Equal(12, extraSpecialCustomerView.Columns.Count());
                 }
             }
         }
@@ -787,6 +801,12 @@ namespace Microsoft.EntityFrameworkCore.Metadata
             var customerPk = specialCustomerType.FindPrimaryKey()!;
 
             var complexType = abstractBaseType.GetComplexProperties().Single().ComplexType;
+
+            foreach (var columnMapping in complexType.GetTableMappings().SelectMany(m => m.ColumnMappings))
+            {
+                Assert.Equal("Tag_Name", columnMapping.Column.Name);
+                Assert.Same(complexType.FindProperty(nameof(Tag.Name)), columnMapping.Property);
+            }
 
             if (mapping == Mapping.TPT)
             {
@@ -2978,6 +2998,9 @@ namespace Microsoft.EntityFrameworkCore.Metadata
         private static IQueryable<Order> GetOrdersForCustomer(string name)
             => throw new NotImplementedException();
 
+        private static IQueryable<Order> GetOrdersForCustomer(int id, string name)
+            => throw new NotImplementedException();
+
         [Fact]
         public void Complex_property_container_column_type_is_used_in_relational_model()
         {
@@ -3094,31 +3117,40 @@ namespace Microsoft.EntityFrameworkCore.Metadata
                 typeof(RelationalModelTest).GetMethod(
                     nameof(GetOrdersForCustomer), BindingFlags.NonPublic | BindingFlags.Static, [typeof(string)])!);
 
+            modelBuilder.HasDbFunction(
+                typeof(RelationalModelTest).GetMethod(
+                    nameof(GetOrdersForCustomer), BindingFlags.NonPublic | BindingFlags.Static, [typeof(int), typeof(string)])!);
+
             var model = Finalize(modelBuilder);
 
             Assert.Single(model.Model.GetEntityTypes());
-            Assert.Equal(3, model.Functions.Count());
+            Assert.Equal(4, model.Functions.Count());
             Assert.Empty(model.Views);
             Assert.Empty(model.Tables);
 
             var orderType = model.Model.FindEntityType(typeof(Order))!;
             Assert.Null(orderType.FindPrimaryKey());
 
-            Assert.Equal(3, orderType.GetFunctionMappings().Count());
+            Assert.Equal(4, orderType.GetFunctionMappings().Count());
             var orderMapping = orderType.GetFunctionMappings().First();
             Assert.Null(orderMapping.IsSharedTablePrincipal);
             Assert.Null(orderMapping.IsSplitEntityTypePrincipal);
             Assert.True(orderMapping.IsDefaultFunctionMapping);
 
-            var tvfMapping = orderType.GetFunctionMappings().ElementAt(1);
+            var tvfMapping = orderType.GetFunctionMappings().ElementAt(2);
             Assert.Null(tvfMapping.IsSharedTablePrincipal);
             Assert.Null(tvfMapping.IsSplitEntityTypePrincipal);
             Assert.False(tvfMapping.IsDefaultFunctionMapping);
 
-            var tvfMapping2 = orderType.GetFunctionMappings().Last();
+            var tvfMapping2 = orderType.GetFunctionMappings().ElementAt(3);
             Assert.Null(tvfMapping2.IsSharedTablePrincipal);
             Assert.Null(tvfMapping2.IsSplitEntityTypePrincipal);
             Assert.False(tvfMapping2.IsDefaultFunctionMapping);
+
+            var tvfMapping3 = orderType.GetFunctionMappings().ElementAt(1);
+            Assert.Null(tvfMapping3.IsSharedTablePrincipal);
+            Assert.Null(tvfMapping3.IsSplitEntityTypePrincipal);
+            Assert.False(tvfMapping3.IsDefaultFunctionMapping);
 
             Assert.Null(orderMapping.IncludesDerivedTypes);
             Assert.Equal(
@@ -3140,7 +3172,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
             Assert.Null(ordersFunction.ReturnType);
 
             var orderDate = orderType.FindProperty(nameof(Order.OrderDate))!;
-            Assert.Equal(2, orderDate.GetFunctionColumnMappings().Count());
+            Assert.Equal(4, orderDate.GetFunctionColumnMappings().Count());
             var orderDateMapping = orderMapping.ColumnMappings.Single(m => m.Property == orderDate);
             Assert.NotNull(orderDateMapping.TypeMapping);
             Assert.Equal("default_datetime_mapping", orderDateMapping.TypeMapping.StoreType);
@@ -3172,6 +3204,7 @@ namespace Microsoft.EntityFrameworkCore.Metadata
             Assert.Same(model.Model.GetDbFunctions().First(f => f.Parameters.Count() == 1), tvfDbFunction);
             Assert.Same(tvfFunction.Parameters.Single(), tvfDbFunction.Parameters.Single().StoreFunctionParameter);
             Assert.Equal(tvfDbFunction.Parameters.Single().Name, tvfFunction.Parameters.Single().DbFunctionParameters.Single().Name);
+            Assert.NotNull(tvfFunction.FindColumn(orderDate));
 
             var tvfFunction2 = tvfMapping2.StoreFunction;
             Assert.Same(tvfMapping2, tvfFunction2.EntityTypeMappings.Single());
@@ -3184,9 +3217,17 @@ namespace Microsoft.EntityFrameworkCore.Metadata
 
             var tvfDbFunction2 = tvfFunction2.DbFunctions.Single();
             Assert.Same(tvfFunction2, tvfDbFunction2.StoreFunction);
-            Assert.Same(model.Model.GetDbFunctions().Last(f => f.Parameters.Count() == 1), tvfDbFunction2);
+            Assert.Same(model.Model.GetDbFunctions().First(f => f.Parameters.Count() == 1 && f.Parameters.Single().ClrType == typeof(string)), tvfDbFunction2);
             Assert.Same(tvfFunction2.Parameters.Single(), tvfDbFunction2.Parameters.Single().StoreFunctionParameter);
             Assert.Equal(tvfDbFunction2.Parameters.Single().Name, tvfFunction2.Parameters.Single().DbFunctionParameters.Single().Name);
+            Assert.NotNull(tvfFunction2.FindColumn(orderDate));
+
+            var tvfFunction3 = tvfMapping3.StoreFunction;
+            Assert.Same(tvfMapping3, tvfFunction3.EntityTypeMappings.Single());
+            Assert.Same(tvfFunction3, model.FindFunction(tvfFunction3.Name, tvfFunction3.Schema, ["default_int_mapping", "just_string(max)"]));
+            Assert.Equal(nameof(GetOrdersForCustomer), tvfFunction3.Name);
+            Assert.Equal(2, tvfFunction3.Parameters.Count());
+            Assert.NotNull(tvfFunction3.FindColumn(orderDate));
         }
 
         [Fact]
@@ -3626,8 +3667,8 @@ namespace Microsoft.EntityFrameworkCore.Metadata
             Assert.All(datePropertyMappings, m => Assert.Equal("Date", m.Element.PropertyName));
         }
 
-        [Fact]
-        public void Json_element_tree_is_merged_for_existing_json_columns()
+        [Theory, InlineData(false), InlineData(true)]
+        public void Json_element_tree_is_merged_for_existing_json_columns(bool defaultMapping)
         {
             var modelBuilder = CreateConventionModelBuilder();
 
@@ -3637,19 +3678,26 @@ namespace Microsoft.EntityFrameworkCore.Metadata
                     b => b.ToJson("complex_data"));
 
             var model = Finalize(modelBuilder);
-            var table = model.Tables.Single();
+            var entityType = model.Model.FindEntityType(typeof(EntityWithNestedComplexProperty))!;
+            var table = defaultMapping
+                ? entityType.GetDefaultMappings().Single().Table
+                : model.Tables.Single();
             var jsonColumn = table.FindColumn("complex_data")!;
 
             var jsonObject = Assert.IsAssignableFrom<IRelationalJsonObject>(jsonColumn.JsonElement);
             var nestedObject = Assert.IsAssignableFrom<IRelationalJsonObject>(jsonObject.FindProperty("Nested"));
             Assert.NotNull(nestedObject.FindProperty("Number"));
 
-            var entityType = model.Model.FindEntityType(typeof(EntityWithNestedComplexProperty))!;
             var complexProperty = entityType.FindComplexProperty(nameof(EntityWithNestedComplexProperty.ComplexProperty))!;
             var nestedComplexProperty = complexProperty.ComplexType.FindComplexProperty(nameof(OuterComplexData.Nested))!;
 
             Assert.Same(jsonColumn, table.FindColumn(complexProperty));
             Assert.Same(jsonColumn, table.FindColumn(nestedComplexProperty));
+            Assert.Same(
+                table,
+                defaultMapping
+                    ? nestedComplexProperty.ComplexType.GetDefaultMappings().Single().Table
+                    : nestedComplexProperty.ComplexType.GetTableMappings().Single().Table);
 
             var numberProperty = nestedComplexProperty.ComplexType.FindProperty(nameof(NestedComplexData.Number))!;
             var numberMappings = numberProperty.GetJsonElementMappings().ToList();
@@ -3657,8 +3705,8 @@ namespace Microsoft.EntityFrameworkCore.Metadata
             Assert.All(numberMappings, m => Assert.Equal("Number", m.Element.PropertyName));
         }
 
-        [Fact]
-        public void Json_element_tree_is_built_for_complex_property_json_columns()
+        [Theory, InlineData(false), InlineData(true)]
+        public void Json_element_tree_is_built_for_complex_property_json_columns(bool defaultMapping)
         {
             var modelBuilder = CreateConventionModelBuilder();
 
@@ -3667,7 +3715,10 @@ namespace Microsoft.EntityFrameworkCore.Metadata
                     e => e.ComplexProperty, b => b.ToJson("complex_data"));
 
             var model = Finalize(modelBuilder);
-            var table = model.Tables.Single();
+            var entityType = model.Model.FindEntityType(typeof(EntityWithComplexProperty))!;
+            var table = defaultMapping
+                ? entityType.GetDefaultMappings().Single().Table
+                : model.Tables.Single();
 
             // Validate JsonElement on column
             var jsonColumn = table.FindColumn("complex_data")!;
@@ -3698,7 +3749,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata
             Assert.False(numberProp.IsNullable);
 
             // Validate FindColumn(IPropertyBase) with complex property
-            var entityType = model.Model.FindEntityType(typeof(EntityWithComplexProperty))!;
             var complexProperty = entityType.FindComplexProperty(nameof(EntityWithComplexProperty.ComplexProperty))!;
             var column = table.FindColumn(complexProperty);
             Assert.NotNull(column);
@@ -3706,13 +3756,13 @@ namespace Microsoft.EntityFrameworkCore.Metadata
             Assert.Same(root, column.JsonElement);
 
             // Validate GetJsonElementMappings for complex property
-            var complexMappings = complexProperty.GetJsonElementMappings().ToList();
+            var complexMappings = complexProperty.GetJsonElementMappings().Where(m => m.TableMapping.Table == table).ToList();
             Assert.Single(complexMappings);
             Assert.Same(root, complexMappings[0].Element);
 
             // Validate scalar properties have mappings
             var valueProperty = complexProperty.ComplexType.FindProperty("Value")!;
-            var valueMappings = valueProperty.GetJsonElementMappings().ToList();
+            var valueMappings = valueProperty.GetJsonElementMappings().Where(m => m.TableMapping.Table == table).ToList();
             Assert.Single(valueMappings);
             Assert.Equal("Value", valueMappings[0].Element.PropertyName);
             Assert.Same((RelationalTypeMapping)valueProperty.GetTypeMapping(), valueMappings[0].Element.StoreTypeMapping);
@@ -3988,6 +4038,26 @@ namespace Microsoft.EntityFrameworkCore.Metadata
 
         public static void AssertEqual(IRelationalModel expectedModel, IRelationalModel actualModel)
             => RelationalModelAsserter.Instance.AssertEqual(expectedModel, actualModel);
+
+        private class ConcurrentlyInitializedModel() : RuntimeModel(skipDetectChanges: false, modelId: Guid.Empty, entityTypeCount: 0)
+        {
+            private bool _concurrentCallMade;
+
+            public override Annotation? FindRuntimeAnnotation(string name)
+            {
+                var annotation = base.FindRuntimeAnnotation(name);
+                if (name == RelationalAnnotationNames.RelationalModel
+                    && annotation == null
+                    && !_concurrentCallMade)
+                {
+                    // Simulates another thread creating the relational model right after this lookup didn't find it
+                    _concurrentCallMade = true;
+                    this.GetRelationalModel();
+                }
+
+                return annotation;
+            }
+        }
 
         public enum Mapping
         {

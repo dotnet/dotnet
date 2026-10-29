@@ -54,15 +54,22 @@ public class DownloadFromResultsContainer : HelixTask, ICancelableTask, IMultiTh
         Log.LogMessage(MessageImportance.High, $"Downloading result files for job {JobId}");
 
         DirectoryInfo directory = Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.Combine(OutputDirectory, JobId)));
-        using (FileStream stream = File.Open(Path.Combine(directory.FullName, MetadataFile), FileMode.Create, FileAccess.Write))
-        using (var writer = new StreamWriter(stream))
+        if (MetadataToWrite != null)
         {
-            foreach (ITaskItem metadata in MetadataToWrite)
+            using (FileStream stream = File.Open(Path.Combine(directory.FullName, MetadataFile), FileMode.Create, FileAccess.Write))
+            using (var writer = new StreamWriter(stream))
             {
-                await writer.WriteLineAsync(metadata.GetMetadata("Identity"));
+                foreach (ITaskItem metadata in MetadataToWrite)
+                {
+                    await writer.WriteLineAsync(metadata.GetMetadata("Identity"));
+                }
             }
         }
-        await Task.WhenAll(WorkItems.Select(wi => DownloadFilesForWorkItem(wi, directory.FullName, _cancellationSource.Token)));
+
+        if (WorkItems != null)
+        {
+            await Task.WhenAll(WorkItems.Select(wi => DownloadFilesForWorkItem(wi, directory.FullName, _cancellationSource.Token)));
+        }
     }
 
     private async Task DownloadFilesForWorkItem(ITaskItem workItem, string directoryPath, CancellationToken ct)
@@ -109,17 +116,14 @@ public class DownloadFromResultsContainer : HelixTask, ICancelableTask, IMultiTh
                     };
 
                     BlobClient blob;
-                    // If we have no read SAS token from the build, make a best-effort attempt using the URL from the Helix API.
-                    // For restricted queues, there will be no read SAS token available to use in the Helix API's result
-                    // (but hopefully the 'else' branch will be hit in this case)
-                    if (string.IsNullOrEmpty(resultsUri.ResultsUriRSAS)) 
+                    var (blobUri, sasToken) = GetBlobUriAndSas(fileAvailableForDownload.Link, resultsUri?.ResultsUriRSAS);
+                    if (string.IsNullOrEmpty(sasToken)) 
                     {
-                        blob = new BlobClient(new Uri(fileAvailableForDownload.Link), blobClientOptions);
+                        blob = new BlobClient(blobUri, blobClientOptions);
                     }
                     else 
                     {
-                        var strippedFileUri = new Uri(fileAvailableForDownload.Link.Substring(0, fileAvailableForDownload.Link.LastIndexOf('?')));
-                        blob = new BlobClient(strippedFileUri, new AzureSasCredential(resultsUri.ResultsUriRSAS), blobClientOptions);
+                        blob = new BlobClient(blobUri, new AzureSasCredential(sasToken), blobClientOptions);
                     }
                     await blob.DownloadToAsync(destinationFile);
                 }
@@ -130,6 +134,22 @@ public class DownloadFromResultsContainer : HelixTask, ICancelableTask, IMultiTh
             }
         };
         return;
+    }
+
+    internal static (Uri BlobUri, string SasToken) GetBlobUriAndSas(string link, string resultsUriRSAS)
+    {
+        if (string.IsNullOrEmpty(resultsUriRSAS))
+        {
+            return (new Uri(link), null);
+        }
+
+        int queryIndex = link.IndexOf('?');
+        string strippedUrl = queryIndex >= 0 ? link.Substring(0, queryIndex) : link;
+        string sasToken = resultsUriRSAS.StartsWith("?", StringComparison.Ordinal)
+            ? resultsUriRSAS.Substring(1)
+            : resultsUriRSAS;
+
+        return (new Uri(strippedUrl), sasToken);
     }
 
     private void LogRequiredParameterError(string parameter)

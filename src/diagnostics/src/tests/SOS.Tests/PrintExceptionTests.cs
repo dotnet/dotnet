@@ -31,6 +31,17 @@ public sealed class PrintExceptionTests
             Liveness.AllValid,
             DumpKind.All);
 
+    public static TheoryData<TestConfig> TaskMatrix { get; } =
+        TestMatrices.CurrentThreadCommands(
+            [TargetCatalog.TaskNestedException],
+            Liveness.AllValid,
+            DumpKind.All);
+
+    public static TheoryData<TestConfig> OverflowMatrix { get; } =
+        TestMatrices.StackWalk(
+            [TargetCatalog.Overflow],
+            liveness: Liveness.AllValid);
+
     [SosTheory]
     [MemberData(nameof(NestedMatrix))]
     public async Task PrintException_Structure(TestConfig config)
@@ -156,6 +167,33 @@ public sealed class PrintExceptionTests
     }
 
     [SosTheory]
+    [MemberData(nameof(OverflowMatrix))]
+    public async Task PrintException_StackOverflow(TestConfig config)
+    {
+        SOSTestSkips.SkipStackOverflowDump(config);
+
+        using Target target = await Targets.GetTargetAsync(config);
+        target.GoToFirstStop();
+
+        target.Sos("clrthreads -managedexception");
+        SosOutput exception = target.Sos("printexception");
+
+        // DbgEng only provides a first-chance STATUS_STACK_OVERFLOW stop before the CLR records the
+        // last-thrown managed exception; continuing exits the process without a usable second-chance stop.
+        if (config.Liveness == Liveness.Live && OperatingSystem.IsWindows())
+        {
+            exception.AssertContains("There is no current managed exception on this thread");
+            return;
+        }
+
+        exception["Exception object"].AssertValid(Sos.Addr);
+        Assert.Equal("System.StackOverflowException", exception["Exception type"]);
+        Assert.Equal("<none>", exception["Message"]);
+        Assert.Equal("<none>", exception["InnerException"]);
+        exception.AssertContains("StackTrace (generated):");
+    }
+
+    [SosTheory]
     [MemberData(nameof(ReflectionMatrix))]
     public async Task PrintException_ReflectionInnerException(TestConfig config)
     {
@@ -182,6 +220,39 @@ public sealed class PrintExceptionTests
 
         SosOutput lines = target.Sos("printexception -lines");
         AssertFrameSequence(lines, ["RefLoader.Loader.Main"], ["ReflectionTest.cs @ "]);
+    }
+
+    [SosTheory]
+    [MemberData(nameof(TaskMatrix))]
+    public async Task PrintException_TaskExceptionChain(TestConfig config)
+    {
+        using Target target = await Targets.GetTargetAsync(config);
+        target.GoToFirstStop();
+
+        SosOutput aggregate = target.Sos("printexception");
+        Assert.Equal("System.AggregateException", aggregate["Exception type"]);
+        aggregate["Message"].AssertContains("One or more errors occurred.");
+        aggregate["InnerException"].AssertContains("System.FormatException");
+        AssertFrameSequence(aggregate, ["System.Threading.Tasks.Task.Wait", "RandomTest.RandomUserTask.WaitTask", "SosTests.TaskException.Main"]);
+
+        ulong formatAddress = aggregate["InnerException"].Extract(Sos.Addr);
+        SosOutput format = target.Sos($"printexception -lines {formatAddress:x}");
+        Assert.Equal("System.FormatException", format["Exception type"]);
+        Assert.Equal("Bad format exception, outer.", format["Message"]);
+        format["InnerException"].AssertContains("System.InvalidOperationException");
+        AssertFrameSequence(format, ["RandomTest.RandomUserTask.<.ctor>"]);
+        format.AssertContains("RandomUserTask.cs @ 26");
+
+        ulong innerAddress = format["InnerException"].Extract(Sos.Addr);
+        Assert.NotEqual(formatAddress, innerAddress);
+        SosOutput inner = target.Sos($"printexception -lines {innerAddress:x}");
+        Assert.Equal("System.InvalidOperationException", inner["Exception type"]);
+        Assert.Equal("This is an Inner InvalidOperationException.", inner["Message"]);
+        Assert.Equal("<none>", inner["InnerException"]);
+        AssertFrameSequence(
+            inner,
+            ["RandomTest.RandomUserTask.InnerException", "RandomTest.RandomUserTask.<.ctor>"],
+            ["RandomUserTask.cs @ 38", "RandomUserTask.cs @ 22"]);
     }
 
     private static void AssertFrameSequence(

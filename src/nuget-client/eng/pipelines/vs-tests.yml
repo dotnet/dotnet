@@ -29,13 +29,16 @@ parameters:
   values:
   - Production
   - Staging
-- name: E2EAgentCleanup
-  displayName: Delete or keep E2E machine for debugging
+- name: testMachineHoldStrategy
+  displayName: Hold E2E test machine for debugging
   type: string
-  default: delete
+  default: None
   values:
-  - delete
-  - stop
+  - None
+  - Completion
+  - Execution
+  - Failure
+  - Timeout
 - name: ApexAgentCleanup
   displayName: Cleanup VS Apex test machine
   type: string
@@ -49,13 +52,11 @@ resources:
   pipelines:
   - pipeline: DartLab
     source: DartLab
-    branch: main
+    branch: refs/heads/main
+    project: DevDiv
+    tags:
+    - Production
   repositories:
-  # Legacy DTL DartLab templates repository
-  - repository: LegacyDartLabTemplates
-    type: git
-    name: DartLab.Templates
-    ref: refs/heads/main
   # DartLab1ES/CloudTest templates repository
   - repository: DartLabTemplates
     type: git
@@ -88,18 +89,17 @@ stages:
     condition: "and(succeeded(), ne(variables['RunEndToEndTests'], 'false'))"
     dependsOn:
     - Build
+    DartLabEnvironment: ${{parameters.DartLabEnvironment}}
     variables:
     - name: VsBootstrapperUrl
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.bootstrapperUrl']]
-    - name: RunSettingsDrop
-      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.RunSettingsDrop']]
+    - name: VisualStudioInstallationParameters
+      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.VisualStudioInstallationParameters']]
     bootstrapperUrl: $(VsBootstrapperUrl)
-    DartLabEnvironment: ${{parameters.DartLabEnvironment}}
-    runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
-    testExecutionJobTimeoutInMinutes: 100
-    testMachineCleanUpStrategy: ${{parameters.E2EAgentCleanup}}
+    visualStudioInstallationParameters: $(VisualStudioInstallationParameters)
+    testExecutionJobTimeoutInMinutes: 412 # cloud test minimum
+    testMachineHoldStrategy: ${{parameters.testMachineHoldStrategy}}
 
-# Dartlab's template defines this in its own stage
 - template: vs-test/apex.yml
   parameters:
     condition: "and(succeeded(), ne(variables['RunApexTests'], 'false'))"

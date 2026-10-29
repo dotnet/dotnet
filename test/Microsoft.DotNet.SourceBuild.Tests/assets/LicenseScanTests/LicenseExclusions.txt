@@ -47,6 +47,13 @@ src/aspnetcore/eng/skill-evals/evaluation-tools/package-lock.json|unknown-licens
 src/deployment-tools/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 
 #
+# diagnostics
+#
+
+# False positive
+src/diagnostics/src/dbi/runtime/src/native/external/libunwind/doc/libunwind-ia64.*|generic-exception
+
+#
 # efcore
 #
 
@@ -55,9 +62,6 @@ src/efcore/test/EfCore.Tests/ChangeTracking/ComplexPropertyEntryTest.cs|propriet
 src/efcore/test/EFCore.Tests/ChangeTracking/EntityEntryTest.cs|proprietary-license
 src/efcore/test/EfCore.Tests/ChangeTracking/MemberEntryTest.cs|proprietary-license
 src/efcore/test/EFCore.Tests/ChangeTracking/PropertyEntryTest.cs|proprietary-license
-
-# Package license metadata does not license the lockfile source
-src/efcore/eng/harness-evaluation/package-lock.json|unknown-license-reference
 
 #
 # fsharp

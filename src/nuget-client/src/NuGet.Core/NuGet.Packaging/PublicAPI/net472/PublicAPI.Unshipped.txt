@@ -1,3 +1,2 @@
 #nullable enable
-NuGet.Client.ManagedCodeConventions.ManagedCodePatterns.AnalyzerAssemblies.get -> NuGet.ContentModel.PatternSet!
-static readonly NuGet.Client.ManagedCodeConventions.PropertyNames.AnalyzerAssembly -> string!
+*REMOVED*NuGet.Packaging.Licenses.NuGetLicenseExpressionParsingException.NuGetLicenseExpressionParsingException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void

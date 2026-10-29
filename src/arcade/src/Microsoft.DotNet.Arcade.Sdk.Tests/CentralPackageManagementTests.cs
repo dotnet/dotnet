@@ -21,26 +21,23 @@ namespace Microsoft.DotNet.Arcade.Sdk.Tests;
 /// </summary>
 public class CentralPackageManagementTests
 {
-    private static readonly string? s_repoRoot = TryGetRepoRoot();
+    private static readonly string s_inputsRoot =
+        Path.Combine(AppContext.BaseDirectory, "testassets", "CentralPackageManagement");
 
     [Fact]
     public void ImplicitPackageReferences_ShouldNotConflictWithPackageVersionEntries()
     {
-        if (s_repoRoot == null)
-        {
-            // Running on Helix or outside the repo — skip
-            return;
-        }
-
-        var directoryPackagesPropsPath = Path.Combine(s_repoRoot, "Directory.Packages.props");
+        var directoryPackagesPropsPath = Path.Combine(s_inputsRoot, "Directory.Packages.props");
         Assert.True(File.Exists(directoryPackagesPropsPath), $"Directory.Packages.props not found at {directoryPackagesPropsPath}");
 
         // Collect all PackageVersion entries from Directory.Packages.props
         var packageVersionIds = GetPackageIds(directoryPackagesPropsPath, "PackageVersion");
+        Assert.NotEmpty(packageVersionIds);
 
         // Find all IsImplicitlyDefined="true" PackageReferences in .targets and .props files
         var implicitReferences = new List<(string file, string packageId)>();
-        var sdkToolsDir = Path.Combine(s_repoRoot, "src", "Microsoft.DotNet.Arcade.Sdk", "tools");
+        var sdkToolsDir = Path.Combine(s_inputsRoot, "tools");
+        Assert.True(Directory.Exists(sdkToolsDir), $"SDK tools not found at {sdkToolsDir}");
 
         foreach (var file in Directory.EnumerateFiles(sdkToolsDir, "*.targets", SearchOption.AllDirectories)
             .Concat(Directory.EnumerateFiles(sdkToolsDir, "*.props", SearchOption.AllDirectories)))
@@ -50,6 +47,7 @@ public class CentralPackageManagementTests
                 implicitReferences.Add((file, id));
             }
         }
+        Assert.NotEmpty(implicitReferences);
 
         // Assert: no implicit PackageReference should have a matching PackageVersion
         var conflicts = implicitReferences
@@ -61,7 +59,7 @@ public class CentralPackageManagementTests
             $"corresponding PackageVersion entries in Directory.Packages.props. " +
             $"Remove the PackageVersion entries or remove IsImplicitlyDefined from the PackageReference.\n" +
             string.Join("\n", conflicts.Select(c =>
-                $"  - '{c.packageId}' (implicit in {Path.GetRelativePath(s_repoRoot, c.file)})")));
+                $"  - '{c.packageId}' (implicit in {Path.GetRelativePath(s_inputsRoot, c.file)})")));
     }
 
     /// <summary>
@@ -77,15 +75,7 @@ public class CentralPackageManagementTests
 
     private static void CollectElementIds(string xmlFile, string elementName, HashSet<string> result)
     {
-        XDocument doc;
-        try
-        {
-            doc = XDocument.Load(xmlFile);
-        }
-        catch
-        {
-            return;
-        }
+        XDocument doc = XDocument.Load(xmlFile);
 
         string? directory = Path.GetDirectoryName(xmlFile);
 
@@ -141,30 +131,4 @@ public class CentralPackageManagementTests
         }
     }
 
-    private static string? TryGetRepoRoot()
-    {
-        var dir = AppContext.BaseDirectory;
-        while (dir != null)
-        {
-            if (File.Exists(Path.Combine(dir, "Directory.Packages.props")) &&
-                Directory.Exists(Path.Combine(dir, "src", "Microsoft.DotNet.Arcade.Sdk")))
-            {
-                return dir;
-            }
-            dir = Path.GetDirectoryName(dir);
-        }
-
-        dir = Directory.GetCurrentDirectory();
-        while (dir != null)
-        {
-            if (File.Exists(Path.Combine(dir, "Directory.Packages.props")) &&
-                Directory.Exists(Path.Combine(dir, "src", "Microsoft.DotNet.Arcade.Sdk")))
-            {
-                return dir;
-            }
-            dir = Path.GetDirectoryName(dir);
-        }
-
-        return null;
-    }
 }

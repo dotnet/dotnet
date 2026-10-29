@@ -124,9 +124,10 @@ extends:
                   zipSources: false
 
             variables:
-            - group: DotNet-DevDiv-Insertion-Workflow-Variables
             - name: _SignType
               value: Real
+            - name: BclPackageVersion
+              value: '10.0.13'
             steps:
             - checkout: self
               clean: true
@@ -144,15 +145,23 @@ extends:
                       /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
                       /p:VisualStudioDropName=$(VisualStudioDropName)
                       /p:GenerateSbom=true
+                      /p:SystemCollectionsImmutablePackageVersion=$(BclPackageVersion)
+                      /p:SystemCompositionPackageVersion=$(BclPackageVersion)
+                      /p:SystemDiagnosticsDiagnosticSourcePackageVersion=$(BclPackageVersion)
+                      /p:SystemReflectionMetadataPackageVersion=$(BclPackageVersion)
+                      /p:SystemSecurityCryptographyXmlPackageVersion=$(BclPackageVersion)
               env:
                   NativeToolsOnMachine: true
                   FSHARP_CACHE_OVERRIDE: 256
                   FSharp_CacheEvictionImmediate: true
-            - template: /eng/templates/publish-test-results.yml
-              parameters:
-                configuration: $(_BuildConfig)
-                testRunTitle: Official $(_BuildConfig)
-                condition: ne(variables['SkipTests'], 'true')
+            - task: PublishTestResults@2
+              displayName: Publish Test Results
+              inputs:
+                testResultsFormat: 'XUnit'
+                testResultsFiles: '*.xml'
+                searchFolder: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)'
+              continueOnError: true
+              condition: ne(variables['SkipTests'], 'true')
             - task: 1ES.PublishPipelineArtifact@1
               displayName: Publish Test Logs
               inputs:
@@ -229,3 +238,4 @@ extends:
         insertTeamEmail: fsharpteam@microsoft.com
         insertTeamName: 'F#'
         completeInsertion: 'auto'
+

@@ -5,7 +5,6 @@
     <MicrosoftDotNetSignCheckTaskAssembly>$(MSBuildThisFileDirectory)..\lib\net\Microsoft.DotNet.SignCheckTask.dll</MicrosoftDotNetSignCheckTaskAssembly>
   </PropertyGroup>
 
-  <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
-  <UsingTask TaskName="Microsoft.DotNet.SignCheckTask.SignCheckTask" AssemblyFile="$(MicrosoftDotNetSignCheckTaskAssembly)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="Microsoft.DotNet.SignCheckTask.SignCheckTask" AssemblyFile="$(MicrosoftDotNetSignCheckTaskAssembly)" Runtime="NET" />
 
 </Project>

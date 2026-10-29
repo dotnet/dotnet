@@ -8,17 +8,8 @@ module internal FSharp.Compiler.Features
 type LanguageFeature =
     | FromEndSlicing
     | RuntimeAsync
-    | WitnessPassing
-    | ExpandedMeasurables
     | NullnessChecking
     | UnionIsPropertiesVisible
-    | AttributesToRightOfModuleKeyword
-    | ErrorOnDeprecatedRequireQualifiedAccess
-    | MatchNotAllowedForUnionCaseWithNoData
-    | CSharpExtensionAttributeNotRequired
-    | WarningWhenCopyAndUpdateRecordChangesAllFields
-    | WarningWhenMultipleRecdTypeChoice
-    | WarningWhenTailRecAttributeButNonTailRecUsage
     | UnmanagedConstraintCsharpInterop
     | ReuseSameFieldsInStructUnions
     /// RFC-1137

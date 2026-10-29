@@ -156,7 +156,7 @@ jobs:
       - name: Upload analysis artifact
         if: always() && steps.build.outcome == 'failure'
         continue-on-error: true
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: build-failure-analysis-data
           path: |
@@ -172,7 +172,7 @@ jobs:
 # on a passing PR.
 steps:
   - name: Download analysis artifact
-    uses: actions/download-artifact@v8.0.1
+    uses: actions/download-artifact@v8.0.2
     with:
       name: build-failure-analysis-data
       path: /tmp/

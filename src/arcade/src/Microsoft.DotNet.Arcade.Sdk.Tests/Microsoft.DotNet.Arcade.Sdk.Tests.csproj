@@ -20,6 +20,13 @@
 
   <ItemGroup>
     <Content Include="testassets\**\*" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Ship the CPM guard's source inputs so it also runs without a checkout on Helix. -->
+    <Content Include="$(RepoRoot)Directory.Packages.props"
+             Link="testassets\CentralPackageManagement\Directory.Packages.props"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Microsoft.DotNet.Arcade.Sdk\tools\**\*.props;..\Microsoft.DotNet.Arcade.Sdk\tools\**\*.targets"
+             Link="testassets\CentralPackageManagement\tools\%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\Microsoft.DotNet.Arcade.Sdk\tools\Tests.targets"
              Link="testassets\ArcadeSdkTools\Tests.targets"
              CopyToOutputDirectory="PreserveNewest" />

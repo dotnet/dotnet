@@ -55,11 +55,8 @@
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <!--
-      From aspnetcore Versions.props:
-          Versions of Microsoft.CodeAnalysis packages referenced by analyzers shipped in the SDK.
-          This need to be pinned since they're used in 3.1 apps and need to be loadable in VS 2019.
-      In source-build these don't need to be pinned and can use the source-built versions since it doesn't
-      need to support VS 2019.
+      Use current source-built Roslyn packages for general references. Compiler-hosted analyzers and source
+      generators use separate overrides below to remain compatible with the bootstrap compiler and its runtime.
     -->
     <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisCommonVersion)" />
 
@@ -77,7 +74,18 @@
       By not lifting the M.CA version to the current version and instead using the N-1 version, we guarantee that it will match the version
       containing in the executed SDK and avoiding this error.
     -->
-    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisSourceGeneratorVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="SourceGenerator_MicrosoftCodeAnalysisCommonVersion" Version="%24(MicrosoftCodeAnalysisCommonPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="SourceGenerator_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="SourceGenerator_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesPreviousVersion)" />
+
+    <!-- Current source-built Roslyn packages can depend on runtime assemblies that the bootstrap compiler
+         cannot load. Newer analyzers and code fixes need the same N-1 dependencies as source generators. -->
+    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisFeaturesExternalAccessVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisFeaturesExternalAccessPreviousVersion)" />
+
+    <!-- In normal builds, these analyzers use older Roslyn packages for compatibility with older VS versions, separately
+         from the newer source generators above. Source-build uses N-1 packages for both. -->
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesPreviousVersion)" />
 

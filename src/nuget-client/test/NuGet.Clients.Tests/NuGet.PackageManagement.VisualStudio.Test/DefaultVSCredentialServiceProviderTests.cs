@@ -41,6 +41,36 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
+        public async Task GetCredentialServiceAsync_WithExplicitFactories_InvokesFactoriesOnlyWhenRequested()
+        {
+            PreviewFeatureSettings.DefaultCredentialsAfterCredentialProviders = false;
+            var factoryCallLog = new List<string>();
+            var target = new DefaultVSCredentialServiceProvider(
+                Mock.Of<IAsyncServiceProvider>(),
+                new Lazy<INuGetUILogger>(() => Mock.Of<INuGetUILogger>()),
+                () => CreateProvidersAsync("vs"),
+                () => CreateProvidersAsync("plugin"),
+                () => CreateProvidersAsync("prompt"));
+
+            Assert.Empty(factoryCallLog);
+
+            await target.GetCredentialServiceAsync();
+
+            Assert.Equal(["vs", "plugin", "prompt"], factoryCallLog);
+
+            factoryCallLog.Clear();
+            await target.GetCredentialServiceAsync();
+
+            Assert.Equal(["vs", "plugin", "prompt"], factoryCallLog);
+
+            Task<IEnumerable<ICredentialProvider>> CreateProvidersAsync(string id)
+            {
+                factoryCallLog.Add(id);
+                return Task.FromResult<IEnumerable<ICredentialProvider>>(Array.Empty<ICredentialProvider>());
+            }
+        }
+
+        [Fact]
         public async Task GetCredentialServiceAsync_WhenNotUsingDefaultNetworkCredentials_AsksPluginsBeforePrompting()
         {
             PreviewFeatureSettings.DefaultCredentialsAfterCredentialProviders = false;
