@@ -151,16 +151,16 @@ namespace NuGet.SolutionRestoreManager
             var tfi = new TargetFrameworkInformation
             {
                 AssetTargetFallback = assetTargetFallback,
-                CentralPackageVersions = centralPackageVersions,
+                CentralPackageVersions = centralPackageVersions ?? ImmutableDictionary<string, CentralPackageVersion>.Empty,
                 Dependencies = dependencies,
                 DownloadDependencies = downloadDependencies,
                 FrameworkName = frameworkName,
-                FrameworkReferences = frameworkReferences,
+                FrameworkReferences = frameworkReferences ?? ImmutableHashSet<FrameworkDependency>.Empty,
                 Imports = imports,
                 RuntimeIdentifierGraphPath = GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.RuntimeIdentifierGraphPath),
                 TargetAlias = GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.TargetFramework) ?? string.Empty,
                 Warn = warn,
-                PackagesToPrune = packagesToPrune,
+                PackagesToPrune = packagesToPrune ?? ImmutableDictionary<string, PrunePackageReference>.Empty,
             };
 
             return tfi;

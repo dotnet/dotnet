@@ -164,6 +164,21 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Fact]
+        public void Read_WhenJsonIsNull_LogsWarningAndReturnsInvalidCacheFile()
+        {
+            var logger = new TestLogger();
+            var contents = "null";
+
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(contents)))
+            {
+                var cacheFile = CacheFileFormat.Read(stream, logger, "nullPath");
+
+                Assert.False(cacheFile.IsValid);
+                Assert.Equal(1, logger.Warnings);
+            }
+        }
+
+        [Fact]
         public void Read_WhenProjectFilePathIsMissing_ReturnsNullForProjectFilePath()
         {
             // Arrange
