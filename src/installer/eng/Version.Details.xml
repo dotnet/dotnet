@@ -87,20 +87,20 @@
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.134">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>21349adfeb2f34dad0a32fed4067201465d29930</Sha>
+      <Sha>bf9cf2d6326830de11071694c7778deee49ce35f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.134-servicing.26523.21">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.134-servicing.26528.8">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>21349adfeb2f34dad0a32fed4067201465d29930</Sha>
+      <Sha>bf9cf2d6326830de11071694c7778deee49ce35f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.134-servicing.26523.21">
+    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.134-servicing.26528.8">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>21349adfeb2f34dad0a32fed4067201465d29930</Sha>
+      <Sha>bf9cf2d6326830de11071694c7778deee49ce35f</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.134-servicing.26523.21">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.134-servicing.26528.8">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>21349adfeb2f34dad0a32fed4067201465d29930</Sha>
+      <Sha>bf9cf2d6326830de11071694c7778deee49ce35f</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.2.1" Version="1.0.2-beta4.22406.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
@@ -141,9 +141,9 @@
       <Sha>fc5e9eda234e2b69aa479f4f83faddc31fdd4da7</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.8.1-hotfix-26509-15" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.8.1-hotfix-26528-33" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/dnceng/internal/_git/microsoft-vstest</Uri>
-      <Sha>81fe01ee0bd2fa13ac8f02a660a89066f220b45c</Sha>
+      <Sha>b0c7bb68b146f73dea6c2797d607e0483bbc65ed</Sha>
       <SourceBuild RepoName="vstest" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="8.0.34" CoherentParentDependency="Microsoft.NET.Sdk">
