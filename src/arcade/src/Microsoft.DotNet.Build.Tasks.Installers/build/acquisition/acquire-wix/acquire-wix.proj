@@ -20,8 +20,7 @@
     <WixDownloadSentinel>$(WixToolsDir)$(WixDownloadFilename).sentinel</WixDownloadSentinel>
   </PropertyGroup>
 
-  <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
-  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
   <Target Name="AcquireWixCore"
           Inputs="$(WixDownloadSentinel)"
           Outputs="$(WixDestinationPath)"
