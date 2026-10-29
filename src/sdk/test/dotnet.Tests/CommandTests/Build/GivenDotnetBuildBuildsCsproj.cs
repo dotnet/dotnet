@@ -42,6 +42,50 @@ namespace Microsoft.DotNet.Cli.Build.Tests
         }
 
         [TestMethod]
+        [DataRow(true, true)]
+        [DataRow(true, false)]
+        [DataRow(false, true)]
+        [DataRow(false, false)]
+        public void ItPrintsTheVerificationMarkerOnlyWhenEnabled(bool enabled, bool succeeds)
+        {
+            var testInstance = TestAssetsManager.CopyTestAsset("NonDefaultTarget",
+                    identifier: $"{enabled}_{succeeds}")
+                .WithSource();
+
+            List<string> args = ["--no-restore", "--tl:off", succeeds ? "/t:PrintMessage" : "/t:MissingVerificationTarget"];
+            if (enabled)
+            {
+                args.Add("--verify-new-flag");
+            }
+
+            var result = new DotnetBuildCommand(Log, testInstance.Path).Execute(args.ToArray());
+
+            result.ExitCode.Should().Be(succeeds ? 0 : 1);
+            Assert.IsNotNull(result.StdOut);
+            if (enabled)
+            {
+                result.StdOut.TrimEnd().Should().EndWith("new flag enabled");
+                result.StdOut.Split(["\r\n", "\n"], StringSplitOptions.None)
+                    .Count(line => line == "new flag enabled").Should().Be(1);
+            }
+            else
+            {
+                result.StdOut.Should().NotContain("new flag enabled");
+            }
+        }
+
+        [TestMethod]
+        public void ItDocumentsTheVerificationFlagInHelp()
+        {
+            var result = new DotnetCommand(Log, "build", "--help").Execute();
+
+            result.Should().Pass().And.HaveStdOutContaining("--verify-new-flag");
+            Assert.IsNotNull(result.StdOut);
+            result.StdOut.Split(["\r\n", "\n"], StringSplitOptions.None)
+                .Should().NotContain("new flag enabled");
+        }
+
+        [TestMethod]
         public void ItBuildsOnlyTheSpecifiedTarget()
         {
             var testAppName = "NonDefaultTarget";

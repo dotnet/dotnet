@@ -107,6 +107,11 @@
         <target state="translated">.NET 작성기</target>
         <note />
       </trans-unit>
+      <trans-unit id="BuildVerifyNewFlagEnabled">
+        <source>new flag enabled</source>
+        <target state="new">new flag enabled</target>
+        <note>{Locked} This is the exact output marker for --verify-new-flag.</note>
+      </trans-unit>
       <trans-unit id="CmdAffectedTestsFeatureDisabled">
         <source>Affected-test selection is experimental. Set the '{0}' environment variable to '1' to enable it.</source>
         <target state="new">Affected-test selection is experimental. Set the '{0}' environment variable to '1' to enable it.</target>

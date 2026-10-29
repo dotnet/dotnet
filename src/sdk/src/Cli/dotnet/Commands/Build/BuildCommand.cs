@@ -6,6 +6,7 @@ using Microsoft.DotNet.Cli.CommandLine;
 using Microsoft.DotNet.Cli.Commands.Restore;
 using Microsoft.DotNet.Cli.Commands.Run;
 using Microsoft.DotNet.Cli.Extensions;
+using Microsoft.DotNet.Cli.Utils;
 
 namespace Microsoft.DotNet.Cli.Commands.Build;
 
@@ -65,6 +66,15 @@ public static class BuildCommand
     {
         parseResult.HandleDebugSwitch();
 
-        return FromParseResult(parseResult, msbuildPath: null, services: CommandServices.CreateDefault()).Execute();
+        var command = FromParseResult(parseResult, msbuildPath: null, services: CommandServices.CreateDefault());
+        int exitCode = command.Execute();
+
+        var definition = (BuildCommandDefinition)parseResult.CommandResult.Command;
+        if (parseResult.GetValue(definition.VerifyNewFlagOption))
+        {
+            Reporter.Output.WriteLine(CliCommandStrings.BuildVerifyNewFlagEnabled);
+        }
+
+        return exitCode;
     }
 }

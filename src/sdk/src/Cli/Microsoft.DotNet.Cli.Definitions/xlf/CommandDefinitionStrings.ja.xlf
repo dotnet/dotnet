@@ -87,6 +87,11 @@
         <target state="translated">dotnet から起動されたビルド サーバーをシャットダウンします。既定では、すべてのサーバーがシャットダウンされます。</target>
         <note />
       </trans-unit>
+      <trans-unit id="BuildVerifyNewFlagOptionDescription">
+        <source>Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</source>
+        <target state="new">Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CannotCombineSearchStringAndVersion">
         <source>Cannot specify both the {0} and {1} arguments.</source>
         <target state="translated">{0} 引数と {1} 引数の両方を指定することはできません。</target>

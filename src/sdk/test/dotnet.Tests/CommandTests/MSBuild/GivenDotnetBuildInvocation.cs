@@ -65,6 +65,15 @@ namespace Microsoft.DotNet.Cli.MSBuild.Tests
         }
 
         [TestMethod]
+        public void VerificationFlagIsNotForwardedToMSBuild()
+        {
+            var command = (RestoringCommand)BuildCommand.FromArgs(
+                ["--verify-new-flag"], "<msbuildpath>", TestCommandServices.CreateNonLLM());
+
+            command.GetArgumentTokensToMSBuild().Should().NotContain("--verify-new-flag");
+        }
+
+        [TestMethod]
         public void NoRestoreMeansNoSeparateRestoreCommand()
         {
             CommandDirectoryContext.PerformActionWithBasePath(WorkingDirectory, () =>

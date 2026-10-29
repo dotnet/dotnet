@@ -87,6 +87,11 @@
         <target state="translated">Завершает работу серверов сборки, запущенных из среды dotnet. По умолчанию завершается работа всех серверов.</target>
         <note />
       </trans-unit>
+      <trans-unit id="BuildVerifyNewFlagOptionDescription">
+        <source>Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</source>
+        <target state="new">Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CannotCombineSearchStringAndVersion">
         <source>Cannot specify both the {0} and {1} arguments.</source>
         <target state="translated">Невозможно одновременно указать аргументы {0} и {1}.</target>

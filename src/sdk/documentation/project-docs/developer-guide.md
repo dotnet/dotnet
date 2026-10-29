@@ -147,6 +147,24 @@ This should output `.../artifacts/bin/redist/Debug/dotnet/dotnet`.
 
 You can now run `dotnet` commands to test changes.
 
+### Testing the build verification flag
+
+This checkout adds a build-only `--verify-new-flag` option. It prints exactly
+`new flag enabled` once after a successful or failed build, preserving the build's
+exit code. Without the option, build output is unchanged.
+
+After building the SDK on Windows, invoke the local SDK explicitly:
+
+```powershell
+& .\artifacts\bin\redist\Debug\dotnet\dotnet.exe build C:\path\to\App.csproj --verify-new-flag
+```
+
+Ensure that the current directory's `global.json`, if present, allows the locally
+built SDK version rather than pinning a different SDK.
+
+The option is also listed by `dotnet build --help`. Downloading an official preview
+SDK alone does not include this local change; use the SDK built from this checkout.
+
 ### Debugging
 
 Run "dotnet --debug <command>" which will launch dotnet and pause waiting for user input. This will give you time to attach a debugger to the running dotnet process, set the breakpoints you want to stop at in your built copy of the sdk, and then you can hit enter for the dotnet command to continue.

@@ -87,6 +87,11 @@
         <target state="translated">dotnet에서 시작한 빌드 서버를 종료합니다. 기본적으로 모든 서버가 종료됩니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="BuildVerifyNewFlagOptionDescription">
+        <source>Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</source>
+        <target state="new">Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CannotCombineSearchStringAndVersion">
         <source>Cannot specify both the {0} and {1} arguments.</source>
         <target state="translated">{0} 인수와 {1} 인수를 모두 지정할 수 없습니다.</target>

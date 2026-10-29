@@ -856,6 +856,9 @@ If not specified the file will be generated inside the default 'TestResults' dir
   <data name="NoIncrementalOptionDescription" xml:space="preserve">
     <value>Do not use incremental building.</value>
   </data>
+  <data name="BuildVerifyNewFlagOptionDescription" xml:space="preserve">
+    <value>Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</value>
+  </data>
   <data name="OnlyLocalOptionSupportManifestFileOption" xml:space="preserve">
     <value>Specifying the tool manifest option (--tool-manifest) is only valid with the local option (--local or the default).</value>
   </data>

@@ -87,6 +87,11 @@
         <target state="translated">Arrête les serveurs de builds démarrés à partir de dotnet. Par défaut, tous les serveurs sont arrêtés.</target>
         <note />
       </trans-unit>
+      <trans-unit id="BuildVerifyNewFlagOptionDescription">
+        <source>Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</source>
+        <target state="new">Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CannotCombineSearchStringAndVersion">
         <source>Cannot specify both the {0} and {1} arguments.</source>
         <target state="translated">Impossible de spécifier à la fois les arguments {0} et {1}.</target>

@@ -87,6 +87,11 @@
         <target state="translated">關閉 dotnet 啟動的組建伺服器。根據預設會關閉所有伺服器。</target>
         <note />
       </trans-unit>
+      <trans-unit id="BuildVerifyNewFlagOptionDescription">
+        <source>Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</source>
+        <target state="new">Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CannotCombineSearchStringAndVersion">
         <source>Cannot specify both the {0} and {1} arguments.</source>
         <target state="translated">無法同時指定 {0} 和 {1} 引數。</target>

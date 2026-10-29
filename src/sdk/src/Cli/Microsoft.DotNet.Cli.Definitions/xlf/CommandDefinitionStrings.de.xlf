@@ -87,6 +87,11 @@
         <target state="translated">Fährt Buildserver herunter, die aus .NET gestartet werden. Standardmäßig werden alle Server heruntergefahren.</target>
         <note />
       </trans-unit>
+      <trans-unit id="BuildVerifyNewFlagOptionDescription">
+        <source>Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</source>
+        <target state="new">Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CannotCombineSearchStringAndVersion">
         <source>Cannot specify both the {0} and {1} arguments.</source>
         <target state="translated">Die Argumente {0} und {1} können nicht gleichzeitig angegeben werden.</target>

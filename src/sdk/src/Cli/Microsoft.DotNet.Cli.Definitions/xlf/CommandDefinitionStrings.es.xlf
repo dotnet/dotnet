@@ -87,6 +87,11 @@
         <target state="translated">Apaga los servidores de compilación que se inician desde dotnet. De forma predeterminada, se apagan todos los servidores.</target>
         <note />
       </trans-unit>
+      <trans-unit id="BuildVerifyNewFlagOptionDescription">
+        <source>Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</source>
+        <target state="new">Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CannotCombineSearchStringAndVersion">
         <source>Cannot specify both the {0} and {1} arguments.</source>
         <target state="translated">No se pueden especificar los argumentos {0} y {1}.</target>

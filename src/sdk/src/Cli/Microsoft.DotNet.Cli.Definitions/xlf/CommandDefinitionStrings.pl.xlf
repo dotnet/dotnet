@@ -87,6 +87,11 @@
         <target state="translated">Zamyka serwery kompilacji, które zostały uruchomione z poziomu polecenia dotnet. Domyślnie zamykane są wszystkie serwery.</target>
         <note />
       </trans-unit>
+      <trans-unit id="BuildVerifyNewFlagOptionDescription">
+        <source>Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</source>
+        <target state="new">Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CannotCombineSearchStringAndVersion">
         <source>Cannot specify both the {0} and {1} arguments.</source>
         <target state="translated">Nie można określić zarówno argumentu {0}, jak i {1}.</target>

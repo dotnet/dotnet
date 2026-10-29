@@ -87,6 +87,11 @@
         <target state="translated">Arresta i server di compilazione avviati da dotnet. Per impostazione predefinita, vengono arrestati tutti i server.</target>
         <note />
       </trans-unit>
+      <trans-unit id="BuildVerifyNewFlagOptionDescription">
+        <source>Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</source>
+        <target state="new">Print 'new flag enabled' after the build finishes, whether it succeeds or fails.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CannotCombineSearchStringAndVersion">
         <source>Cannot specify both the {0} and {1} arguments.</source>
         <target state="translated">Non è possibile specificare entrambi gli argomenti {0} e {1}.</target>

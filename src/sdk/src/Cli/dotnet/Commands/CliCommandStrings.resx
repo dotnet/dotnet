@@ -126,6 +126,10 @@
   <data name="Actual" xml:space="preserve">
     <value>Actual</value>
   </data>
+  <data name="BuildVerifyNewFlagEnabled" xml:space="preserve">
+    <value>new flag enabled</value>
+    <comment>{Locked} This is the exact output marker for --verify-new-flag.</comment>
+  </data>
   <data name="AddAppFullName" xml:space="preserve">
     <value>Add one or more projects to a solution file.</value>
   </data>

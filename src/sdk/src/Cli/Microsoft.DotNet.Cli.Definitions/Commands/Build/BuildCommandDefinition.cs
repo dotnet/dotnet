@@ -41,6 +41,12 @@ internal sealed class BuildCommandDefinition : Command
 
     public readonly Option<bool> NoRestoreOption = CommonOptions.CreateNoRestoreOption();
 
+    public readonly Option<bool> VerifyNewFlagOption = new("--verify-new-flag")
+    {
+        Description = CommandDefinitionStrings.BuildVerifyNewFlagOptionDescription,
+        Arity = ArgumentArity.Zero
+    };
+
     public readonly Option<bool> SelfContainedOption = CommonOptions.CreateSelfContainedOption();
 
     public readonly Option<bool> NoSelfContainedOption = CommonOptions.CreateNoSelfContainedOption();
@@ -78,6 +84,7 @@ internal sealed class BuildCommandDefinition : Command
         Options.Add(ConfigurationOption);
         Options.Add(VersionSuffixOption);
         Options.Add(NoRestoreOption);
+        Options.Add(VerifyNewFlagOption);
         Options.Add(InteractiveOption);
         Options.Add(VerbosityOption);
         Options.Add(OutputOption);
