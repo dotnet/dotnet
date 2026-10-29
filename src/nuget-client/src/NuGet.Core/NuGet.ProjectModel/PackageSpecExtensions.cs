@@ -15,12 +15,14 @@ namespace NuGet.ProjectModel
         /// </summary>
         public static TargetFrameworkInformation GetTargetFramework(this PackageSpec project, NuGetFramework targetFramework)
         {
-            var frameworkInfo = project.TargetFrameworks.FirstOrDefault(f => NuGetFramework.Comparer.Equals(targetFramework, f.FrameworkName));
+            var frameworkInfo = project.TargetFrameworks.FirstOrDefault(f =>
+                f.FrameworkName != null && NuGetFramework.Comparer.Equals(targetFramework, f.FrameworkName));
             if (frameworkInfo == null)
             {
-                frameworkInfo = NuGetFrameworkUtility.GetNearest(project.TargetFrameworks,
+                frameworkInfo = NuGetFrameworkUtility.GetNearest(project.TargetFrameworks.Where(f => f.FrameworkName != null),
                     targetFramework,
-                    item => item.FrameworkName);
+                    item => item.FrameworkName
+                        ?? throw new InvalidOperationException("A target framework must include its framework name."));
             }
 
             return frameworkInfo ?? new TargetFrameworkInformation();
@@ -38,8 +40,8 @@ namespace NuGet.ProjectModel
 
             if (projectFrameworkInfo.FrameworkName != null)
             {
-                frameworkInfo = project.RestoreMetadata?.TargetFrameworks
-                    .FirstOrDefault(f => f.FrameworkName.Equals(projectFrameworkInfo.FrameworkName));
+                frameworkInfo = project.RestoreMetadata?.TargetFrameworks?.FirstOrDefault(
+                    f => f.FrameworkName != null && f.FrameworkName.Equals(projectFrameworkInfo.FrameworkName));
             }
 
             return frameworkInfo ?? new ProjectRestoreMetadataFrameworkInfo();
@@ -73,9 +75,9 @@ namespace NuGet.ProjectModel
         /// <returns>The <see cref="ProjectRestoreMetadataFrameworkInfo"/> if it exists, <see langword="null"/> otherwise. </returns>
         public static ProjectRestoreMetadataFrameworkInfo? GetRestoreMetadataFramework(this PackageSpec project, string? targetAlias)
         {
-            if (project.RestoreMetadata != null)
+            if (project.RestoreMetadata?.TargetFrameworks is { } targetFrameworks)
             {
-                foreach (var framework in project.RestoreMetadata.TargetFrameworks.NoAllocEnumerate())
+                foreach (var framework in targetFrameworks.NoAllocEnumerate())
                 {
                     if (string.Equals(framework.TargetAlias, targetAlias, StringComparison.OrdinalIgnoreCase))
                     {
@@ -111,7 +113,9 @@ namespace NuGet.ProjectModel
             if (result == null || frameworks == null)
             {
                 var reducer = new FrameworkReducer(DefaultFrameworkNameProvider.Instance, DefaultCompatibilityProvider.Instance);
-                NuGetFramework? mostCompatibleFramework = reducer.GetNearest(targetFramework, project.TargetFrameworks.Select(e => e.FrameworkName));
+                NuGetFramework? mostCompatibleFramework = reducer.GetNearest(
+                    targetFramework,
+                    project.TargetFrameworks.Select(e => e.FrameworkName).OfType<NuGetFramework>());
                 if (mostCompatibleFramework != null)
                 {
                     FindMatchingFrameworks(project, mostCompatibleFramework, ref result, ref frameworks);
@@ -142,7 +146,7 @@ namespace NuGet.ProjectModel
             {
                 foreach (TargetFrameworkInformation framework in project.TargetFrameworks.NoAllocEnumerate())
                 {
-                    if (NuGetFramework.Comparer.Equals(targetFramework, framework.FrameworkName))
+                    if (framework.FrameworkName != null && NuGetFramework.Comparer.Equals(targetFramework, framework.FrameworkName))
                     {
                         // Result not being null means we have multiple matches.
                         if (matchedFramework != null)
