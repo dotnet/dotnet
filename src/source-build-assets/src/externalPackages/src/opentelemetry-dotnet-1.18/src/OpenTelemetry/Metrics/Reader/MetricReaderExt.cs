@@ -1,0 +1,357 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Metrics;
+using OpenTelemetry.Internal;
+
+namespace OpenTelemetry.Metrics;
+
+/// <summary>
+/// MetricReader base class.
+/// </summary>
+public abstract partial class MetricReader
+{
+    private readonly Dictionary<string, int> metricStreamNames = new(StringComparer.OrdinalIgnoreCase);
+    private readonly ConcurrentDictionary<MetricStreamIdentity, Metric?> instrumentIdentityToMetric = new();
+    private readonly Lock instrumentCreationLock = new();
+    private readonly ConcurrentQueue<int> availableMetricIndices = new();
+
+    private int metricLimit;
+    private int cardinalityLimit;
+    private Metric?[] metrics = [];
+    private Metric[] metricsCurrentBatch = [];
+    private int metricIndex = -1;
+    private ExemplarFilterType? exemplarFilter;
+    private ExemplarFilterType? exemplarFilterForHistograms;
+
+    internal static void DeactivateMetric(Metric metric)
+    {
+        if (metric.Active)
+        {
+            // Note: This causes the metric to be removed from the storage array
+            // during the next collect/export. The freed storage slot is then
+            // reused for a subsequently published instrument (see
+            // TryReserveMetricIndex), so repeatedly creating and disposing
+            // meters/instruments does not exhaust the metric storage.
+            metric.Active = false;
+
+            OpenTelemetrySdkEventSource.Log.MetricInstrumentDeactivated(
+                metric.Name,
+                metric.MeterName);
+        }
+    }
+
+    internal AggregationTemporality GetAggregationTemporality(Type instrumentType)
+        => this.temporalityFunc(instrumentType);
+
+    internal virtual List<Metric> AddMetricWithNoViews(Instrument instrument)
+    {
+        MetricStreamConfiguration? metricStreamConfiguration = null;
+
+        // Apply default histogram aggregation if configured
+        if (this.DefaultHistogramAggregation is { } aggregation)
+        {
+            metricStreamConfiguration = CreateDefaultHistogramConfiguration(instrument, aggregation);
+        }
+
+        var metricStreamIdentity = new MetricStreamIdentity(instrument, metricStreamConfiguration);
+
+        var exemplarFilter = metricStreamIdentity.IsHistogram
+            ? this.exemplarFilterForHistograms ?? this.exemplarFilter
+            : this.exemplarFilter;
+
+        lock (this.instrumentCreationLock)
+        {
+            if (this.TryGetExistingMetric(in metricStreamIdentity, out var existingMetric))
+            {
+                return [existingMetric];
+            }
+
+            if (!this.TryReserveMetricIndex(out var index))
+            {
+                OpenTelemetrySdkEventSource.Log.MetricInstrumentIgnored(metricStreamIdentity.InstrumentName, metricStreamIdentity.MeterName, "Maximum allowed Metric streams for the provider exceeded.", "Use MeterProviderBuilder.AddView to drop unused instruments. Or use MeterProviderBuilder.SetMaxMetricStreams to configure MeterProvider to allow higher limit.");
+                return [];
+            }
+            else
+            {
+                Metric? metric = null;
+                try
+                {
+                    metric = new Metric(
+                        metricStreamIdentity,
+                        this.GetAggregationTemporality(metricStreamIdentity.InstrumentType),
+                        this.cardinalityLimit,
+                        exemplarFilter);
+                }
+                catch (NotSupportedException nse)
+                {
+                    // The reserved slot was never populated, so return it for reuse.
+                    this.availableMetricIndices.Enqueue(index);
+
+                    // TODO: This allocates string even if none listening.
+                    // Could be improved with separate Event.
+                    // Also the message could call out what Instruments
+                    // and types (eg: int, long etc) are supported.
+                    OpenTelemetrySdkEventSource.Log.MetricInstrumentIgnored(metricStreamIdentity.InstrumentName, metricStreamIdentity.MeterName, "Unsupported instrument. Details: " + nse.Message, "Switch to a supported instrument type.");
+                    return [];
+                }
+
+                this.instrumentIdentityToMetric[metricStreamIdentity] = metric;
+                this.metrics[index] = metric;
+
+                this.CreateOrUpdateMetricStreamRegistration(in metricStreamIdentity);
+
+                return [metric];
+            }
+        }
+    }
+
+    internal virtual List<Metric> AddMetricWithViews(Instrument instrument, List<MetricStreamConfiguration?> metricStreamConfigs)
+    {
+        var maxCountMetricsToBeCreated = metricStreamConfigs.Count;
+
+        // Create list with initial capacity as the max metric count.
+        // Due to duplicate/max limit, we may not end up using them all.
+        var metrics = new List<Metric>(maxCountMetricsToBeCreated);
+        lock (this.instrumentCreationLock)
+        {
+            for (var i = 0; i < maxCountMetricsToBeCreated; i++)
+            {
+                var metricStreamConfig = metricStreamConfigs[i];
+
+                // Apply default histogram aggregation if no explicit view is provided
+                if (metricStreamConfig == null && this.DefaultHistogramAggregation is { } aggregation)
+                {
+                    metricStreamConfig = CreateDefaultHistogramConfiguration(instrument, aggregation);
+                }
+
+                var metricStreamIdentity = new MetricStreamIdentity(instrument, metricStreamConfig);
+
+                var exemplarFilter = metricStreamIdentity.IsHistogram
+                    ? this.exemplarFilterForHistograms ?? this.exemplarFilter
+                    : this.exemplarFilter;
+
+                // Per the OpenTelemetry specification, View-provided names are
+                // not subject to the instrument name syntax. Only validate the
+                // name when it originates from the instrument itself (no View
+                // rename). The Meter API does not validate instrument names,
+                // so the SDK must validate them here.
+                if (metricStreamConfig?.Name == null
+                    && !MeterProviderBuilderSdk.IsValidInstrumentName(metricStreamIdentity.InstrumentName))
+                {
+                    OpenTelemetrySdkEventSource.Log.MetricInstrumentIgnored(
+                        metricStreamIdentity.InstrumentName,
+                        metricStreamIdentity.MeterName,
+                        "Instrument name is invalid.",
+                        "The name must comply with the OpenTelemetry specification.");
+
+                    continue;
+                }
+
+                if (this.TryGetExistingMetric(in metricStreamIdentity, out var existingMetric))
+                {
+                    metrics.Add(existingMetric);
+                    continue;
+                }
+
+                if (metricStreamConfig == MetricStreamConfiguration.Drop)
+                {
+                    OpenTelemetrySdkEventSource.Log.MetricInstrumentIgnored(metricStreamIdentity.InstrumentName, metricStreamIdentity.MeterName, "View configuration asks to drop this instrument.", "Modify view configuration to allow this instrument, if desired.");
+                    continue;
+                }
+
+                if (!this.TryReserveMetricIndex(out var index))
+                {
+                    OpenTelemetrySdkEventSource.Log.MetricInstrumentIgnored(metricStreamIdentity.InstrumentName, metricStreamIdentity.MeterName, "Maximum allowed Metric streams for the provider exceeded.", "Use MeterProviderBuilder.AddView to drop unused instruments. Or use MeterProviderBuilder.SetMaxMetricStreams to configure MeterProvider to allow higher limit.");
+                }
+                else
+                {
+                    Metric metric = new(
+                        metricStreamIdentity,
+                        this.GetAggregationTemporality(metricStreamIdentity.InstrumentType),
+                        metricStreamConfig?.CardinalityLimit ?? this.cardinalityLimit,
+                        exemplarFilter,
+                        metricStreamConfig?.ExemplarReservoirFactory);
+
+                    this.instrumentIdentityToMetric[metricStreamIdentity] = metric;
+                    this.metrics[index] = metric;
+                    metrics.Add(metric);
+
+                    this.CreateOrUpdateMetricStreamRegistration(in metricStreamIdentity);
+                }
+            }
+        }
+
+        return metrics;
+    }
+
+    internal void ApplyParentProviderSettings(
+        int metricLimit,
+        int cardinalityLimit,
+        ExemplarFilterType? exemplarFilter,
+        ExemplarFilterType? exemplarFilterForHistograms)
+    {
+        this.metricLimit = metricLimit;
+        this.metrics = new Metric[metricLimit];
+        this.metricsCurrentBatch = new Metric[metricLimit];
+        this.cardinalityLimit = cardinalityLimit;
+        this.exemplarFilter = exemplarFilter;
+        this.exemplarFilterForHistograms = exemplarFilterForHistograms;
+    }
+
+    private static MetricStreamConfiguration? CreateDefaultHistogramConfiguration(Instrument instrument, MetricReaderHistogramAggregation aggregation)
+    {
+        var instrumentType = instrument.GetType();
+        if (instrumentType.IsGenericType)
+        {
+            var genericType = instrumentType.GetGenericTypeDefinition();
+            if (genericType == typeof(Histogram<>))
+            {
+                return aggregation == MetricReaderHistogramAggregation.Base2ExponentialBucketHistogram
+                    ? new Base2ExponentialBucketHistogramConfiguration()
+                    : new ExplicitBucketHistogramConfiguration();
+            }
+        }
+
+        return null;
+    }
+
+    private bool TryGetExistingMetric(in MetricStreamIdentity metricStreamIdentity, [NotNullWhen(true)] out Metric? existingMetric)
+        => this.instrumentIdentityToMetric.TryGetValue(metricStreamIdentity, out existingMetric)
+            && existingMetric != null && existingMetric.Active;
+
+    private void CreateOrUpdateMetricStreamRegistration(in MetricStreamIdentity metricStreamIdentity)
+    {
+        if (this.metricStreamNames.TryGetValue(metricStreamIdentity.MetricStreamName, out var count))
+        {
+            // TODO: This can be a false positive. The registration is only
+            // released when the metric is removed during a collection cycle.
+            // If an instrument is deactivated and an instrument with the same
+            // stream name is re-created before the next collect, the stale
+            // registration is still present and this logs a duplicate/conflict
+            // warning even though there is no actual conflict.
+            OpenTelemetrySdkEventSource.Log.DuplicateMetricInstrument(
+                metricStreamIdentity.InstrumentName,
+                metricStreamIdentity.MeterName,
+                "Metric instrument has the same name as an existing one but differs by description, unit, or instrument type. Measurements from this instrument will still be exported but may result in conflicts.",
+                "Either change the name of the instrument or use MeterProviderBuilder.AddView to resolve the conflict.");
+
+            this.metricStreamNames[metricStreamIdentity.MetricStreamName] = count + 1;
+        }
+        else
+        {
+            this.metricStreamNames[metricStreamIdentity.MetricStreamName] = 1;
+        }
+    }
+
+    private Batch<Metric> GetMetricsBatch()
+    {
+        try
+        {
+            var indexSnapshot = Math.Min(this.metricIndex, this.metricLimit - 1);
+            var target = indexSnapshot + 1;
+            var metricCountCurrentBatch = 0;
+            for (var i = 0; i < target; i++)
+            {
+                ref var metric = ref this.metrics[i];
+                if (metric != null)
+                {
+                    var metricPointSize = metric.Snapshot();
+
+                    if (metricPointSize > 0)
+                    {
+                        this.metricsCurrentBatch[metricCountCurrentBatch++] = metric;
+                    }
+
+                    if (!metric.Active)
+                    {
+                        this.RemoveMetric(ref metric, i);
+                    }
+                }
+            }
+
+            return (metricCountCurrentBatch > 0) ? new Batch<Metric>(this.metricsCurrentBatch, metricCountCurrentBatch) : default;
+        }
+        catch (Exception ex)
+        {
+            OpenTelemetrySdkEventSource.Log.MetricReaderException(nameof(this.GetMetricsBatch), ex);
+            return default;
+        }
+    }
+
+    private void RemoveMetric(ref Metric? metric, int index)
+    {
+        OpenTelemetrySdkEventSource.Log.MetricInstrumentRemoved(metric!.Name, metric.MeterName);
+
+        // Note: This removes the entry (key and value) so the dictionary does
+        // not grow without bound as instruments are repeatedly created and
+        // disposed. A value-matching removal is used to guard against a race
+        // condition: if a metric is deactivated and then reactivated in the
+        // same collection cycle, instrumentIdentityToMetric[metric.InstrumentIdentity]
+        // may already point to the new (active) metric. In that case the entry's
+        // value no longer equals the old metric, the removal is a no-op, and the
+        // new metric is retained.
+        var item = new KeyValuePair<MetricStreamIdentity, Metric?>(metric.InstrumentIdentity, metric);
+#if NET
+        this.instrumentIdentityToMetric.TryRemove(item);
+#else
+        ICollection<KeyValuePair<MetricStreamIdentity, Metric?>> instrumentIdentityToMetric = this.instrumentIdentityToMetric;
+        instrumentIdentityToMetric.Remove(item);
+#endif
+
+        // Release the stream-name registration for this metric. When the last
+        // metric using the name is removed the entry is dropped so the
+        // dictionary does not grow without bound as instruments are repeatedly
+        // created and disposed with recycled storage slots.
+        var metricStreamName = metric.InstrumentIdentity.MetricStreamName;
+        lock (this.instrumentCreationLock)
+        {
+            if (this.metricStreamNames.TryGetValue(metricStreamName, out var count))
+            {
+                if (count <= 1)
+                {
+                    this.metricStreamNames.Remove(metricStreamName);
+                }
+                else
+                {
+                    this.metricStreamNames[metricStreamName] = count - 1;
+                }
+            }
+        }
+
+        // Note: metric is a reference to the array storage so
+        // this clears the metric out of the array.
+        metric = null;
+
+        // Make the freed slot available for reuse by a future instrument. This
+        // must happen after the slot has been cleared above so that a concurrent
+        // AddMetricWith*Views call observes a null slot before writing to it.
+        this.availableMetricIndices.Enqueue(index);
+    }
+
+    private bool TryReserveMetricIndex(out int index)
+    {
+        // Note: This is always called while holding instrumentCreationLock, so
+        // access to metricIndex does not need additional synchronization.
+
+        // Reuse a slot freed by a previously removed (deactivated) metric, if
+        // one is available, before consuming a brand new slot.
+        if (this.availableMetricIndices.TryDequeue(out index))
+        {
+            return true;
+        }
+
+        var newIndex = this.metricIndex + 1;
+        if (newIndex >= this.metricLimit)
+        {
+            index = -1;
+            return false;
+        }
+
+        this.metricIndex = newIndex;
+        index = newIndex;
+        return true;
+    }
+}
