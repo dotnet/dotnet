@@ -1280,8 +1280,8 @@ Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize kar�
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandProtocolVersionDescription">
-        <source>The NuGet server protocol version to be used. Currently supported versions are 2 and 3. See https://learn.microsoft.com/nuget/api/overview for information about the version 3 protocol. Defaults to 2 if not specified.</source>
-        <target state="translated">Kullanılacak NuGet sunucu protokolü sürümü. Şu anda desteklenen sürümler 2 ve 3'tür. Sürüm 3 protokolü hakkında bilgi için https://learn.microsoft.com/nuget/api/overview adresine bakın. Belirtilmemişse varsayılan olarak 2'dir.</target>
+        <source>The NuGet server protocol version to be used. When the URL ends in .json, it defaults to "3", and defaults to "2" otherwise.</source>
+        <target state="needs-review-translation">Kullanılacak NuGet sunucu protokolü sürümü. Şu anda desteklenen sürümler 2 ve 3'tür. Sürüm 3 protokolü hakkında bilgi için https://learn.microsoft.com/nuget/api/overview adresine bakın. Belirtilmemişse varsayılan olarak 2'dir.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandSourceDescription">
