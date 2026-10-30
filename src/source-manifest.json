@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 338490,
+      "barId": 338812,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "337343720594259474a8a4b390610feadd518229"
+      "commitSha": "4163bf82769cbb7f0a6e1e02f85090d30b53e988"
     },
     {
       "barId": 336188,
@@ -13,10 +13,10 @@
       "commitSha": "77e4202bed594e8c1063e697b289221e57858bd5"
     },
     {
-      "barId": 335141,
+      "barId": 338683,
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "8b8bdd0e7a8ca16c0f58020276835d1aef712e9e"
+      "commitSha": "a1daff94c5cfe452443ebac0f8c0cf4f7bfaaab7"
     },
     {
       "barId": 337646,
@@ -31,28 +31,28 @@
       "commitSha": "2ee21e1b8f7721ea9cb89cd4db4f589b37b579d7"
     },
     {
-      "barId": 338620,
+      "barId": 338818,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "1aa8f0b82b2553829d109721e51ee0d105f52ba9"
+      "commitSha": "5f8e4349fe84e11481094acd1ffbd848e954495d"
     },
     {
-      "barId": 338626,
+      "barId": 338797,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "42ec98e2199ec3a2573284c3856ad78eaa1f3258"
+      "commitSha": "6090cb9e02bbb0ac3b47a5278458051911e84cf2"
     },
     {
-      "barId": 338525,
+      "barId": 338675,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "c414b8b078e739c59a42d72aee932fe19bed6cc0"
+      "commitSha": "00dc56cc16c00ff1501145a0dd653dadf81d964b"
     },
     {
-      "barId": 337899,
+      "barId": 338165,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "d12022d6d0ec9c3355fbb3ae293f67c6babd2c84"
+      "commitSha": "fe180deb551cc47a57de788c936e2fd4d778a909"
     },
     {
       "barId": 338560,
@@ -67,16 +67,16 @@
       "commitSha": "c9cfaac79ed68cdce37df6690475db67edae4c63"
     },
     {
-      "barId": 338608,
+      "barId": 338790,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "406deba91f42e16246259a90e94a9b410c626b30"
+      "commitSha": "640c85e5fcace39fe46a4e288170a36fc0a12522"
     },
     {
-      "barId": 338612,
+      "barId": 338823,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "6dbcdc18531734d139850c8948067ad54dfdaaf6"
+      "commitSha": "735c69bd695466ea44a0602e9c83c91e6004707b"
     },
     {
       "barId": 335115,
@@ -85,16 +85,16 @@
       "commitSha": "33071a16e5320a16a9dc4da5240fb61515c8d064"
     },
     {
-      "barId": 335788,
+      "barId": 337674,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "bdf6a59a376b141815580500d147c31b95d63a64"
+      "commitSha": "86b9e8a65454b843e3c3fe4cf3c644e421312a41"
     },
     {
-      "barId": 336930,
+      "barId": 338544,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "2b0a53c9c2a12fa32c1c2f52da740156cd6c3dac"
+      "commitSha": "8a2c9040054af8f98c1fa208ee3be84af943a7ec"
     },
     {
       "barId": 336290,
@@ -133,10 +133,10 @@
       "commitSha": "0e20ab52b574b83d81ec96f299093a22a6197b28"
     },
     {
-      "barId": 337099,
+      "barId": 338729,
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",
-      "commitSha": "c32744f91a48445c9fb4b70b6c6e5e0327248dcd"
+      "commitSha": "480f24d55faf82033891822d0fcc38a62ba56ed4"
     }
   ],
   "submodules": [
@@ -204,6 +204,11 @@
       "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet",
       "remoteUri": "https://github.com/open-telemetry/opentelemetry-dotnet",
       "commitSha": "611868a27afda59761da60b98610f8d3b85497dc"
+    },
+    {
+      "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet-1.18",
+      "remoteUri": "https://github.com/open-telemetry/opentelemetry-dotnet",
+      "commitSha": "9db92a4e978b4ae432183c790259be48a475578f"
     },
     {
       "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet-contrib",
