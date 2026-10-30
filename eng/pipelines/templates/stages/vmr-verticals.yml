@@ -174,7 +174,6 @@ stages:
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: x86
-          extraProperties: /p:BuildRuntimeProductsOnly=true
           brandingType: ${{ variables.brandingType }}
 
     - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
@@ -525,7 +524,7 @@ stages:
             crossRootFs: '/crossrootfs/arm'
             targetOS: linux
             targetArchitecture: arm
-            extraProperties: /p:BuildRuntimeProductsOnly=true /p:TargetCxxStandardLibrary=libc++ /p:TargetCxxStandardLibraryStatic=true /p:TargetCxxAbiLibrary=libstdc++
+            extraProperties: /p:TargetCxxStandardLibrary=libc++ /p:TargetCxxStandardLibraryStatic=true /p:TargetCxxAbiLibrary=libstdc++
             brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
@@ -590,7 +589,6 @@ stages:
             targetOS: linux-musl
             targetArchitecture: arm
             targetRid: ${{ variables.linuxMuslArmRid }}
-            extraProperties: /p:BuildRuntimeProductsOnly=true
             brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
@@ -661,7 +659,6 @@ stages:
             pool: ${{ parameters.pool_Windows }}
             targetOS: windows
             targetArchitecture: x86
-            extraProperties: /p:BuildRuntimeProductsOnly=true
             brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
@@ -684,7 +681,7 @@ stages:
             pool: ${{ parameters.pool_Windows }}
             targetOS: windows
             targetArchitecture: x86
-            extraProperties: /p:PgoInstrument=true /p:BuildRuntimeProductsOnly=true
+            extraProperties: /p:PgoInstrument=true
             brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
@@ -854,7 +851,6 @@ stages:
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: x86
-          extraProperties: /p:BuildRuntimeProductsOnly=true
 
     - template: ../jobs/vmr-build.yml
       parameters:

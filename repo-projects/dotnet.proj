@@ -31,12 +31,12 @@
   </ItemGroup>
 
   <!-- Build the workloads. -->
-  <ItemGroup Condition="'$(BuildWorkloads)' == 'true'">
+  <ItemGroup Condition="'$(BuildWorkloads)' == 'true' and '$(BuildRuntimeProductsOnly)' != 'true'">
     <RepositoryReference Include="sdk" DotNetBuildPass="2" />
   </ItemGroup>
 
   <!-- Build the windows SDK bundle. -->
-  <ItemGroup Condition="'$(DotNetBuildPass)' == '3' and '$(TargetOS)' == 'windows'">
+  <ItemGroup Condition="'$(DotNetBuildPass)' == '3' and '$(TargetOS)' == 'windows' and '$(BuildRuntimeProductsOnly)' != 'true'">
     <RepositoryReference Include="sdk" DotNetBuildPass="3" />
   </ItemGroup>
 
