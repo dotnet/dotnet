@@ -191,13 +191,15 @@ internal class SwixComponent : SwixPackageBase
         }
         else
         {
+            string[] supportedPlatforms = WorkloadPackageBase.GetSupportedPlatforms(sdkFeatureBand);
             foreach (WorkloadPackId packId in workload.Packs ?? Enumerable.Empty<WorkloadPackId>())
             {
                 // Check whether the pack dependency is aliased to non-Windows RIDs. If so, we can't add a dependency for the pack
                 // because we won't be able to create any installers.
                 if (manifest.Packs.TryGetValue(packId, out WorkloadPack? pack))
                 {
-                    if (pack.IsAlias && pack.AliasTo != null && !pack.AliasTo.Keys.Any(rid => s_SupportedRids.Contains(rid)))
+                    if (pack.IsAlias && pack.AliasTo != null && !pack.AliasTo.Keys.Any(rid =>
+                        s_SupportedRids.Contains(rid) && (rid != "win-x86" || supportedPlatforms.Contains("x86"))))
                     {
                         continue;
                     }

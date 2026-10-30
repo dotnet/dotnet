@@ -18,6 +18,27 @@ public class SwixComponentTests : TestBase
 {
     public string RandomPath => Path.Combine(AppContext.BaseDirectory, "obj", Path.GetFileNameWithoutExtension(Path.GetTempFileName()));
 
+    [WindowsOnlyTheory]
+    [InlineData("11.0.100", "win-x86", true)]
+    [InlineData("12.0.100-alpha.1", "win-x86", false)]
+    [InlineData("12.0.100", "win-x64", true)]
+    [InlineData("12.0.100", "win-arm64", true)]
+    [InlineData("12.0.100", "any", true)]
+    public void ItDoesNotReferencePackInstallersForUnsupportedSdkHosts(string sdkFeatureBand, string rid, bool expectedDependency)
+    {
+        WorkloadManifest manifest = Create("WorkloadManifest.json");
+        WorkloadDefinition workload = (WorkloadDefinition)manifest.Workloads.First().Value;
+        WorkloadPackId packId = new("Example.Tool");
+        manifest.Packs.Add(packId, new WorkloadPack(packId, "1.0.0", WorkloadPackKind.Tool,
+            new Dictionary<string, WorkloadPackId> { [rid] = new($"Example.Tool.{rid}") }));
+        workload.Packs.Clear();
+        workload.Packs.Add(packId);
+
+        SwixComponent component = SwixComponent.Create(new ReleaseVersion(sdkFeatureBand), workload, manifest, packGroupId: null);
+
+        Assert.Equal(expectedDependency, component.Dependencies.Any(d => d.Id == "Example.Tool.1.0.0"));
+    }
+
     [WindowsOnlyFact]
     public void ItAssignsDefaultValues()
     {

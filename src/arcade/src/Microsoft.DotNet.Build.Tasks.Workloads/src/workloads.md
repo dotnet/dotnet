@@ -4,6 +4,8 @@
 
 An MSBuild task used to create workload artifacts including MSIs and SWIX projects for Visual Studio Installer. It processes workload manifest packages to produce per-platform MSI installers for workload packs and manifests, NuGet package wrapper projects, and SWIX authoring for Visual Studio insertion.
 
+Installer platforms are selected from each package's SDK feature band. .NET 12 and later generate x64 and ARM64 installers only; earlier feature bands also generate x86 installers. This applies to manifests, workload sets, packs, pack groups, and their Visual Studio insertion authoring. It does not remove support for targeting x86 applications from a supported SDK host.
+
 ### Input Parameters
 
 | Parameter | Type | Required | Description |
