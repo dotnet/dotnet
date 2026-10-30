@@ -100,6 +100,7 @@ namespace NuGet.Packaging
                         // Extract the .nuspec file with a well known file name.
                         filesAdded.Add(packageReader.ExtractFile(
                             sourceNuspecFile,
+                            packageDirectory,
                             targetNuspecPath,
                             packageExtractionContext.Logger));
 
@@ -486,7 +487,7 @@ namespace NuGet.Packaging
                                         var nuspecFile = packageReader.GetNuspecFile();
                                         if ((packageSaveMode & PackageSaveMode.Nuspec) == PackageSaveMode.Nuspec)
                                         {
-                                            packageReader.ExtractFile(nuspecFile, targetNuspec, logger);
+                                            packageReader.ExtractFile(nuspecFile, targetPath, Path.GetFullPath(targetNuspec), logger);
                                         }
 
                                         if ((packageSaveMode & PackageSaveMode.Files) == PackageSaveMode.Files)
