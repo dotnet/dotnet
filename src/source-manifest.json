@@ -7,10 +7,10 @@
       "commitSha": "d7737fa028e509dc2baafddf2607bab06bb9621f"
     },
     {
-      "barId": 337820,
+      "barId": 338981,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "3b7d9e5dfea53388d9a0a6c423a26a2b1b861e04"
+      "commitSha": "91671c70a85f2a2ccc293a403da6d9b4c9e63df1"
     },
     {
       "barId": 332483,
@@ -37,10 +37,10 @@
       "commitSha": "5f8e4349fe84e11481094acd1ffbd848e954495d"
     },
     {
-      "barId": 338240,
+      "barId": 338772,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "cf71cda90e3e9638c2289d356116bc5cc38147a5"
+      "commitSha": "c24253f4d4db68244441cc037313b307bad090a0"
     },
     {
       "barId": 338539,
@@ -85,10 +85,10 @@
       "commitSha": "22f775f4154d002eb9628d6ff608172d4c61c453"
     },
     {
-      "barId": 337672,
+      "barId": 338918,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "4ca68185f5faef068d06176a1e3a241f0a7c4041"
+      "commitSha": "93718bf425cb9f28c46b3ed281301dee812ad4ee"
     },
     {
       "barId": 337970,
