@@ -8,7 +8,7 @@
     "default": {
       "name": "default",
       "createdDate": "2026-10-28 15:04:31Z",
-      "lastUpdatedDate": "2026-10-28 17:54:20Z"
+      "lastUpdatedDate": "2026-10-30 15:49:02Z"
     }
   },
   "results": {
@@ -62,6 +62,23 @@
       "ruleId": "BA2004",
       "justification": "C++/CLI managed assembly references without source checksums are incorrectly reported as insecure source hashing. Verified with the fix in https://github.com/microsoft/binskim/pull/1261. Remove when the fixed BinSkim is deployed.",
       "createdDate": "2026-10-28 15:04:31Z"
+    },
+    "30928ed1dec7090c9b53d5576c640b26d745391d4099cf83c9e61ac49a1abe75": {
+      "signature": "30928ed1dec7090c9b53d5576c640b26d745391d4099cf83c9e61ac49a1abe75",
+      "alternativeSignatures": [
+        "9c0c9955ad011a7f51173b51fc66ac5f67e4e1b5170bd2de7cd57f1ba67e6ce7",
+        "5f393b1ed23798c2ab69c424d737ecb42794014aa6a740634965c1b2e2c3d43b",
+        "f362c568270b2d945fd385efd0784c1bbc05e3ced9c7d5ebfa50f7d7637ab603"
+      ],
+      "target": "runtimes/win-x64/lib/net12.0/System.Printing.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20261030.2/Microsoft_WindowsDesktop_App_Runtime_win-x64_12_0_0-alpha_1_26530_102_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2004",
+      "justification": "C++/CLI managed assembly references without source checksums are incorrectly reported as insecure source hashing. Verified with the fix in https://github.com/microsoft/binskim/pull/1261. Remove when the fixed BinSkim is deployed.",
+      "createdDate": "2026-10-30 15:49:02Z"
     },
     "5c772f79720e16f8856f1d86db05b38967f435bb9b48adf52b517311906e2e12": {
       "signature": "5c772f79720e16f8856f1d86db05b38967f435bb9b48adf52b517311906e2e12",
@@ -1507,6 +1524,533 @@
       "ruleId": "BA2024",
       "justification": ".NET is exempt from this rule",
       "createdDate": "2026-10-28 17:54:20Z"
+    },
+    "8186e0a064c083c862bfa281033c9d23b1037cf7cf0c08eaa0cf4bb49c2c77b9": {
+      "signature": "8186e0a064c083c862bfa281033c9d23b1037cf7cf0c08eaa0cf4bb49c2c77b9",
+      "alternativeSignatures": [
+        "c98ffd461669551c46fd1c6c084e0952fc3a59e54c9ea1ccc6fc0e8e71e63097",
+        "b6870ebf4dab7847ea0d9ebfa0b19e6ad3390f2906ea6a35cede4706bd865115",
+        "bc0217258641fa61616ffb4b0d856bd4527d60565b4d975b4290fbfb360edc58"
+      ],
+      "target": "sdk/12.0.100-alpha.1.26530.102/dotnet-aot.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/Sdk/12.0.100-alpha.1.26530.102/dotnet-sdk-12_0_100-alpha_1_26530_102-win-x86_zip/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "31d4b6cc9d071a1a8cdc7f9de9b0eaeab96f3e7f9ffde9ce051028e506420c96": {
+      "signature": "31d4b6cc9d071a1a8cdc7f9de9b0eaeab96f3e7f9ffde9ce051028e506420c96",
+      "alternativeSignatures": [
+        "38160d63ad2e032482f964a7e56e318b991688e6f9412f5e835403222b23bb7c",
+        "ae121dac8ab6b2c19f29f01461757bcaae08148f79036a03794c0663b74a68b7",
+        "ed95130e028e751adc0b5184b8be9ecb79fb764f338ef002e4b7bcfa2de647f3"
+      ],
+      "target": "host/fxr/12.0.0-alpha.1.26530.102/hostfxr.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/aspnetcore/Runtime/12.0.0-alpha.1.26530.102/aspnetcore-runtime-12_0_0-alpha_1_26530_102-win-x86_zip/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "848ad1299ff8e076a8e1e11d6a9a44fbcf9f476dc892e221b3675f4740518c67": {
+      "signature": "848ad1299ff8e076a8e1e11d6a9a44fbcf9f476dc892e221b3675f4740518c67",
+      "alternativeSignatures": [
+        "f01d9a9342d2c553db809a7adfb5c3aa4b4df6878755a15445904f5e5ff0ae7c",
+        "afe16590674cca88e8bdd98bc741a2f5b0ff909bdb9f42c7e06abb68711a37aa",
+        "45a44a962264ccc83932ec5129bd50faa81db7a3fbeab066a4a32d2a44f4e420"
+      ],
+      "target": "runtimes/linux-arm/native/mscordaccore.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/runtime/runtime_linux-arm_Microsoft_CrossOsDiag_Private_CoreCLR_12_0_0-alpha_1_26530_102_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "f21e6006f79239a0979efc3d8c3e8a81638cf81f5f6594aabc57f1f2b3083c52": {
+      "signature": "f21e6006f79239a0979efc3d8c3e8a81638cf81f5f6594aabc57f1f2b3083c52",
+      "alternativeSignatures": [
+        "428ffe4d50cf5cb44b37cac67199b96ad4cd567653e27d4d00c44311f0f596b9",
+        "c05166d46588eaac3b7a2ee349c05d9e387e23238612956d2ef623d445fbdf39",
+        "f3c6ef7bed2a2c62ac6bc9d3f08b89acb9941c05ec18db0597112ed6955d8191"
+      ],
+      "target": "runtimes/linux-arm/native/mscordbi.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/runtime/runtime_linux-arm_Microsoft_CrossOsDiag_Private_CoreCLR_12_0_0-alpha_1_26530_102_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "bbc52046f26be4f0f385c9b2783311e79e8a5b1bb10ed4550f6888c95596c2c5": {
+      "signature": "bbc52046f26be4f0f385c9b2783311e79e8a5b1bb10ed4550f6888c95596c2c5",
+      "alternativeSignatures": [
+        "016ad27297578b837469a2a54bde23e98c99bb0a9df428ae1ddac26f04d41dc3",
+        "317aff7d36843ed409b80f59873eeb43e588805db0ed2cc789a43b8051ac80c2",
+        "3bdb2fdcdf3a80d10ba5b2ffa26c2af561114306e1bdc7b9e4ad4e24a8d4c405"
+      ],
+      "target": "runtimes/linux-arm64/native/mscordaccore.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/runtime/runtime_linux-arm64_Microsoft_CrossOsDiag_Private_CoreCLR_12_0_0-alpha_1_26530_102_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "8318932e5d780b621fa819d33c39ef783c180252c12503c193cbc567560da4b5": {
+      "signature": "8318932e5d780b621fa819d33c39ef783c180252c12503c193cbc567560da4b5",
+      "alternativeSignatures": [
+        "2b2439b40a70d2cec9e66886ec7b7bf26b28fee57bd5c66d7d9d763e18943204",
+        "17c805188b3c6ec98ca98c9b91256cb5705e03f4b2966f216ab9f1e9c4cc4e16",
+        "c31d015af2d07f3959cd58f16997ab074a6720b19bc7f74a3e98400ff0714336"
+      ],
+      "target": "runtimes/linux-arm64/native/mscordbi.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/runtime/runtime_linux-arm64_Microsoft_CrossOsDiag_Private_CoreCLR_12_0_0-alpha_1_26530_102_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "6457ccc9dcb7bedaebac824b18df810385a2ba100f91d09bec170e0ce806ac61": {
+      "signature": "6457ccc9dcb7bedaebac824b18df810385a2ba100f91d09bec170e0ce806ac61",
+      "alternativeSignatures": [
+        "5abfa56b78e9148df7d09abfb0ee8ce14cc4df846dfea4afa43091ac6286aa54",
+        "07d943fad90571441a2ab094b730e2f57cece1b3e13a896de567ce820e81e98a",
+        "9b99281379be2e9841b5d9c61247baa4364074eaa646a8b89b426ffd4c7354ad"
+      ],
+      "target": "runtimes/linux-musl-arm/native/mscordaccore.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/runtime/runtime_linux-musl-arm_Microsoft_CrossOsDiag_Private_CoreCLR_12_0_0-alpha_1_26530_102_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "89f49906692c2d4f66a3e541cdc22316c54d2999b39f208b3f680e48da297b51": {
+      "signature": "89f49906692c2d4f66a3e541cdc22316c54d2999b39f208b3f680e48da297b51",
+      "alternativeSignatures": [
+        "b71ae01d123de13c4e59858c3a1eb984a161d5c8331f1d6193fb9794ebe70073",
+        "cc18705ae00769c1661b88671669f9de02fd2dc113469ca0b5556e76e6ed7835",
+        "ff42d4409b60a7171673ed6f3be8cab37037c2cd4ceb766390d80dd7bfe6531d"
+      ],
+      "target": "runtimes/linux-musl-arm/native/mscordbi.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/runtime/runtime_linux-musl-arm_Microsoft_CrossOsDiag_Private_CoreCLR_12_0_0-alpha_1_26530_102_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "3e42007ae11243afb50c0f20e6d00b9bab7a7ca398738f26cbb202ee7c8df9fd": {
+      "signature": "3e42007ae11243afb50c0f20e6d00b9bab7a7ca398738f26cbb202ee7c8df9fd",
+      "alternativeSignatures": [
+        "4b1014d8ba1a4b760c3d13186d2d77147ef16d402ed4021e0534bd40cdb06296",
+        "32b7ec636b2bc69cae82c28a8be6162b51d7162153796eaa8ab5a248acf9ed48",
+        "aa7112f6b74124a459e496afed3ee58b2dc524e9ab53523e8341f228a65ffaa7"
+      ],
+      "target": "runtimes/linux-musl-arm64/native/mscordaccore.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/runtime/runtime_linux-musl-arm64_Microsoft_CrossOsDiag_Private_CoreCLR_12_0_0-alpha_1_26530_102_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "1ca9530ac09c4677667ba646db7b460366e4c76c66ad30c6aa85efee0ac6d447": {
+      "signature": "1ca9530ac09c4677667ba646db7b460366e4c76c66ad30c6aa85efee0ac6d447",
+      "alternativeSignatures": [
+        "1c2474c651ce3ecc744a558ec3ff02b2cfe21fb29e23ee910d112b9188971037",
+        "bb08af7de60a66b476cdcf21842cf5e11d71ef07337014cc6d9ba8d41d921e29",
+        "4ea13fb97fbb2b1dfa1a8b40225284fb5826f1fc4aa782d899f1cf54f482e79d"
+      ],
+      "target": "runtimes/linux-musl-arm64/native/mscordbi.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/runtime/runtime_linux-musl-arm64_Microsoft_CrossOsDiag_Private_CoreCLR_12_0_0-alpha_1_26530_102_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "277a96bcd0e9ae54c9b47de98ba00572f2cab3e1c64340b08bb1d12408d8b60b": {
+      "signature": "277a96bcd0e9ae54c9b47de98ba00572f2cab3e1c64340b08bb1d12408d8b60b",
+      "alternativeSignatures": [
+        "ced8a12c8dd6170dbcb2168f503eeb13a7806b23945a2cf749f5016787e112b0",
+        "e26cc898e30d4a9cf658701f973ac95eb170778c64efeef6754d8fbb79d71018",
+        "1ad79fa24e541de2937888a9835ab29936f56d311c120ca1aadfc44d1b0f65a7"
+      ],
+      "target": "runtimes/linux-musl-x64/native/mscordaccore.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/runtime/runtime_linux-musl-x64_Microsoft_CrossOsDiag_Private_CoreCLR_12_0_0-alpha_1_26530_102_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "352fe65c049ef18ee762f18e806ec0e2a6f4e98ae9261f614ff6aa717de64520": {
+      "signature": "352fe65c049ef18ee762f18e806ec0e2a6f4e98ae9261f614ff6aa717de64520",
+      "alternativeSignatures": [
+        "ac5d913778bb192a8d2574dd079d1bc6acfc7b244fa0999f23860b9b1287822a",
+        "803ca9778bbd60e8980173775d9d10deecbaa51ea08c535a26d33b369193e8e8",
+        "e5e133cba2fe3e03025563ec2fc3f948dfa93260dddd35058d43569b7308f398"
+      ],
+      "target": "runtimes/linux-musl-x64/native/mscordbi.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/runtime/runtime_linux-musl-x64_Microsoft_CrossOsDiag_Private_CoreCLR_12_0_0-alpha_1_26530_102_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "c993ae350b03a1a95a0979fdacf9071f82c8f41bea3e7d413c7f1bf317473f41": {
+      "signature": "c993ae350b03a1a95a0979fdacf9071f82c8f41bea3e7d413c7f1bf317473f41",
+      "alternativeSignatures": [
+        "7c2667d956d0d91eee801582b37f09b5758f9e6351526ce386a10b945696a99e",
+        "6553bb41284e952d6045e307c6f3d0e5b2e929ed80baf0049e21f97b85a3b8d3",
+        "ac60c6cabb1920c063b940dd1fb93d5f98e309504ef1331491cac426633b6b01"
+      ],
+      "target": "runtimes/linux-x64/native/mscordaccore.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/runtime/runtime_linux-x64_Microsoft_CrossOsDiag_Private_CoreCLR_12_0_0-alpha_1_26530_102_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "2b9c338fd2fb3b5718d43dac31d4b323125b0fc1ff5351d0b5a1bc8969b9bf2d": {
+      "signature": "2b9c338fd2fb3b5718d43dac31d4b323125b0fc1ff5351d0b5a1bc8969b9bf2d",
+      "alternativeSignatures": [
+        "254af91a5a0ffc4b01f2bad13d6444009c329972fe3db755d0e1d010e7cc8490",
+        "4c990b3ae04149239aac3ba0c1a324790164e99171e104c09a2acd9359bad2e4",
+        "3d19c1de9902e432216074d5c4d514cee707f2b26518f6584174c51d44dfb821"
+      ],
+      "target": "runtimes/linux-x64/native/mscordbi.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/runtime/runtime_linux-x64_Microsoft_CrossOsDiag_Private_CoreCLR_12_0_0-alpha_1_26530_102_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "0a5c15043b58071a5b6f5501842a5f9080dffb2035f6b08a75832ede9a17524d": {
+      "signature": "0a5c15043b58071a5b6f5501842a5f9080dffb2035f6b08a75832ede9a17524d",
+      "alternativeSignatures": [
+        "9ed551d1e4fa4ed20ea3b3ab40452c8dea022b4ced9cb826b15dc62859f43b6f",
+        "75e16ddaf89e6cce57746564ccf7e9dfe3183f1ac463e6c67e7c2ec6886c5e7c",
+        "8e97680fe38b7349f302a4a6f58119960ac51dd53de2e61d4960248ed8eed77b"
+      ],
+      "target": "runtimes/win-arm64/native/wpfgfx_cor3.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20261030.2/runtime_win-arm64_Microsoft_DotNet_Wpf_GitHub_12_0_0-alpha_1_26530_102_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "ca159bf3b27f76bf7c5085f84bed7aa014f943dc419cce0f24d53df077a75ff6": {
+      "signature": "ca159bf3b27f76bf7c5085f84bed7aa014f943dc419cce0f24d53df077a75ff6",
+      "alternativeSignatures": [
+        "d24b9f5bfa491b0be596f9c24d96faa6193cd5acf699507295db68a204789687",
+        "95d99458c5b2f59e3fd1d21def72e4a5cd34cae67ea25610f91da5c59e8e218d",
+        "621270e5efc727067c52b8486a79a5772edfd7ecedfe918d3a7300e2f50527b4"
+      ],
+      "target": "runtimes/win-x64/native/PenImc_cor3.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20261030.2/runtime_win-x64_Microsoft_DotNet_Wpf_GitHub_12_0_0-alpha_1_26530_102_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "c69f1a54030c0cc7dd452a29f64824340beb7fe5b96c11506798855f202f044e": {
+      "signature": "c69f1a54030c0cc7dd452a29f64824340beb7fe5b96c11506798855f202f044e",
+      "alternativeSignatures": [
+        "0d4f4b8c7f674eb0ee5f0eb195ec63baeab5fee03fbaf65015ad27efbf060648",
+        "f6d8115d1b7aee27d3703154ac2415b837623dff2941266aa3b6f93be3d4152a",
+        "e7924df667399babcb03e67a148aedd8128a15473bfa5b0c63f6408601079581"
+      ],
+      "target": "runtimes/win-x64/native/wpfgfx_cor3.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20261030.2/runtime_win-x64_Microsoft_DotNet_Wpf_GitHub_12_0_0-alpha_1_26530_102_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "acf66b8a06ec7b20bb2b35a284238214bcb5b79e55279c6ebb84b1e70a458a99": {
+      "signature": "acf66b8a06ec7b20bb2b35a284238214bcb5b79e55279c6ebb84b1e70a458a99",
+      "alternativeSignatures": [
+        "5bb51a7b72eee6a642d4d38cd2a74a88efd6810c440f87debdc1206013ce4bef",
+        "c99914f479374913fa07bdb1f576a2161eafe6657d9df8da988a762834edb3e0",
+        "c52c6f68cf2689baf44a07b92b080c9dd680316a8871712bf240c120c626cc9a"
+      ],
+      "target": "runtimes/win-x86/native/wpfgfx_cor3.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20261030.2/runtime_win-x86_Microsoft_DotNet_Wpf_GitHub_12_0_0-alpha_1_26530_102_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "a91f5e22ba2bec9b9b85b32b15920d4268964ac1f2ed8ff901052a2bfde6e674": {
+      "signature": "a91f5e22ba2bec9b9b85b32b15920d4268964ac1f2ed8ff901052a2bfde6e674",
+      "alternativeSignatures": [
+        "576b42b930384d9ba3b892d731085a09c7e0caf206e3efe993cc6dd1976d122e",
+        "412c63f642357a2faf397cf2f53c25d055685192830546d27f6b7df61ddd1a5b",
+        "742e5765d15323b738fc8b6bd590c8d686ab294d1855fb41c505c04fd126225c"
+      ],
+      "target": "shared/Microsoft.AspNetCore.App/12.0.0-alpha.1.26530.102/aspnetcorev2_inprocess.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/aspnetcore/Runtime/12.0.0-alpha.1.26530.102/aspnetcore-runtime-12_0_0-alpha_1_26530_102-win-x86_zip/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "30e8b806a96a8725b0cc7dfe9bed431040167153a499fdf8f6a09fa1fa610c83": {
+      "signature": "30e8b806a96a8725b0cc7dfe9bed431040167153a499fdf8f6a09fa1fa610c83",
+      "alternativeSignatures": [
+        "0b4ca47dba09b6b11851bfae98b34a945ad8ab1a36cb172bd7fbee896a8d461c",
+        "4e1bd6886fed98cbdb9767f738aebad89207375e8a15765e47b511e73ad958a8",
+        "17e9d1ef59542cc6973282c05ecf59313a42e87f6921dc61f4f3f645563ec419"
+      ],
+      "target": "contentFiles/any/any/ARM64/aspnetcorev2.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20261030.2/Microsoft_AspNetCore_Server_IntegrationTesting_IIS_12_0_0-alpha_1_26530_102_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "031ddf30f9473582d70450e0e7fc0fbc30877b1efd5e73389dd1e8a90891b46b": {
+      "signature": "031ddf30f9473582d70450e0e7fc0fbc30877b1efd5e73389dd1e8a90891b46b",
+      "alternativeSignatures": [
+        "e393e312e6e9d363188aa0449222acc65ef70b9b2bcce1a34d775e85d302f498",
+        "95319be58975ecf98e6f6524fbf85c9d786e2a95273bfa2bc47c9b1cdab0010f",
+        "def873639ff5efafa2be4470f0f1dd4fbddb9c9c5db70bfdd9d584484d2eb4d6"
+      ],
+      "target": "contentFiles/any/any/x64/aspnetcorev2.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20261030.2/Microsoft_AspNetCore_Server_IntegrationTesting_IIS_12_0_0-alpha_1_26530_102_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "44fc907473942f272d68d9b429ad50665a25fefe3d5b74774b334859b779a08b": {
+      "signature": "44fc907473942f272d68d9b429ad50665a25fefe3d5b74774b334859b779a08b",
+      "alternativeSignatures": [
+        "868b723b724e0840fdf9f2e8098a1b8cf942e6f5ea451f8219a35404f5dc0839",
+        "4993820aeb9044c91442ea6f758f9f568fa10f7e2d56f72012da84aacbf4bef4",
+        "3dddb34d1208d516172abf28d7fa63972bdc484febdcacd9eeeb741fb7bb896e"
+      ],
+      "target": "contentFiles/any/any/x86/aspnetcorev2.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20261030.2/Microsoft_AspNetCore_Server_IntegrationTesting_IIS_12_0_0-alpha_1_26530_102_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "892dc13f1555a72d65546331fe11b67698bab959be1b8dfeec0e5707ae7cd411": {
+      "signature": "892dc13f1555a72d65546331fe11b67698bab959be1b8dfeec0e5707ae7cd411",
+      "alternativeSignatures": [
+        "f0ffc52811d1f0958ee924b758abb86a05cbdecd07e304c6ea93be518659fb89",
+        "3fe7b3a504428bd3f17fcab2eb3aa99aa4ac777e984f2bfddc8d0dc2b6f55715",
+        "7ebabb4585b9933828f6bb55a773b522576ecdbf112d2432ac0d9da1dd34d82e"
+      ],
+      "target": "contentFiles/any/any/ARM64/2.0.0/aspnetcorev2_outofprocess.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20261030.2/Microsoft_AspNetCore_Server_IntegrationTesting_IIS_12_0_0-alpha_1_26530_102_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "f28170e81f06a90db34dd36fcbb27a310e484a2392a394a91612c3db8ca0069a": {
+      "signature": "f28170e81f06a90db34dd36fcbb27a310e484a2392a394a91612c3db8ca0069a",
+      "alternativeSignatures": [
+        "c30b20ac91bc9699a2b3e580c27a28717795ee9c13e4a05b7db6cd0f66931724",
+        "66760ae3ff3933ef8f469a20bb393151b90dcd60b822b0bc3333565e77d562ff",
+        "2b7b88bf5563140b75b033d444ea8bc393a560ff79dc4f64ea703ae3a5d5f272"
+      ],
+      "target": "contentFiles/any/any/x64/2.0.0/aspnetcorev2_outofprocess.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20261030.2/Microsoft_AspNetCore_Server_IntegrationTesting_IIS_12_0_0-alpha_1_26530_102_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "6348d0bf2dd376b5be6e3f009100d84722d70b31258f3f922019278f2d6469f5": {
+      "signature": "6348d0bf2dd376b5be6e3f009100d84722d70b31258f3f922019278f2d6469f5",
+      "alternativeSignatures": [
+        "61361a2d948d96b909bfda3245fafe1afca482e4fb319f531462ae27ff01f93d",
+        "318b7b9b952778832e95e8900f006c07e38b1ecbbc848c631e99fb438183b931",
+        "d1ad9b3687e6c9e42692a4b078ea6507d50b22e3674f6a958957c9fea8555c11"
+      ],
+      "target": "contentFiles/any/any/x86/2.0.0/aspnetcorev2_outofprocess.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20261030.2/Microsoft_AspNetCore_Server_IntegrationTesting_IIS_12_0_0-alpha_1_26530_102_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "08b43cc21d6d558859109679e0dfa7394f06f9e4f0e4eb72541e46115cbaaede": {
+      "signature": "08b43cc21d6d558859109679e0dfa7394f06f9e4f0e4eb72541e46115cbaaede",
+      "alternativeSignatures": [
+        "c62210e41ddbc7558a5791779bbccea3d2bf5f35f67f1a9fe75741717bcc4c64",
+        "f50504545145da345baeb834ae3f7ea2cb9e77a4a732d6a412beef7e002a62da",
+        "c44f885eedb1a6ec9491bf5ae050d26af1a3e1f97f0a14f877b5e4747ddfa415"
+      ],
+      "target": "packs/Microsoft.NETCore.App.Host.win-arm64/12.0.0-alpha.1.26530.102/runtimes/win-arm64/native/comhost.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/Sdk/12.0.100-alpha.1.26530.102/dotnet-sdk-pgo-12_0_100-alpha_1_26530_102-win-arm64_zip/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "add48d7b798e4f7cb794053de737f0990a9e01e3addb889e554621be7bed1bbc": {
+      "signature": "add48d7b798e4f7cb794053de737f0990a9e01e3addb889e554621be7bed1bbc",
+      "alternativeSignatures": [
+        "fb15272667d1153aedba1efda8caea7d14eb4723c154204eaa0cb52b31a59499",
+        "a6e37d7ea5576462881a672dfe84e335aadcc6a728c3225cb90b583b6897f51a",
+        "402941e98f5406f3f5e64544fa46858b6cd0e9c9420226278781b7d364c4171e"
+      ],
+      "target": "packs/Microsoft.NETCore.App.Host.win-arm64/12.0.0-alpha.1.26530.102/runtimes/win-arm64/native/nethost.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/Sdk/12.0.100-alpha.1.26530.102/dotnet-sdk-pgo-12_0_100-alpha_1_26530_102-win-arm64_zip/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "a76a4261807f1002bf7bb482a97331f7d569dac304f09c7d260b2fa56afc6d5f": {
+      "signature": "a76a4261807f1002bf7bb482a97331f7d569dac304f09c7d260b2fa56afc6d5f",
+      "alternativeSignatures": [
+        "688d4121d1381ed858af130e838ce3a024eadf61bf87df940e23700edcbf4f53",
+        "d4fcd9f0b3c1b399ef3e92179089f55c098bc9a6d497a5603d55b062e74d0703",
+        "9c28a557ed7f1573cc08d4ab1e4b504eda7ccf31ceafce4fe7bb07275703803b"
+      ],
+      "target": "packs/Microsoft.NETCore.App.Host.win-x64/12.0.0-alpha.1.26530.102/runtimes/win-x64/native/comhost.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/Sdk/12.0.100-alpha.1.26530.102/dotnet-sdk-pgo-12_0_100-alpha_1_26530_102-win-x64_zip/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "ba9e20078695a02ee83bea31e57f0592512a33ded97797da1bba6e454c729452": {
+      "signature": "ba9e20078695a02ee83bea31e57f0592512a33ded97797da1bba6e454c729452",
+      "alternativeSignatures": [
+        "67a756276a06aa1f5325d5db5788db5ea13c2e4861f5b445a1d85de65012d5c4",
+        "e5f5c2de27eb4eeb0316bad8e718bf05a068f3ba733b8bff32230d6e68e701ca",
+        "3661400c3929146b00c7831ba448766755b967ec1d1636795c09c8f97813d651"
+      ],
+      "target": "packs/Microsoft.NETCore.App.Host.win-x64/12.0.0-alpha.1.26530.102/runtimes/win-x64/native/nethost.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/Sdk/12.0.100-alpha.1.26530.102/dotnet-sdk-pgo-12_0_100-alpha_1_26530_102-win-x64_zip/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "5b508e7a1d392e7410d595138a6af03828ffcc6514eb7ff0cd5c9c695945eb1e": {
+      "signature": "5b508e7a1d392e7410d595138a6af03828ffcc6514eb7ff0cd5c9c695945eb1e",
+      "alternativeSignatures": [
+        "67b91633c9c4f1ca49cd2ae191e3a0d3e037a1acc2ed4dffb4a9926544157c34",
+        "36c77a3af07aba65047ab10aeb5c7799a1dfd0f94e0f7e730e81f87b8c7ae65b",
+        "84bfae1ca320a28f9c0901eeaf42fa33c54421300edc8954b5ba041a031ec490"
+      ],
+      "target": "packs/Microsoft.NETCore.App.Host.win-x86/12.0.0-alpha.1.26530.102/runtimes/win-x86/native/comhost.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/Sdk/12.0.100-alpha.1.26530.102/dotnet-sdk-pgo-12_0_100-alpha_1_26530_102-win-x86_zip/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
+    },
+    "3641e8712730a1dce9f8edb605f21a6b7466e4cec039fecc7f5830c83b4af170": {
+      "signature": "3641e8712730a1dce9f8edb605f21a6b7466e4cec039fecc7f5830c83b4af170",
+      "alternativeSignatures": [
+        "c482e8b3037ecea1fc32761ad197386641939c00ae43aedec86b34d5dd1eb049",
+        "9da70ff6d1a106a42e205c6178cedc2f4108870c30290f4e4c32dc239f162965",
+        "285806683a124445c343870703bcda556452a49ffa8a9e54b9e5b08a735232c4"
+      ],
+      "target": "packs/Microsoft.NETCore.App.Host.win-x86/12.0.0-alpha.1.26530.102/runtimes/win-x86/native/nethost.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/Sdk/12.0.100-alpha.1.26530.102/dotnet-sdk-pgo-12_0_100-alpha_1_26530_102-win-x86_zip/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2024",
+      "justification": ".NET is exempt from this rule",
+      "createdDate": "2026-10-30 15:48:55Z"
     }
   }
 }
