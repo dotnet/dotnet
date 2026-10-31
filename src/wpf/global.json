@@ -13,10 +13,10 @@
     "dotnet": "12.0.100-alpha.1.26480.102",
     "runtimes": {
       "dotnet/x64": [
-        "$(MicrosoftNETCoreAppRefVersion)"
+        "$(MicrosoftNETCorePlatformsVersion)"
       ],
       "dotnet/x86": [
-        "$(MicrosoftNETCoreAppRefVersion)"
+        "$(MicrosoftNETCorePlatformsVersion)"
       ]
     },
     "vs": {
@@ -24,8 +24,8 @@
     }
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "12.0.0-beta.26519.106",
-    "Microsoft.DotNet.Helix.Sdk": "12.0.0-beta.26519.106",
+    "Microsoft.DotNet.Arcade.Sdk": "12.0.0-beta.26519.114",
+    "Microsoft.DotNet.Helix.Sdk": "12.0.0-beta.26519.114",
     "Microsoft.Build.NoTargets": "3.7.56"
   },
   "native-tools": {
