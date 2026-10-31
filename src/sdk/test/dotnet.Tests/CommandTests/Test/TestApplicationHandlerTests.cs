@@ -7,6 +7,7 @@ using Microsoft.DotNet.Cli.Commands.Run;
 using Microsoft.DotNet.Cli.Commands.Test;
 using Microsoft.DotNet.Cli.Commands.Test.IPC.Models;
 using Microsoft.DotNet.Cli.Commands.Test.Terminal;
+using TestExitCode = Microsoft.DotNet.Cli.Commands.Test.ExitCode;
 
 namespace dotnet.Tests.CommandTests.Test;
 
@@ -97,6 +98,42 @@ public class TestApplicationHandlerTests : IDisposable
         rendered.Should().Contain(targetFramework);
         rendered.Should().Contain("stdout-line");
         rendered.Should().Contain("stderr-line");
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public void OnTestProcessExited_ReportsIncompleteLiveResultsWithoutAddingRecoveredCounts(bool completeSession)
+    {
+        (TestApplicationHandler handler, TerminalTestReporter reporter, CapturingConsole console) = CreateHandler(
+            isHelp: false, isDiscovery: false, showAssembly: true);
+        handler.OnHandshakeReceived(BuildHandshake(HandshakeMessageExecutionModes.Run), gotSupportedVersion: true)
+            .Should().BeTrue();
+        handler.OnSessionEventReceived(new TestSessionEvent(SessionEventTypes.TestSessionStart, "session", "exec-1"));
+        handler.OnTestResultsReceived(new TestResultMessages(
+            "exec-1", "inst-1",
+            [new SuccessfulTestResultMessage("test", "Test", TestStates.Passed, null, null, null, null, "session")],
+            []));
+        if (completeSession)
+        {
+            handler.OnSessionEventReceived(new TestSessionEvent(SessionEventTypes.TestSessionEnd, "session", "exec-1"));
+        }
+
+        handler.OnTestProcessExited(exitCode: 7, outputData: "Recovered 388 test results from TRX.", errorData: string.Empty);
+
+        reporter.TotalTests.Should().Be(1, "recovered artifact counts must not be added to live IPC results");
+        reporter.TestExecutionCompleted(DateTimeOffset.UtcNow, exitCode: 7);
+        string rendered = console.GetOutput();
+        rendered.Should().Contain("Test run summary: Failed!").And.Contain("total: 1");
+        rendered.Should().Contain("Recovered 388 test results from TRX.");
+        if (completeSession)
+        {
+            rendered.Should().NotContain("Live test results are incomplete");
+        }
+        else
+        {
+            rendered.Should().Contain("Live test results are incomplete").And.Contain("recovered");
+        }
     }
 
     /// <summary>
@@ -322,6 +359,26 @@ public class TestApplicationHandlerTests : IDisposable
     }
 
     [TestMethod]
+    public void OnFileArtifactsReceived_UsesHandshakeModuleIdentityRatherThanLaunchPath()
+    {
+        var manager = new ArtifactPostProcessingManager();
+        (TestApplicationHandler handler, _, _) = CreateHandler(
+            isHelp: false, isDiscovery: false, artifactPostProcessingManager: manager);
+        HandshakeMessage handshake = BuildHandshake(
+            HandshakeMessageExecutionModes.Run, supportedPostProcessorKinds: "example.summary");
+        string modulePath = Path.GetFullPath("AssemblyBehindAppHost.dll");
+        handshake.Properties[HandshakeMessagePropertyNames.ModulePath] = modulePath;
+        handler.OnHandshakeReceived(handshake, gotSupportedVersion: true).Should().BeTrue();
+
+        handler.OnFileArtifactsReceived(new FileArtifactMessages(
+            "exec-1", "inst-1",
+            [new FileArtifactMessage(Path.GetFullPath("summary.json"), "Summary", null, null, null, null, "example.summary")]));
+
+        manager.SnapshotArtifacts().Should().ContainSingle().Which.ProducingTestModule.Should().Be(modulePath);
+        manager.SnapshotApplications().Should().ContainSingle().Which.ProducingTestModule.Should().Be(modulePath);
+    }
+
+    [TestMethod]
     public void OnFileArtifactsReceived_DuringArtifactPostProcessing_RecordsInputProvenance()
     {
         var invocation = new ArtifactPostProcessingInvocation("manifest.json");
@@ -367,6 +424,38 @@ public class TestApplicationHandlerTests : IDisposable
         invocation.FailureMessage.Should().NotBeNullOrEmpty();
         reporter.HasHandshakeFailure.Should().BeFalse(
             "post-processing failures must not change the test run exit code");
+    }
+
+    [TestMethod]
+    public void OnTestProcessExited_WorkerWithoutHandshake_RecordsReportingFailureOnly()
+    {
+        var invocation = new ArtifactPostProcessingInvocation("manifest.json");
+        (TestApplicationHandler handler, TerminalTestReporter reporter, _) = CreateHandler(
+            isHelp: false, isDiscovery: false, artifactPostProcessingInvocation: invocation);
+
+        handler.OnTestProcessExited(0, string.Empty, string.Empty);
+
+        invocation.FailureMessage.Should().Be(CliCommandStrings.ArtifactPostProcessingMissingHandshake);
+        reporter.HasHandshakeFailure.Should().BeFalse();
+        reporter.TotalTests.Should().Be(0);
+    }
+
+    [TestMethod]
+    public void OnTestProcessExited_WorkerWithSuccessfulHandshakeAndNullOutput_IsNotAFailure()
+    {
+        var invocation = new ArtifactPostProcessingInvocation("manifest.json");
+        (TestApplicationHandler handler, TerminalTestReporter reporter, _) = CreateHandler(
+            isHelp: false, isDiscovery: false, artifactPostProcessingInvocation: invocation);
+        handler.OnHandshakeReceived(
+            BuildHandshake(HandshakeMessageExecutionModes.Tool, hostType: HandshakeMessageHostTypes.ArtifactPostProcessor),
+            gotSupportedVersion: true).Should().BeTrue();
+
+        handler.OnTestProcessExited(0, string.Empty, string.Empty);
+
+        invocation.FailureMessage.Should().BeNull();
+        invocation.SnapshotOutputs().Should().BeEmpty();
+        reporter.HasHandshakeFailure.Should().BeFalse();
+        reporter.TotalTests.Should().Be(0);
     }
 
     /// <summary>
@@ -664,8 +753,8 @@ public class TestApplicationHandlerTests : IDisposable
     public void OnTestProcessExited_WhenMatchingAffectedTestsOrchestratorSucceeds_DoesNotReportFailure(
         bool collectTestMap, string feature, string? executionMode)
     {
-        (TestApplicationHandler handler, TerminalTestReporter reporter, _) = CreateHandler(
-            isHelp: false, isDiscovery: false, collectTestMap: collectTestMap, affectedTests: !collectTestMap);
+        (TestApplicationHandler handler, TerminalTestReporter reporter, CapturingConsole console) = CreateHandler(
+            isHelp: false, isDiscovery: false, showAssembly: true, collectTestMap: collectTestMap, affectedTests: !collectTestMap);
 
         handler.OnHandshakeReceived(
             BuildHandshake(executionMode, HandshakeMessageHostTypes.TestHostOrchestrator, orchestratorFeature: feature),
@@ -675,6 +764,15 @@ public class TestApplicationHandlerTests : IDisposable
 
         reporter.HasHandshakeFailure.Should().BeFalse();
         reporter.TotalTests.Should().Be(0);
+        reporter.SkippedTests.Should().Be(0);
+        if (collectTestMap)
+        {
+            console.GetOutput().Should().NotContain(CliCommandStrings.NoAffectedTestsSelected);
+        }
+        else
+        {
+            console.GetOutput().Should().Contain(CliCommandStrings.NoAffectedTestsSelected).And.Contain(TargetPath);
+        }
     }
 
     [TestMethod]
@@ -724,6 +822,26 @@ public class TestApplicationHandlerTests : IDisposable
 
         reporter.HasHandshakeFailure.Should().BeTrue();
         console.GetOutput().Should().Contain(TargetPath).And.Contain("orchestrator stdout").And.Contain("orchestrator stderr");
+        console.GetOutput().Should().NotContain(CliCommandStrings.NoAffectedTestsSelected);
+    }
+
+    [TestMethod]
+    public void OnTestProcessExited_WhenAffectedTestsWereCancelled_DoesNotReportNoSelection()
+    {
+        (TestApplicationHandler handler, TerminalTestReporter reporter, CapturingConsole console) = CreateHandler(
+            isHelp: false, isDiscovery: false, affectedTests: true);
+        handler.OnHandshakeReceived(
+            BuildHandshake(
+                HandshakeMessageExecutionModes.Run,
+                HandshakeMessageHostTypes.TestHostOrchestrator,
+                orchestratorFeature: "RunAffectedTestsOrchestrator"),
+            gotSupportedVersion: true).Should().BeTrue();
+        reporter.MarkCancelled();
+
+        handler.OnTestProcessExited(exitCode: 0, outputData: string.Empty, errorData: string.Empty);
+
+        console.GetOutput().Should().NotContain(CliCommandStrings.NoAffectedTestsSelected);
+        reporter.HasHandshakeFailure.Should().BeFalse();
     }
 
     [TestMethod]
@@ -838,7 +956,7 @@ public class TestApplicationHandlerTests : IDisposable
     [DataRow(false)]
     public void OnTestProcessExited_WhenSuccessfulAffectedModuleFollowsFailedModule_PreservesAggregateFailure(bool collectTestMap)
     {
-        (TestApplicationHandler failedHandler, TerminalTestReporter reporter, _) = CreateHandler(
+        (TestApplicationHandler failedHandler, TerminalTestReporter reporter, CapturingConsole console) = CreateHandler(
             isHelp: false, isDiscovery: false, collectTestMap: collectTestMap, affectedTests: !collectTestMap);
         var successfulModule = new TestModule(
             RunProperties: new RunProperties("dotnet", "/repo/OtherTest.dll", "/repo"),
@@ -866,6 +984,8 @@ public class TestApplicationHandlerTests : IDisposable
         successfulHandler.OnTestProcessExited(exitCode: 0, outputData: string.Empty, errorData: string.Empty);
 
         reporter.HasHandshakeFailure.Should().BeTrue();
+        reporter.TestExecutionCompleted(DateTimeOffset.UtcNow, exitCode: TestExitCode.GenericFailure);
+        console.GetOutput().Should().Contain("Test run summary: Failed!");
     }
 
     /// <summary>
