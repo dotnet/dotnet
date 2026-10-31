@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <_workloadVersionSuffix Condition="'$(DotNetFinalVersionKind)' != 'release' and
+                                       '$(PrereleaseVersionLabel)' != 'rtm' and
+                                       '$(PrereleaseVersionLabel)' != 'servicing'">-$(PreReleaseVersionLabel)</_workloadVersionSuffix>
+    <!-- Append the version iteration if it's not empty -->
+    <_workloadVersionSuffix Condition="'$(_workloadVersionSuffix)' != '' and '$(PrereleaseVersionIteration)' != ''">$(_workloadVersionSuffix).$(PrereleaseVersionIteration)</_workloadVersionSuffix>
+  </PropertyGroup>
+</Project>

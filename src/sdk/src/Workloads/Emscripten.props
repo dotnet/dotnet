@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <EmscriptenPackageVersion Condition="'$(DotNet1xxWorkloadManifestVersion)' == ''">$(MicrosoftNETRuntimeEmscriptenInternalPackageVersion)</EmscriptenPackageVersion>
+  </PropertyGroup>
+</Project>
