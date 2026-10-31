@@ -163,7 +163,7 @@ stages:
           sourceIndexName: dotnet-dotnet-windows
           sourceIndexIncludeRepos: 'winforms wpf windowsdesktop aspnetcore'
 
-    - ${{ if containsValue(parameters.verifications, 'unified-build-windows-x86') }}:
+    - ${{ if and(not(parameters.excludeRuntimeDependentJobs), containsValue(parameters.verifications, 'unified-build-windows-x86')) }}:
       - template: ../jobs/vmr-build.yml
         parameters:
           buildName: Windows
@@ -510,21 +510,22 @@ stages:
             extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
             brandingType: ${{ variables.brandingType }}
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Linux
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Linux }}
-          container:
-            name: ${{ variables.azurelinuxArmCrossContainerName }}
-            image: ${{ variables.azurelinuxArmCrossContainerImage }}
-          crossRootFs: '/crossrootfs/arm'
-          targetOS: linux
-          targetArchitecture: arm
-          extraProperties: /p:TargetCxxStandardLibrary=libc++ /p:TargetCxxStandardLibraryStatic=true /p:TargetCxxAbiLibrary=libstdc++
-          brandingType: ${{ variables.brandingType }}
+      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Linux
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux }}
+            container:
+              name: ${{ variables.azurelinuxArmCrossContainerName }}
+              image: ${{ variables.azurelinuxArmCrossContainerImage }}
+            crossRootFs: '/crossrootfs/arm'
+            targetOS: linux
+            targetArchitecture: arm
+            extraProperties: /p:TargetCxxStandardLibrary=libc++ /p:TargetCxxStandardLibraryStatic=true /p:TargetCxxAbiLibrary=libstdc++
+            brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -573,21 +574,22 @@ stages:
           targetRid: ${{ variables.linuxMuslX64Rid }}
           brandingType: ${{ variables.brandingType }}
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Linux_Alpine
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Linux }}
-          container:
-            name: ${{ variables.azurelinuxArmMuslCrossContainerName }}
-            image: ${{ variables.azurelinuxArmMuslCrossContainerImage }}
-          crossRootFs: '/crossrootfs/arm'
-          targetOS: linux-musl
-          targetArchitecture: arm
-          targetRid: ${{ variables.linuxMuslArmRid }}
-          brandingType: ${{ variables.brandingType }}
+      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Linux_Alpine
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux }}
+            container:
+              name: ${{ variables.azurelinuxArmMuslCrossContainerName }}
+              image: ${{ variables.azurelinuxArmMuslCrossContainerImage }}
+            crossRootFs: '/crossrootfs/arm'
+            targetOS: linux-musl
+            targetArchitecture: arm
+            targetRid: ${{ variables.linuxMuslArmRid }}
+            brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -646,6 +648,19 @@ stages:
           targetArchitecture: arm64
           brandingType: ${{ variables.brandingType }}
 
+      - ${{ if and(not(parameters.excludeRuntimeDependentJobs), not(containsValue(parameters.verifications, 'unified-build-windows-x86'))) }}:
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Windows
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            signDac: ${{ variables.signDacEnabled }}
+            pool: ${{ parameters.pool_Windows }}
+            targetOS: windows
+            targetArchitecture: x86
+            brandingType: ${{ variables.brandingType }}
+
       - template: ../jobs/vmr-build.yml
         parameters:
           buildName: Windows_Pgo
@@ -657,16 +672,17 @@ stages:
           extraProperties: /p:PgoInstrument=true
           brandingType: ${{ variables.brandingType }}
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Windows_Pgo
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: false
-          pool: ${{ parameters.pool_Windows }}
-          targetOS: windows
-          targetArchitecture: x86
-          extraProperties: /p:PgoInstrument=true
-          brandingType: ${{ variables.brandingType }}
+      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Windows_Pgo
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: false
+            pool: ${{ parameters.pool_Windows }}
+            targetOS: windows
+            targetArchitecture: x86
+            extraProperties: /p:PgoInstrument=true
+            brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -717,7 +733,8 @@ stages:
           buildPass: 2
           reuseBuildArtifactsFrom:
           - Windows_x64
-          - Windows_x86
+          - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+            - Windows_x86
           - Windows_arm64
           brandingType: ${{ variables.brandingType }}
 
@@ -736,7 +753,8 @@ stages:
           extraProperties: /p:BuildWorkloads=true
           reuseBuildArtifactsFrom:
           - Windows_x64
-          - Windows_x86
+          - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+            - Windows_x86
           - Windows_arm64
           - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
             - Browser_CoreCLR_Shortstack_wasm
@@ -773,24 +791,8 @@ stages:
           reuseBuildArtifactsFrom:
           - Windows_Workloads_x64_BuildPass2
           - Windows_x64
-          - Windows_x86
-          - Windows_arm64
-
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Windows
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          brandingType: ${{ variables.brandingType }}
-          pool: ${{ parameters.pool_Windows }}
-          targetOS: windows
-          targetArchitecture: x86
-          buildPass: 3
-          reuseBuildArtifactsFrom:
-          - Windows_Workloads_x64_BuildPass2
-          - Windows_x64
-          - Windows_x86
+          - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+            - Windows_x86
           - Windows_arm64
 
       - template: ../jobs/vmr-build.yml
@@ -807,7 +809,8 @@ stages:
           reuseBuildArtifactsFrom:
           - Windows_Workloads_x64_BuildPass2
           - Windows_x64
-          - Windows_x86
+          - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+            - Windows_x86
           - Windows_arm64
 
 #### VERTICAL BUILD (Scouting) ####
@@ -836,17 +839,18 @@ stages:
         targetOS: windows
         targetArchitecture: x64
 
-    - template: ../jobs/vmr-build.yml
-      parameters:
-        buildName: Windows
-        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-        sign: ${{ variables.signEnabled }}
-        signType: ${{ variables.signType }}
-        brandingType: ${{ variables.brandingType }}
-        signDac: ${{ variables.signDacEnabled }}
-        pool: ${{ parameters.pool_Windows }}
-        targetOS: windows
-        targetArchitecture: x86
+    - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+      - template: ../jobs/vmr-build.yml
+        parameters:
+          buildName: Windows
+          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
+          brandingType: ${{ variables.brandingType }}
+          signDac: ${{ variables.signDacEnabled }}
+          pool: ${{ parameters.pool_Windows }}
+          targetOS: windows
+          targetArchitecture: x86
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -876,5 +880,6 @@ stages:
         buildPass: 2
         reuseBuildArtifactsFrom:
         - Windows_x64
-        - Windows_x86
+        - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+          - Windows_x86
         - Windows_arm64

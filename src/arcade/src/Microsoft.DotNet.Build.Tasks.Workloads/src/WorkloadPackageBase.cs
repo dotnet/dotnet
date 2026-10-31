@@ -25,6 +25,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads;
 /// </summary>
 public abstract class WorkloadPackageBase : IWorkloadPackageMetadata
 {
+    private const int FirstSdkMajorWithoutX86 = 12;
+
+    // Installer platforms describe the SDK host, not application target architectures.
+    internal static string[] GetSupportedPlatforms(ReleaseVersion sdkFeatureBand) =>
+        sdkFeatureBand.Major >= FirstSdkMajorWithoutX86 ? ["x64", "arm64"] : ["x86", "x64", "arm64"];
+
     /// <summary>
     /// The package authors.
     /// </summary>
