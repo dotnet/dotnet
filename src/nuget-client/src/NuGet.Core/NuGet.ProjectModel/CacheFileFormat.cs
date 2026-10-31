@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using System.IO;
@@ -42,7 +40,8 @@ namespace NuGet.ProjectModel
         {
             public override IAssetsLogMessage Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
-                return JsonSerializer.Deserialize(ref reader, (JsonTypeInfo<AssetsLogMessage>)options.GetTypeInfo(typeof(AssetsLogMessage)));
+                return JsonSerializer.Deserialize(ref reader, (JsonTypeInfo<AssetsLogMessage>)options.GetTypeInfo(typeof(AssetsLogMessage)))
+                    ?? throw new JsonException("The cache log message was null.");
             }
 
             public override void Write(Utf8JsonWriter writer, IAssetsLogMessage value, JsonSerializerOptions options)
@@ -59,7 +58,8 @@ namespace NuGet.ProjectModel
 
             try
             {
-                return JsonSerializer.Deserialize(utf8Json: stream, (JsonTypeInfo<CacheFile>)SerializerOptions.GetTypeInfo(typeof(CacheFile)));
+                return JsonSerializer.Deserialize(utf8Json: stream, (JsonTypeInfo<CacheFile>)SerializerOptions.GetTypeInfo(typeof(CacheFile)))
+                    ?? throw new JsonException("The cache file was null.");
             }
             catch (Exception ex) when (ex is ArgumentNullException || ex is JsonException || ex is NotSupportedException)
             {
@@ -73,9 +73,12 @@ namespace NuGet.ProjectModel
 
         public static void Write(string filePath, CacheFile lockFile)
         {
+            if (filePath == null) throw new ArgumentNullException(nameof(filePath));
+            if (lockFile == null) throw new ArgumentNullException(nameof(lockFile));
+
             // Create the directory if it does not exist
             var fileInfo = new FileInfo(filePath);
-            fileInfo.Directory.Create();
+            fileInfo.Directory?.Create();
 
             using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
@@ -85,6 +88,9 @@ namespace NuGet.ProjectModel
 
         public static void Write(Stream stream, CacheFile cacheFile)
         {
+            if (stream == null) throw new ArgumentNullException(nameof(stream));
+            if (cacheFile == null) throw new ArgumentNullException(nameof(cacheFile));
+
 #if NET5_0_OR_GREATER
             using (var textWriter = new StreamWriter(stream))
 #else

@@ -74,6 +74,7 @@ namespace NuGet.Protocol
 #else
             if (packageSource.DisableTLSCertificateValidation)
             {
+                // CodeQL [SM02184] Off by default, opt-in feature that was highly requested by customers https://github.com/NuGet/Home/issues/4387
                 clientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
             }
 #endif

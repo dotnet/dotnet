@@ -1,9 +1,15 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 using Newtonsoft.Json.Linq;
+using NuGet.Common;
 using NuGet.Frameworks;
+using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Xunit;
 
@@ -36,7 +42,7 @@ namespace NuGet.ProjectModel.Test
                 }
             }";
 
-            var lockFile = PackagesLockFileFormat.Parse(nuGetLockFileContent, "In Memory");
+            PackagesLockFile lockFile = ParseWithSystemTextJson(nuGetLockFileContent);
 
             Assert.Equal(1, lockFile.Targets.Count);
 
@@ -58,6 +64,215 @@ namespace NuGet.ProjectModel.Test
             Assert.Null(target.Dependencies[1].RequestedVersion);
             Assert.Equal("1.0.0", target.Dependencies[0].ResolvedVersion?.ToNormalizedString());
             Assert.False(string.IsNullOrEmpty(target.Dependencies[1].ContentHash));
+        }
+
+        [Fact]
+        public void PackagesLockFileFormat_ReadWithCommentsAndTrailingCommas()
+        {
+            var lockFileContent = """
+                {
+                    // NuGet writes the version property first.
+                    "version": 1,
+                    "dependencies": {
+                        "net8.0": {
+                            "PackageA": {
+                                "type": "Direct",
+                                "resolved": "1.0.0",
+                                "dependencies": {
+                                    "PackageB": null,
+                                },
+                            },
+                        },
+                    },
+                }
+                """;
+
+            PackagesLockFile lockFile = ParseWithSystemTextJson(lockFileContent);
+
+            Assert.Equal(1, lockFile.Version);
+            var target = Assert.Single(lockFile.Targets);
+            Assert.Equal(NuGetFramework.Parse("net8.0"), target.TargetFramework);
+            var package = Assert.Single(target.Dependencies);
+            Assert.Equal("PackageA", package.Id);
+            Assert.Equal(VersionRange.All, Assert.Single(package.Dependencies).VersionRange);
+        }
+
+        [Theory]
+        [InlineData("""{"dependencies":{},"version":1}""")]
+        [InlineData("""{"net8.0":{"framework":"net8.0","dependencies":{}},"version":3}""")]
+        public void PackagesLockFileFormat_ReadVersionNotFirst_Throws(string content)
+        {
+            Assert.Throws<JsonException>(() => ParseWithSystemTextJson(content));
+        }
+
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public void PackagesLockFileFormat_ReadUtf8Stream_ParsesAndDisposesSource(
+            bool includeBom,
+            bool useNonSeekableStream)
+        {
+            const string content = """{"version":1,"dependencies":{"net10.0":{}}}""";
+            byte[] contentBytes = Encoding.UTF8.GetBytes(content);
+            byte[] bytes;
+            if (includeBom)
+            {
+                byte[] preamble = Encoding.UTF8.GetPreamble();
+                bytes = new byte[preamble.Length + contentBytes.Length];
+                Array.Copy(preamble, bytes, preamble.Length);
+                Array.Copy(contentBytes, 0, bytes, preamble.Length, contentBytes.Length);
+            }
+            else
+            {
+                bytes = contentBytes;
+            }
+
+            Stream source = new MemoryStream(bytes);
+            if (useNonSeekableStream)
+            {
+                source = new ChunkedReadStream(source, maxBytesPerRead: 1);
+            }
+
+            PackagesLockFile lockFile = PackagesLockFileFormat.Read(source, NullLogger.Instance, "encoded.lock.json");
+
+            Assert.Equal(1, lockFile.Version);
+            Assert.Equal(NuGetFramework.Parse("net10.0"), Assert.Single(lockFile.Targets).TargetFramework);
+            Assert.False(source.CanRead);
+        }
+
+        [Fact]
+        public void PackagesLockFileFormat_ReadLockFileWithSystemTextJsonLeadingTriviaLargerThanBuffer_ParsesLockFile()
+        {
+            string content = new string(' ', 20_000) + """{"version":1,"dependencies":{}}""";
+
+            PackagesLockFile lockFile = ParseWithSystemTextJson(content);
+
+            Assert.Equal(1, lockFile.Version);
+        }
+
+        [Fact]
+        public void PackagesLockFileFormat_ReadMalformedJson_LogsDiagnosticAndDisposesStream()
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes("""{"version":1"""));
+            var logger = new TestLogger();
+
+            PackagesLockFile lockFile = PackagesLockFileFormat.Read(stream, logger, "broken.lock.json");
+
+            Assert.Equal(int.MinValue, lockFile.Version);
+            Assert.False(stream.CanRead);
+            Assert.Contains("broken.lock.json", Assert.Single(logger.InformationMessages));
+        }
+
+        [Fact]
+        public void PackagesLockFileFormat_ReadWhenInitialReadThrows_ReturnsFallbackAndDisposesSource()
+        {
+            var stream = new ThrowingReadStream();
+            var logger = new TestLogger();
+
+            PackagesLockFile lockFile = PackagesLockFileFormat.Read(stream, logger, "unreadable.lock.json");
+
+            Assert.Equal(int.MinValue, lockFile.Version);
+            Assert.True(stream.IsDisposed);
+            Assert.Contains("unreadable.lock.json", Assert.Single(logger.InformationMessages));
+        }
+
+        [Fact]
+        public void PackagesLockFileFormat_ReadStreamWithNullLog_Throws()
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes("""{"version":1,"dependencies":{}}"""));
+
+            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
+                () => PackagesLockFileFormat.Read(stream, log: null!, "packages.lock.json"));
+
+            Assert.Equal("log", exception.ParamName);
+        }
+
+        [Fact]
+        public void PackagesLockFileFormat_ReadTextReaderWithNullLog_Throws()
+        {
+            var reader = new StringReader("""{"version":1,"dependencies":{}}""");
+
+#pragma warning disable CS0618 // Testing the obsolete TextReader overload's argument validation.
+            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
+                () => PackagesLockFileFormat.Read(reader, log: null!, "packages.lock.json"));
+#pragma warning restore CS0618
+
+            Assert.Equal("log", exception.ParamName);
+        }
+
+        [Theory]
+        [InlineData("""{"version":1.0,"dependencies":{}}""")]
+        [InlineData("""{"version":"1","dependencies":{}}""")]
+        [InlineData("""{"version":true,"dependencies":{}}""")]
+        [InlineData("""{"version":{},"dependencies":{}}""")]
+        [InlineData("""{"version":[],"dependencies":{}}""")]
+        public void PackagesLockFileFormat_ReadNonIntegerVersion_Throws(string content)
+        {
+            Assert.Throws<JsonException>(() => ParseWithSystemTextJson(content));
+        }
+
+        [Theory]
+        [InlineData("""{"version":1}""")]
+        [InlineData("""{"version":1,"dependencies":[]}""")]
+        [InlineData("""{"version":1,"dependencies":{"net10.0":[]}}""")]
+        [InlineData("""{"version":1,"dependencies":{"net10.0":{"PackageA":[]}}}""")]
+        [InlineData("""{"version":1,"dependencies":{"net10.0":{"PackageA":{"dependencies":[]}}}}""")]
+        [InlineData("""{"version":3,"net10.0":[]}""")]
+        [InlineData("""{"version":3,"net10.0":{"dependencies":{}}}""")]
+        [InlineData("""{"version":3,"net10.0":{"framework":"net10.0"}}""")]
+        [InlineData("""{"version":3,"net10.0":{"framework":1,"dependencies":{}}}""")]
+        [InlineData("""{"version":3,"net10.0":{"framework":"net10.0","dependencies":[]}}""")]
+        public void PackagesLockFileFormat_ReadInvalidKnownSchema_Throws(string content)
+        {
+            Assert.Throws<JsonException>(() => ParseWithSystemTextJson(content));
+        }
+
+        [Theory]
+        [InlineData("requested", "1.0")]
+        [InlineData("resolved", "1.0")]
+        [InlineData("contentHash", "1.0")]
+        [InlineData("type", "1.0")]
+        public void PackagesLockFileFormat_ReadNonStringDependencyProperty_ReturnsInvalidFile(
+            string propertyName,
+            string propertyValue)
+        {
+            string content = $$"""
+                {
+                  "version": 1,
+                  "dependencies": {
+                    "net10.0": {
+                      "PackageA": {
+                        "{{propertyName}}": {{propertyValue}}
+                      }
+                    }
+                  }
+                }
+                """;
+
+            PackagesLockFile lockFile = PackagesLockFileFormat.Read(
+                new MemoryStream(Encoding.UTF8.GetBytes(content)),
+                NullLogger.Instance,
+                "invalid.lock.json");
+
+            Assert.Equal(int.MinValue, lockFile.Version);
+        }
+
+        [Fact]
+        public void PackagesLockFileFormat_ReadTrailingContent_ReturnsInvalidFile()
+        {
+            const string content = """
+                {"version":1,"dependencies":{}}
+                {"version":2,"dependencies":{}}
+                """;
+
+            PackagesLockFile lockFile = PackagesLockFileFormat.Read(
+                new MemoryStream(Encoding.UTF8.GetBytes(content)),
+                NullLogger.Instance,
+                "trailing.lock.json");
+
+            Assert.Equal(int.MinValue, lockFile.Version);
         }
 
         [Fact]
@@ -84,7 +299,7 @@ namespace NuGet.ProjectModel.Test
 }";
 
             // Act
-            var lockFile = PackagesLockFileFormat.Parse(lockFileContents, "In memory");
+            PackagesLockFile lockFile = ParseWithSystemTextJson(lockFileContents);
 
             // Assert
             Assert.Equal(12, lockFile.Targets.Count);
@@ -170,7 +385,7 @@ namespace NuGet.ProjectModel.Test
                 }
             }";
 
-            var lockFile = PackagesLockFileFormat.Parse(nuGetLockFileContent, "In Memory");
+            PackagesLockFile lockFile = ParseWithSystemTextJson(nuGetLockFileContent);
 
             Assert.Equal(2, lockFile.Targets.Count);
 
@@ -221,7 +436,7 @@ namespace NuGet.ProjectModel.Test
                 }
             }";
 
-            var lockFile = PackagesLockFileFormat.Parse(nuGetLockFileContent, "In Memory");
+            PackagesLockFile lockFile = ParseWithSystemTextJson(nuGetLockFileContent);
 
             var output = JObject.Parse(PackagesLockFileFormat.Render(lockFile));
             var expected = JObject.Parse(nuGetLockFileContent);
@@ -259,7 +474,7 @@ namespace NuGet.ProjectModel.Test
                 }
             }";
 
-            var lockFile = PackagesLockFileFormat.Parse(lockFileContent, "In Memory");
+            PackagesLockFile lockFile = ParseWithSystemTextJson(lockFileContent);
 
             Assert.Equal(3, lockFile.Version);
             Assert.Equal(2, lockFile.Targets.Count);
@@ -302,7 +517,7 @@ namespace NuGet.ProjectModel.Test
                 }
             }";
 
-            var lockFile = PackagesLockFileFormat.Parse(lockFileContent, "In Memory");
+            PackagesLockFile lockFile = ParseWithSystemTextJson(lockFileContent);
 
             Assert.Equal(3, lockFile.Version);
             Assert.Equal(2, lockFile.Targets.Count);
@@ -397,7 +612,7 @@ namespace NuGet.ProjectModel.Test
                 }
             }";
 
-            var lockFile = PackagesLockFileFormat.Parse(originalContent, "In Memory");
+            PackagesLockFile lockFile = ParseWithSystemTextJson(originalContent);
             var output = JObject.Parse(PackagesLockFileFormat.Render(lockFile)).ToString();
             var expected = JObject.Parse(originalContent).ToString();
 
@@ -405,7 +620,7 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Fact]
-        public void PackagesLockFileFormat_BackwardCompatibilityVersion1()
+        public void PackagesLockFileFormat_ReadVersion1()
         {
             var v1Content = @"{
                 ""version"": 1,
@@ -420,7 +635,7 @@ namespace NuGet.ProjectModel.Test
                 }
             }";
 
-            var lockFile = PackagesLockFileFormat.Parse(v1Content, "In Memory");
+            PackagesLockFile lockFile = ParseWithSystemTextJson(v1Content);
 
             Assert.Equal(1, lockFile.Version);
             Assert.Equal(1, lockFile.Targets.Count);
@@ -429,7 +644,7 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Fact]
-        public void PackagesLockFileFormat_BackwardCompatibilityVersion2()
+        public void PackagesLockFileFormat_ReadVersion2()
         {
             var v2Content = @"{
                 ""version"": 2,
@@ -444,11 +659,96 @@ namespace NuGet.ProjectModel.Test
                 }
             }";
 
-            var lockFile = PackagesLockFileFormat.Parse(v2Content, "In Memory");
+            PackagesLockFile lockFile = ParseWithSystemTextJson(v2Content);
 
             Assert.Equal(2, lockFile.Version);
             Assert.Equal(1, lockFile.Targets.Count);
             Assert.Null(lockFile.Targets[0].TargetAlias);
+        }
+
+        private static PackagesLockFile ParseWithSystemTextJson(string content)
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+            return PackagesLockFileFormat.ReadLockFile(stream);
+        }
+
+        private sealed class ChunkedReadStream : Stream
+        {
+            private readonly Stream _stream;
+            private readonly int _maxBytesPerRead;
+
+            internal ChunkedReadStream(Stream stream, int maxBytesPerRead)
+            {
+                _stream = stream;
+                _maxBytesPerRead = maxBytesPerRead;
+            }
+
+            public override bool CanRead => _stream.CanRead;
+            public override bool CanSeek => false;
+            public override bool CanWrite => false;
+            public override long Length => throw new NotSupportedException();
+            public override long Position
+            {
+                get => throw new NotSupportedException();
+                set => throw new NotSupportedException();
+            }
+
+            public override int Read(byte[] buffer, int offset, int count)
+            {
+                return _stream.Read(buffer, offset, Math.Min(count, _maxBytesPerRead));
+            }
+
+            public override void Flush()
+            {
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    _stream.Dispose();
+                }
+
+                base.Dispose(disposing);
+            }
+
+            public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+            public override void SetLength(long value) => throw new NotSupportedException();
+            public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+        }
+
+        private sealed class ThrowingReadStream : Stream
+        {
+            internal bool IsDisposed { get; private set; }
+
+            public override bool CanRead => !IsDisposed;
+            public override bool CanSeek => false;
+            public override bool CanWrite => false;
+            public override long Length => throw new NotSupportedException();
+            public override long Position
+            {
+                get => throw new NotSupportedException();
+                set => throw new NotSupportedException();
+            }
+
+            public override int Read(byte[] buffer, int offset, int count)
+            {
+                throw new IOException("The source cannot be read.");
+            }
+
+            public override void Flush()
+            {
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                IsDisposed = true;
+                base.Dispose(disposing);
+            }
+
+            public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+            public override void SetLength(long value) => throw new NotSupportedException();
+            public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Test.Utility.Commands
         public static void AddTargetFramework(PackageSpec packageSpec, string frameworkName)
         {
             var nugetFramework = NuGetFramework.Parse(frameworkName);
-            if (!packageSpec.TargetFrameworks.Any(e => e.FrameworkName.Equals(nugetFramework)))
+            if (!packageSpec.TargetFrameworks.Any(e => Equals(e.FrameworkName, nugetFramework)))
             {
                 packageSpec.TargetFrameworks.Add(new TargetFrameworkInformation() { FrameworkName = nugetFramework });
                 if (packageSpec.RestoreMetadata != null)
@@ -32,7 +32,7 @@ namespace Test.Utility.Commands
         public static void RemoveTargetFramework(PackageSpec packageSpec, string frameworkName)
         {
             var nugetFramework = NuGetFramework.Parse(frameworkName);
-            var targetFrameworkToRemove = packageSpec.TargetFrameworks.FirstOrDefault(e => e.FrameworkName.Equals(nugetFramework));
+            var targetFrameworkToRemove = packageSpec.TargetFrameworks.FirstOrDefault(e => Equals(e.FrameworkName, nugetFramework));
             if (targetFrameworkToRemove != null)
             {
                 packageSpec.TargetFrameworks.Remove(targetFrameworkToRemove);
@@ -40,7 +40,7 @@ namespace Test.Utility.Commands
                 if (packageSpec.RestoreMetadata != null)
                 {
                     // Assume that it has to be here.
-                    var projectRestoreMetadataFrameworkInfoToRemove = packageSpec.RestoreMetadata.TargetFrameworks.First(e => e.FrameworkName.Equals(nugetFramework));
+                    var projectRestoreMetadataFrameworkInfoToRemove = packageSpec.RestoreMetadata.TargetFrameworks.First(e => Equals(e.FrameworkName, nugetFramework));
                     packageSpec.RestoreMetadata.TargetFrameworks.Remove(projectRestoreMetadataFrameworkInfoToRemove);
                     packageSpec.RestoreMetadata.OriginalTargetFrameworks.Remove(frameworkName);
                     packageSpec.RestoreMetadata.CrossTargeting = packageSpec.RestoreMetadata.OriginalTargetFrameworks.Count > 1;
@@ -57,13 +57,12 @@ namespace Test.Utility.Commands
             if (frameworks.Length == 0)
             {
                 // Use all frameworks if none were given
-                frameworks = spec.TargetFrameworks.Select(e => e.FrameworkName).ToArray();
+                frameworks = spec.TargetFrameworks.Select(e => e.FrameworkName).OfType<NuGetFramework>().ToArray();
             }
 
-            foreach (var framework in spec
-                .RestoreMetadata
+            foreach (var framework in spec.RestoreMetadata
                 .TargetFrameworks
-                .Where(e => frameworks.Contains(e.FrameworkName)))
+                .Where(e => e.FrameworkName != null && frameworks.Contains(e.FrameworkName)))
             {
                 framework.ProjectReferences.Add(new ProjectRestoreReference()
                 {

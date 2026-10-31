@@ -1702,12 +1702,88 @@ namespace NuGet.Packaging.Test
             using (TestDirectory testDirectory = TestDirectory.Create())
             {
                 string firstFile = package.Reader.GetFiles().First();
-                string destination = Path.Combine(testDirectory, firstFile);
+                string destination = Path.Combine(testDirectory, "extracted-file");
 
                 // Act
+#pragma warning disable CS0618 // Verify compatibility of the obsolete overload.
                 package.Reader.ExtractFile(firstFile, destination, logger: null);
+#pragma warning restore CS0618
 
-                // Assert is just that no exception was thrown.
+                // Assert
+                Assert.True(File.Exists(destination));
+            }
+        }
+
+        [Fact]
+        public void ExtractFile_WithDestinationAndNullLogger_UsesCanonicalTargetPath()
+        {
+            using (var package = PackageReaderTest.Create(TestPackagesCore.GetPackageCoreReaderTestPackage()))
+            using (var directory = TestDirectory.Create())
+            {
+                string firstFile = package.Reader.GetFiles().First();
+                string expectedPath = Path.Combine(directory.Path, "renamed.nuspec");
+
+                string extractedPath = package.Reader.ExtractFile(
+                    firstFile, directory.Path, "content/../renamed.nuspec", logger: null);
+
+                Assert.Equal(expectedPath, extractedPath);
+                using (var expected = new MemoryStream())
+                using (var source = package.Reader.GetStream(firstFile))
+                {
+                    source.CopyTo(expected);
+                    Assert.Equal(expected.ToArray(), File.ReadAllBytes(extractedPath));
+                }
+            }
+        }
+
+        [Theory]
+        [InlineData("../destination-sibling/outside.nuspec", false)]
+        [InlineData("../destination-sibling/outside.nuspec", true)]
+        [InlineData("", false)]
+        public void ExtractFile_WithDestinationAndUnsafeTarget_ThrowsBeforeWriting(
+            string targetFilePath, bool absolutePath)
+        {
+            using (var package = PackageReaderTest.Create(TestPackagesCore.GetPackageCoreReaderTestPackage()))
+            using (var directory = TestDirectory.Create())
+            {
+                string firstFile = package.Reader.GetFiles().First();
+                string destination = Path.Combine(directory.Path, "destination");
+                if (absolutePath)
+                {
+                    targetFilePath = Path.GetFullPath(Path.Combine(destination, targetFilePath));
+                }
+
+                Assert.Throws<UnsafePackageEntryException>(
+                    () => package.Reader.ExtractFile(firstFile, destination, targetFilePath, NullLogger.Instance));
+
+                Assert.False(Directory.Exists(destination));
+                Assert.False(Directory.Exists(Path.Combine(directory.Path, "destination-sibling")));
+            }
+        }
+
+        [Theory]
+        [InlineData(null, "destination", "target.nuspec", "packageFile")]
+        [InlineData("source.nuspec", null, "target.nuspec", "destination")]
+        [InlineData("source.nuspec", "destination", null, "targetFilePath")]
+        public void ExtractFile_WithDestinationAndNullArgument_Throws(
+            string packageFile, string destination, string targetFilePath, string parameterName)
+        {
+            using (var package = PackageReaderTest.Create(TestPackagesCore.GetPackageCoreReaderTestPackage()))
+            {
+                var exception = Assert.Throws<ArgumentNullException>(
+                    () => package.Reader.ExtractFile(packageFile, destination, targetFilePath, NullLogger.Instance));
+
+                Assert.Equal(parameterName, exception.ParamName);
+            }
+        }
+
+        [Fact]
+        public void ExtractFile_WithEmptyDestination_Throws()
+        {
+            using (var package = PackageReaderTest.Create(TestPackagesCore.GetPackageCoreReaderTestPackage()))
+            {
+                Assert.Throws<ArgumentException>(
+                    () => package.Reader.ExtractFile("Aa.nuspec", string.Empty, "target.nuspec", NullLogger.Instance));
             }
         }
 
