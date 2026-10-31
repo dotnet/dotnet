@@ -34,7 +34,7 @@
       </trans-unit>
       <trans-unit id="Error_CopilotRequestFailed">
         <source>GitHub Copilot was unable to complete the request. See the Activity Log for details.</source>
-        <target state="new">GitHub Copilot was unable to complete the request. See the Activity Log for details.</target>
+        <target state="translated">GitHub Copilot 无法完成请求。有关详细信息，请参阅活动日志。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotServiceNotAvailable">
@@ -94,7 +94,7 @@
       </trans-unit>
       <trans-unit id="Error_SupplyChainSecurityToolNotAvailable">
         <source>The Review Supply Chain Security tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
-        <target state="new">The Review Supply Chain Security tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</target>
+        <target state="translated">“查看供应链安全”工具不可用。请在 GitHub Copilot 聊天窗口中启用 NuGet MCP 服务器，然后重试。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -174,7 +174,7 @@
       </trans-unit>
       <trans-unit id="Prompt_ReviewPackageSourceMapping">
         <source>Review this repository's package source mappings.</source>
-        <target state="new">Review this repository's package source mappings.</target>
+        <target state="translated">查看此存储库的包源映射。</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
@@ -244,17 +244,17 @@
       </trans-unit>
       <trans-unit id="Text_MinPublishAgeExceptions_Description">
         <source>Package ID patterns exempt from minimum publish age checks. [Learn more](https://aka.ms/nuget/min-publish-age)</source>
-        <target state="new">Package ID patterns exempt from minimum publish age checks. [Learn more](https://aka.ms/nuget/min-publish-age)</target>
+        <target state="translated">免于最低发布时长检查的包 ID 模式。[了解详细信息](https://aka.ms/nuget/min-publish-age)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_MinPublishAgeExceptions_Title">
         <source>Minimum publish age exceptions</source>
-        <target state="new">Minimum publish age exceptions</target>
+        <target state="translated">最低发布时长例外</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_MinPublishAgeHours_Header">
         <source>Minimum publish age (hours)</source>
-        <target state="new">Minimum publish age (hours)</target>
+        <target state="translated">最低发布时长(小时)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">
@@ -304,12 +304,12 @@
       </trans-unit>
       <trans-unit id="Title_ResolveSupplyChainSecurityWithCopilot">
         <source>Resolve Supply Chain Security with GitHub Copilot</source>
-        <target state="new">Resolve Supply Chain Security with GitHub Copilot</target>
+        <target state="translated">使用 GitHub Copilot 解决供应链安全问题</target>
         <note>Do not translate "GitHub Copilot"</note>
       </trans-unit>
       <trans-unit id="VSOptions_Button_PackageSourceMappingReview">
         <source>Review with GitHub Copilot</source>
-        <target state="new">Review with GitHub Copilot</target>
+        <target state="translated">使用 GitHub Copilot 审阅</target>
         <note>Do not translate "GitHub Copilot"</note>
       </trans-unit>
       <trans-unit id="clearLocalResources">
