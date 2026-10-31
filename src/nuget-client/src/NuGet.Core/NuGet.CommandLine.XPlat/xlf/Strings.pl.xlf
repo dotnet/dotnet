@@ -1281,7 +1281,7 @@ Wyszukiwanie polega na porównywaniu łańcuchów bez rozróżniania wielkości 
       </trans-unit>
       <trans-unit id="SourcesCommandProtocolVersionDescription">
         <source>The NuGet server protocol version to be used. When the URL ends in .json, it defaults to "3", and defaults to "2" otherwise.</source>
-        <target state="needs-review-translation">Wersja protokołu serwera NuGet do użycia. Obecnie obsługiwane wersje to 2 i 3. Zobacz stronę https://learn.microsoft.com/nuget/api/overview, aby uzyskać informacje o protokole w wersji 3. Wartość domyślna to 2, jeśli nie zostanie określona.</target>
+        <target state="new">The NuGet server protocol version to be used. When the URL ends in .json, it defaults to "3", and defaults to "2" otherwise.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandSourceDescription">

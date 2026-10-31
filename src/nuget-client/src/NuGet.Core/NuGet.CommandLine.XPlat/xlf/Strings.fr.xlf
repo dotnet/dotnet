@@ -1281,7 +1281,7 @@ La recherche est une comparaison de chaînes qui ne respecte pas la casse à l�
       </trans-unit>
       <trans-unit id="SourcesCommandProtocolVersionDescription">
         <source>The NuGet server protocol version to be used. When the URL ends in .json, it defaults to "3", and defaults to "2" otherwise.</source>
-        <target state="needs-review-translation">Version du protocole serveur NuGet à utiliser. Les versions actuellement prises en charge sont 2 et 3. Consultez https://learn.microsoft.com/nuget/api/overview pour plus d’informations sur le protocole version 3. La valeur par défaut est 2 si elle n’est pas spécifiée.</target>
+        <target state="new">The NuGet server protocol version to be used. When the URL ends in .json, it defaults to "3", and defaults to "2" otherwise.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandSourceDescription">
