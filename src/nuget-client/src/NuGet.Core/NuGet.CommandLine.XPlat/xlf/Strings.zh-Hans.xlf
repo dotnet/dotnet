@@ -1281,7 +1281,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
       </trans-unit>
       <trans-unit id="SourcesCommandProtocolVersionDescription">
         <source>The NuGet server protocol version to be used. When the URL ends in .json, it defaults to "3", and defaults to "2" otherwise.</source>
-        <target state="needs-review-translation">要使用的 NuGet 服务器协议版本。当前支持的版本为 2 和 3。有关版本 3 协议的信息，请参阅 https://learn.microsoft.com/nuget/api/overview。如果未指定，则默认为 2。</target>
+        <target state="new">The NuGet server protocol version to be used. When the URL ends in .json, it defaults to "3", and defaults to "2" otherwise.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandSourceDescription">
