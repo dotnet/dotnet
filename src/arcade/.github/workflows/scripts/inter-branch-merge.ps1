@@ -142,11 +142,11 @@ function ResetFilesToTargetBranch($patterns, $targetBranch) {
 
         Write-Host "Processing pattern: $pattern"
         
-        # Use git checkout to reset files matching the pattern to the target branch
+        # Remove matching files absent from the target branch as well as restoring its files.
         # The -- is needed to separate the revision from the pathspec
         # Just attempt to checkout the pattern directly - git will handle whether files exist
         try {
-            & git checkout "origin/$targetBranch" -- $pattern 2>&1 | Write-Host
+            & git checkout --no-overlay "origin/$targetBranch" -- $pattern 2>&1 | Write-Host
             if ($LASTEXITCODE -eq 0) {
                 Write-Host -f Green "Checked out pattern '$pattern' from $targetBranch"
                 $processedPatterns += $pattern
