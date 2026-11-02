@@ -627,9 +627,9 @@ Returns true if and only if the current test was skipped.
 
 ##### RecordProperty {#Test::RecordProperty}
 
-`static void Test::RecordProperty(const std::string& key, const std::string&
+`static void Test::RecordProperty(std::string_view key, std::string_view
 value)` \
-`static void Test::RecordProperty(const std::string& key, int value)`
+`static void Test::RecordProperty(std::string_view key, int value)`
 
 Logs a property for the current test, test suite, or entire invocation of the
 test program. Only the last value for a given key is logged.
@@ -1291,7 +1291,7 @@ Gets the user-supplied value.
 
 ##### SetValue {#SetValue}
 
-`void SetValue(const std::string& new_value)`
+`void SetValue(std::string_view new_value)`
 
 Sets a new value, overriding the previous one.
 
