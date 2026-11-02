@@ -21,6 +21,7 @@ namespace Microsoft.Deployment.DotNet.Releases
 
         /// <summary>
         /// Determines if a local file is the latest version compared to an online copy.
+        /// Modification timestamps are compared in UTC.
         /// </summary>
         /// <param name="fileName">The path of the local file.</param>
         /// <param name="address">The address pointing of the file.</param>
@@ -32,10 +33,10 @@ namespace Microsoft.Deployment.DotNet.Releases
 
             httpResponse.EnsureSuccessStatusCode();
 
-            DateTime? onlineLastModified = httpResponse.Content.Headers.LastModified?.DateTime;
+            DateTime? onlineLastModifiedUtc = httpResponse.Content.Headers.LastModified?.UtcDateTime;
             var fileInfo = new FileInfo(fileName);
 
-            return fileInfo.LastWriteTime >= onlineLastModified;
+            return fileInfo.LastWriteTimeUtc >= onlineLastModifiedUtc;
         }
 
         /// <summary>
