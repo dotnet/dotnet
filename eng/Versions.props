@@ -59,16 +59,12 @@
     <NuGetPackagingVersion>7.0.3</NuGetPackagingVersion>
     <NuGetProtocolVersion>7.0.3</NuGetProtocolVersion>
     <NuGetProjectModelVersion>7.0.3</NuGetProjectModelVersion>
-    <!-- roslyn dependencies -->
-    <MicrosoftCodeAnalysisVersion>4.4.0</MicrosoftCodeAnalysisVersion>
     <!-- runtime dependencies -->
     <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.11</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftExtensionsLoggingConsoleVersion>10.0.11</MicrosoftExtensionsLoggingConsoleVersion>
     <MicrosoftExtensionsLoggingVersion>10.0.11</MicrosoftExtensionsLoggingVersion>
     <MicrosoftExtensionsHostingVersion>10.0.11</MicrosoftExtensionsHostingVersion>
     <SystemSecurityCryptographyXmlVersion>10.0.11</SystemSecurityCryptographyXmlVersion>
-    <!-- sdk dependencies -->
-    <MicrosoftDotNetApiCompatTaskVersion>10.0.100</MicrosoftDotNetApiCompatTaskVersion>
     <!-- testfx dependencies. Overrides the Arcade default to pick up the automatic DOTNET_ROOT configuration for
          app host launches (https://github.com/microsoft/testfx/pull/10413), which the test projects rely on to run
          against the repo-local .NET installation. Restored from the test-tools feed, see https://aka.ms/mstest/preview. -->
