@@ -1,0 +1,84 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+name: Check License Headers
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-license:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v5
+    
+    - name: Check license headers
+      run: |
+        echo "Checking for required license headers..."
+        
+        # Define the required headers for different file types
+        HEADER_HASH="# Copyright (c) Microsoft Corporation."
+        HEADER_SLASH="// Copyright (c) Microsoft Corporation."
+        
+        # Find files that should have headers
+        files_to_check=$(find . -type f \( \
+          -name "*.cs" -o \
+          -name "*.ts" -o \
+          -name "*.js" -o \
+          -name "*.sh" -o \
+          -name "*.yml" -o \
+          -name "*.yaml" \
+        \) \
+          -not -path "./.git/*" \
+          -not -path "./node_modules/*" \
+          -not -path "./**/bin/*" \
+          -not -path "./**/obj/*" \
+          -not -path "./docs/*")
+        
+        missing_headers=()
+        
+        for file in $files_to_check; do
+          echo "Checking: $file"
+          
+          # Check based on file extension
+          case "$file" in
+            *.sh|*.yml|*.yaml)
+              if ! head -5 "$file" | grep -q "# Copyright (c) Microsoft Corporation."; then
+                missing_headers+=("$file")
+              fi
+              ;;
+            *.cs|*.ts|*.js)
+              if ! head -5 "$file" | grep -q "// Copyright (c) Microsoft Corporation."; then
+                missing_headers+=("$file")
+              fi
+              ;;
+          esac
+        done
+        
+        # Report results
+        if [ ${#missing_headers[@]} -eq 0 ]; then
+          echo "✅ All files have required license headers"
+        else
+          echo "❌ The following files are missing license headers:"
+          printf '%s\n' "${missing_headers[@]}"
+          echo ""
+          echo "Please add the appropriate header to each file:"
+          echo "For .sh/.yml/.yaml files:"
+          echo "  # Copyright (c) Microsoft Corporation."
+          echo "  # Licensed under the MIT License."
+          echo ""
+          echo "For .cs/.ts/.js files:"
+          echo "  // Copyright (c) Microsoft Corporation."
+          echo "  // Licensed under the MIT License."
+          exit 1
+        fi
