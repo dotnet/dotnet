@@ -19,10 +19,14 @@ schedules:
     always: true
 
 parameters:
-- name: enablePgo
+- name: desiredPgo
   displayName: 'Build PGO verticals?'
-  type: boolean
-  default: false
+  type: string
+  default: 'Default (disabled for release branches)'
+  values:
+    - Enabled
+    - Disabled
+    - Default (disabled for release branches)
 
 - name: desiredSigning
   displayName: 'Sign?'
@@ -202,7 +206,12 @@ extends:
           desiredSigning: ${{ parameters.desiredSigning }}
         desiredIBC: ${{ parameters.desiredIBC }}
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
-        enablePgo: ${{ parameters.enablePgo }}
+        ${{ if eq(parameters.desiredPgo, 'Enabled') }}:
+          enablePgo: true
+        ${{ elseif eq(parameters.desiredPgo, 'Disabled') }}:
+          enablePgo: false
+        ${{ else }}:
+          enablePgo: ${{ not(or(startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'))) }}
         isOfficialBuild: true
         scope: full
         # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
