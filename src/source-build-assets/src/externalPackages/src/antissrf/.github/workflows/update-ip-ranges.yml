@@ -1,0 +1,54 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+name: Verify IP Address Ranges
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'config/IPAddressRanges.json'
+      - 'nodejs/src/IPAddressRanges.ts'
+      - 'dotnet/src/IPAddressRanges.cs'
+  workflow_dispatch: # Allow manual triggering
+
+permissions:
+  contents: read
+
+jobs:
+  verify-ranges:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v5
+    
+    - name: Install jq
+      run: sudo apt-get update && sudo apt-get install -y jq
+    
+    - name: Make scripts executable
+      run: chmod +x scripts/*.sh
+    
+    - name: Build Node.js/TypeScript version
+      run: ./scripts/build-ip-ranges-nodejs.sh
+    
+    - name: Build C# version
+      run: ./scripts/build-ip-ranges-dotnet.sh
+    
+    - name: Verify generated files are up-to-date
+      run: |
+        if ! git diff --exit-code nodejs/src/IPAddressRanges.ts dotnet/src/IPAddressRanges.cs; then
+          echo "❌ Generated IP address range files are out of sync!"
+          echo "The following files need to be regenerated:"
+          git diff --name-only nodejs/src/IPAddressRanges.ts dotnet/src/IPAddressRanges.cs
+          echo ""
+          echo "Please run the following commands locally and commit the results:"
+          echo "  ./scripts/build-ip-ranges-nodejs.sh"
+          echo "  ./scripts/build-ip-ranges-dotnet.sh"
+          exit 1
+        else
+          echo "✅ All generated files are up-to-date"
+        fi

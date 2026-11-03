@@ -34,3 +34,6 @@
 [submodule "opentelemetry-dotnet-1.18"]
 	path = src/externalPackages/src/opentelemetry-dotnet-1.18
 	url = https://github.com/open-telemetry/opentelemetry-dotnet
+[submodule "antissrf"]
+	path = src/externalPackages/src/antissrf
+	url = https://github.com/microsoft/AntiSSRF.git

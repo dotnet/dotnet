@@ -1,0 +1,44 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+name: Run .NET Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "dotnet/**"
+      - ".github/workflows/test-dotnet.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        framework: [net8.0, net48]
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore solution
+        run: dotnet restore dotnet/Microsoft.Security.AntiSSRF.sln
+
+      - name: Run UnitTests (${{ matrix.framework }})
+        run: dotnet test dotnet/UnitTests/Microsoft.Security.AntiSSRF.UnitTests.csproj --configuration Release --framework ${{ matrix.framework }} --no-restore
+
+      - name: Run FunctionalTests (${{ matrix.framework }})
+        run: dotnet test dotnet/FunctionalTests/Microsoft.Security.AntiSSRF.FunctionalTests.csproj --configuration Release --framework ${{ matrix.framework }} --no-restore
