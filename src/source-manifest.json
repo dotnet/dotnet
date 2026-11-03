@@ -19,10 +19,10 @@
       "commitSha": "4f0cf801e7cc7e00b1f603ca2c1276a512155987"
     },
     {
-      "barId": 337644,
+      "barId": 339590,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "0b63bb1c3acbe62ab548a703646b2a48288dab77"
+      "commitSha": "106a2206850c5d90d0c0cec753ea467dada45204"
     },
     {
       "barId": 326569,
