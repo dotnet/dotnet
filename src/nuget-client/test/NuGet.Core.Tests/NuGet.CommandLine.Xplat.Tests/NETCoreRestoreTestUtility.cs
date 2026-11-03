@@ -35,14 +35,15 @@ namespace NuGet.CommandLine.XPlat.Tests
 
         public static PackageSpec GetProject(string projectName, string framework, LibraryDependency dependency)
         {
+            var parsedFramework = NuGetFramework.Parse(framework);
             var targetFrameworkInfo = dependency == null ?
                 new TargetFrameworkInformation()
                 {
-                    FrameworkName = NuGetFramework.Parse(framework)
+                    FrameworkName = parsedFramework
                 } :
                 new TargetFrameworkInformation()
                 {
-                    FrameworkName = NuGetFramework.Parse(framework),
+                    FrameworkName = parsedFramework,
                     Dependencies = [dependency]
                 };
 
@@ -56,7 +57,7 @@ namespace NuGet.CommandLine.XPlat.Tests
             spec.RestoreMetadata.ProjectStyle = ProjectStyle.PackageReference;
             spec.RestoreMetadata.OriginalTargetFrameworks.Add(framework);
             spec.Name = projectName;
-            spec.RestoreMetadata.TargetFrameworks.Add(new ProjectRestoreMetadataFrameworkInfo(targetFrameworkInfo.FrameworkName) { TargetAlias = framework });
+            spec.RestoreMetadata.TargetFrameworks.Add(new ProjectRestoreMetadataFrameworkInfo(parsedFramework) { TargetAlias = framework });
 
             return spec;
         }
