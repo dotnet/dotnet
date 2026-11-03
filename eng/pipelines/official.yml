@@ -25,6 +25,11 @@ schedules:
     always: true
 
 parameters:
+- name: enablePgo
+  displayName: 'Build PGO verticals?'
+  type: boolean
+  default: false
+
 - name: desiredSigning
   displayName: 'Sign?'
   type: string
@@ -194,6 +199,7 @@ extends:
         ${{ else }}:
           desiredSigning: ${{ parameters.desiredSigning }}
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
+        enablePgo: ${{ parameters.enablePgo }}
         isOfficialBuild: true
         scope: full
         # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
