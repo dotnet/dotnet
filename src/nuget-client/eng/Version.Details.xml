@@ -52,7 +52,7 @@
       <Sha>2aade6beb02ea367fd97c4070a4198802fe61c03</Sha>
     </Dependency>
     <Dependency Name="System.Security.Cryptography.Xml" Version="10.0.13">
-      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>4099f83977f4d29604a9aeb971fb0a7bc1d5f699</Sha>
     </Dependency>
     <Dependency Name="System.Formats.Asn1" Version="8.0.1">
