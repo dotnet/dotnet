@@ -1,0 +1,11 @@
+node_modules/**
+out/**
+*.md
+.gitignore
+.npmrc
+.config
+*.json
+**/*.json
+**/*.tgz
+temp-lib
+src/IPAddressRanges.ts
