@@ -9,14 +9,6 @@
     <SbPath>$(TestRoot)/sb</SbPath>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.ApiCompat.Task" />
-    <PackageReference Include="Microsoft.CodeAnalysis" />
-  </ItemGroup>
-
-  <UsingTask TaskName="ValidateAssembliesTask"
-             AssemblyFile="$(PkgMicrosoft_DotNet_ApiCompat_Task)/tools/net/Microsoft.DotNet.ApiCompat.Task.dll" />
-
   <Target Name="RunApiCompat" DependsOnTargets="Restore" BeforeTargets="Build">
     <MakeDir Directories="$(MsftPath)" Condition="!Exists('$(MsftPath)')" />
     <MakeDir Directories="$(SbPath)" Condition="!Exists('$(SbPath)')" />
