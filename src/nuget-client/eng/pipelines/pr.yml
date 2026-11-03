@@ -274,8 +274,11 @@ stages:
         displayName: Run Static Analysis
         timeoutInMinutes: 30
         pool:
-          name: NetCore-Public
-          demands: ImageOverride -equals Windows.VS2026.Amd64.Open
+          ${{ if eq(variables['System.TeamProject'], 'public') }}:
+            name: NetCore-Public
+            demands: ImageOverride -equals Windows.VS2026.Amd64.Open
+          ${{ else }}:
+            name: VSEng-MicroBuildVSStable
         steps:
         - task: PowerShell@2
           displayName: Run configure.ps1
