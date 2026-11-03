@@ -344,7 +344,10 @@ jobs:
   # Cap how long a single repo build may run. A hung repo build would otherwise run into the job
   # timeout below, and a canceled job skips the log collection steps, losing every diagnostic.
   - name: repoBuildTimeoutMinutes
-    value: 150
+    ${{ if and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+      value: 300
+    ${{ else }}:
+      value: 150
 
   - name: baseArguments
     value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine $(commandPrefix)nodeReuse 1 -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument) $(officialBuildArgument) /p:RepoBuildTimeoutMinutes=$(repoBuildTimeoutMinutes)
@@ -403,12 +406,8 @@ jobs:
       value: '/p:DotNetRuntimeSourceFeedKey=$(dotnetbuilds-internal-container-read-token-base64)'
 
   # Timeout
-  ## Real signing takes a while - increase the timeout to allow for that
-  ${{ if eq(variables['_SignType'], 'real') }}:
-    timeoutInMinutes: 720
-  ## Currently, CodeQL slows the build down too much
-  ## https://github.com/dotnet/source-build/issues/4276
-  ${{ elseif and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+  ## internal builds can take longer due to real signing or CodeQL, increase the timeout to allow for that
+  ${{ if and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     timeoutInMinutes: 720
   ${{ elseif and(startswith(parameters.buildName, 'OSX'), ne(variables['System.TeamProject'], 'internal')) }}:
     timeoutInMinutes: 360
