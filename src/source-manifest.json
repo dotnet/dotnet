@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 338812,
+      "barId": 339063,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "4163bf82769cbb7f0a6e1e02f85090d30b53e988"
+      "commitSha": "c4681eb4c38539bf73b61bb8c41d8938ca864083"
     },
     {
-      "barId": 336188,
+      "barId": 337728,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "77e4202bed594e8c1063e697b289221e57858bd5"
+      "commitSha": "94416692e05da692feb0223a9790d5afb3f8b45c"
     },
     {
       "barId": 338683,
@@ -25,10 +25,10 @@
       "commitSha": "eef106df3e5e74fae30236e1449cc3f4e955207a"
     },
     {
-      "barId": 329538,
+      "barId": 339190,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "2ee21e1b8f7721ea9cb89cd4db4f589b37b579d7"
+      "commitSha": "940e0b0b2cb05cd142f8e9760fda2779175127bb"
     },
     {
       "barId": 338818,
@@ -37,10 +37,10 @@
       "commitSha": "5f8e4349fe84e11481094acd1ffbd848e954495d"
     },
     {
-      "barId": 338797,
+      "barId": 339181,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "6090cb9e02bbb0ac3b47a5278458051911e84cf2"
+      "commitSha": "8ece311778ea12fbe6227c4468e14bbbf16e7aca"
     },
     {
       "barId": 338675,
@@ -49,10 +49,10 @@
       "commitSha": "00dc56cc16c00ff1501145a0dd653dadf81d964b"
     },
     {
-      "barId": 338165,
+      "barId": 338920,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "fe180deb551cc47a57de788c936e2fd4d778a909"
+      "commitSha": "fbc9be3aa8159670bbb660c3b7b7e22368f4e279"
     },
     {
       "barId": 338560,
@@ -67,16 +67,16 @@
       "commitSha": "fa48a4bbf3827ec3eafdf4bd24a141829d4a6f28"
     },
     {
-      "barId": 338790,
+      "barId": 338989,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "640c85e5fcace39fe46a4e288170a36fc0a12522"
+      "commitSha": "dcfa99c3da434035cba7aa4c41f33b8b849a0b8c"
     },
     {
-      "barId": 338823,
+      "barId": 338979,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "735c69bd695466ea44a0602e9c83c91e6004707b"
+      "commitSha": "e522423abedb0602c25a3d0bd8e603cc23d7f0ad"
     },
     {
       "barId": 335115,
@@ -91,10 +91,10 @@
       "commitSha": "30d68985cf75b5b00d1ec4a385d65effd32d8478"
     },
     {
-      "barId": 338544,
+      "barId": 339449,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "8a2c9040054af8f98c1fa208ee3be84af943a7ec"
+      "commitSha": "3fc2853ea93385e4adace3b5fef0a300e1d888dd"
     },
     {
       "barId": 336290,
@@ -121,16 +121,16 @@
       "commitSha": "e95b692aa80fb9aee711ad6847b1a8dd0a5d786a"
     },
     {
-      "barId": 338573,
+      "barId": 339263,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "d2737c7c7fc077c56297576e90670f4c9aa9d3e3"
+      "commitSha": "05a83265c3acc3f637f76b4c428e0b55bfcb8d78"
     },
     {
-      "barId": 337661,
+      "barId": 338855,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "0e20ab52b574b83d81ec96f299093a22a6197b28"
+      "commitSha": "dbd3026982f09a279e4595666c07bb6136f579c3"
     },
     {
       "barId": 338729,
@@ -143,7 +143,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "988ea2c1798de7779f656df2281dd36d6039a17a"
+      "commitSha": "b66cffcd5f5d6ee34a4f96d57bf016d9a22cb023"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
@@ -159,6 +159,11 @@
       "path": "source-build-assets/src/externalPackages/src/abstractions-xunit",
       "remoteUri": "https://github.com/xunit/abstractions.xunit",
       "commitSha": "b75d54d73b141709f805c2001b16f3dd4d71539d"
+    },
+    {
+      "path": "source-build-assets/src/externalPackages/src/antissrf",
+      "remoteUri": "https://github.com/microsoft/AntiSSRF.git",
+      "commitSha": "8366ff53e9c75a52d1edcc06fde7b1620243928c"
     },
     {
       "path": "source-build-assets/src/externalPackages/src/antlr4",

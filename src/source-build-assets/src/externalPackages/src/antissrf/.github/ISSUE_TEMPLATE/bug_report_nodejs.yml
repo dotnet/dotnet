@@ -1,0 +1,80 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+name: Bug Report - Node.js
+description: File a bug report for the Node.js version of the AntiSSRF library
+title: "[Bug][Node.js]: <title>"
+labels: ["bug", "nodejs"]
+type: bug
+body:
+
+  - type: textarea
+    attributes:
+      label: Bug Behavior
+      description: Describe the current behavior you are experiencing. Include any error messages, unexpected responses, or other issues.
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: Describe what you expected to happen instead of the current behavior.
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Steps To Reproduce
+      description: Provide clear steps to reproduce this issue, including code samples if applicable.
+      placeholder: |
+        1. Import the library: `import { AntiSSRFPolicy, PolicyConfigOptions } from "@microsoft/antissrf";`
+        2. Create policy: `const policy = new AntiSSRFPolicy(PolicyConfigOptions.ExternalOnlyLatest);`
+        3. Get agent: `const agent = policy.getHttpsAgent();`
+        4. Make request: `https.get("https://example.com", { agent }, (res) => { ... });`
+        5. Observe unexpected behavior: [describe what happens]
+    validations:
+      required: false
+
+  - type: input
+    attributes:
+      label: Version
+      description: Specify the version of the AntiSSRF Node.js library where you encountered this issue.
+      placeholder: "e.g., 1.0.0"
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Operating System
+      description: Specify your operating system and version.
+      placeholder: "e.g., Ubuntu 22.04, Windows 11, macOS 15.0"
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Node.js Version
+      description: Specify the Node.js version you are using.
+      placeholder: "e.g., 22.1.0"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Additional Context
+      description: |
+        Provide any additional context, links to documentation, stack traces, or other relevant information that may help us understand and resolve this issue.
+    validations:
+      required: false
+
+  - type: checkboxes
+    attributes:
+      label: Verification
+      description: Please confirm before submitting your bug report.
+      options:
+        - label: I have searched existing issues and confirmed this bug has not already been reported
+          required: true
+    
+  - type: markdown
+    attributes:
+      value: "Thank you for helping us improve the AntiSSRF library!"
