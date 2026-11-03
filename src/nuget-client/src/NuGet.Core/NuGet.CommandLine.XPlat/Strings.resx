@@ -873,7 +873,7 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
     <comment>0 - packagereference name</comment>
   </data>
   <data name="SourcesCommandProtocolVersionDescription" xml:space="preserve">
-    <value>The NuGet server protocol version to be used. Currently supported versions are 2 and 3. See https://learn.microsoft.com/nuget/api/overview for information about the version 3 protocol. Defaults to 2 if not specified.</value>
+    <value>The NuGet server protocol version to be used. When the URL ends in .json, it defaults to "3", and defaults to "2" otherwise.</value>
   </data>
   <data name="SourcesCommandMinPublishAgeHoursDescription" xml:space="preserve">
     <value>The minimum number of hours a package must have been published before it can be selected for update. Set to 0 to disable.</value>
