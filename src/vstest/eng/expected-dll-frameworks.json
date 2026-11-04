@@ -79,6 +79,7 @@
       "tools/net462/Common7/IDE/Extensions/TestPlatform/Extensions/Microsoft.CodeCoverage.Instrumentation.Core.dll": "netstandard",
       "tools/net462/Common7/IDE/Extensions/TestPlatform/Extensions/Microsoft.CodeCoverage.Instrumentation.dll": "netstandard",
       "tools/net462/Common7/IDE/Extensions/TestPlatform/Extensions/Microsoft.CodeCoverage.Interprocess.dll": "netframework",
+      "tools/net462/Common7/IDE/Extensions/TestPlatform/Extensions/Microsoft.Diagnostics.NETCore.Client.dll": "netstandard",
       "tools/net462/Common7/IDE/Extensions/TestPlatform/Extensions/Microsoft.DiaSymReader.dll": "netstandard",
       "tools/net462/Common7/IDE/Extensions/TestPlatform/Extensions/Microsoft.TestPlatform.Extensions.BlameDataCollector.dll": "netframework",
       "tools/net462/Common7/IDE/Extensions/TestPlatform/Extensions/Microsoft.TestPlatform.Extensions.EventLogCollector.dll": "netframework",
@@ -304,6 +305,7 @@
       "lib/netstandard2.0/Microsoft.VisualStudio.TestPlatform.ObjectModel.dll": "netstandard"
     },
     "Microsoft.TestPlatform.Portable": {
+      "tools/net462/Extensions/Microsoft.Diagnostics.NETCore.Client.dll": "netstandard",
       "tools/net462/Extensions/Microsoft.TestPlatform.Extensions.BlameDataCollector.dll": "netframework",
       "tools/net462/Extensions/Microsoft.TestPlatform.TestHostRuntimeProvider.dll": "netframework",
       "tools/net462/Extensions/Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.dll": "netframework",
@@ -328,6 +330,7 @@
       "tools/net462/System.Runtime.CompilerServices.Unsafe.dll": "none",
       "tools/net462/System.Runtime.InteropServices.RuntimeInformation.dll": "none",
       "tools/net8.0/datacollector.dll": "net",
+      "tools/net8.0/Extensions/Microsoft.Diagnostics.NETCore.Client.dll": "netstandard",
       "tools/net8.0/Extensions/Microsoft.TestPlatform.Extensions.BlameDataCollector.dll": "netstandard",
       "tools/net8.0/Extensions/Microsoft.TestPlatform.TestHostRuntimeProvider.dll": "netstandard",
       "tools/net8.0/Extensions/Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.dll": "netstandard",
