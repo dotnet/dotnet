@@ -7,8 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Moq;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Packaging.Core;
@@ -209,6 +212,41 @@ namespace NuGet.Protocol.Tests
             // Assert
             Assert.StartsWith(string.Format(CultureInfo.CurrentCulture, Strings.Log_FailedToFetchV2FeedHttp, searchUri, string.Empty), exception.Message);
             Assert.IsType<System.Xml.XmlException>(exception.InnerException);
+        }
+
+        [Fact]
+        public async Task V2FeedParser_Search_FirstRequestIsNotMarkedAsRetry()
+        {
+            // Arrange
+            var serviceAddress = ProtocolUtility.CreateServiceAddress();
+            var feed = ProtocolUtility.GetResource("NuGet.Protocol.Tests.compiler.resources.AzureSearch.xml", GetType());
+
+            var requests = new List<HttpRetryHandlerRequest>();
+            var retryHandler = new Mock<IHttpRetryHandler>();
+            retryHandler
+                .Setup(x => x.SendAsync(
+                    It.IsAny<HttpRetryHandlerRequest>(),
+                    It.IsAny<string>(),
+                    It.IsAny<ILogger>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns<HttpRetryHandlerRequest, string, ILogger, CancellationToken>((request, _, __, ___) =>
+                {
+                    requests.Add(request);
+                    return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(feed) });
+                });
+
+            var httpSource = new TestHttpSource(new PackageSource(serviceAddress), new Dictionary<string, string>());
+            httpSource.RetryHandler = retryHandler.Object;
+
+            V2FeedParser parser = new V2FeedParser(httpSource, serviceAddress);
+            var searchFilter = new SearchFilter(includePrerelease: false);
+
+            // Act
+            await parser.Search("azure", searchFilter, 0, 1, NullLogger.Instance, CancellationToken.None);
+
+            // Assert
+            var request = Assert.Single(requests);
+            Assert.False(request.IsRetry);
         }
 
         [Fact]

@@ -448,7 +448,7 @@ namespace NuGet.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to NuGet.Config is malformed. Path: &apos;{0}&apos;..
+        ///   Looks up a localized string similar to NuGet.Config is malformed. Path: &apos;{0}&apos;. Reason: {1}.
         /// </summary>
         internal static string ShowError_ConfigInvalidOperation {
             get {
@@ -457,7 +457,7 @@ namespace NuGet.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to NuGet.Config is not valid XML. Path: &apos;{0}&apos;..
+        ///   Looks up a localized string similar to NuGet.Config is not valid XML. Path: &apos;{0}&apos;. Reason: {1}.
         /// </summary>
         internal static string ShowError_ConfigInvalidXml {
             get {
@@ -475,7 +475,7 @@ namespace NuGet.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to read NuGet.Config due to unauthorized access. Path: &apos;{0}&apos;..
+        ///   Looks up a localized string similar to Failed to read NuGet.Config due to unauthorized access. Path: &apos;{0}&apos;. Reason: {1}.
         /// </summary>
         internal static string ShowError_ConfigUnauthorizedAccess {
             get {
@@ -511,7 +511,7 @@ namespace NuGet.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unexpected failure reading NuGet.Config. Path: &apos;{0}&apos;..
+        ///   Looks up a localized string similar to Unexpected failure reading NuGet.Config. Path: &apos;{0}&apos;. Reason: {1}.
         /// </summary>
         internal static string Unknown_Config_Exception {
             get {

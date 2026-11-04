@@ -2910,7 +2910,7 @@ EndGlobal";
             using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource);
             pathContext.Settings.RemoveSource("source");
             pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "true");
-            string packageid = new string('a', 200);
+            string packageid = new string('a', 100);
             var packageA1 = new SimpleTestPackageContext()
             {
                 Id = packageid,
