@@ -355,17 +355,6 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
-            buildName: iOSSimulator_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            sign: ${{ variables.signEnabled }}
-            signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac_ShortStack }}
-            targetOS: iossimulator
-            targetArchitecture: x64
-            brandingType: ${{ variables.brandingType }}
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
             buildName: MacCatalyst_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             sign: ${{ variables.signEnabled }}
@@ -406,17 +395,6 @@ stages:
             pool: ${{ parameters.pool_Mac_ShortStack }}
             targetOS: tvossimulator
             targetArchitecture: arm64
-            brandingType: ${{ variables.brandingType }}
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            buildName: tvOSSimulator_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            sign: ${{ variables.signEnabled }}
-            signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac_ShortStack }}
-            targetOS: tvossimulator
-            targetArchitecture: x64
             brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
@@ -749,10 +727,8 @@ stages:
             - Android_Shortstack_x86
             - iOS_Shortstack_arm64
             - iOSSimulator_Shortstack_arm64
-            - iOSSimulator_Shortstack_x64
             - tvOS_Shortstack_arm64
             - tvOSSimulator_Shortstack_arm64
-            - tvOSSimulator_Shortstack_x64
             - MacCatalyst_Shortstack_arm64
             - MacCatalyst_Shortstack_x64
 

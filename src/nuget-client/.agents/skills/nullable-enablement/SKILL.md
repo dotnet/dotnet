@@ -127,6 +127,14 @@ public bool TryGetValue(string key, [NotNullWhen(true)] out string? value)
 - Add `[NotNullWhen(true)]` only when it's actually guaranteed non-null on success for ALL code paths
 - Callers use `!` after the success guard
 
+**Conditional member invariants:**
+When a boolean-returning method or property guarantees that a nullable member is non-null for a particular result, express that relationship with `[MemberNotNullWhen]`. This lets callers rely on the guard without weakening the member's honest nullable contract or using `!`.
+```csharp
+[MemberNotNullWhen(true, nameof(DgSpecHash))]
+public bool IsValid { get { return DgSpecHash != null; } }
+```
+Use the attribute only when every path returning the specified value establishes the member as non-null. Consider `[MemberNotNull]` when a method guarantees members are initialized after it returns, regardless of a boolean result.
+
 **`Debug.Assert(x != null)` + `x!`:**
 When the parameter type is non-null and all callers are nullable-enabled, you can remove both the assert and the `!` — they're redundant.
 

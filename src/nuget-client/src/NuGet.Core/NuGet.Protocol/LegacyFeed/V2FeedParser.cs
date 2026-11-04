@@ -595,7 +595,20 @@ namespace NuGet.Protocol
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         var networkStream = await response.Content.ReadAsStreamAsync();
-                        return await LoadXmlAsync(networkStream, token);
+                        try
+                        {
+                            return await LoadXmlAsync(networkStream, token);
+                        }
+                        catch (XmlException ex)
+                        {
+                            // The source answered with something that isn't a feed, such as an HTML page
+                            throw new FatalProtocolException(string.Format(
+                                CultureInfo.CurrentCulture,
+                                Strings.Log_FailedToFetchV2FeedHttp,
+                                uri,
+                                ex.Message),
+                                ex);
+                        }
                     }
                     else if (ignoreNotFounds && response.StatusCode == HttpStatusCode.NotFound)
                     {
