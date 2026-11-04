@@ -14,6 +14,10 @@ parameters:
   type: string
   default: ''
 
+- name: enablePgo
+  type: boolean
+  default: true
+
 # Scope of jobs which are executed
 - name: scope
   type: string
@@ -430,19 +434,20 @@ stages:
           targetOS: linux
           targetArchitecture: x64
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: AzureLinux_x64_Cross_Pgo
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: false
-          pool: ${{ parameters.pool_Linux }}
-          container:
-            name: ${{ variables.azurelinuxX64CrossContainerName }}
-            image: ${{ variables.azurelinuxX64CrossContainerImage }}
-          crossRootFs: '/crossrootfs/x64'
-          targetOS: linux
-          targetArchitecture: x64
-          extraProperties: /p:PgoInstrument=true
+      - ${{ if parameters.enablePgo }}:
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: AzureLinux_x64_Cross_Pgo
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: false
+            pool: ${{ parameters.pool_Linux }}
+            container:
+              name: ${{ variables.azurelinuxX64CrossContainerName }}
+              image: ${{ variables.azurelinuxX64CrossContainerImage }}
+            crossRootFs: '/crossrootfs/x64'
+            targetOS: linux
+            targetArchitecture: x64
+            extraProperties: /p:PgoInstrument=true
 
       - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
 
@@ -490,19 +495,20 @@ stages:
           targetOS: linux
           targetArchitecture: arm64
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: AzureLinux_x64_Cross_Pgo
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: false
-          pool: ${{ parameters.pool_Linux }}
-          container:
-            name: ${{ variables.azurelinuxArm64CrossContainerName }}
-            image: ${{ variables.azurelinuxArm64CrossContainerImage }}
-          crossRootFs: '/crossrootfs/arm64'
-          targetOS: linux
-          targetArchitecture: arm64
-          extraProperties: /p:PgoInstrument=true
+      - ${{ if parameters.enablePgo }}:
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: AzureLinux_x64_Cross_Pgo
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: false
+            pool: ${{ parameters.pool_Linux }}
+            container:
+              name: ${{ variables.azurelinuxArm64CrossContainerName }}
+              image: ${{ variables.azurelinuxArm64CrossContainerImage }}
+            crossRootFs: '/crossrootfs/arm64'
+            targetOS: linux
+            targetArchitecture: arm64
+            extraProperties: /p:PgoInstrument=true
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -588,36 +594,37 @@ stages:
           targetArchitecture: arm64
           enableIBCOptimization: ${{ variables.ibcEnabled }}
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Windows_Pgo
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: false
-          pool: ${{ parameters.pool_Windows }}
-          targetOS: windows
-          targetArchitecture: x64
-          extraProperties: /p:PgoInstrument=true
+      - ${{ if parameters.enablePgo }}:
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Windows_Pgo
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: false
+            pool: ${{ parameters.pool_Windows }}
+            targetOS: windows
+            targetArchitecture: x64
+            extraProperties: /p:PgoInstrument=true
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Windows_Pgo
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: false
-          pool: ${{ parameters.pool_Windows }}
-          targetOS: windows
-          targetArchitecture: x86
-          extraProperties: /p:PgoInstrument=true
-          enableIBCOptimization: ${{ variables.ibcEnabled }}
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Windows_Pgo
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: false
+            pool: ${{ parameters.pool_Windows }}
+            targetOS: windows
+            targetArchitecture: x86
+            extraProperties: /p:PgoInstrument=true
+            enableIBCOptimization: ${{ variables.ibcEnabled }}
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Windows_Pgo
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: false
-          pool: ${{ parameters.pool_Windows }}
-          targetOS: windows
-          targetArchitecture: arm64
-          extraProperties: /p:PgoInstrument=true
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Windows_Pgo
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: false
+            pool: ${{ parameters.pool_Windows }}
+            targetOS: windows
+            targetArchitecture: arm64
+            extraProperties: /p:PgoInstrument=true
 
       ## Build Pass 2 verticals
 
