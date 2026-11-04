@@ -1570,17 +1570,14 @@ namespace NuGet.ProjectModel.Test
 
         [Fact]
 
-        public void GetPackageSpec_WhenFrameworksDownloadDependenciesDependencyNameIsNull_ReturnsDownloadDependencies()
+        public void GetPackageSpec_WhenFrameworksDownloadDependenciesDependencyNameIsNull_Throws()
         {
-            var expectedResult = new DownloadDependency(name: null, new VersionRange(new NuGetVersion("1.2.3")));
-            var json = $"{{\"frameworks\":{{\"a\":{{\"downloadDependencies\":[{{\"name\":null,\"version\":\"{expectedResult.VersionRange.ToShortString()}\"}}]}}}}}}";
+            const string json = "{\"frameworks\":{\"a\":{\"downloadDependencies\":[{\"name\":null,\"version\":\"[1.2.3]\"}]}}}";
 
-            TargetFrameworkInformation framework = GetFramework(json);
-
-            DownloadDependency actualResult = framework.DownloadDependencies.Single();
-
-            Assert.Equal(expectedResult.Name, actualResult.Name);
-            Assert.Equal(expectedResult.VersionRange, actualResult.VersionRange);
+            FileFormatException exception = Assert.Throws<FileFormatException>(() => GetPackageSpec(json));
+            FileFormatException innerFileFormatException = Assert.IsType<FileFormatException>(exception.InnerException);
+            ArgumentNullException innerException = Assert.IsType<ArgumentNullException>(innerFileFormatException.InnerException);
+            Assert.Equal("name", innerException.ParamName);
         }
 
         [Fact]
