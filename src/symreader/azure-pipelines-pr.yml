@@ -57,6 +57,52 @@ stages:
         - script: eng\common\cibuild.cmd -configuration $(_BuildConfig) -prepareMachine $(_BuildArgs)
           displayName: Build and Test
 
+      - job: Windows_ARM64
+        displayName: 'Windows ARM64 Tests'
+        pool:
+          vmImage: 'windows-latest'
+        timeoutInMinutes: 120
+        strategy:
+          matrix:
+            Debug:
+              _BuildConfig: Debug
+              _SignType: none
+            Release:
+              _BuildConfig: Release
+              _SignType: none
+        steps:
+        - checkout: self
+          clean: true
+        - powershell: eng\common\build.ps1 -configuration $(_BuildConfig) -restore -build -ci -prepareMachine
+          displayName: Build Test Payloads
+        - powershell: |
+            $globalJson = Get-Content global.json -Raw | ConvertFrom-Json
+            Write-Host "##vso[task.setvariable variable=HelixDotNetSdkVersion]$($globalJson.tools.dotnet)"
+            $properties = & .\.dotnet\dotnet.exe msbuild src\Microsoft.DiaSymReader.Tests\Microsoft.DiaSymReader.UnitTests.csproj -nologo -getProperty:NetCurrent,XUnitVersion
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            $properties = ($properties | Out-String | ConvertFrom-Json).Properties
+            Write-Host "##vso[task.setvariable variable=HelixTestTargetFramework]$($properties.NetCurrent)"
+            Write-Host "##vso[task.setvariable variable=HelixXUnitRunnerVersion]$($properties.XUnitVersion)"
+          displayName: Read Test Runtime Settings
+        - template: /eng/common/templates/steps/send-to-helix.yml
+          parameters:
+            DisplayNamePrefix: Run Windows ARM64 Tests
+            HelixSource: pr/dotnet/symreader
+            HelixType: test/symreader/
+            HelixTargetQueues: Windows.11.Arm64.Open
+            HelixConfiguration: $(_BuildConfig)
+            Creator: dotnet-symreader
+            HelixProjectArguments: /p:Configuration=$(_BuildConfig) /p:DotNetCliRuntime=win-arm64
+            XUnitProjects: '$(Build.SourcesDirectory)\src\Microsoft.DiaSymReader.Tests\Microsoft.DiaSymReader.UnitTests.csproj;$(Build.SourcesDirectory)\src\Microsoft.DiaSymReader.Native.Tests\Microsoft.DiaSymReader.Native.UnitTests.csproj'
+            XUnitPublishTargetFramework: $(HelixTestTargetFramework)
+            XUnitRuntimeTargetFramework: netcoreapp2.0
+            XUnitRunnerVersion: $(HelixXUnitRunnerVersion)
+            XUnitWorkItemTimeout: '00:20:00'
+            IncludeDotNetCli: true
+            DotNetCliPackageType: sdk
+            DotNetCliVersion: $(HelixDotNetSdkVersion)
+            WaitForWorkItemCompletion: true
+
       - job: MacOS
         displayName: 'MacOS'
         pool:
