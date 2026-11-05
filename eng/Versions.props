@@ -6,10 +6,10 @@
     <VersionMajor>11</VersionMajor>
     <VersionMinor>0</VersionMinor>
     <VersionSDKMinor>1</VersionSDKMinor>
-    <VersionSDKMinorPatch>0</VersionSDKMinorPatch>
+    <VersionSDKMinorPatch>1</VersionSDKMinorPatch>
     <VersionFeature>$([System.String]::Copy('$(VersionSDKMinorPatch)').PadLeft(2, '0'))</VersionFeature>
     <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionSDKMinor)$(VersionFeature)</VersionPrefix>
-    <PreReleaseVersionLabel>rtm</PreReleaseVersionLabel>
+    <PreReleaseVersionLabel>servicing</PreReleaseVersionLabel>
     <PreReleaseVersionIteration></PreReleaseVersionIteration>
 
     <!-- 
