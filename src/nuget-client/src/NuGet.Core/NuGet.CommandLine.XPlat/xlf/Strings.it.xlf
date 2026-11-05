@@ -1281,7 +1281,7 @@ La ricerca viene eseguita in un confronto di stringhe senza distinzione tra maiu
       </trans-unit>
       <trans-unit id="SourcesCommandProtocolVersionDescription">
         <source>The NuGet server protocol version to be used. When the URL ends in .json, it defaults to "3", and defaults to "2" otherwise.</source>
-        <target state="new">The NuGet server protocol version to be used. When the URL ends in .json, it defaults to "3", and defaults to "2" otherwise.</target>
+        <target state="translated">Versione del protocollo server NuGet da usare. Quando l'URL termina con .json, il valore predefinito è "3" e il valore predefinito è "2" in caso contrario.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandSourceDescription">
