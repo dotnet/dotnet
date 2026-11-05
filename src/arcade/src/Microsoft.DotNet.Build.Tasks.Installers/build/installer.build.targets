@@ -451,6 +451,7 @@
       <_pkgArgs>$(_pkgArgs) --identifier &quot;$(_MacOSComponentName)&quot;</_pkgArgs>
       <_pkgArgs>$(_pkgArgs) --version &quot;$(InstallerPackageVersion)&quot;</_pkgArgs>
       <_pkgArgs>$(_pkgArgs) --install-location &quot;$(_MacOSSharedInstallDir)&quot;</_pkgArgs>
+      <_pkgArgs Condition="'$(MacOSMinimumVersion)' != ''">$(_pkgArgs) --compression latest --min-os-version &quot;$(MacOSMinimumVersion)&quot;</_pkgArgs>
       <_pkgArgs Condition="'$(MacOSScriptsDirectory)' != ''">$(_pkgArgs) --scripts &quot;$(MacOSScriptsDirectory)&quot;</_pkgArgs>
       <_pkgArgs>$(_pkgArgs) &quot;$(_InstallerFile)&quot;</_pkgArgs>
     </PropertyGroup>

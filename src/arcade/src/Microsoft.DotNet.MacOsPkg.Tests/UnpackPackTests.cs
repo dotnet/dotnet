@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -118,6 +119,104 @@ public class UnpackPackTests : IDisposable
             Unpack(withAppPkg, unpackPath, withAppPkgFiles);
             Pack(unpackPath, packPath, withAppPkgFiles);
         }, [ unpackPath, packPath ]);
+    }
+
+    [MacOSOnlyTheory]
+    [InlineData(null, false, false)]
+    [InlineData("12.0", false, false)]
+    [InlineData("14.0", true, true)]
+    public void UnpackPackPreservesMinimumOSVersionAndCompression(string? minimumOSVersion, bool withApp, bool inInstaller)
+    {
+        string sourcePath = GetTestPath();
+        string originalPkgPath = GetTempPkgPath();
+        string unpackPath = GetTestPath();
+        string repackedPkgPath = GetTempPkgPath();
+        string roundTripPath = GetTestPath();
+        string expandedPath = GetTestPath();
+        var expectedFiles = withApp ? withAppPkgFiles : simplePkgFiles;
+
+        RunCommand("pkgutil", "--expand-full", withApp ? withAppPkg : simplePkg, sourcePath);
+
+        List<string> arguments =
+        [
+            "--root", Path.Combine(sourcePath, "Payload"),
+            "--identifier", "com.example.compression",
+            "--version", "1.0",
+            "--install-location", "/usr/local/share/compression",
+        ];
+        if (minimumOSVersion is not null)
+        {
+            arguments.AddRange(["--compression", "latest", "--min-os-version", minimumOSVersion]);
+        }
+        arguments.Add(originalPkgPath);
+        RunCommand("pkgbuild", arguments.ToArray());
+
+        string? installerPath = null;
+        string? unpackedInstallerPath = null;
+        if (inInstaller)
+        {
+            installerPath = GetTempPkgPath();
+            unpackedInstallerPath = GetTestPath();
+            RunCommand("productbuild", "--package", originalPkgPath, installerPath);
+            RunPkgProcess(installerPath, unpackedInstallerPath, "unpack").Should().BeTrue();
+            originalPkgPath = Directory.GetFiles(unpackedInstallerPath, "*.pkg").Single();
+        }
+
+        Unpack(originalPkgPath, unpackPath, expectedFiles);
+        Pack(unpackPath, repackedPkgPath, expectedFiles);
+        if (inInstaller)
+        {
+            File.Copy(repackedPkgPath, originalPkgPath, overwrite: true);
+            RunPkgProcess(unpackedInstallerPath!, installerPath!, "pack").Should().BeTrue();
+            string expandedInstallerPath = GetTestPath();
+            RunPkgProcess(installerPath!, expandedInstallerPath, "unpack").Should().BeTrue();
+            repackedPkgPath = Directory.GetFiles(expandedInstallerPath, "*.pkg").Single();
+        }
+        Unpack(repackedPkgPath, roundTripPath, expectedFiles);
+        RunCommand("pkgutil", "--expand", repackedPkgPath, expandedPath);
+
+        XElement packageInfo = XElement.Load(Path.Combine(expandedPath, "PackageInfo"));
+        (packageInfo.Attribute("minimumSystemVersion")?.Value).Should().Be(minimumOSVersion);
+        packageInfo.Attribute("identifier")!.Value.Should().Be("com.example.compression");
+        packageInfo.Attribute("version")!.Value.Should().Be("1.0");
+        packageInfo.Attribute("install-location")!.Value.Should().Be("/usr/local/share/compression");
+
+        using FileStream payload = File.OpenRead(Path.Combine(expandedPath, "Payload"));
+        byte[] header = new byte[4];
+        payload.ReadExactly(header);
+        if (minimumOSVersion is null)
+        {
+            header.Take(2).Should().Equal(0x1f, 0x8b);
+        }
+        else
+        {
+            header.Should().Equal((byte)'p', (byte)'b', (byte)'z', (byte)'x');
+        }
+
+        string payloadPath = Path.Combine(roundTripPath, "Payload");
+        if (withApp)
+        {
+            string appPath = GetTestPath();
+            Unpack(Path.Combine(payloadPath, "test.app"), appPath, appFiles);
+            foreach (var (file, _) in appFiles)
+            {
+                File.ReadAllBytes(Path.Combine(appPath, file))
+                    .Should().Equal(File.ReadAllBytes(Path.Combine(sourcePath, "Payload", "test.app", file)));
+            }
+        }
+        else
+        {
+            File.ReadAllBytes(Path.Combine(payloadPath, "Sample.txt"))
+                .Should().Equal(File.ReadAllBytes(Path.Combine(sourcePath, "Payload", "Sample.txt")));
+        }
+
+        void RunCommand(string command, params string[] arguments)
+        {
+            ProcessTextOutput result = Process.RunAndCaptureText(command, arguments, timeout: TimeSpan.FromMinutes(1));
+
+            output.WriteLine(result.StandardOutput);
+            result.ExitStatus.ExitCode.Should().Be(0, result.StandardError);
+        }
     }
 
     [MacOSOnlyFact]
