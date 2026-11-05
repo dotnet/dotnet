@@ -153,7 +153,8 @@ namespace NuGet.Commands
 
             Dictionary<ValueTuple<string, NuGetVersion>, LockFileLibrary> libraries = EnsureUniqueLockFileLibraries(lockFile);
 
-            var librariesWithWarnings = new HashSet<LibraryIdentity>();
+            var librariesWithWarnings = new HashSet<(string TargetAlias, LibraryIdentity Library)>();
+            var fallbackWarnings = new List<RestoreLogMessage>();
 
             var restoreMetadata = project.RestoreMetadata;
             var rootProjectStyle = restoreMetadata?.ProjectStyle ?? ProjectStyle.Unknown;
@@ -249,7 +250,7 @@ namespace NuGet.Commands
                         target.Libraries.Add(targetLibrary);
 
                         // Log warnings if the target library used the fallback framework
-                        if (warnForImportsOnGraph && !librariesWithWarnings.Contains(library))
+                        if (warnForImportsOnGraph && !librariesWithWarnings.Contains((targetGraph.TargetAlias, library)))
                         {
                             if (target.TargetFramework is FallbackFramework)
                             {
@@ -285,10 +286,10 @@ namespace NuGet.Commands
                                     library.Name,
                                     targetGraph.TargetGraphName);
 
-                                _logger.Log(logMessage);
+                                fallbackWarnings.Add(logMessage);
 
-                                // only log the warning once per library
-                                librariesWithWarnings.Add(library);
+                                // only log the warning once per library for each target framework, not for its RID graphs
+                                librariesWithWarnings.Add((targetGraph.TargetAlias, library));
                             }
                         }
 
@@ -322,6 +323,12 @@ namespace NuGet.Commands
 
                 EnsureUniqueLockFileTargetLibraries(target);
                 lockFile.Targets.Add(target);
+            }
+
+            // Aliases of the same framework produce the same text, so they become one message with both target graphs.
+            foreach (RestoreLogMessage fallbackWarning in DiagnosticUtility.MergeOnTargetGraph(fallbackWarnings))
+            {
+                _logger.Log(fallbackWarning);
             }
 
             PopulatePackageFolders(localRepositories.Select(repo => repo.RepositoryRoot).Distinct(), lockFile);

@@ -19,6 +19,7 @@
 
   <PropertyGroup Condition="'$(Configuration)' == 'Proto'">
     <FSCoreVersion>$(FSCoreShippedVersion)</FSCoreVersion>
+    <RollForward>LatestMajor</RollForward>
   </PropertyGroup>
 
   <PropertyGroup>

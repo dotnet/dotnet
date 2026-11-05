@@ -60,27 +60,27 @@ namespace Microsoft.DiaSymReader
 
         [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.SafeDirectories)]
         [DllImport(DiaSymReaderModuleName32, EntryPoint = CreateSymReaderFactoryName)]
-        private static unsafe extern void CreateSymReader32([MarshalAs(UnmanagedType.LPStruct)] Guid id, IntPtr* symReader);
+        private static unsafe extern void CreateSymReader32(Guid* id, IntPtr* symReader);
 
         [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.SafeDirectories)]
         [DllImport(DiaSymReaderModuleNameAmd64, EntryPoint = CreateSymReaderFactoryName)]
-        private static unsafe extern void CreateSymReaderAmd64([MarshalAs(UnmanagedType.LPStruct)] Guid id, IntPtr* symReader);
+        private static unsafe extern void CreateSymReaderAmd64(Guid* id, IntPtr* symReader);
 
         [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.SafeDirectories)]
         [DllImport(DiaSymReaderModuleNameArm64, EntryPoint = CreateSymReaderFactoryName)]
-        private static unsafe extern void CreateSymReaderArm64([MarshalAs(UnmanagedType.LPStruct)] Guid id, IntPtr* symReader);
+        private static unsafe extern void CreateSymReaderArm64(Guid* id, IntPtr* symReader);
 
         [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.SafeDirectories)]
         [DllImport(DiaSymReaderModuleName32, EntryPoint = CreateSymWriterFactoryName)]
-        private static unsafe extern void CreateSymWriter32([MarshalAs(UnmanagedType.LPStruct)] Guid id, IntPtr* symWriter);
+        private static unsafe extern void CreateSymWriter32(Guid* id, IntPtr* symWriter);
 
         [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.SafeDirectories)]
         [DllImport(DiaSymReaderModuleNameAmd64, EntryPoint = CreateSymWriterFactoryName)]
-        private static unsafe extern void CreateSymWriterAmd64([MarshalAs(UnmanagedType.LPStruct)] Guid id, IntPtr* symWriter);
+        private static unsafe extern void CreateSymWriterAmd64(Guid* id, IntPtr* symWriter);
 
         [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.SafeDirectories)]
         [DllImport(DiaSymReaderModuleNameArm64, EntryPoint = CreateSymWriterFactoryName)]
-        private static unsafe extern void CreateSymWriterArm64([MarshalAs(UnmanagedType.LPStruct)] Guid id, IntPtr* symWriter);
+        private static unsafe extern void CreateSymWriterArm64(Guid* id, IntPtr* symWriter);
 
 
 #if NETSTANDARD2_0
@@ -210,22 +210,22 @@ namespace Microsoft.DiaSymReader
                         switch (RuntimeInformation.ProcessArchitecture, createReader)
                         {
                             case (Architecture.X86, true):
-                                CreateSymReader32(clsid, &rawInstance);
+                                CreateSymReader32(&clsid, &rawInstance);
                                 break;
                             case (Architecture.X86, false):
-                                CreateSymWriter32(clsid, &rawInstance);
+                                CreateSymWriter32(&clsid, &rawInstance);
                                 break;
                             case (Architecture.X64, true):
-                                CreateSymReaderAmd64(clsid, &rawInstance);
+                                CreateSymReaderAmd64(&clsid, &rawInstance);
                                 break;
                             case (Architecture.X64, false):
-                                CreateSymWriterAmd64(clsid, &rawInstance);
+                                CreateSymWriterAmd64(&clsid, &rawInstance);
                                 break;
                             case (Architecture.Arm64, true):
-                                CreateSymReaderArm64(clsid, &rawInstance);
+                                CreateSymReaderArm64(&clsid, &rawInstance);
                                 break;
                             case (Architecture.Arm64, false):
-                                CreateSymWriterArm64(clsid, &rawInstance);
+                                CreateSymWriterArm64(&clsid, &rawInstance);
                                 break;
                             default:
                                 throw new NotSupportedException();
