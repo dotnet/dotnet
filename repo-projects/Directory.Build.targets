@@ -1,6 +1,7 @@
 <Project>
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets, $(MSBuildThisFileDirectory)..))" />
+  <Import Project="$(RepositoryEngineeringDir)BootstrapSdk.targets" />
 
   <PropertyGroup>
     <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>

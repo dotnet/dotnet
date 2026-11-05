@@ -1,0 +1,46 @@
+<Project>
+
+  <PropertyGroup Condition="'$(NETCoreSdkVersion)' == '12.0.100-alpha.1.26554.104'">
+    <_BootstrapWindowsDesktopSdk>$([MSBuild]::NormalizeDirectory('$(DotNetRoot)', 'sdk', '$(NETCoreSdkVersion)', 'Sdks', 'Microsoft.NET.Sdk.WindowsDesktop'))</_BootstrapWindowsDesktopSdk>
+    <_BootstrapWinFXTargets>$(_BootstrapWindowsDesktopSdk)targets/Microsoft.WinFX.targets</_BootstrapWinFXTargets>
+  </PropertyGroup>
+
+  <!-- TODO: Remove this repair when the bootstrap SDK advances to a corrected version.
+       https://github.com/dotnet/dotnet/pull/10741 fixes future WindowsDesktop SDK packages,
+       but cannot fix the targets already installed in this bootstrap SDK.
+       Source-built bootstrap SDKs can legitimately omit WindowsDesktop entirely. -->
+  <Target Name="RepairBootstrapWindowsDesktopSdk"
+          BeforeTargets="ResolveProjectReferences"
+          Condition="'$(NETCoreSdkVersion)' == '12.0.100-alpha.1.26554.104' and
+                     ('$(DotNetRoot)' == '' or '$(DotNetBuildSourceOnly)' != 'true' or Exists('$(_BootstrapWindowsDesktopSdk)'))">
+    <Error Condition="'$(DotNetRoot)' == ''"
+           Text="Cannot locate the bootstrap SDK for the WindowsDesktop repair: DotNetRoot is empty." />
+    <Error Condition="!Exists('$(_BootstrapWinFXTargets)') or
+                      !Exists('$(_BootstrapWindowsDesktopSdk)tools/net12.0/PresentationBuildTasks.dll') or
+                      !Exists('$(_BootstrapWindowsDesktopSdk)tools/net472/PresentationBuildTasks.dll')"
+           Text="Unexpected bootstrap WindowsDesktop SDK layout at '$(_BootstrapWindowsDesktopSdk)': expected Microsoft.WinFX.targets and tools/net12.0 and tools/net472 PresentationBuildTasks.dll payloads." />
+
+    <XmlPeek XmlInputPath="$(_BootstrapWinFXTargets)"
+             Namespaces="&lt;Namespace Prefix='msb' Uri='http://schemas.microsoft.com/developer/msbuild/2003' /&gt;"
+             Query="/msb:Project/msb:PropertyGroup/msb:_PresentationBuildTasksTfm[contains(@Condition, &quot; == 'Core'&quot;)]/text()">
+      <Output TaskParameter="Result" PropertyName="_BootstrapCoreTasksTfm" />
+    </XmlPeek>
+    <XmlPeek XmlInputPath="$(_BootstrapWinFXTargets)"
+             Namespaces="&lt;Namespace Prefix='msb' Uri='http://schemas.microsoft.com/developer/msbuild/2003' /&gt;"
+             Query="/msb:Project/msb:PropertyGroup/msb:_PresentationBuildTasksTfm[contains(@Condition, &quot; != 'Core'&quot;)]/text()">
+      <Output TaskParameter="Result" PropertyName="_BootstrapFrameworkTasksTfm" />
+    </XmlPeek>
+    <Error Condition="('$(_BootstrapCoreTasksTfm)' != 'net11.0' and '$(_BootstrapCoreTasksTfm)' != 'net12.0') or '$(_BootstrapFrameworkTasksTfm)' != 'net472'"
+           Text="Unexpected bootstrap WinFX selectors in '$(_BootstrapWinFXTargets)': Core='$(_BootstrapCoreTasksTfm)', Framework='$(_BootstrapFrameworkTasksTfm)'." />
+
+    <Message Condition="'$(_BootstrapCoreTasksTfm)' == 'net11.0'"
+             Text="Repairing the bootstrap WinFX Core task selector from net11.0 to net12.0."
+             Importance="high" />
+    <XmlPoke Condition="'$(_BootstrapCoreTasksTfm)' == 'net11.0'"
+             XmlInputPath="$(_BootstrapWinFXTargets)"
+             Namespaces="&lt;Namespace Prefix='msb' Uri='http://schemas.microsoft.com/developer/msbuild/2003' /&gt;"
+             Query="/msb:Project/msb:PropertyGroup/msb:_PresentationBuildTasksTfm[contains(@Condition, &quot; == 'Core'&quot;)]"
+             Value="net12.0" />
+  </Target>
+
+</Project>
