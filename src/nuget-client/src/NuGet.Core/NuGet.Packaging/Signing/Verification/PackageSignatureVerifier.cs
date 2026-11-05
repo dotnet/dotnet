@@ -34,6 +34,7 @@ namespace NuGet.Packaging.Signing
 
             var valid = false;
             var trustResults = new List<PackageVerificationResult>();
+            List<SignatureVerificationSummary> observedSummaries = new();
 
             var packageSigningTelemetryEvent = new PackageSigningTelemetryEvent();
             using (var telemetry = TelemetryActivity.Create(parentId, packageSigningTelemetryEvent))
@@ -48,7 +49,11 @@ namespace NuGet.Packaging.Signing
                         if (signature != null)
                         {
                             // Verify that the signature is trusted
-                            var sigTrustResults = await Task.WhenAll(_verificationProviders.Select(e => e.GetTrustResultAsync(package, signature, settings, token)));
+                            // The built-in trust provider records observations synchronously before returning its task.
+                            PackageVerificationResult[] sigTrustResults = await Task.WhenAll(_verificationProviders.Select(provider =>
+                                provider is SignatureTrustAndValidityVerificationProvider trustProvider
+                                    ? trustProvider.GetTrustResultAsync(package, signature, settings, token, observedSummaries)
+                                    : provider.GetTrustResultAsync(package, signature, settings, token)));
                             valid = IsValid(sigTrustResults);
                             trustResults.AddRange(sigTrustResults);
                         }
@@ -66,7 +71,11 @@ namespace NuGet.Packaging.Signing
                         };
                         trustResults.Add(new InvalidSignaturePackageVerificationResult(
                             settings.AllowIllegal ? SignatureVerificationStatus.Valid : SignatureVerificationStatus.Disallowed,
-                            issues));
+                            issues)
+                        {
+                            SignatureSummaries = observedSummaries,
+                            HasNonX509Rejection = !settings.AllowIllegal
+                        });
                         valid = settings.AllowIllegal;
                     }
                     catch (CryptographicException e)
@@ -78,7 +87,11 @@ namespace NuGet.Packaging.Signing
                         };
                         trustResults.Add(new InvalidSignaturePackageVerificationResult(
                             settings.AllowIllegal ? SignatureVerificationStatus.Valid : SignatureVerificationStatus.Disallowed,
-                            issues));
+                            issues)
+                        {
+                            SignatureSummaries = observedSummaries,
+                            HasNonX509Rejection = !settings.AllowIllegal
+                        });
                         valid = settings.AllowIllegal;
                     }
                 }
@@ -92,12 +105,17 @@ namespace NuGet.Packaging.Signing
                     var issues = new[] { SignatureLog.Issue(fatal: true, code: NuGetLogCode.NU3004, message: Strings.ErrorPackageNotSigned) };
                     trustResults.Add(new UnsignedPackageVerificationResult(
                         settings.AllowIllegal ? SignatureVerificationStatus.Valid : SignatureVerificationStatus.Disallowed,
-                        issues));
+                        issues)
+                    {
+                        RejectionReasons = SignatureVerificationRejectionReasons.Other,
+                        HasNonX509Rejection = true
+                    });
                     valid = false;
                 }
 
                 var status = valid ? NuGetOperationStatus.Succeeded : NuGetOperationStatus.Failed;
                 packageSigningTelemetryEvent.SetResult(isSigned ? PackageSignType.Signed : PackageSignType.Unsigned, status);
+                PackageSigningTelemetryEvent.SetRevocationInformation(packageSigningTelemetryEvent, trustResults, settings.RevocationMode);
 
                 return new VerifySignaturesResult(valid, isSigned, trustResults);
             }

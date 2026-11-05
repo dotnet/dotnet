@@ -18,11 +18,13 @@ using System.Xml.Linq;
 using FluentAssertions;
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using Moq;
+using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Packaging.Core;
 using NuGet.Packaging.PackageExtraction;
 using NuGet.Packaging.Signing;
+using NuGet.ProjectModel;
 using NuGet.Protocol.Plugins;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
@@ -43,6 +45,283 @@ namespace NuGet.Packaging.Test
         private const string SignatureVerificationEnvironmentVariable = "DOTNET_NUGET_SIGNATURE_VERIFICATION";
         private const string SignatureVerificationEnvironmentVariableTypo = "DOTNET_NUGET_SIGNATURE_VERIFICATIOn";
         private const string UntrustedChainCertError = "The author primary signature's signing certificate is not trusted by the trust provider.";
+
+        [Theory]
+        [InlineData(NuGetLogCode.NU3018, false, false, true, true)]
+        [InlineData(NuGetLogCode.NU3018, true, false, true, true)]
+        [InlineData(NuGetLogCode.NU3018, true, true, true, true)]
+        [InlineData(NuGetLogCode.NU3028, true, false, true, true)]
+        [InlineData(NuGetLogCode.NU3018, false, false, false, true)]
+        [InlineData(NuGetLogCode.NU3018, true, false, true, false)]
+        public async Task ExtractPackageAsync_RevocationTelemetry_ReflectsWarningPolicy(
+            NuGetLogCode warningCode, bool warningsAsErrors, bool noWarn, bool verificationValid, bool isSigned)
+        {
+            Dictionary<string, object> telemetryEvent = await ExtractWithRevocationTelemetryAsync(
+                warningCode, warningsAsErrors, noWarn, verificationValid, isSigned);
+            bool blocked = !verificationValid || (isSigned && warningsAsErrors && !noWarn);
+            SignatureVerificationRejectionReasons reasons = blocked
+                ? SignatureVerificationRejectionReasons.RevocationUnavailable : SignatureVerificationRejectionReasons.None;
+
+            Assert.Equal((int)reasons, telemetryEvent["AcceptanceRejectionReasons"]);
+            Assert.Equal(verificationValid ? 0 : (int)reasons, telemetryEvent["VerificationRejectionReasons"]);
+            Assert.Equal(verificationValid ? (int)reasons : 0, telemetryEvent["WarningPromotionReasons"]);
+            int expectedRevocationFlags = blocked
+                ? verificationValid ? (int)X509ChainStatusFlags.RevocationStatusUnknown
+                    : (int)(X509ChainStatusFlags.RevocationStatusUnknown | X509ChainStatusFlags.OfflineRevocation)
+                : 0;
+            Assert.Equal(expectedRevocationFlags, telemetryEvent["AcceptanceRevocationRejectionFlags"]);
+        }
+
+        [Theory]
+        [InlineData(false, true, false, false, (int)SignatureVerificationRejectionReasons.Other)]
+        [InlineData(true, true, false, false, (int)(SignatureVerificationRejectionReasons.RevocationUnavailable | SignatureVerificationRejectionReasons.Other))]
+        [InlineData(true, false, true, false, (int)(SignatureVerificationRejectionReasons.RevocationUnavailable | SignatureVerificationRejectionReasons.UnattributedCollectorError))]
+        [InlineData(false, false, true, false, (int)SignatureVerificationRejectionReasons.UnattributedCollectorError)]
+        [InlineData(true, false, false, true, (int)SignatureVerificationRejectionReasons.None)]
+        public async Task ExtractPackageAsync_RevocationTelemetry_AttributesOnlyEffectiveErrors(
+            bool revocationWarning, bool otherWarning, bool preexistingError, bool warningsNotAsErrors,
+            int expectedReasons)
+        {
+            Dictionary<string, object> telemetryEvent = await ExtractWithRevocationTelemetryAsync(
+                NuGetLogCode.NU3018, warningsAsErrors: true, noWarn: false, verificationValid: true, isSigned: true,
+                revocationWarning, otherWarning, preexistingError, warningsNotAsErrors);
+
+            Assert.Equal(expectedReasons, telemetryEvent["AcceptanceRejectionReasons"]);
+            Assert.Equal(0, telemetryEvent["VerificationRejectionReasons"]);
+            SignatureVerificationRejectionReasons expectedPromotionReasons = warningsNotAsErrors
+                ? SignatureVerificationRejectionReasons.None
+                : (revocationWarning ? SignatureVerificationRejectionReasons.RevocationUnavailable : SignatureVerificationRejectionReasons.None)
+                    | (otherWarning ? SignatureVerificationRejectionReasons.Other : SignatureVerificationRejectionReasons.None);
+            Assert.Equal((int)expectedPromotionReasons, telemetryEvent["WarningPromotionReasons"]);
+            bool expectedNonX509Promotion = otherWarning && !warningsNotAsErrors;
+            Assert.Equal(expectedNonX509Promotion, telemetryEvent["WarningPromotionHasNonX509Rejection"]);
+            Assert.Equal(expectedNonX509Promotion, telemetryEvent["AcceptanceHasNonX509Rejection"]);
+            Assert.Equal((expectedReasons & (int)SignatureVerificationRejectionReasons.RevocationUnavailable) != 0
+                ? (int)X509ChainStatusFlags.RevocationStatusUnknown : 0, telemetryEvent["AcceptanceRevocationRejectionFlags"]);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task ExtractPackageAsync_RevocationTelemetry_PreservesFullFlagsWithoutPromotingUnrelatedObservations(
+            bool warningsAsErrors)
+        {
+            Dictionary<string, object> telemetryEvent = await ExtractWithRevocationTelemetryAsync(
+                NuGetLogCode.NU3018, warningsAsErrors, noWarn: false, verificationValid: true, isSigned: true,
+                additionalSignerFlags: X509ChainStatusFlags.UntrustedRoot);
+
+            X509ChainStatusFlags unavailableFlags =
+                X509ChainStatusFlags.RevocationStatusUnknown | X509ChainStatusFlags.OfflineRevocation;
+            Assert.Equal((int)(X509ChainStatusFlags.UntrustedRoot | unavailableFlags),
+                telemetryEvent["SignerChainStatusFlags"]);
+            Assert.Equal((int)unavailableFlags, telemetryEvent["SignerRevocationStatusFlags"]);
+            Assert.Equal(0, telemetryEvent["VerificationRejectionReasons"]);
+            Assert.Equal(warningsAsErrors ? (int)SignatureVerificationRejectionReasons.RevocationUnavailable : 0,
+                telemetryEvent["AcceptanceRejectionReasons"]);
+            Assert.Equal(warningsAsErrors ? (int)X509ChainStatusFlags.RevocationStatusUnknown : 0,
+                telemetryEvent["AcceptanceRevocationRejectionFlags"]);
+            Assert.Equal(warningsAsErrors ? (int)X509ChainStatusFlags.RevocationStatusUnknown : 0,
+                telemetryEvent["WarningPromotionRevocationFlags"]);
+        }
+
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public async Task ExtractPackageAsync_RevocationTelemetry_PreservesParsingObservationsWithoutAttributingTheirRejection(
+            bool allowIllegal, bool warningsAsErrors)
+        {
+            Dictionary<string, object> telemetryEvent = await ExtractWithRevocationTelemetryAsync(
+                NuGetLogCode.NU3032, warningsAsErrors, noWarn: false, verificationValid: allowIllegal, isSigned: true,
+                revocationWarning: false, additionalSignerFlags: X509ChainStatusFlags.UntrustedRoot,
+                parsingFailure: true);
+
+            Assert.Equal(!allowIllegal || warningsAsErrors ? (int)SignatureVerificationRejectionReasons.Other : 0,
+                telemetryEvent["AcceptanceRejectionReasons"]);
+            Assert.Equal(allowIllegal ? 0 : (int)SignatureVerificationRejectionReasons.Other,
+                telemetryEvent["VerificationRejectionReasons"]);
+            Assert.Equal(allowIllegal && warningsAsErrors ? (int)SignatureVerificationRejectionReasons.Other : 0,
+                telemetryEvent["WarningPromotionReasons"]);
+            Assert.Equal(0, telemetryEvent["VerificationRevocationRejectionFlags"]);
+            Assert.Equal(0, telemetryEvent["AcceptanceRevocationRejectionFlags"]);
+            Assert.Equal(0, telemetryEvent["WarningPromotionRevocationFlags"]);
+            Assert.Equal(!allowIllegal, telemetryEvent["VerificationHasNonX509Rejection"]);
+            Assert.Equal(allowIllegal && warningsAsErrors, telemetryEvent["WarningPromotionHasNonX509Rejection"]);
+            Assert.Equal(!allowIllegal || warningsAsErrors, telemetryEvent["AcceptanceHasNonX509Rejection"]);
+        }
+
+        [Theory]
+        [InlineData(false, false, false)]
+        [InlineData(true, false, false)]
+        [InlineData(true, true, false)]
+        [InlineData(true, false, true)]
+        public async Task ExtractPackageAsync_ChainTelemetry_AttributesOnlyPromotedFullFlags(
+            bool warningsAsErrors, bool noWarn, bool warningsNotAsErrors)
+        {
+            Dictionary<string, object> telemetryEvent = await ExtractWithRevocationTelemetryAsync(
+                NuGetLogCode.NU3018, warningsAsErrors, noWarn, verificationValid: true, isSigned: true,
+                otherWarning: true, warningsNotAsErrors: warningsNotAsErrors,
+                additionalSignerFlags: X509ChainStatusFlags.UntrustedRoot,
+                otherWarningFlags: X509ChainStatusFlags.UntrustedRoot);
+            X509ChainStatusFlags observedFlags = X509ChainStatusFlags.UntrustedRoot |
+                X509ChainStatusFlags.RevocationStatusUnknown | X509ChainStatusFlags.OfflineRevocation;
+            X509ChainStatusFlags promotedFlags = warningsAsErrors && !noWarn && !warningsNotAsErrors
+                ? X509ChainStatusFlags.UntrustedRoot | X509ChainStatusFlags.RevocationStatusUnknown
+                : X509ChainStatusFlags.NoError;
+
+            Assert.Equal((int)observedFlags, telemetryEvent["VerificationDecisionRelevantChainStatusFlags"]);
+            Assert.Equal((int)observedFlags, telemetryEvent["AcceptanceDecisionRelevantChainStatusFlags"]);
+            Assert.Equal(0, telemetryEvent["VerificationChainRejectionFlags"]);
+            Assert.Equal((int)promotedFlags, telemetryEvent["WarningPromotionChainStatusFlags"]);
+            Assert.Equal((int)promotedFlags, telemetryEvent["AcceptanceChainRejectionFlags"]);
+            Assert.Equal(false, telemetryEvent["WarningPromotionHasNonX509Rejection"]);
+            Assert.Equal(false, telemetryEvent["AcceptanceHasNonX509Rejection"]);
+            Assert.Equal((int)(promotedFlags & CertificateChainUtility.RevocationUnavailableFlags),
+                telemetryEvent["WarningPromotionRevocationFlags"]);
+        }
+
+        private static async Task<Dictionary<string, object>> ExtractWithRevocationTelemetryAsync(
+            NuGetLogCode warningCode, bool warningsAsErrors, bool noWarn, bool verificationValid, bool isSigned,
+            bool revocationWarning = true, bool otherWarning = false, bool preexistingError = false,
+            bool warningsNotAsErrors = false, X509ChainStatusFlags additionalSignerFlags = X509ChainStatusFlags.NoError,
+            bool parsingFailure = false, X509ChainStatusFlags otherWarningFlags = X509ChainStatusFlags.NoError)
+        {
+            INuGetTelemetryService originalTelemetryService = TelemetryActivity.NuGetTelemetryService;
+            List<Dictionary<string, object>> events = new();
+            Mock<INuGetTelemetryService> telemetryService = new();
+            telemetryService.Setup(service => service.EmitTelemetryEvent(It.IsAny<TelemetryEvent>()))
+                .Callback<TelemetryEvent>(telemetryEvent =>
+                {
+                    if (telemetryEvent.Name == PackageExtractionTelemetryEvent.EventName)
+                    {
+                        Dictionary<string, object> properties = new();
+                        foreach (KeyValuePair<string, object> property in telemetryEvent)
+                        {
+                            properties.Add(property.Key, property.Value);
+                        }
+                        events.Add(properties);
+                    }
+                });
+            RestoreCollectorLogger logger = new(NullLogger.Instance);
+            WarningProperties warningProperties = new() { AllWarningsAsErrors = warningsAsErrors };
+            if (noWarn)
+            {
+                warningProperties.NoWarn.Add(warningCode);
+            }
+            if (warningsNotAsErrors)
+            {
+                warningProperties.WarningsNotAsErrors.Add(warningCode);
+            }
+            logger.ApplyRestoreInputs(new PackageSpec
+            {
+                RestoreMetadata = new ProjectRestoreMetadata { ProjectWideWarningProperties = warningProperties }
+            });
+            PrimarySignature signature = PrimarySignature.Load(SigningTestUtility.GetResourceBytes(".signature.p7s"));
+            if (preexistingError)
+            {
+                await logger.LogAsync(new RestoreLogMessage(LogLevel.Error, NuGetLogCode.NU3018, "An unrelated package failed."));
+            }
+            List<SignatureLog> issues = new();
+            if (parsingFailure)
+            {
+                issues.Add(SignatureLog.Issue(!verificationValid, warningCode, "The signature has multiple repository countersignatures."));
+            }
+            if (revocationWarning)
+            {
+                issues.Add(SignatureLog.Issue(false, warningCode, "Revocation information unavailable.", X509ChainStatusFlags.RevocationStatusUnknown));
+            }
+            if (otherWarning)
+            {
+                issues.Add(SignatureLog.Issue(false, warningCode, otherWarningFlags == X509ChainStatusFlags.NoError
+                    ? "The signature hash algorithm is not supported." : "The signing certificate has an untrusted root.", otherWarningFlags));
+            }
+            SignatureVerificationStatus trust = verificationValid
+                ? SignatureVerificationStatus.Valid : SignatureVerificationStatus.Disallowed;
+            SignatureVerificationSummary[] summaries = new[]
+            {
+                new SignatureVerificationSummary(SignatureType.Author,
+                    parsingFailure ? SignatureVerificationStatus.Disallowed : SignatureVerificationStatus.Valid,
+                    SignatureVerificationStatusFlags.NoErrors, Array.Empty<SignatureLog>())
+                {
+                    SignerChainStatusFlags = X509ChainStatusFlags.OfflineRevocation |
+                        X509ChainStatusFlags.RevocationStatusUnknown | additionalSignerFlags,
+                    SignerDecisionRelevantChainStatusFlags = X509ChainStatusFlags.OfflineRevocation |
+                        X509ChainStatusFlags.RevocationStatusUnknown | additionalSignerFlags,
+                    SignerChainRejectionFlags = verificationValid && !parsingFailure ? X509ChainStatusFlags.NoError
+                        : X509ChainStatusFlags.OfflineRevocation | X509ChainStatusFlags.RevocationStatusUnknown,
+                    SignerChainEvaluationStatus = SignatureChainEvaluationStatus.Evaluated,
+                    TimestampChainEvaluationStatus = SignatureChainEvaluationStatus.NotApplicable,
+                    SignerRejectionReasons = verificationValid && !parsingFailure
+                        ? SignatureVerificationRejectionReasons.None : SignatureVerificationRejectionReasons.RevocationUnavailable,
+                    Placement = SignaturePlacement.PrimarySignature
+                }
+            };
+            PackageVerificationResult trustResult = parsingFailure
+                ? new InvalidSignaturePackageVerificationResult(trust, issues)
+                {
+                    SignatureSummaries = summaries,
+                    HasNonX509Rejection = !verificationValid
+                }
+                : new SignedPackageVerificationResult(trust, signature, issues)
+                {
+                    SignatureSummaries = summaries,
+                    RejectionReasons = verificationValid
+                        ? SignatureVerificationRejectionReasons.None : SignatureVerificationRejectionReasons.RevocationUnavailable
+                };
+            Mock<IPackageSignatureVerifier> verifier = new();
+            verifier.Setup(value => value.VerifySignaturesAsync(It.IsAny<ISignedPackageReader>(),
+                It.IsAny<SignedPackageVerifierSettings>(), It.IsAny<CancellationToken>(), It.IsAny<Guid>()))
+                .ReturnsAsync(new VerifySignaturesResult(verificationValid, isSigned,
+                    isSigned ? new[] { trustResult } : Array.Empty<PackageVerificationResult>()));
+            Mock<IEnvironmentVariableReader> environment = new(MockBehavior.Strict);
+            environment.Setup(value => value.GetEnvironmentVariable(SignatureVerificationEnvironmentVariable)).Returns("TRUE");
+
+            using (TestDirectory root = TestDirectory.Create())
+            {
+                SimpleTestPackageContext package = new("A", "1.0.0");
+                FileInfo packageFile = await SimpleTestPackageUtility.CreateFullPackageAsync(root, package);
+                using FileStream stream = File.OpenRead(packageFile.FullName);
+                using PackageArchiveReader packageReader = new(stream, environmentVariableReader: environment.Object);
+                PackageExtractionContext context = new(PackageSaveMode.Nuspec | PackageSaveMode.Files,
+                    PackageExtractionBehavior.XmlDocFileSaveMode, DefaultContext, logger)
+                {
+                    SignedPackageVerifier = verifier.Object
+                };
+                try
+                {
+                    TelemetryActivity.NuGetTelemetryService = telemetryService.Object;
+                    Task extraction = PackageExtractor.ExtractPackageAsync(root, packageReader, new PackagePathResolver(root), context, CancellationToken.None);
+                    bool blocked = !verificationValid || (isSigned && (preexistingError
+                        || (warningsAsErrors && !noWarn && !warningsNotAsErrors && (revocationWarning || otherWarning || parsingFailure))));
+                    if (blocked)
+                    {
+                        await Assert.ThrowsAsync<SignatureException>(() => extraction);
+                    }
+                    else
+                    {
+                        await extraction;
+                    }
+
+                    Dictionary<string, object> telemetryEvent = Assert.Single(events);
+                    Assert.Equal(verificationValid ? NuGetOperationStatus.Succeeded : NuGetOperationStatus.Failed, telemetryEvent["SignatureVerificationStatus"]);
+                    Assert.Equal(blocked ? NuGetOperationStatus.Failed : NuGetOperationStatus.Succeeded, telemetryEvent["SignatureAcceptanceStatus"]);
+                    Assert.Equal(blocked ? NuGetOperationStatus.Failed : NuGetOperationStatus.Succeeded, telemetryEvent["Status"]);
+                    Assert.Equal(isSigned ? PackageSignType.Signed : PackageSignType.Unsigned, telemetryEvent["PackageSignType"]);
+                    Assert.Equal(DefaultContext.VerifierSettings.RevocationMode.ToString(), telemetryEvent["RevocationMode"]);
+                    Assert.Equal(isSigned, telemetryEvent["RevocationInformationUnavailable"]);
+                    X509ChainStatusFlags signerFlags = isSigned
+                        ? trustResult.SignatureSummaries[0].SignerChainStatusFlags : X509ChainStatusFlags.NoError;
+                    Assert.Equal((int)signerFlags, telemetryEvent["SignerChainStatusFlags"]);
+                    Assert.Equal((int)(signerFlags & CertificateChainUtility.RevocationUnavailableFlags),
+                        telemetryEvent["SignerRevocationStatusFlags"]);
+                    return telemetryEvent;
+                }
+                finally
+                {
+                    TelemetryActivity.NuGetTelemetryService = originalTelemetryService;
+                }
+            }
+        }
 
         [Fact]
         public async Task InstallFromSourceAsync_StressTestAsync()
