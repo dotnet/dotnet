@@ -417,10 +417,14 @@
       <_BlameDataCollectorContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.BlameDataCollector\$(Configuration)\net48\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll">
         <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(Filename)%(Extension)</PackagePath>
       </_BlameDataCollectorContent>
+      <!-- Required by BlameDataCollector to create hang dumps of .NET testhosts. -->
+      <_NetCoreClientContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.BlameDataCollector\$(Configuration)\net48\Microsoft.Diagnostics.NETCore.Client.dll">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(Filename)%(Extension)</PackagePath>
+      </_NetCoreClientContent>
       <_EventLogCollectorContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.EventLogCollector\$(Configuration)\net48\Microsoft.TestPlatform.Extensions.EventLogCollector.dll">
         <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(Filename)%(Extension)</PackagePath>
       </_EventLogCollectorContent>
-      <TfmSpecificPackageFile Include="@(_TrxLoggerContent);@(_HtmlLoggerContent);@(_TestIdsLoggerContent);@(_TestHostRuntimeProviderContent);@(_BlameDataCollectorContent);@(_EventLogCollectorContent)" />
+      <TfmSpecificPackageFile Include="@(_TrxLoggerContent);@(_HtmlLoggerContent);@(_TestIdsLoggerContent);@(_TestHostRuntimeProviderContent);@(_BlameDataCollectorContent);@(_NetCoreClientContent);@(_EventLogCollectorContent)" />
     </ItemGroup>
   </Target>
   <!--
