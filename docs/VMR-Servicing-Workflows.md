@@ -17,6 +17,7 @@ Utilizes a **continuously** open servicing branch. A new VMR **Release Specific*
 
 - Release builds are cut from short-lived servicing branches.
 - Long-lived servicing branches are always open.
+- Internal fixes for later release windows can be checked into parking branches until their General Servicing window opens.
 - Day-to-day validation occurs against long-lived validation and repository branches.
 - Final validation occurs against short-lived servicing branches.
 - Developers switch where they check in based on the point in time during the month.
@@ -30,6 +31,7 @@ Utilizes a **continuously** open servicing branch. A new VMR **Release Specific*
 - **Current Month** changes then move to being checked into the following locations:
   - Internal **Release Specific** VMR branches (`internal/release/10.0.NOM`) – for all VMR fixes.
 - The Public VMR branches are rebranded for **Current+1 Month**.
+- NETMechanic creates a PR merging the **Current+1 Month** parking branch, if present, into internal **General Servicing** after the current release is cut and rebranding has propagated. The parking branch is deleted upon merge. See [Release-Window Parking Branches](#release-window-parking-branches).
 - After rebranding for **Current+1 Month** and until the next branch point, **General Servicing** branches are open for **Current+1 Month** changes. While the **General Servicing** VMR branch represents **Current+1 Month**, changes for **Current+1 Month** may be checked into the following locations:
   - Public **General Servicing** component repository branches (e.g., SDK @ `release/10.0.1xx`, runtime @ `release/10.0`) – flows to public VMR (`release/10.0.Nxx`) via forward flow.
   - Public **General Servicing** VMR branches (`release/10.0.Nxx`) – for public VMR fixes.
@@ -59,7 +61,7 @@ Utilizes a **continuously** open servicing branch. A new VMR **Release Specific*
 ### Cons
 
 - Developers need to know where to check in to meet the current release. If the **Release Specific** branch point is too early, this could be an issue.
-- Some fixes may have to wait if they are not approved for a currently active branch.
+- Parking branches require additional branch management and merge-conflict resolution when their General Servicing window opens.
 - For late-breaking changes, there is no forward flow.
 - Care is required around branch time to ensure all approved fixes make it into the VMR before the branch point. For example: a runtime fix is approved, checked into the runtime repo, and begins flowing into the VMR via a PR. If the release branch is cut before that PR merges, the fix misses the release. Tooling can mitigate this risk. *Note: A similar situation exists today; long-lived branches likely reduce the chance of missing a change.*
 
@@ -135,7 +137,7 @@ gantt
 4. Developer merges the fix based on the current branch status and schedule, choosing the appropriate place to check-in:
     - If the approved milestone corresponds to the **Release Specific** branch, then the PR is targeted to the internal VMR **Release Specific** branch and merged.
     - If the approved milestone corresponds to the current state of the **General Servicing** branch (the branch is branded for that milestone), then the PR is targeted to the internal VMR **General Servicing** branch and merged.
-    - If the approved milestone does not correspond to any currently open branch, the fix is parked until a **General Servicing** internal VMR branch matches the milestone, and then the fix is merged.
+    - If the approved milestone is beyond the current **General Servicing** window, the PR is targeted to that window's internal VMR parking branch. NETMechanic merges the parking branch into internal **General Servicing** when that window opens; the developer does not resubmit the fix.
 5. If a staging pull request was created against the component repository for repo-specific validation, be sure to Abandon the PR with a comment that the PR was used for validation, linking to the internal VMR pull request that was used to merge the fix.
 6. Confirm that the fix made it into the VMR servicing branch matching the approved milestone.
 7. Wait for a validation build.
@@ -196,9 +198,9 @@ When a fix is made directly to a **Release Specific** branch, that fix will make
 
 It is recommended, though not required, that fixes made directly to the **Release Specific** VMR branch be explicitly merged back into the corresponding internal **General Servicing** branch and, when applicable, into the corresponding public **General Servicing** branches.
 
-### Proposed Extension - Release-Window Parking Branches
+### Release-Window Parking Branches
 
-**Status: Proposed; NETMechanic support is not yet implemented.** This extends the workflow above with an immediate check-in destination for approved internal fixes whose target release is not yet represented by **General Servicing** or a **Release Specific** branch. It does not create additional active release trains.
+Parking branches provide an immediate check-in destination for approved internal fixes whose target release is not yet represented by **General Servicing** or a **Release Specific** branch. They do not create additional active release trains.
 
 #### Branch identity and developer destinations
 
