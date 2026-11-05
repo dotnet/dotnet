@@ -196,6 +196,41 @@ When a fix is made directly to a **Release Specific** branch, that fix will make
 
 It is recommended, though not required, that fixes made directly to the **Release Specific** VMR branch be explicitly merged back into the corresponding internal **General Servicing** branch and, when applicable, into the corresponding public **General Servicing** branches.
 
+### Proposed Extension - Release-Window Parking Branches
+
+**Status: Proposed; NETMechanic support is not yet implemented.** This extends the workflow above with an immediate check-in destination for approved internal fixes whose target release is not yet represented by **General Servicing** or a **Release Specific** branch. It does not create additional active release trains.
+
+#### Branch identity and developer destinations
+
+Parking branches are internal VMR branches identified by release train, year, and month/week window: `10B` (October's second week), `11B`, `12B`, `1B`, etc. An example ref is `internal/parking/10.0/2027/1B`. Window identity remains stable when an OOB changes product patch numbers.
+
+| Approved target | Developer destination |
+|-----------------|-----------------------|
+| Future window not yet represented by General Servicing | That window's parking branch |
+| Window currently represented by General Servicing | Internal General Servicing |
+| Window already cut for release | Internal Release Specific branch |
+
+Developers submit to one destination for their approved window, not multiple future-window branches. Existing component-validation and multi-band rules remain unchanged. Public fixes retain the documented public check-in paths when their target is open.
+
+#### QB gestures and NETMechanic responsibilities
+
+1. **Prepare future windows.** The QB selects the train, bands, and future windows. NETMechanic creates missing parking branches from pinned, applicable released content, without inheriting another window's unshipped payload. It publishes the window-to-branch mapping and configures appropriate protection and PR validation. Reruns preserve existing parked work.
+2. **Cut the current release and roll General Servicing forward.** At the normal code-complete branch point, the QB runs `branch-for-release`, identifying the outgoing and incoming windows. NETMechanic:
+   - Creates the outgoing **Release Specific** VMR branch from **General Servicing** HEAD and validation branches from the corresponding manifest SHAs.
+   - Performs the existing public **General Servicing** rebranding for the incoming window and verifies propagation to internal **General Servicing**.
+   - Freezes incoming parking-branch intake, pins its head, and creates a PR merging that branch into internal **General Servicing**, never the outgoing release branch. The PR must have **delete source branch upon merge** enabled.
+   - After the PR merges, verifies integration and parking-branch deletion, and publishes **General Servicing** as the window's check-in destination. An abandoned or failed PR preserves the parking branch.
+
+   NETMechanic owns this sequence and merge-PR creation; approvals and substantive conflict resolution remain human responsibilities. Reruns resume incomplete work without repeating the release cut or version increment.
+3. **Develop and validate the incoming window.** Formerly parked fixes participate in normal internal rolling builds before their own release cut. Subsequent fixes go directly to **General Servicing**. At that window's cut, check-ins move to its **Release Specific** branch. There are no subsequent parking-to-release integration PRs.
+4. **Ship using the existing process.** Retain release-tag merges into public **General Servicing** and applicable unreleased **Release Specific** branches, plus continuous public-to-internal synchronization. These carry shipped fixes forward. Existing sign-off checks and the recommendation to carry late release fixes into **General Servicing** early remain unchanged.
+
+#### OOB behavior and safeguards
+
+**An OOB consumes no parking branch.** Tactics selects its base, scope, versions, and content using the OOB process below. Its base may be previously shipped or approved in-flight content, but must not inadvertently include future-window fixes. OOB version changes do not change parking-window identities.
+
+NETMechanic must prevent intake races and report incomplete rollover explicitly. Parking merges preserve current branding and routing; conflicts require review. Future payloads must remain isolated from earlier releases, OOBs, and premature public disclosure. Internal rolling-build inclusion is expected; earlier shipment is prohibited. Changes to a fix's approved window require explicit retargeting.
+
 ### Special Considerations - OOB Releases
 
 There are times when an OOB release is required. These are releases that contain a minimal set of fixes with new branding. These typically come in two forms:
