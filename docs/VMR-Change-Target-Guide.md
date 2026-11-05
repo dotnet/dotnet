@@ -41,15 +41,20 @@ See also:
 >
 > See [Managing SDK Bands – Servicing fixes across bands](./VMR-Managing-SDK-Bands.md#servicing-fixes-across-bands) for full details.
 
+Choose the branch representing the **approved release window**, not necessarily the nearest calendar release. If that window has not reached General Servicing, use its internal VMR parking branch. For example, `internal/parking/10.0.1xx/2027/1B` merges into `internal/release/10.0.1xx`, while `internal/parking/10.0.2xx/2027/1B` merges into `internal/release/10.0.2xx`. Runtime/shared fixes target only 1xx; SDK/band-specific fixes target each affected band.
+
+NETMechanic integrates and deletes parking branches when their General Servicing window opens, after the preceding release cut. Developers do not resubmit fixes to General Servicing or later parking windows. Once the approved window is cut, new fixes go directly to its Release Specific branch. During parking integration, follow the QB's published destination and do not submit to a frozen parking branch. OOBs use the explicitly approved OOB destination and consume no parking branch. See [Release-Window Parking Branches](VMR-Servicing-Workflows.md#release-window-parking-branches).
+
 | Condition(s)                                                                                                                        | Where Can I Check In?                                 | Do I need to port the change to avoid regression? |
 |-------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------|-------------------------------|
-| - Change is non-security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have not been created (e.g. internal/release/10.0.105) <br/> - **Runtime/shared-component fix (10.0+)** | **General Servicing 1xx band branch** in VMR or component repository (e.g. `release/10.0.1xx`) | Port to main as necessary on disclosure day |
-| - Change is non-security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have not been created (e.g. internal/release/10.0.105) <br/> - **SDK/band-specific fix (10.0+)** | **Each affected General Servicing band branch** in VMR or component repository (e.g. `release/10.0.1xx` and `release/10.0.2xx`) | Port to main as necessary on disclosure day |
-| - Change is not approved for release corresponding to any branch (usually approved for future month's release) | Hold change for branch opening  | N/A |
-| - Change is non-security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have been created (e.g. internal/release/10.0.105) <br/> - **Runtime/shared-component fix (10.0+)** | **Internal 1xx release specific branch in VMR** (e.g. `internal/release/10.0.105`) | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day. |
-| - Change is non-security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have been created (e.g. internal/release/10.0.105) <br/> - **SDK/band-specific fix (10.0+)** | **Each affected internal release specific branch in VMR** (e.g. `internal/release/10.0.105` and `internal/release/10.0.200`) | Will merge to General Servicing branches on release day. Port to main as necessary on disclosure day. |
-| - Change is security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have been created (e.g. internal/release/10.0.105) | **Internal release specific branch in VMR** (e.g. internal/release/10.0.105). For SDK/band-specific fixes, target each affected band's release specific branch. | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day.|
-| - Change is security **AND** <br/> - Change is approved for nearest upcoming servicing release **AND** <br/> - Release specific branches have not been created (e.g. internal/release/10.0.105) | **Internal 1xx band branch** (e.g. `internal/release/10.0.1xx`) for runtime/shared fixes. For SDK/band-specific fixes, target each affected `internal/release/10.0.Nxx` branch. | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day. |
+| - Change is non-security **AND** <br/> - Approved window is represented by General Servicing <br/> - **Runtime/shared-component fix (10.0+)** | **General Servicing 1xx band branch** in VMR or component repository (e.g. `release/10.0.1xx`) | Port to main as necessary on disclosure day |
+| - Change is non-security **AND** <br/> - Approved window is represented by General Servicing <br/> - **SDK/band-specific fix (10.0+)** | **Each affected General Servicing band branch** in VMR or component repository (e.g. `release/10.0.1xx` and `release/10.0.2xx`) | Port to main as necessary on disclosure day |
+| - Change is approved for a future window not yet represented by General Servicing | **Internal VMR parking branch for the approved year/window and band** (e.g. `internal/parking/10.0.1xx/2027/1B`). Runtime/shared fixes target only 1xx; SDK/band-specific fixes target each affected band. Ask the QB to prepare the window if missing. | Mechanic merges into the matching internal General Servicing branch when the window opens; no developer resubmission. Port to main as necessary on disclosure day. |
+| - Change has no approved servicing window | Obtain Tactics approval before checking into servicing | N/A |
+| - Change is non-security **AND** <br/> - Release specific branches exist for the approved window (e.g. internal/release/10.0.105) <br/> - **Runtime/shared-component fix (10.0+)** | **Internal 1xx release specific branch in VMR** (e.g. `internal/release/10.0.105`) | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day. |
+| - Change is non-security **AND** <br/> - Release specific branches exist for the approved window (e.g. internal/release/10.0.105) <br/> - **SDK/band-specific fix (10.0+)** | **Each affected internal release specific branch in VMR** (e.g. `internal/release/10.0.105` and `internal/release/10.0.200`) | Will merge to General Servicing branches on release day. Port to main as necessary on disclosure day. |
+| - Change is security **AND** <br/> - Release specific branches exist for the approved window (e.g. internal/release/10.0.105) | **Internal release specific branch in VMR** (e.g. internal/release/10.0.105). For SDK/band-specific fixes, target each affected band's release specific branch. | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day.|
+| - Change is security **AND** <br/> - Approved window is represented by General Servicing | **Internal 1xx band branch** (e.g. `internal/release/10.0.1xx`) for runtime/shared fixes. For SDK/band-specific fixes, target each affected `internal/release/10.0.Nxx` branch. | Will merge to General Servicing branch on release day. Port to main as necessary on disclosure day. |
 
 ---
 
@@ -142,14 +147,14 @@ flowchart TD
     classDef wait fill:#f5f5f5,stroke:#8d6e63,stroke-dasharray:5 3;
 
     start([Start])
-    approved{Is the change<br/>approved for the next<br/>calendar release?}
+    approved{Does the change have an<br/>approved servicing window?}
+    releaseCut{Does the approved window<br/>have a release-specific branch?}
+    generalWindow{Is the approved window<br/>represented by General Servicing?}
+    parkingType{Runtime or shared<br/>component fix? 10.0+}
     security{Is the change<br/>security-related?}
-    releaseCutNonSec{Have release-specific<br/>branches been created?}
-    releaseCutSec{Have release-specific<br/>branches been created?}
     componentTypeNonSecNoCut{Runtime or shared<br/>component fix? 10.0+}
     componentTypeNonSecCut{Runtime or shared<br/>component fix? 10.0+}
     componentTypeSecNoCut{Runtime or shared<br/>component fix? 10.0+}
-    componentTypeSecCut{Runtime or shared<br/>component fix? 10.0+}
 
     generalServicing1xx["1xx General servicing<br/>branch only<br/>e.g. release/10.0.1xx<br/><br/>Port to main as<br/>necessary on disclosure day"]
     generalServicingAllBands["Each affected band's<br/>General servicing branch<br/>e.g. release/10.0.1xx<br/>AND release/10.0.2xx<br/><br/>Port to main as<br/>necessary on disclosure day"]
@@ -157,17 +162,22 @@ flowchart TD
     internalSpecificAllBands["Each affected band's internal<br/>release-specific branch<br/>e.g. internal/release/10.0.105<br/>AND internal/release/10.0.200<br/>Merges to general<br/>servicing on release day<br/><br/>Port to main as<br/>necessary on disclosure day"]
     internalGeneral1xx["Internal 1xx band branch<br/>e.g. internal/release/10.0.1xx<br/>Merges to general<br/>servicing on release day<br/><br/>Port to main as<br/>necessary on disclosure day"]
     internalGeneralAllBands["Each affected band's<br/>internal band branch<br/>e.g. internal/release/10.0.1xx<br/>AND internal/release/10.0.2xx<br/>Merges to general<br/>servicing on release day<br/><br/>Port to main as<br/>necessary on disclosure day"]
-    holdChange["Hold change until<br/>branch opens"]
+    parking1xx["Internal 1xx parking branch<br/>for the approved year/window<br/>e.g. internal/parking/10.0.1xx/2027/1B"]
+    parkingAllBands["Each affected band's internal<br/>parking branch for the approved year/window"]
+    holdChange["Obtain Tactics approval"]
 
     start --> approved
     approved -- "No" --> holdChange
-    approved -- "Yes" --> security
+    approved -- "Yes" --> releaseCut
+    releaseCut -- "Yes" --> componentTypeNonSecCut
+    releaseCut -- "No" --> generalWindow
+    generalWindow -- "Yes" --> security
+    generalWindow -- "No" --> parkingType
+    parkingType -- "Yes" --> parking1xx
+    parkingType -- "No" --> parkingAllBands
 
-    security -- "No" --> releaseCutNonSec
-    security -- "Yes" --> releaseCutSec
-
-    releaseCutNonSec -- "No" --> componentTypeNonSecNoCut
-    releaseCutNonSec -- "Yes" --> componentTypeNonSecCut
+    security -- "No" --> componentTypeNonSecNoCut
+    security -- "Yes" --> componentTypeSecNoCut
 
     componentTypeNonSecNoCut -- "Yes" --> generalServicing1xx
     componentTypeNonSecNoCut -- "No" --> generalServicingAllBands
@@ -175,16 +185,10 @@ flowchart TD
     componentTypeNonSecCut -- "Yes" --> internalSpecific1xx
     componentTypeNonSecCut -- "No" --> internalSpecificAllBands
 
-    releaseCutSec -- "No" --> componentTypeSecNoCut
-    releaseCutSec -- "Yes" --> componentTypeSecCut
-
     componentTypeSecNoCut -- "Yes" --> internalGeneral1xx
     componentTypeSecNoCut -- "No" --> internalGeneralAllBands
 
-    componentTypeSecCut -- "Yes" --> internalSpecific1xx
-    componentTypeSecCut -- "No" --> internalSpecificAllBands
-
-    class approved,security,releaseCutNonSec,releaseCutSec,componentTypeNonSecNoCut,componentTypeNonSecCut,componentTypeSecNoCut,componentTypeSecCut decision;
-    class generalServicing1xx,generalServicingAllBands,internalSpecific1xx,internalSpecificAllBands,internalGeneral1xx,internalGeneralAllBands action;
+    class approved,releaseCut,generalWindow,parkingType,security,componentTypeNonSecNoCut,componentTypeNonSecCut,componentTypeSecNoCut decision;
+    class generalServicing1xx,generalServicingAllBands,internalSpecific1xx,internalSpecificAllBands,internalGeneral1xx,internalGeneralAllBands,parking1xx,parkingAllBands action;
     class holdChange wait;
 ```
