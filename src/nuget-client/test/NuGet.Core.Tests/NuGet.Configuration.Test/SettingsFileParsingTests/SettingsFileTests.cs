@@ -35,7 +35,7 @@ namespace NuGet.Configuration.Test
                 var ex = Record.Exception(() => new SettingsFile(mockBaseDirectory));
                 ex.Should().NotBeNull();
                 ex.Should().BeOfType<NuGetConfigurationException>();
-                ex.Message.Should().Be(string.Format("NuGet.Config is not valid XML. Path: '{0}'.", Path.Combine(mockBaseDirectory, configFile)));
+                ex.Message.Should().Be(string.Format("NuGet.Config is not valid XML. Path: '{0}'. Reason: {1}", Path.Combine(mockBaseDirectory, configFile), ex.InnerException!.Message));
             }
         }
 
@@ -57,7 +57,7 @@ namespace NuGet.Configuration.Test
                 // Assert
                 ex.Should().NotBeNull();
                 ex.Should().BeOfType<NuGetConfigurationException>();
-                ex.Message.Should().Be(string.Format("NuGet.Config is not valid XML. Path: '{0}'.", Path.Combine(mockBaseDirectory, nugetConfigPath)));
+                ex.Message.Should().Be(string.Format("NuGet.Config is not valid XML. Path: '{0}'. Reason: {1}", Path.Combine(mockBaseDirectory, nugetConfigPath), ex.InnerException!.Message));
             }
         }
 

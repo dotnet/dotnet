@@ -1024,7 +1024,7 @@ namespace NuGet.Protocol {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Repository Signatures resouce must be served over HTTPS. Source: {0}.
+        ///   Looks up a localized string similar to Repository Signatures resource must be served over HTTPS. Source: {0}.
         /// </summary>
         internal static string RepositorySignaturesResourceMustBeHttps {
             get {

@@ -71,7 +71,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
                 result.Success.Should().BeFalse();
                 result.Path.Should().BeNull();
                 result.Version.Should().BeNull();
-                result.Errors.Should().BeEquivalentTo(new[] { $"Failed to load NuGet settings. NuGet.Config is not valid XML. Path: '{pathContext.NuGetConfig}'." });
+                result.Errors.Should().ContainSingle().Which.Should().StartWith($"Failed to load NuGet settings. NuGet.Config is not valid XML. Path: '{pathContext.NuGetConfig}'. Reason: ");
                 result.Warnings.Should().BeEmpty();
             }
         }
