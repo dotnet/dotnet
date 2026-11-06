@@ -44,16 +44,6 @@
     <OfficialBuild Condition="'$(OfficialBuildId)' != ''">true</OfficialBuild>
   </PropertyGroup>
 
-  <!-- Override the bootstrap Arcade framework defaults while they lag behind the product.
-       Keep this fallback for future retargeting; update the condition and defaults together. -->
-  <PropertyGroup Condition="'$(NetCurrent)' != 'net12.0'">
-    <NetCurrent>net12.0</NetCurrent>
-    <NetPrevious>net11.0</NetPrevious>
-    <NetPrevious Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(NetPrevious)' != ''">$(NetCurrent)</NetPrevious>
-    <NetMinimum>net10.0</NetMinimum>
-    <NetMinimum Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetCurrent)</NetMinimum>
-  </PropertyGroup>
-
   <!-- Manually import the Versions.props file when the Arcade SDK isn't used. -->
   <Import Project="$(RepositoryEngineeringDir)Versions.props" Condition="'$(SkipArcadeSdkImport)' == 'true'" />
   <Import Project="$(RepositoryEngineeringDir)VmrLayout.props" />
