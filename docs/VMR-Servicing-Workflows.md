@@ -8,6 +8,7 @@ Terminology for the info below:
 - **Current+2 Month** – The next release after the current+1 month.
 - **Release Specific** – Refers to a specific release, rather than an overall release train (e.g. `internal/release/10.0.101`).
 - **General Servicing** – Refers to an overall servicing train (e.g. `release/10.0.1xx`).
+- **Parking Branch** – An internal VMR branch for approved fixes targeting a future release window that is not yet represented by General Servicing (e.g. `internal/parking/10.0.1xx/2027/1B`).
 
 ## Branch the VMR for each release
 
@@ -17,6 +18,7 @@ Utilizes a **continuously** open servicing branch. A new VMR **Release Specific*
 
 - Release builds are cut from short-lived servicing branches.
 - Long-lived servicing branches are always open.
+- Internal fixes for later release windows can be checked into parking branches until their General Servicing window opens.
 - Day-to-day validation occurs against long-lived validation and repository branches.
 - Final validation occurs against short-lived servicing branches.
 - Developers switch where they check in based on the point in time during the month.
@@ -30,6 +32,7 @@ Utilizes a **continuously** open servicing branch. A new VMR **Release Specific*
 - **Current Month** changes then move to being checked into the following locations:
   - Internal **Release Specific** VMR branches (`internal/release/10.0.NOM`) – for all VMR fixes.
 - The Public VMR branches are rebranded for **Current+1 Month**.
+- After the current release is cut, the **Current+1 Month** parking branch, if present, is merged into its corresponding internal **General Servicing** branch and deleted upon merge. This does not depend on branding being merged first. See [Release-Window Parking Branches](#release-window-parking-branches).
 - After rebranding for **Current+1 Month** and until the next branch point, **General Servicing** branches are open for **Current+1 Month** changes. While the **General Servicing** VMR branch represents **Current+1 Month**, changes for **Current+1 Month** may be checked into the following locations:
   - Public **General Servicing** component repository branches (e.g., SDK @ `release/10.0.1xx`, runtime @ `release/10.0`) – flows to public VMR (`release/10.0.Nxx`) via forward flow.
   - Public **General Servicing** VMR branches (`release/10.0.Nxx`) – for public VMR fixes.
@@ -59,7 +62,7 @@ Utilizes a **continuously** open servicing branch. A new VMR **Release Specific*
 ### Cons
 
 - Developers need to know where to check in to meet the current release. If the **Release Specific** branch point is too early, this could be an issue.
-- Some fixes may have to wait if they are not approved for a currently active branch.
+- Parking branches require additional branch management and merge-conflict resolution when their General Servicing window opens.
 - For late-breaking changes, there is no forward flow.
 - Care is required around branch time to ensure all approved fixes make it into the VMR before the branch point. For example: a runtime fix is approved, checked into the runtime repo, and begins flowing into the VMR via a PR. If the release branch is cut before that PR merges, the fix misses the release. Tooling can mitigate this risk. *Note: A similar situation exists today; long-lived branches likely reduce the chance of missing a change.*
 
@@ -135,7 +138,7 @@ gantt
 4. Developer merges the fix based on the current branch status and schedule, choosing the appropriate place to check-in:
     - If the approved milestone corresponds to the **Release Specific** branch, then the PR is targeted to the internal VMR **Release Specific** branch and merged.
     - If the approved milestone corresponds to the current state of the **General Servicing** branch (the branch is branded for that milestone), then the PR is targeted to the internal VMR **General Servicing** branch and merged.
-    - If the approved milestone does not correspond to any currently open branch, the fix is parked until a **General Servicing** internal VMR branch matches the milestone, and then the fix is merged.
+    - If the approved milestone is beyond the current **General Servicing** window, the PR is targeted to that window's internal VMR parking branch. NETMechanic merges the parking branch into internal **General Servicing** when that window opens; the developer does not resubmit the fix.
 5. If a staging pull request was created against the component repository for repo-specific validation, be sure to Abandon the PR with a comment that the PR was used for validation, linking to the internal VMR pull request that was used to merge the fix.
 6. Confirm that the fix made it into the VMR servicing branch matching the approved milestone.
 7. Wait for a validation build.
@@ -195,6 +198,62 @@ When a fix is made directly to a **Release Specific** branch, that fix will make
 - Current infrastructure issues in the **General Servicing** branch resolved by the fix.
 
 It is recommended, though not required, that fixes made directly to the **Release Specific** VMR branch be explicitly merged back into the corresponding internal **General Servicing** branch and, when applicable, into the corresponding public **General Servicing** branches.
+
+### Release-Window Parking Branches
+
+Parking branches provide an immediate check-in destination for approved internal fixes whose target release is not yet represented by **General Servicing** or a **Release Specific** branch. They do not create additional active release trains.
+
+#### Branch identity and developer destinations
+
+Parking branches are internal VMR branches identified by release train, SDK feature band, year, and month/week window: `10B` (October's second week), `11B`, `12B`, `1B`, etc. Window identity remains stable when an OOB changes product patch numbers. Each branch uses its band's source baseline and merges only into the corresponding internal **General Servicing** branch:
+
+| Example parking branch | General Servicing destination |
+|------------------------|-------------------------------|
+| `internal/parking/10.0.1xx/2027/1B` | `internal/release/10.0.1xx` |
+| `internal/parking/10.0.2xx/2027/1B` | `internal/release/10.0.2xx` |
+
+| Approved target | Developer destination |
+|-----------------|-----------------------|
+| Future window not yet represented by General Servicing | That window's parking branch |
+| Window currently represented by General Servicing | Internal General Servicing |
+| Window already cut for release | Internal Release Specific branch |
+
+Developers submit to one destination per affected band for their approved window, not multiple future-window branches. Runtime/shared-component fixes target only the 1xx parking branch; SDK/band-specific fixes target each affected band's parking branch. Existing component-validation rules remain unchanged. Public fixes retain the documented public check-in paths when their target is open.
+
+#### QB gestures and NETMechanic responsibilities
+
+```mermaid
+flowchart TD
+    prepare["QB prepares future windows<br/>Mechanic creates parking branches per band"]
+    parking["Approved future fixes enter<br/>their window and band parking branch"]
+    cut["QB cuts current release<br/>from General Servicing"]
+    outgoing["Current window: Release Specific<br/>Late fixes, validation, and shipment"]
+    branding["Rebrand General Servicing<br/>for the incoming window"]
+    merge["Freeze incoming parking intake<br/>Mechanic opens merge PR into<br/>the matching internal General Servicing branch"]
+    general["PR merged: delete parking branch<br/>Incoming fixes now target General Servicing<br/>Rolling builds validate the integrated payload"]
+    nextCut["Cut incoming window's Release Specific branch<br/>Further fixes target that release branch"]
+    prepare --> parking
+    parking --> merge
+    cut --> outgoing
+    cut --> branding
+    cut --> merge
+    merge --> general
+    general --> nextCut
+```
+
+The QB selects the train, bands, and future windows. NETMechanic creates missing parking branches from pinned, applicable released content for each band, without inheriting another window's unshipped payload. It publishes the window-to-branch mapping and configures protection and PR validation; reruns preserve parked work.
+
+At the normal code-complete branch point, the QB runs `branch-for-release`, identifying the outgoing and incoming windows. NETMechanic creates the outgoing release and validation branches, performs the existing General Servicing rebranding, and creates the incoming parking merge PR. The merge requires the outgoing cut to exist, but does not require branding to merge first. Mechanic freezes parking intake and pins its head; the PR targets the matching internal General Servicing branch and has **delete source branch upon merge** enabled.
+
+After the PR merges, Mechanic verifies integration and source-branch deletion and publishes General Servicing as the incoming window's destination. Failed or abandoned PRs preserve the parking branch. Approvals and substantive conflict resolution remain human responsibilities. Reruns resume without repeating the cut or version increment.
+
+Formerly parked fixes participate in rolling builds before their own release cut. Subsequent fixes go to General Servicing, then to the Release Specific branch once cut. There are no further parking integration PRs. Existing release-tag merges, public-to-internal synchronization, sign-off checks, and recommendations for carrying late release fixes forward remain unchanged.
+
+#### OOB behavior and safeguards
+
+**An OOB consumes no parking branch.** Tactics selects its base, scope, versions, and content using the OOB process below. Its base may be previously shipped or approved in-flight content, but must not inadvertently include future-window fixes. OOB version changes do not change parking-window identities.
+
+NETMechanic must prevent intake races and report incomplete rollover explicitly. Parking merges preserve current branding and routing; conflicts require review. Future payloads must remain isolated from earlier releases, OOBs, and premature public disclosure. Internal rolling-build inclusion is expected; earlier shipment is prohibited. Changes to a fix's approved window require explicit retargeting.
 
 ### Special Considerations - OOB Releases
 
