@@ -1,1 +1,13 @@
-
+diff --git a/msft_assemblyversions.txt b/sb_assemblyversions.txt
+index ------------
+--- a/msft_assemblyversions.txt
++++ b/sb_assemblyversions.txt
+@@ ------------ @@ sdk/x.y.z/pl/zh-Hant/Microsoft.VisualStudio.TestPlatform.Common.resources.dll -
+ sdk/x.y.z/pl/zh-Hant/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll - AssemblyVersion:15.0.0.0, FileVersion:18.1400.26.55619, FileVersionNumber:18.1400.26.55619, ProductVersion:18.14.0-preview-26555-119, ProductVersionNumber:18.14.0.0
+ sdk/x.y.z/pl/zh-Hant/vstest.console.resources.dll - AssemblyVersion:15.0.0.0, FileVersion:18.1400.26.55619, FileVersionNumber:18.1400.26.55619, ProductVersion:18.14.0-preview-26555-119, ProductVersionNumber:18.14.0.0
+ sdk/x.y.z/ProjectData/Microsoft.NET.ProjectData.Tasks.dll - AssemblyVersion:5.14.0.0, FileVersion:5.1400.26.55619, FileVersionNumber:5.1400.26.55619, ProductVersion:5.14.0-1.26555.119+44f1dfbadaaada94a7700389484a22a0ad448aaf, ProductVersionNumber:0.0.0.0
+-sdk/x.y.z/ProjectData/NuGet.Versioning.dll - AssemblyVersion:8.0.0.0, FileVersion:8.0.0.48205, FileVersionNumber:8.0.0.48205, ProductVersion:8.0.0-rc.48205+7450e29b425097f9e16d22262c5521a4e9bdd206.7450e29b425097f9e16d22262c5521a4e9bdd206, ProductVersionNumber:0.0.0.0
++sdk/x.y.z/ProjectData/NuGet.Versioning.dll - AssemblyVersion:8.2.0.0, FileVersion:8.2.0.55619, FileVersionNumber:8.2.0.55619, ProductVersion:8.2.0-rc.55619+44f1dfbadaaada94a7700389484a22a0ad448aaf.44f1dfbadaaada94a7700389484a22a0ad448aaf, ProductVersionNumber:0.0.0.0
+ sdk/x.y.z/pt-BR/cs/Microsoft.VisualStudio.TestPlatform.Client.resources.dll - AssemblyVersion:15.0.0.0, FileVersion:18.1400.26.55619, FileVersionNumber:18.1400.26.55619, ProductVersion:18.14.0-preview-26555-119, ProductVersionNumber:18.14.0.0
+ sdk/x.y.z/pt-BR/cs/Microsoft.VisualStudio.TestPlatform.Common.resources.dll - AssemblyVersion:15.0.0.0, FileVersion:18.1400.26.55619, FileVersionNumber:18.1400.26.55619, ProductVersion:18.14.0-preview-26555-119, ProductVersionNumber:18.14.0.0
+ sdk/x.y.z/pt-BR/cs/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll - AssemblyVersion:15.0.0.0, FileVersion:18.1400.26.55619, FileVersionNumber:18.1400.26.55619, ProductVersion:18.14.0-preview-26555-119, ProductVersionNumber:18.14.0.0
