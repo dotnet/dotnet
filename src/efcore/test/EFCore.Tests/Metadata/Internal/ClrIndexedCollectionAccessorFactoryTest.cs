@@ -288,8 +288,10 @@ public class ClrIndexedCollectionAccessorFactoryTest
         Assert.Equal(99, entity.Items[0].Number);
     }
 
-    [Fact]
-    public void Can_handle_IList_interface()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Can_handle_IList_interface(bool forMaterialization)
     {
         var property = CreateComplexCollectionProperty<IList<TestComplexType>>();
         var accessor = ClrIndexedCollectionAccessorFactory.Instance.Create(property)!;
@@ -306,7 +308,7 @@ public class ClrIndexedCollectionAccessorFactoryTest
         Assert.Equal(20, ((TestComplexType)value!).Number);
 
         var newValue = new TestComplexType { Number = 99 };
-        accessor.Set(entity, 0, newValue, false);
+        accessor.Set(entity, 0, newValue, forMaterialization);
         Assert.Equal(99, entity.Items[0].Number);
     }
 

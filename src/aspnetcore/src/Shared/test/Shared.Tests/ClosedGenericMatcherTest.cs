@@ -149,7 +149,11 @@ public class ClosedGenericMatcherTest
                     {
                         typeof(IList<int>),
                         typeof(IReadOnlyList<>),
+#if NET12_0 || NET12_0_OR_GREATER
+                        typeof(IReadOnlyList<int>)
+#else
                         null
+#endif
                     },
                     {
                         typeof(IDictionary<string, object>),

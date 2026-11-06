@@ -650,6 +650,27 @@ public class FormDataMapperTests
             });
     }
 
+    [Theory]
+    [InlineData(typeof(ISet<int>))]
+    [InlineData(typeof(IList<int>))]
+    [InlineData(typeof(ICollection<int>))]
+    [InlineData(typeof(IReadOnlySet<int>))]
+    [InlineData(typeof(IReadOnlyList<int>))]
+    [InlineData(typeof(IReadOnlyCollection<int>))]
+    [InlineData(typeof(IEnumerable<int>))]
+    [InlineData(typeof(IImmutableSet<int>))]
+    [InlineData(typeof(IImmutableList<int>))]
+    [InlineData(typeof(IImmutableQueue<int>))]
+    [InlineData(typeof(IImmutableStack<int>))]
+    public void ResolveConverter_UsesRequestedCollectionInterface(Type collectionType)
+    {
+        var options = new FormDataMapperOptions();
+
+        var converter = options.ResolveConverter(collectionType);
+
+        Assert.IsAssignableFrom(typeof(FormDataConverter<>).MakeGenericType(collectionType), converter);
+    }
+
     [Fact]
     public void CanDeserialize_Collections_IReadOnlySet()
     {

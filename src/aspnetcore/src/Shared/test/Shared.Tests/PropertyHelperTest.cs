@@ -286,34 +286,34 @@ public class PropertyHelperTest
     public void PropertyHelper_ForInterface_ReturnsExpectedProperties()
     {
         // Arrange
+#if NET12_0 || NET12_0_OR_GREATER
+        var expectedNames = new[] { "Count", "Count", "IsReadOnly" };
+#else
         var expectedNames = new[] { "Count", "IsReadOnly" };
+#endif
 
         // Act
         var helpers = PropertyHelper.GetProperties(typeof(ICollection<string>));
 
         // Assert
-        Assert.Collection(
-            helpers.OrderBy(helper => helper.Name, StringComparer.Ordinal),
-            helper => { Assert.Equal(expectedNames[0], helper.Name, StringComparer.Ordinal); },
-            helper => { Assert.Equal(expectedNames[1], helper.Name, StringComparer.Ordinal); });
+        Assert.Equal(expectedNames, helpers.Select(helper => helper.Name).OrderBy(name => name, StringComparer.Ordinal));
     }
 
     [Fact]
     public void PropertyHelper_ForDerivedInterface_ReturnsAllProperties()
     {
         // Arrange
+#if NET12_0 || NET12_0_OR_GREATER
+        var expectedNames = new[] { "Count", "Count", "IsReadOnly", "Keys", "Keys", "Values", "Values" };
+#else
         var expectedNames = new[] { "Count", "IsReadOnly", "Keys", "Values" };
+#endif
 
         // Act
         var helpers = PropertyHelper.GetProperties(typeof(IDictionary<string, string>));
 
         // Assert
-        Assert.Collection(
-            helpers.OrderBy(helper => helper.Name, StringComparer.Ordinal),
-            helper => { Assert.Equal(expectedNames[0], helper.Name, StringComparer.Ordinal); },
-            helper => { Assert.Equal(expectedNames[1], helper.Name, StringComparer.Ordinal); },
-            helper => { Assert.Equal(expectedNames[2], helper.Name, StringComparer.Ordinal); },
-            helper => { Assert.Equal(expectedNames[3], helper.Name, StringComparer.Ordinal); });
+        Assert.Equal(expectedNames, helpers.Select(helper => helper.Name).OrderBy(name => name, StringComparer.Ordinal));
     }
 
     [Fact]

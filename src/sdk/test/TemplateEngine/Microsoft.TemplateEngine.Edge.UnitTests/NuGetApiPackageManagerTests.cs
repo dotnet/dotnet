@@ -196,7 +196,7 @@ namespace Microsoft.TemplateEngine.Edge.UnitTests
             IEngineEnvironmentSettings engineEnvironmentSettings = s_environmentSettingsHelper.CreateEnvironment(virtualize: true);
 
             NuGetApiPackageManager packageManager = new NuGetApiPackageManager(engineEnvironmentSettings);
-            (string latestVersion, bool isLatestVersion, _) = await packageManager.GetLatestVersionAsync("Microsoft.DotNet.Common.ProjectTemplates.5.0", additionalSource: _additionalSources.FirstOrDefault(), cancellationToken: TestContext.CancellationToken);
+            (string latestVersion, bool isLatestVersion, _) = await packageManager.GetLatestVersionAsync("Microsoft.DotNet.Common.ProjectTemplates.5.0", additionalSource: _additionalSources[0], cancellationToken: TestContext.CancellationToken);
 
             latestVersion.Should().NotBeNullOrEmpty();
             isLatestVersion.Should().BeFalse();
@@ -209,7 +209,7 @@ namespace Microsoft.TemplateEngine.Edge.UnitTests
 
             NuGetApiPackageManager packageManager = new NuGetApiPackageManager(engineEnvironmentSettings);
             (string latestVersion, bool isLatestVersion, _) = await packageManager.GetLatestVersionAsync(
-                "Microsoft.DotNet.Common.ProjectTemplates.5.0", "5.0.0", additionalSource: _additionalSources.First(), cancellationToken: TestContext.CancellationToken);
+                "Microsoft.DotNet.Common.ProjectTemplates.5.0", "5.0.0", additionalSource: _additionalSources[0], cancellationToken: TestContext.CancellationToken);
 
             latestVersion.Should().NotBe("5.0.0");
             isLatestVersion.Should().BeFalse();
@@ -222,7 +222,7 @@ namespace Microsoft.TemplateEngine.Edge.UnitTests
 
             NuGetApiPackageManager packageManager = new NuGetApiPackageManager(engineEnvironmentSettings);
             var exception = await Assert.ThrowsExactlyAsync<PackageNotFoundException>(() => packageManager.GetLatestVersionAsync(
-                "Microsoft.DotNet.NotCommon.ProjectTemplates.5.0", "5.0.0", additionalSource: _additionalSources.FirstOrDefault(), cancellationToken: TestContext.CancellationToken));
+                "Microsoft.DotNet.NotCommon.ProjectTemplates.5.0", "5.0.0", additionalSource: _additionalSources[0], cancellationToken: TestContext.CancellationToken));
 
             exception.PackageIdentifier.Should().Be("Microsoft.DotNet.NotCommon.ProjectTemplates.5.0");
             exception.Message.Should().NotBeNullOrEmpty();
