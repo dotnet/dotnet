@@ -205,6 +205,68 @@ namespace NuGet.Packaging.Test
             }
         }
 
+        [Theory]
+        [InlineData(X509RevocationMode.Online)]
+        [InlineData(X509RevocationMode.Offline)]
+        public void GetChainEvaluationStatus_WithUntrustedExcludedRoot_ReturnsNotApplicable(
+            X509RevocationMode revocationMode)
+        {
+            using X509Certificate2 certificate = _fixture.GetDefaultCertificate();
+            using X509ChainHolder chainHolder = X509ChainHolder.CreateForCodeSigning();
+            IX509Chain chain = chainHolder.Chain2;
+            chain.ChainPolicy.RevocationMode = revocationMode;
+            chain.ChainPolicy.RevocationFlag = X509RevocationFlag.ExcludeRoot;
+            bool buildSucceeded = chain.Build(certificate);
+            X509ChainStatus[] statuses = chain.ChainStatus;
+
+            Assert.False(buildSucceeded);
+            Assert.Single(chain.ChainElements.Cast<X509ChainElement>());
+            Assert.Equal(X509ChainStatusFlags.UntrustedRoot, CertificateChainUtility.GetChainStatusFlags(statuses));
+            Assert.Equal(SignatureChainEvaluationStatus.NotApplicable,
+                CertificateChainUtility.GetChainEvaluationStatus(buildSucceeded, statuses, chain, certificate));
+            Assert.Equal(X509ChainStatusFlags.UntrustedRoot, CertificateChainUtility.GetChainStatusFlags(chain.ChainStatus));
+        }
+
+        [Theory]
+        [InlineData(X509ChainStatusFlags.PartialChain)]
+        [InlineData(X509ChainStatusFlags.NotSignatureValid)]
+        public void GetChainEvaluationStatus_WithInvalidRootOnlyChain_ReturnsIndeterminate(
+            X509ChainStatusFlags structuralFailure)
+        {
+            using X509Certificate2 certificate = _fixture.GetDefaultCertificate();
+            using X509ChainHolder chainHolder = X509ChainHolder.CreateForCodeSigning();
+            IX509Chain chain = chainHolder.Chain2;
+            chain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
+            chain.ChainPolicy.RevocationFlag = X509RevocationFlag.ExcludeRoot;
+            Assert.False(chain.Build(certificate));
+            Assert.Single(chain.ChainElements.Cast<X509ChainElement>());
+            X509ChainStatus[] statuses = new[]
+            {
+                new X509ChainStatus { Status = X509ChainStatusFlags.UntrustedRoot },
+                new X509ChainStatus { Status = structuralFailure }
+            };
+
+            Assert.Equal(SignatureChainEvaluationStatus.Indeterminate,
+                CertificateChainUtility.GetChainEvaluationStatus(false, statuses, chain, certificate));
+        }
+
+        [Fact]
+        public void GetChainEvaluationStatus_WithIncompleteChain_ReturnsIndeterminate()
+        {
+            using X509Certificate2 certificate = SigningTestUtility.GenerateCertificate(
+                $"Missing issuer {Guid.NewGuid()}", "Incomplete chain certificate", _fixture.Key, _fixture.Key);
+            using X509ChainHolder chainHolder = X509ChainHolder.CreateForCodeSigning();
+            IX509Chain chain = chainHolder.Chain2;
+            chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+            chain.ChainPolicy.RevocationFlag = X509RevocationFlag.ExcludeRoot;
+            bool buildSucceeded = chain.Build(certificate);
+
+            Assert.False(buildSucceeded);
+            Assert.True(CertificateChainUtility.GetChainStatusFlags(chain.ChainStatus).HasFlag(X509ChainStatusFlags.PartialChain));
+            Assert.Equal(SignatureChainEvaluationStatus.Indeterminate,
+                CertificateChainUtility.GetChainEvaluationStatus(buildSucceeded, chain.ChainStatus, chain, certificate));
+        }
+
         [Fact]
         public void BuildWithPolicy_WhenChainIsNull_Throws()
         {

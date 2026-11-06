@@ -99,6 +99,20 @@ namespace NuGet.Packaging.Signing
             HashAlgorithmName fingerprintAlgorithm,
             List<SignatureLog> issues)
         {
+            return Verify(signature, settings, fingerprintAlgorithm, issues, out _, out _);
+        }
+
+        internal SignatureVerificationStatusFlags Verify(
+            Signature signature,
+            SignedPackageVerifierSettings settings,
+            HashAlgorithmName fingerprintAlgorithm,
+            List<SignatureLog> issues,
+            out X509ChainStatusFlags chainStatusFlags,
+            out SignatureChainEvaluationStatus chainEvaluationStatus)
+        {
+            chainStatusFlags = X509ChainStatusFlags.NoError;
+            chainEvaluationStatus = SignatureChainEvaluationStatus.NotEvaluated;
+
             if (settings == null)
             {
                 throw new ArgumentNullException(nameof(settings));
@@ -157,6 +171,9 @@ namespace NuGet.Packaging.Signing
                     }
 
                     var chainBuildSucceed = CertificateChainUtility.BuildCertificateChain(chain, timestamperCertificate, out var chainStatusList);
+                    chainStatusFlags = CertificateChainUtility.GetChainStatusFlags(chainStatusList);
+                    chainEvaluationStatus = CertificateChainUtility.GetChainEvaluationStatus(
+                        chainBuildSucceed, chainStatusList, chain, timestamperCertificate);
                     string x509ChainString = CertificateUtility.X509ChainToString(chain.PrivateReference, fingerprintAlgorithm);
 
                     if (!string.IsNullOrWhiteSpace(x509ChainString))
@@ -180,9 +197,12 @@ namespace NuGet.Packaging.Signing
 
                         if (CertificateChainUtility.TryGetStatusAndMessage(chainStatusList, timestampInvalidCertificateFlags, out IEnumerable<string>? messages))
                         {
-                            foreach (string message in messages)
+                            foreach ((X509ChainStatusFlags issueFlags, string message) in CertificateChainUtility.GetStatusAndMessagesWithFlags(
+                                chainStatusList.Where(chainStatus => (chainStatus.Status & timestampInvalidCertificateFlags) != 0)))
                             {
-                                issues.Add(SignatureLog.Issue(treatIssueAsError, NuGetLogCode.NU3028, string.Format(CultureInfo.CurrentCulture, Strings.VerifyError_TimestampVerifyChainBuildingIssue, signature.FriendlyName, message)));
+                                issues.Add(SignatureLog.Issue(treatIssueAsError, NuGetLogCode.NU3028,
+                                    string.Format(CultureInfo.CurrentCulture, Strings.VerifyError_TimestampVerifyChainBuildingIssue, signature.FriendlyName, message),
+                                    issueFlags & timestampInvalidCertificateFlags));
                             }
 
                             flags |= SignatureVerificationStatusFlags.ChainBuildingFailure;
@@ -197,7 +217,9 @@ namespace NuGet.Packaging.Signing
                         {
                             SignatureUtility.LogAdditionalContext(chain, issues);
 
-                            issues.Add(SignatureLog.Error(NuGetLogCode.NU3028, string.Format(CultureInfo.CurrentCulture, Strings.VerifyTimestampChainBuildingIssue_UntrustedRoot, signature.FriendlyName)));
+                            issues.Add(SignatureLog.Issue(true, NuGetLogCode.NU3028,
+                                string.Format(CultureInfo.CurrentCulture, Strings.VerifyTimestampChainBuildingIssue_UntrustedRoot, signature.FriendlyName),
+                                X509ChainStatusFlags.UntrustedRoot));
 
                             flags |= SignatureVerificationStatusFlags.UntrustedRoot;
                             chainBuildingHasIssues = true;
@@ -205,7 +227,9 @@ namespace NuGet.Packaging.Signing
 
                         if (CertificateChainUtility.TryGetStatusAndMessage(chainStatusList, X509ChainStatusFlags.Revoked, out messages))
                         {
-                            issues.Add(SignatureLog.Error(NuGetLogCode.NU3028, string.Format(CultureInfo.CurrentCulture, Strings.VerifyError_TimestampVerifyChainBuildingIssue, signature.FriendlyName, messages!.First())));
+                            issues.Add(SignatureLog.Issue(true, NuGetLogCode.NU3028,
+                                string.Format(CultureInfo.CurrentCulture, Strings.VerifyError_TimestampVerifyChainBuildingIssue, signature.FriendlyName, messages!.First()),
+                                X509ChainStatusFlags.Revoked));
                             flags |= SignatureVerificationStatusFlags.CertificateRevoked;
 
                             return flags;
@@ -240,12 +264,14 @@ namespace NuGet.Packaging.Signing
                                 {
                                     if (offlineRevocationErrors)
                                     {
-                                        issues.Add(SignatureLog.Issue(!settings.AllowUnknownRevocation, NuGetLogCode.NU3028, string.Format(CultureInfo.CurrentCulture, Strings.VerifyError_TimestampVerifyChainBuildingIssue, signature.FriendlyName, Strings.VerifyCertTrustOfflineWhileRevocationModeOnline)));
+                                        issues.Add(SignatureLog.Issue(!settings.AllowUnknownRevocation, NuGetLogCode.NU3028, string.Format(CultureInfo.CurrentCulture, Strings.VerifyError_TimestampVerifyChainBuildingIssue, signature.FriendlyName, Strings.VerifyCertTrustOfflineWhileRevocationModeOnline),
+                                            X509ChainStatusFlags.OfflineRevocation));
                                     }
 
                                     if (unknownRevocationMessage != null)
                                     {
-                                        issues.Add(SignatureLog.Issue(!settings.AllowUnknownRevocation, NuGetLogCode.NU3028, unknownRevocationMessage));
+                                        issues.Add(SignatureLog.Issue(!settings.AllowUnknownRevocation, NuGetLogCode.NU3028, unknownRevocationMessage,
+                                            X509ChainStatusFlags.RevocationStatusUnknown));
                                     }
 
                                 }
