@@ -22,7 +22,8 @@ namespace Microsoft.TestPlatform.CommunicationUtilities.UnitTests;
 /// This test publishes a minimal console app that references the TranslationLayer with
 /// PublishAot=true and checks the publish output for linker warnings originating from the
 /// CommunicationUtilities.Serialization namespace. Pre-existing warnings from ObjectModel
-/// and Jsonite are expected and excluded from the assertion.
+/// and Jsonite are expected and excluded from the assertion. The published executable also
+/// verifies that discovery results containing traits can be deserialized at runtime.
 /// </summary>
 [TestClass]
 [TestCategory("Compatibility")]
@@ -160,6 +161,7 @@ public class NativeAotCompatibilityTests
             runProcess.ExitCode,
             $"NativeAOT consumer failed with exit code {runProcess.ExitCode}.\n\nOutput:\n{runOutputBuilder}");
         Assert.Contains("NativeAOT serialization round trip succeeded.", runOutputBuilder.ToString());
+        Assert.Contains("NativeAOT discovery traits deserialization succeeded.", runOutputBuilder.ToString());
     }
 }
 
