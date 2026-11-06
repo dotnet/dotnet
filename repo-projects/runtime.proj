@@ -34,7 +34,7 @@
 
     <!-- If this build is not a "special flavor" build, build everything that can be built for this target. -->
     <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' != 'true' and '$(TargetOS)' != 'browser'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
-    <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' == 'false' and '$(TargetOS)' == 'browser'">$(BuildArgs) /p:RuntimeFlavor=CoreCLR</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' == 'false' and ('$(TargetOS)' == 'browser' or '$(TargetOS)' == 'wasi')">$(BuildArgs) /p:RuntimeFlavor=CoreCLR</BuildArgs>
 
     <!-- NativeAOT wasm builds are not yet supported in the VMR. -->
     <BuildArgs Condition="'$(TargetArchitecture)' == 'wasm'">$(BuildArgs) /p:NativeAotSupported=false</BuildArgs>
