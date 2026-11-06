@@ -586,10 +586,7 @@ namespace NuGet.Protocol
                         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/atom+xml"));
                         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
                         return request;
-                    })
-                {
-                    IsRetry = true
-                },
+                    }),
                 async response =>
                 {
                     if (response.StatusCode == HttpStatusCode.OK)
