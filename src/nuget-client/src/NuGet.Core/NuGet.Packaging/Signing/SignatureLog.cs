@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Security.Cryptography.X509Certificates;
 using NuGet.Common;
 using NuGet.Shared;
 
@@ -25,6 +26,22 @@ namespace NuGet.Packaging.Signing
         public DateTimeOffset Time { get; set; }
 
         public string? LibraryId { get; set; }
+
+        internal X509ChainStatusFlags? ChainStatusFlags { get; set; }
+
+        internal RestoreLogMessage? RestoreMessage { get; set; }
+
+        internal SignatureVerificationRejectionReasons RejectionReason =>
+            (ChainStatusFlags.GetValueOrDefault() & CertificateChainUtility.RevocationUnavailableFlags) != 0
+                ? SignatureVerificationRejectionReasons.RevocationUnavailable
+                : SignatureVerificationRejectionReasons.Other;
+
+        internal static SignatureLog Issue(bool fatal, NuGetLogCode code, string message, X509ChainStatusFlags chainStatusFlags)
+        {
+            SignatureLog issue = Issue(fatal, code, message);
+            issue.ChainStatusFlags = chainStatusFlags;
+            return issue;
+        }
 
         private SignatureLog(LogLevel level, NuGetLogCode code, string message)
         {
@@ -96,12 +113,14 @@ namespace NuGet.Packaging.Signing
         /// <returns>RestoreLogMessage equivalent to the SignatureLog.</returns>
         public RestoreLogMessage AsRestoreLogMessage()
         {
-            return new RestoreLogMessage(Level, Code, Message)
+            RestoreLogMessage restoreMessage = new(Level, Code, Message)
             {
                 ProjectPath = ProjectPath,
                 WarningLevel = WarningLevel,
                 LibraryId = LibraryId
             };
+            RestoreMessage = restoreMessage;
+            return restoreMessage;
         }
     }
 }

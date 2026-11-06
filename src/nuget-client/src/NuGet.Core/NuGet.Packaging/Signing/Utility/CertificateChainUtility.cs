@@ -214,6 +214,35 @@ namespace NuGet.Packaging.Signing
             }
         }
 
+        internal const X509ChainStatusFlags RevocationUnavailableFlags =
+            X509ChainStatusFlags.OfflineRevocation | X509ChainStatusFlags.RevocationStatusUnknown;
+
+        internal static X509ChainStatusFlags GetChainStatusFlags(X509ChainStatus[] statuses)
+        {
+            return statuses.Aggregate(X509ChainStatusFlags.NoError, (flags, status) => flags | status.Status);
+        }
+
+        internal static SignatureChainEvaluationStatus GetChainEvaluationStatus(
+            bool buildSucceeded, X509ChainStatus[] statuses, IX509Chain chain, X509Certificate2 certificate)
+        {
+            X509ChainStatusFlags flags = GetChainStatusFlags(statuses);
+            bool isExcludedRoot = chain.ChainPolicy.RevocationFlag == X509RevocationFlag.ExcludeRoot
+                && chain.ChainElements.Count == 1
+                && certificate.IssuerName.RawData.SequenceEqual(certificate.SubjectName.RawData);
+            if (isExcludedRoot && flags == X509ChainStatusFlags.UntrustedRoot)
+            {
+                return SignatureChainEvaluationStatus.NotApplicable;
+            }
+
+            // Other chain failures do not establish whether revocation checking completed.
+            if (!buildSucceeded && (flags & RevocationUnavailableFlags) == 0 && flags != X509ChainStatusFlags.Revoked)
+            {
+                return SignatureChainEvaluationStatus.Indeterminate;
+            }
+
+            return isExcludedRoot ? SignatureChainEvaluationStatus.NotApplicable : SignatureChainEvaluationStatus.Evaluated;
+        }
+
         internal static bool BuildCertificateChain(IX509Chain chain, X509Certificate2 certificate, out X509ChainStatus[] status)
         {
             if (certificate == null)
@@ -282,11 +311,17 @@ namespace NuGet.Packaging.Signing
 
         internal static IEnumerable<string> GetStatusAndMessagesFromChainStatuses(IEnumerable<X509ChainStatus> chainStatuses)
         {
+            return GetStatusAndMessagesWithFlags(chainStatuses).Select(status => status.Message);
+        }
+
+        internal static IEnumerable<(X509ChainStatusFlags Flags, string Message)> GetStatusAndMessagesWithFlags(
+            IEnumerable<X509ChainStatus> chainStatuses)
+        {
             return chainStatuses
                 .Where(x => !string.IsNullOrEmpty(x.StatusInformation?.Trim()))
-                .Select(x => $"{x.Status}: {x.StatusInformation?.Trim()}")
-                .Distinct(StringComparer.Ordinal)
-                .OrderBy(x => x, StringComparer.Ordinal);
+                .Select(x => (Flags: x.Status, Message: $"{x.Status}: {x.StatusInformation?.Trim()}"))
+                .Distinct()
+                .OrderBy(x => x.Message, StringComparer.Ordinal);
         }
 
         private static void LogAdditionalContext(IX509Chain chain, ILogger logger)
