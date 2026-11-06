@@ -294,7 +294,10 @@
        Note: in the inner build $(OutputPath) already points at the per-TFM output directory
        (e.g. artifacts\bin\...\Release\net11.0\), so the '$(OutputPath)**' globs only ever span that
        single TFM's sub-folders. %(RecursiveDir) is therefore just the language folder (cs, de, ...),
-       not a leading TFM directory, and the package layout stays contentFiles\any\$(_CliContentTfm)\<lang>\. -->
+       not a leading TFM directory, and the package layout stays contentFiles\any\$(_CliContentTfm)\<lang>\.
+       Root and extension resources are collected before assigning source-qualified metadata,
+       avoiding batching against previously populated package items.
+       PackagePath includes the filename so pack does not append the source RecursiveDir again. -->
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' or '$(OS)' != 'Windows_NT'">
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_IncludeCliSourceBuildResources</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
@@ -303,46 +306,23 @@
           Condition="('$(DotNetBuildSourceOnly)' == 'true' or '$(OS)' != 'Windows_NT') and '$(TargetFramework)' == '$(_CliContentTfm)'"
           Returns="@(TfmSpecificPackageFile)">
     <ItemGroup>
-      <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.TestPlatform.*.resources.dll"
-                              Exclude="$(OutputPath)**\*TestHostRuntimeProvider*.resources.dll;$(OutputPath)**\*BlameDataCollector*.resources.dll">
-        <PackagePath>contentFiles\any\$(_CliContentTfm)\%(RecursiveDir)</PackagePath>
+      <_CliRootResources Include="$(OutputPath)**\Microsoft.TestPlatform.*.resources.dll"
+                         Exclude="$(OutputPath)**\*TestHostRuntimeProvider*.resources.dll;$(OutputPath)**\*BlameDataCollector*.resources.dll" />
+      <_CliRootResources Include="$(OutputPath)**\Microsoft.VisualStudio.TestPlatform.*.resources.dll"
+                         Exclude="$(OutputPath)**\*Html*.resources.dll;$(OutputPath)**\*Trx*.resources.dll" />
+      <_CliRootResources Include="$(OutputPath)**\vstest.console.resources.dll" />
+      <_CliExtensionResources Include="$(OutputPath)**\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll;
+                                       $(OutputPath)**\Microsoft.TestPlatform.Extensions.BlameDataCollector.resources.dll;
+                                       $(OutputPath)**\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll;
+                                       $(OutputPath)**\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" />
+      <TfmSpecificPackageFile Include="@(_CliRootResources)">
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\%(_CliRootResources.RecursiveDir)%(_CliRootResources.Filename)%(_CliRootResources.Extension)</PackagePath>
         <BuildAction>None</BuildAction>
         <PackageCopyToOutput>true</PackageCopyToOutput>
         <PackageFlatten>false</PackageFlatten>
       </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
-        <PackagePath>contentFiles\any\$(_CliContentTfm)\Extensions\%(RecursiveDir)</PackagePath>
-        <BuildAction>None</BuildAction>
-        <PackageCopyToOutput>true</PackageCopyToOutput>
-        <PackageFlatten>false</PackageFlatten>
-      </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.TestPlatform.Extensions.BlameDataCollector.resources.dll">
-        <PackagePath>contentFiles\any\$(_CliContentTfm)\Extensions\%(RecursiveDir)</PackagePath>
-        <BuildAction>None</BuildAction>
-        <PackageCopyToOutput>true</PackageCopyToOutput>
-        <PackageFlatten>false</PackageFlatten>
-      </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.VisualStudio.TestPlatform.*.resources.dll"
-                              Exclude="$(OutputPath)**\*Html*.resources.dll;$(OutputPath)**\*Trx*.resources.dll">
-        <PackagePath>contentFiles\any\$(_CliContentTfm)\%(RecursiveDir)</PackagePath>
-        <BuildAction>None</BuildAction>
-        <PackageCopyToOutput>true</PackageCopyToOutput>
-        <PackageFlatten>false</PackageFlatten>
-      </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll">
-        <PackagePath>contentFiles\any\$(_CliContentTfm)\Extensions\%(RecursiveDir)</PackagePath>
-        <BuildAction>None</BuildAction>
-        <PackageCopyToOutput>true</PackageCopyToOutput>
-        <PackageFlatten>false</PackageFlatten>
-      </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll">
-        <PackagePath>contentFiles\any\$(_CliContentTfm)\Extensions\%(RecursiveDir)</PackagePath>
-        <BuildAction>None</BuildAction>
-        <PackageCopyToOutput>true</PackageCopyToOutput>
-        <PackageFlatten>false</PackageFlatten>
-      </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(OutputPath)**\vstest.console.resources.dll">
-        <PackagePath>contentFiles\any\$(_CliContentTfm)\%(RecursiveDir)</PackagePath>
+      <TfmSpecificPackageFile Include="@(_CliExtensionResources)">
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\Extensions\%(_CliExtensionResources.RecursiveDir)%(_CliExtensionResources.Filename)%(_CliExtensionResources.Extension)</PackagePath>
         <BuildAction>None</BuildAction>
         <PackageCopyToOutput>true</PackageCopyToOutput>
         <PackageFlatten>false</PackageFlatten>
