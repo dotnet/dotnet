@@ -164,7 +164,8 @@ public class CreateVisualStudioWorkload : VisualStudioWorkloadTaskBase
             }
 
             Dictionary<string, WorkloadManifestMsi> manifestMsisByPlatform = new();
-            foreach (string platform in SupportedPlatforms)
+            string[] supportedPlatforms = WorkloadPackageBase.GetSupportedPlatforms(manifestPackage.SdkFeatureBand);
+            foreach (string platform in supportedPlatforms)
             {
                 WorkloadManifestMsi manifestMsi = new(manifestPackage, platform, BuildEngine, WixToolsetConfig, BaseIntermediateOutputPath, 
                     EnableSideBySideManifests, CreateWixPacks);
@@ -214,7 +215,6 @@ public class CreateVisualStudioWorkload : VisualStudioWorkloadTaskBase
                             GroupPackageId = packGroupId,
                             GroupPackageVersion = manifestPackage.PackageVersion.ToString()
                         };
-                        packGroupJsonList.Add(packGroupJson);
                     }
 
                     foreach (WorkloadPackId packId in wd.Packs)
@@ -230,7 +230,7 @@ public class CreateVisualStudioWorkload : VisualStudioWorkloadTaskBase
                             });
                         }
 
-                        foreach ((string sourcePackage, string[] platforms) in WorkloadPackPackage.GetSourcePackages(PackageSource, pack))
+                        foreach ((string sourcePackage, string[] platforms) in WorkloadPackPackage.GetSourcePackages(PackageSource, pack, supportedPlatforms))
                         {
                             if (!File.Exists(sourcePackage))
                             {
@@ -281,6 +281,15 @@ public class CreateVisualStudioWorkload : VisualStudioWorkloadTaskBase
 
                     if (CreateWorkloadPackGroups)
                     {
+                        if (packsInWorkloadByPlatform.Count == 0)
+                        {
+                            packGroupId = null;
+                        }
+                        else
+                        {
+                            packGroupJsonList.Add(packGroupJson);
+                        }
+
                         //  TODO: Support passing in data to skip creating pack groups for certain packs (possibly EMSDK, because it's large)
                         foreach (var kvp in packsInWorkloadByPlatform)
                         {

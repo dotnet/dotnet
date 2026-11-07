@@ -45,7 +45,6 @@ parameters:
   - unified-build-linux-buildtests
   - unified-build-windows-buildtests
   - unified-build-windows-x64
-  - unified-build-windows-x86
 
 # These are not expected to be passed it but rather just object variables reused below
 - name: pool_Linux
