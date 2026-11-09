@@ -1,6 +1,14 @@
 {
   "files": [
     {
+      "path": "THIRD-PARTY-NOTICES.TXT",
+      "detected_license_expression": "mit AND bsd-new AND unicode AND (x11 AND unknown-license-reference) AND x11 AND public-domain AND zlib AND apache-2.0 AND iso-8879 AND bsd-simplified AND w3c-software-doc-20150513 AND ietf AND osf-1990 AND uoi-ncsa AND cc0-1.0 AND warranty-disclaimer AND bsd-original-uc AND clear-bsd AND (mit AND object-form-exception-to-mit) AND nist-software"
+    },
+    {
+      "path": "src/installer/pkg/THIRD-PARTY-NOTICES.TXT",
+      "detected_license_expression": "mit AND bsd-new AND unicode AND (x11 AND unknown-license-reference) AND x11 AND public-domain AND iso-8879 AND bsd-simplified AND w3c-software-doc-20150513 AND ietf AND osf-1990 AND uoi-ncsa AND zlib AND cc0-1.0 AND apache-2.0 AND (cc0-1.0 AND public-domain AND mit) AND (bsd-original-uc AND mit) AND lzma-sdk-9.22 AND (bsd-simplified AND mit) AND (apache-2.0 AND mit)"
+    },
+    {
       "path": "src/tests/GC/Scenarios/GCBench/THIRD-PARTY-NOTICES",
       "detected_license_expression": "unknown-license-reference"
     },
