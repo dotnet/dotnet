@@ -157,6 +157,11 @@ parameters:
   type: boolean
   default: false
 
+# Tag Azure Pipelines builds configured to run CodeQL.
+- name: tagPipelineBuildWithCodeql
+  type: boolean
+  default: false
+
 #### repo parameters ####
 
 - name: isBuiltFromVmr
@@ -458,6 +463,10 @@ jobs:
   - checkout: self
     fetchDepth: 1
     retryCountOnTaskFailure: 5
+
+  - ${{ if eq(parameters.tagPipelineBuildWithCodeql, true) }}:
+    - pwsh: Write-Host "##vso[build.addbuildtag]CodeQL"
+      displayName: Tag build with CodeQL
 
   - ${{ if in(parameters.targetOS, 'osx', 'maccatalyst', 'ios', 'iossimulator', 'tvos', 'tvossimulator') }}:
     - template: ../steps/select-xcode.yml
