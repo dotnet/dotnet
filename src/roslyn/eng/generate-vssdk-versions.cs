@@ -1,3 +1,4 @@
+<<<<<<<< HEAD:src/roslyn/eng/generate-vssdk-versions.cs
 ﻿#!/usr/bin/env dotnet
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
@@ -95,3 +96,11 @@ return 0;
 
 static string GetScriptDirectory([CallerFilePath] string path = null)
     => Path.GetDirectoryName(path);
+========
+PLEASE READ
+
+Please remove this file during conflict resolution in your PR.
+This file has been reverted (removed) in the source repository but the PR branch
+does not have the file yet as it's based on an older commit. This means the file is
+not getting removed in the PR due to the other conflicts.
+>>>>>>>> darc/forward/04b3076-bbff605:src/roslyn/eng/generate-vssdk-versions.csx
