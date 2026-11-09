@@ -8,7 +8,7 @@ Terminology for the info below:
 - **Current+2 Month** – The next release after the current+1 month.
 - **Release Specific** – Refers to a specific release, rather than an overall release train (e.g. `internal/release/10.0.101`).
 - **General Servicing** – Refers to an overall servicing train (e.g. `release/10.0.1xx`).
-- **Parking Branch** – An internal VMR branch for approved fixes targeting a future release window that is not yet represented by General Servicing (e.g. `internal/parking/10.0.1xx/2027/1B`).
+- **Parking Branch** – An internal VMR branch for approved security fixes targeting a future release window that is not yet represented by General Servicing (e.g. `internal/parking/10.0.1xx/2027/1B`).
 
 ## Branch the VMR for each release
 
@@ -18,7 +18,7 @@ Utilizes a **continuously** open servicing branch. A new VMR **Release Specific*
 
 - Release builds are cut from short-lived servicing branches.
 - Long-lived servicing branches are always open.
-- Internal fixes for later release windows can be checked into parking branches until their General Servicing window opens.
+- Security fixes for later release windows can be checked into parking branches until their General Servicing window opens. Non-security fixes wait in public PRs until their approved window opens.
 - Day-to-day validation occurs against long-lived validation and repository branches.
 - Final validation occurs against short-lived servicing branches.
 - Developers switch where they check in based on the point in time during the month.
@@ -117,7 +117,7 @@ gantt
 4. Developer merges the fix based on the current branch status and schedule, choosing the appropriate place to check in:
     - If the approved milestone corresponds to the **Release Specific** branch, then the PR is targeted to the internal VMR **Release Specific** branch and merged.
     - If the approved milestone corresponds to the current state of the **General Servicing** branch (the branch is branded for that milestone), then the PR is targeted to the public VMR **General Servicing** branch, or the component repository **General Servicing** branch and merged.
-    - If the approved milestone does not correspond to any currently open branch, the fix is parked until a **General Servicing** VMR/component repo branch matches the milestone, and then the fix is merged.
+    - If the approved milestone does not correspond to any currently open branch, the fix waits in an unmerged PR targeting the public **General Servicing** VMR/component repo branch until that branch matches the milestone. Do not merge the fix early or use an internal parking branch for it.
 5. Confirm that the fix flowed into the VMR servicing branch matching the approved milestone.
 6. Wait for a validation build.
 7. Validate the fix in the shipping product.
@@ -138,7 +138,8 @@ gantt
 4. Developer merges the fix based on the current branch status and schedule, choosing the appropriate place to check-in:
     - If the approved milestone corresponds to the **Release Specific** branch, then the PR is targeted to the internal VMR **Release Specific** branch and merged.
     - If the approved milestone corresponds to the current state of the **General Servicing** branch (the branch is branded for that milestone), then the PR is targeted to the internal VMR **General Servicing** branch and merged.
-    - If the approved milestone is beyond the current **General Servicing** window, the PR is targeted to that window's internal VMR parking branch. NETMechanic merges the parking branch into internal **General Servicing** when that window opens; the developer does not resubmit the fix.
+    - If the approved milestone is beyond the current **General Servicing** window and the fix is security-related, the PR is targeted to that window's internal VMR parking branch. NETMechanic merges the parking branch into internal **General Servicing** when that window opens; the developer does not resubmit the fix.
+    - Non-security fixes for a future window wait in unmerged public **General Servicing** PRs until their approved window opens, rather than entering an internal parking branch.
 5. If a staging pull request was created against the component repository for repo-specific validation, be sure to Abandon the PR with a comment that the PR was used for validation, linking to the internal VMR pull request that was used to merge the fix.
 6. Confirm that the fix made it into the VMR servicing branch matching the approved milestone.
 7. Wait for a validation build.
@@ -201,7 +202,7 @@ It is recommended, though not required, that fixes made directly to the **Releas
 
 ### Release-Window Parking Branches
 
-Parking branches provide an immediate check-in destination for approved internal fixes whose target release is not yet represented by **General Servicing** or a **Release Specific** branch. They do not create additional active release trains.
+Parking branches provide an immediate check-in destination for approved security fixes whose target release is not yet represented by **General Servicing** or a **Release Specific** branch. They do not create additional active release trains. Non-security fixes for a future window wait in unmerged public **General Servicing** PRs until their approved window opens; they do not normally use parking branches.
 
 #### Branch identity and developer destinations
 
@@ -214,8 +215,10 @@ Parking branches are internal VMR branches identified by release train, SDK feat
 
 | Approved target | Developer destination |
 |-----------------|-----------------------|
-| Future window not yet represented by General Servicing | That window's parking branch |
-| Window currently represented by General Servicing | Internal General Servicing |
+| Security fix for a future window not yet represented by General Servicing | That window's internal parking branch |
+| Non-security fix for a future window not yet represented by General Servicing | Unmerged public General Servicing PR; wait for the approved window |
+| Security fix for a window currently represented by General Servicing | Internal General Servicing |
+| Non-security fix for a window currently represented by General Servicing | Public General Servicing |
 | Window already cut for release | Internal Release Specific branch |
 
 Developers submit to one destination per affected band for their approved window, not multiple future-window branches. Runtime/shared-component fixes target only the 1xx parking branch; SDK/band-specific fixes target each affected band's parking branch. Existing component-validation rules remain unchanged. Public fixes retain the documented public check-in paths when their target is open.
@@ -225,7 +228,7 @@ Developers submit to one destination per affected band for their approved window
 ```mermaid
 flowchart TD
     prepare["QB prepares future windows<br/>Mechanic creates parking branches per band"]
-    parking["Approved future fixes enter<br/>their window and band parking branch"]
+    parking["Approved future security fixes enter<br/>their window and band parking branch"]
     cut["QB cuts current release<br/>from General Servicing"]
     outgoing["Current window: Release Specific<br/>Late fixes, validation, and shipment"]
     branding["Rebrand General Servicing<br/>for the incoming window"]
