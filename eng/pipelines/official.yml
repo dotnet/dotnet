@@ -56,6 +56,10 @@ variables:
 - name: isScheduleTrigger
   value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
 
+# True when the pipeline is configured to run CodeQL.
+- name: isCodeqlActive
+  value: ${{ or(parameters.forceCodeql, eq(variables['Build.CronSchedule.DisplayName'], 'Unsigned CodeQL main build on Sundays')) }}
+
 - ${{ if eq(parameters.forceCodeql, true) }}:
   - name: Codeql.Cadence
     value: 0

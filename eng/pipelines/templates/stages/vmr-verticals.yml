@@ -158,6 +158,7 @@ stages:
           targetOS: windows
           targetArchitecture: x64
           tagPipelineBuildWithSdkVersion: ${{ parameters.isOfficialBuild }}
+          tagPipelineBuildWithCodeql: ${{ eq(variables.isCodeqlActive, 'true') }}
           enableAstred: ${{ parameters.isOfficialBuild }}
           brandingType: ${{ variables.brandingType }}
           sourceIndexName: dotnet-dotnet-windows
