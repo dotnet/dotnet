@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.Pkcs;
@@ -815,6 +816,26 @@ namespace NuGet.Packaging.Test
                 issue.Level == (allowUntrusted ? LogLevel.Warning : LogLevel.Error));
         }
 
+        [Theory]
+        [InlineData(PackageExtractionTelemetryEvent.EventName)]
+        [InlineData(PackageSigningTelemetryEvent.EventName)]
+        public async Task VerifySignaturesAsync_ChainTelemetry_IgnoresUnrelatedTelemetry(string eventName)
+        {
+            SignedPackageVerifierSettings settings = SignedPackageVerifierSettings.GetDefault(TestEnvironmentVariableReader.EmptyInstance);
+            TelemetryEvent unrelatedEvent = new(eventName);
+            (VerifySignaturesResult result, TelemetryEvent telemetryEvent) = await VerifyWithChainsAsync(
+                X509ChainStatusFlags.NoError, X509ChainStatusFlags.NoError, settings,
+                signerChainBuilt: () =>
+                {
+                    using TelemetryActivity activity = TelemetryActivity.Create(Guid.NewGuid(), unrelatedEvent);
+                });
+
+            Assert.True(result.IsValid);
+            Assert.NotSame(unrelatedEvent, telemetryEvent);
+            Assert.Equal(PackageSigningTelemetryEvent.EventName, telemetryEvent.Name);
+            Assert.Equal(NuGetOperationStatus.Succeeded, telemetryEvent["Status"]);
+        }
+
         private async Task<(VerifySignaturesResult Result, TelemetryEvent Telemetry)> VerifyWithChainsAsync(
             X509ChainStatusFlags signerFlags, X509ChainStatusFlags timestampFlags, SignedPackageVerifierSettings settings,
             bool? signerBuildSucceeded = null, bool? timestampBuildSucceeded = null, PrimarySignature? signature = null,
@@ -824,10 +845,13 @@ namespace NuGet.Packaging.Test
             IX509ChainFactory originalSignerFactory = X509TrustStore.GetX509ChainFactory(Signing.X509StorePurpose.CodeSigning, NullLogger.Instance);
             IX509ChainFactory originalTimestampFactory = X509TrustStore.GetX509ChainFactory(Signing.X509StorePurpose.Timestamping, NullLogger.Instance);
             INuGetTelemetryService? originalTelemetryService = TelemetryActivity.NuGetTelemetryService;
-            List<TelemetryEvent> events = new();
+            Guid parentId = Guid.NewGuid();
+            ConcurrentQueue<TelemetryEvent> events = new();
             Mock<INuGetTelemetryService> telemetryService = new();
-            telemetryService.Setup(service => service.EmitTelemetryEvent(It.IsAny<TelemetryEvent>()))
-                .Callback<TelemetryEvent>(telemetryEvent => events.Add(telemetryEvent));
+            telemetryService.Setup(service => service.EmitTelemetryEvent(It.Is<TelemetryEvent>(telemetryEvent =>
+                telemetryEvent.Name == PackageSigningTelemetryEvent.EventName &&
+                parentId.ToString().Equals(telemetryEvent[nameof(TelemetryActivity.ParentId)]))))
+                .Callback<TelemetryEvent>(telemetryEvent => events.Enqueue(telemetryEvent));
             signature ??= _signature.Value;
             Mock<ISignedPackageReader> package = new();
             package.Setup(reader => reader.IsSignedAsync(It.IsAny<CancellationToken>())).ReturnsAsync(isSigned);
@@ -852,7 +876,7 @@ namespace NuGet.Packaging.Test
                     ? new ISignatureVerificationProvider[] { _provider }
                     : new ISignatureVerificationProvider[] { _provider, additionalProvider };
                 PackageSignatureVerifier verifier = new(providers);
-                VerifySignaturesResult result = await verifier.VerifySignaturesAsync(package.Object, settings, CancellationToken.None);
+                VerifySignaturesResult result = await verifier.VerifySignaturesAsync(package.Object, settings, CancellationToken.None, parentId);
 
                 return (result, Assert.Single(events));
             }
