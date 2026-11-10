@@ -139,7 +139,6 @@ stages:
         enablePoison: ${{ leg.enablePoison }}
         buildFromArchive: ${{ leg.buildFromArchive }}
         runOnline: ${{ leg.runOnline }}
-        useMonoRuntime: ${{ leg.useMonoRuntime }}
         useSystemLibraries: ${{ leg.useSystemLibraries }}
         withPreviousSDK: ${{ leg.withPreviousSDK }}
         createSourceArtifact: ${{ leg.createSourceArtifact }}
