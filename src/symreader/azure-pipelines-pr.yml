@@ -38,6 +38,7 @@ stages:
       - job: Windows
         pool:
             vmImage: 'windows-latest'
+        timeoutInMinutes: 120
         variables:
           - name: _OfficialBuildArgs
             value: ''
@@ -57,24 +58,6 @@ stages:
         - script: eng\common\cibuild.cmd -configuration $(_BuildConfig) -prepareMachine $(_BuildArgs)
           displayName: Build and Test
 
-      - job: Windows_ARM64
-        displayName: 'Windows ARM64 Tests'
-        pool:
-          vmImage: 'windows-latest'
-        timeoutInMinutes: 120
-        strategy:
-          matrix:
-            Debug:
-              _BuildConfig: Debug
-              _SignType: none
-            Release:
-              _BuildConfig: Release
-              _SignType: none
-        steps:
-        - checkout: self
-          clean: true
-        - powershell: eng\common\build.ps1 -configuration $(_BuildConfig) -restore -build -ci -prepareMachine
-          displayName: Build Test Payloads
         - powershell: |
             $globalJson = Get-Content global.json -Raw | ConvertFrom-Json
             Write-Host "##vso[task.setvariable variable=HelixDotNetSdkVersion]$($globalJson.tools.dotnet)"
