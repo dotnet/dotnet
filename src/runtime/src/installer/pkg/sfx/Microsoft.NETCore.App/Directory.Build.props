@@ -152,6 +152,7 @@
     <PlatformManifestFileEntry Include="libbootstrapperdll.o" IsNative="true" />
     <PlatformManifestFileEntry Include="libeventpipe-disabled.a" IsNative="true" />
     <PlatformManifestFileEntry Include="libeventpipe-enabled.a" IsNative="true" />
+    <PlatformManifestFileEntry Include="libPortableRuntime.a" IsNative="true" />
     <PlatformManifestFileEntry Include="libRuntime.ServerGC.a" IsNative="true" />
     <PlatformManifestFileEntry Include="libRuntime.WorkstationGC.a" IsNative="true" />
     <PlatformManifestFileEntry Include="libRuntime.VxSortDisabled.a" IsNative="true" />
