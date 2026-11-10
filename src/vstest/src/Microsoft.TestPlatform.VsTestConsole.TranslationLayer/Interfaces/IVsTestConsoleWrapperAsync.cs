@@ -15,6 +15,32 @@ namespace Microsoft.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
 /// <summary>
 /// Asynchronous equivalent of <see cref="IVsTestConsoleWrapper"/>.
 /// </summary>
+///
+/// <remarks>
+/// The type is obsolete as a reference: consumers should name the derived <see cref="IVsTestConsoleWrapper"/>
+/// instead, which exposes every member declared here. Most of those members are individually deprecated on top
+/// of that, either because they do not actually run asynchronously or because they merely duplicate the
+/// synchronous member of the same name, and each carries its own attribute pointing at the synchronous API.
+/// <para>
+/// The per-member attributes below are kept deliberately rather than replaced by this one. The C# compiler
+/// does not report an interface-level obsoletion when a member is invoked through the derived
+/// <see cref="IVsTestConsoleWrapper"/>, which is how virtually every consumer reaches these methods, so
+/// removing them would silence the warning for almost everybody. The two attributes cover different call
+/// shapes: this one flags code that names <c>IVsTestConsoleWrapperAsync</c> directly, the member ones flag
+/// the calls themselves.
+/// </para>
+/// <para>
+/// The two <c>ProcessTestRunAttachmentsAsync</c> overloads are the exception: they genuinely run
+/// asynchronously and have no synchronous replacement, so they carry no member-level attribute. They are still
+/// reachable, without any warning, through <see cref="IVsTestConsoleWrapper"/> — which is what code that only
+/// wants them should reference, since naming this interface warns regardless of which member is used.
+/// </para>
+/// <para>
+/// This is not a binary breaking change, and <c>error: false</c> keeps it a warning. Code that names this type
+/// directly does get a warning it did not get before.
+/// </para>
+/// </remarks>
+[Obsolete("Reference IVsTestConsoleWrapper instead, which exposes the same members.", error: false)]
 public interface IVsTestConsoleWrapperAsync
 {
     /// <summary>

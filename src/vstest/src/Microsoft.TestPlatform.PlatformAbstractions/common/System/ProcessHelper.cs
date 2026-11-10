@@ -244,8 +244,30 @@ public partial class ProcessHelper : IProcessHelper
 
     /// <inheritdoc/>
     public string? GetCurrentProcessFileName()
+        => GetCurrentProcessFileName(getProcessPath: null, getMainModuleFileName: null);
+
+    /// <summary>
+    /// The path readers let tests supply different executable and module paths without proot.
+    /// Only tests should supply non-null arguments; production callers must use the parameterless overload.
+    /// </summary>
+    internal string? GetCurrentProcessFileName(Func<string?>? getProcessPath, Func<string?>? getMainModuleFileName)
     {
-        return _currentProcess.MainModule?.FileName;
+#if NET
+        // Environment.ProcessPath is more reliable than MainModule under sandboxes such as
+        // proot, which is commonly used to run Linux distributions on Android (e.g. Termux).
+        // proot starts the real executable through an injected loader, and it cannot rewrite
+        // the contents of /proc/self/maps that MainModule is built from. When the loader is
+        // mapped below the executable (as it is on ARM64) MainModule reports the loader
+        // instead of the running dotnet host, which breaks test host resolution.
+        // See https://github.com/microsoft/vstest/issues/16446.
+        var processPath = getProcessPath is not null ? getProcessPath() : Environment.ProcessPath;
+        if (processPath is not null)
+        {
+            return processPath;
+        }
+#endif
+
+        return getMainModuleFileName is not null ? getMainModuleFileName() : _currentProcess.MainModule?.FileName;
     }
 
     /// <inheritdoc/>

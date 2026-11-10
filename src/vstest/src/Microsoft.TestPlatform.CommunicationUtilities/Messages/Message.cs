@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
+
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 /// <summary>
@@ -30,6 +32,10 @@ public class Message
     /// <inheritdoc/>
     public override string ToString()
     {
-        return RawMessage ?? "{}";
+        // Redact by scanning for property names that look like they hold a secret, rather than by
+        // listing the message types that carry one. A list has to be updated whenever a message or a
+        // variable is added or renamed, and the one time it is not, the value lands in a log. This
+        // covers the environment blocks that messages carry to child processes.
+        return SecretRedaction.RedactSecretsInJson(RawMessage ?? "{}");
     }
 }

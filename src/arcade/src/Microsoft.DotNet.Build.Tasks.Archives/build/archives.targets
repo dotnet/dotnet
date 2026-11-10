@@ -75,6 +75,7 @@
   <PropertyGroup>
     <ArchiveName Condition="'$(ArchiveName)' == ''">$([System.IO.Path]::GetFileNameWithoutExtension($(MSBuildProjectFile)))</ArchiveName>
     <SymbolsArchiveName Condition="'$(SymbolsArchiveName)' == ''">$(ArchiveName)-symbols</SymbolsArchiveName>
+    <_TarOwnershipArguments Condition="'$(DotNetBuildSourceOnly)' == 'true'">--numeric-owner --owner=2001 --group=2001</_TarOwnershipArguments>
   </PropertyGroup>
 
   <Target Name="_CheckPigzAvailability" Condition="'$(_PigzFoundExitCode)' == ''">
@@ -126,11 +127,11 @@
                   DestinationFile="$(_DestinationFileName)"
                   Condition="'$(_CurrentArchiveFormat)' == 'zip'"/>
     <!-- use parallel gzip implementation when available -->
-    <Exec Command="tar -cf - . | pigz &gt; &quot;$(_DestinationFileName)&quot;"
+    <Exec Command="tar $(_TarOwnershipArguments) -cf - . | pigz &gt; &quot;$(_DestinationFileName)&quot;"
           WorkingDirectory="$(_OutputPathRoot)"
           Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' == '0'"/>
     <!-- otherwise, use built-in gzip feature (-z) -->
-    <Exec Command="tar -czf &quot;$(_DestinationFileName)&quot; ."
+    <Exec Command="tar $(_TarOwnershipArguments) -czf &quot;$(_DestinationFileName)&quot; ."
           WorkingDirectory="$(_OutputPathRoot)"
           Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' != '0'"/>
 
@@ -176,11 +177,11 @@
                   DestinationFile="$(_DestinationFileName)"
                   Condition="'$(_CurrentArchiveFormat)' == 'zip'"/>
     <!-- use parallel gzip implementation when available -->
-    <Exec Command="tar -cf - . | pigz &gt; &quot;$(_DestinationFileName)&quot;"
+    <Exec Command="tar $(_TarOwnershipArguments) -cf - . | pigz &gt; &quot;$(_DestinationFileName)&quot;"
           WorkingDirectory="$(_SymbolsOutputPathRoot)"
           Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' == '0'"/>
     <!-- otherwise, use built-in gzip feature (-z) -->
-    <Exec Command="tar -czf &quot;$(_DestinationFileName)&quot; ."
+    <Exec Command="tar $(_TarOwnershipArguments) -czf &quot;$(_DestinationFileName)&quot; ."
           WorkingDirectory="$(_SymbolsOutputPathRoot)"
           Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' != '0'"/>
 

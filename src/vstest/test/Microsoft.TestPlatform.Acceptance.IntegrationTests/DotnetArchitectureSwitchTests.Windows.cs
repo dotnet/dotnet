@@ -44,7 +44,9 @@ public class DotnetArchitectureSwitchTestsWindowsOnly : AcceptanceTestBase
         var environmentVariables = new Dictionary<string, string?>
         {
             [$"DOTNET_ROOT_{architectureTo}"] = Path.GetDirectoryName(dotnetPathTo)!,
-            ["ExpectedArchitecture"] = architectureTo
+            ["ExpectedArchitecture"] = architectureTo,
+            // Give this test its own template cache; the shared one races with other scaffolds.
+            ["DOTNET_CLI_HOME"] = CreateIsolatedTemplateEngineHome(TempDirectory.Path)
         };
 
         if (architectureTo == "X86")
