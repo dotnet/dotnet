@@ -425,6 +425,22 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
+            buildName: Wasi_CoreCLR_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux_Shortstack }}
+            container:
+              name: ${{ variables.wasiCrossContainerName }}
+              image: ${{ variables.wasiCrossContainerImage }}
+            crossRootFs: '/crossrootfs/x64'
+            targetOS: wasi
+            targetArchitecture: wasm
+            extraProperties: /p:DotNetBuildUseMonoRuntime=false
+            brandingType: ${{ variables.brandingType }}
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
             buildName: Wasi_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             isCodeqlActive: ${{ parameters.isCodeqlActive }}
@@ -767,6 +783,7 @@ stages:
             - Browser_CoreCLR_Shortstack_wasm
             - Browser_Shortstack_wasm
             - Browser_Multithreaded_Shortstack_wasm
+            - Wasi_CoreCLR_Shortstack_wasm
             - Wasi_Shortstack_wasm
             - Android_Shortstack_arm64
             - Android_Shortstack_arm
