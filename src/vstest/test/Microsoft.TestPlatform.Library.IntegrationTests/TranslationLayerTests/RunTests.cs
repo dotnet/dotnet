@@ -7,11 +7,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 using FluentAssertions;
 
 using Microsoft.TestPlatform.Library.IntegrationTests.TranslationLayerTests.EventHandler;
 using Microsoft.TestPlatform.TestUtilities;
+using Microsoft.TestPlatform.VsTestConsole.TranslationLayer;
 using Microsoft.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Common.Telemetry;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
@@ -75,6 +77,35 @@ public class RunTests : AcceptanceTestBase
         _vstestConsoleWrapper.RunTests([GetAssetFullPath("SimpleTestProject.dll"), GetAssetFullPath("SimpleTestProject2.dll")], GetDefaultRunSettings(), runEventHandler);
 
         // Assert
+        Assert.HasCount(6, runEventHandler.TestResults);
+        Assert.AreEqual(2, runEventHandler.TestResults.Count(t => t.Outcome == TestOutcome.Passed));
+        Assert.AreEqual(2, runEventHandler.TestResults.Count(t => t.Outcome == TestOutcome.Failed));
+        Assert.AreEqual(2, runEventHandler.TestResults.Count(t => t.Outcome == TestOutcome.Skipped));
+    }
+
+    [TestMethod]
+    [NetCoreTargetFrameworkDataSource]
+    [TestCategory("Smoke")]
+    public async Task RunAllTestsFromDllsAfterAsyncSessionStart(RunnerInfo runnerInfo)
+    {
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        _vstestConsoleWrapper = new VsTestConsoleWrapper(
+            GetDotnetRunnerPath(),
+            new ConsoleParameters
+            {
+                EnvironmentVariables = new Dictionary<string, string?> { ["DOTNET_ROLL_FORWARD"] = "LatestMajor" },
+            });
+#pragma warning disable CS0618 // Verify the existing async startup API with a real console.
+        await _vstestConsoleWrapper.StartSessionAsync();
+#pragma warning restore CS0618
+
+        var runEventHandler = new RunEventHandler();
+        _vstestConsoleWrapper.RunTests(
+            [GetAssetFullPath("SimpleTestProject.dll"), GetAssetFullPath("SimpleTestProject2.dll")],
+            GetDefaultRunSettings(),
+            runEventHandler);
+
         Assert.HasCount(6, runEventHandler.TestResults);
         Assert.AreEqual(2, runEventHandler.TestResults.Count(t => t.Outcome == TestOutcome.Passed));
         Assert.AreEqual(2, runEventHandler.TestResults.Count(t => t.Outcome == TestOutcome.Failed));

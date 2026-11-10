@@ -58,6 +58,13 @@ public class ExecutorUnitTests
         var version = suffixIndex == -1 ? assemblyVersion : assemblyVersion.Substring(0, suffixIndex);
         Assert.Contains(version,
             mockOutput.Messages.First().Message!);
+
+        // The banner always shows the short version. Asserting the absence of the version
+        // followed by a dash, rather than the absence of the full version, keeps this
+        // meaningful on an official build, whose version carries no suffix at all.
+        Assert.DoesNotContain(version + "-",
+            mockOutput.Messages.First().Message!,
+            "The banner must show the short version; the suffix is only kept in diag mode.");
     }
 
     [TestMethod]

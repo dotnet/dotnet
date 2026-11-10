@@ -1,0 +1,85 @@
+parameters:
+- name: buildArguments
+  type: string
+  default: ''
+
+- name: sdkDirectory
+  type: string
+  default: $(sourcesPath)/artifacts/obj/extracted-dotnet-sdk
+
+steps:
+- task: DownloadBuildArtifacts@1
+  displayName: Download Microsoft Windows package manifest
+  inputs:
+    buildType: current
+    downloadType: single
+    artifactName: VerticalManifests
+    itemPattern: VerticalManifests/Windows_x64.xml
+    downloadPath: $(Pipeline.Workspace)/test-sdk-manifest
+
+- bash: |
+    set -euo pipefail
+
+    manifest="$(Pipeline.Workspace)/test-sdk-manifest/VerticalManifests/Windows_x64.xml"
+    if [[ ! -f "$manifest" ]]; then
+      echo "Microsoft Windows package manifest not found at '$manifest'." >&2
+      exit 1
+    fi
+
+    test_sdk_version=""
+    package_count=0
+    manifest_contents="$(cat "$manifest")"
+    while [[ "$manifest_contents" =~ \<Package[[:space:]][^\>]*\> ]]; do
+      package_entry="${BASH_REMATCH[0]}"
+      manifest_contents="${manifest_contents#*"$package_entry"}"
+      if [[ ! "$package_entry" =~ [[:space:]]Id=\"Microsoft\.NET\.Test\.Sdk\" ]]; then
+        continue
+      fi
+      if [[ ! "$package_entry" =~ [[:space:]]Version=\"([^\"]+)\" ]]; then
+        echo "Microsoft.NET.Test.Sdk entry in '$manifest' has no version." >&2
+        exit 1
+      fi
+      test_sdk_version="${BASH_REMATCH[1]}"
+      package_count=$((package_count + 1))
+    done
+
+    if [[ "$package_count" -ne 1 ]]; then
+      echo "Expected one Microsoft.NET.Test.Sdk entry in '$manifest', found $package_count." >&2
+      exit 1
+    fi
+
+    if [[ ! "$test_sdk_version" =~ ^[0-9A-Za-z][0-9A-Za-z.+-]*$ ]]; then
+      echo "Invalid Microsoft.NET.Test.Sdk version in '$manifest': '$test_sdk_version'." >&2
+      exit 1
+    fi
+
+    sdk_dir="${{ parameters.sdkDirectory }}"
+    build_args="${{ parameters.buildArguments }}"
+    # Use the test cache and properties during preparation, without running tests or selecting the product SDK yet.
+    ./build.sh --source-only --test --excludeCIBinarylog $build_args \
+      --projects "$(Build.SourcesDirectory)/eng/extract-sdk-archive.proj" /p:Test=false \
+      "/p:DotNetSdkExtractDir=$sdk_dir" /bl:artifacts/log/Release/PrepareTestSdk.binlog
+
+    if [[ ! -x "$sdk_dir/dotnet" || ! -d "$sdk_dir/sdk" ]]; then
+      echo "Source-built test SDK not found at '$sdk_dir'." >&2
+      exit 1
+    fi
+
+    mapfile -t sdk_versions < <(find "$sdk_dir/sdk" -mindepth 1 -maxdepth 1 -type d -printf '%f\n')
+    if [[ ${#sdk_versions[@]} -ne 1 ]]; then
+      echo "Expected one SDK in '$sdk_dir', found ${#sdk_versions[@]}." >&2
+      exit 1
+    fi
+
+    resolved_sdk_version="$("$sdk_dir/dotnet" --version)"
+    if [[ "$resolved_sdk_version" != "${sdk_versions[0]}" ]]; then
+      echo "Resolved SDK '$resolved_sdk_version' does not match prepared SDK '${sdk_versions[0]}'." >&2
+      exit 1
+    fi
+    "$sdk_dir/dotnet" --info
+
+    echo "Using source-built SDK '$sdk_dir' with Microsoft.NET.Test.Sdk $test_sdk_version from the matching Microsoft Windows package manifest."
+    echo "##vso[task.setvariable variable=SourceBuiltMicrosoftNETTestSdkVersion]$test_sdk_version"
+    echo "##vso[task.setvariable variable=SourceBuiltTestSdkDir]$sdk_dir"
+  displayName: Prepare source-built SDK for tests
+  workingDirectory: $(sourcesPath)
