@@ -385,9 +385,9 @@
         <source>--Platform|/Platform:&lt;Platform type&gt;
       Target platform architecture to be used for test execution. 
       Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.</source>
-        <target state="new">--Platform|/Platform:&lt;Platform type&gt;
-      Target platform architecture to be used for test execution. 
-      Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.</target>
+        <target state="translated">--Platform|/Platform:&lt;平台類型&gt;
+      用於測試執行的目標平台架構。
+      有效值為 x86、x64、ARM、ARM64、S390x、Ppc64le、RiscV64 和 LoongArch64。</target>
         <note />
       </trans-unit>
       <trans-unit id="SwitchToIsolationInMultiTargetingMode">
@@ -400,10 +400,10 @@
       Target .Net Framework version to be used for test execution. 
       Valid values are short names such as net48 and net10.0, or long names such as ".NETFramework,Version=v4.8" and ".NETCoreApp,Version=v10.0".
       Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
-        <target state="new">--Framework|/Framework:&lt;Framework Version&gt;
-      Target .Net Framework version to be used for test execution. 
-      Valid values are short names such as net48 and net10.0, or long names such as ".NETFramework,Version=v4.8" and ".NETCoreApp,Version=v10.0".
-      Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</target>
+        <target state="translated">--Framework|/Framework:&lt;Framework Version&gt;
+      要在測試執行時使用的目標 .NET Framework 版本。
+      有效值包括 net48、net10.0 這類簡短名稱，或 ".NETFramework,Version=v4.8"、".NETCoreApp,Version=v10.0" 這類完整名稱。
+      其他支援的值為 Framework40、Framework45、FrameworkCore10 以及 FrameworkUap10。</target>
         <note />
       </trans-unit>
       <trans-unit id="FrameworkVersionRequired">

@@ -21,7 +21,7 @@ imported through the `imports:` frontmatter field.
 
 ```bash
 # Install the gh-aw CLI extension (once per machine)
-gh extension install github/gh-aw --pin v0.93.0
+gh extension install github/gh-aw --pin v1.0.1
 
 # Compile a single workflow after editing its .md source. Strict mode is the
 # default — keep it that way. NEVER set `strict: false` in frontmatter.
@@ -38,7 +38,7 @@ gh aw logs <workflow-id>
 gh aw audit <run-id>
 ```
 
-Use gh-aw v0.93.0 to match the compiler recorded in the generated workflows.
+Use gh-aw v1.0.1 to match the compiler recorded in the generated workflows.
 When updating gh-aw actions, use the matching compiler, update
 `.github/aw/actions-lock.json`, and recompile all workflows so the generated
 steps and manifests keep the same action versions.
@@ -109,9 +109,9 @@ Set it up once (requires org admin to create/install the App):
 
 1. Create a GitHub App owned by the `microsoft` org (Settings → Developer settings →
    GitHub Apps). Grant the repository permissions the workflows need (Administration
-   read-only; Contents, Issues, and Pull requests read/write; and Security events
-   read/write for code-scanning alerts), generate a **private key** (`.pem`), and
-   **install** the App on `microsoft/vstest`.
+   read-only; Checks read-only; Contents, Issues, and Pull requests read/write; and
+   Security events read/write for code-scanning alerts), generate a **private key**
+   (`.pem`), and **install** the App on `microsoft/vstest`.
 2. Store the App **Client ID** as a repository **variable** and the private key as a
    **secret**. The variable remains named `APP_ID` to match the workflow sources, but its
    value must be the Client ID, not the numeric App ID:
