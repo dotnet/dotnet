@@ -161,7 +161,7 @@ stages:
           ${{ else }}:
             extraProperties: ${{ leg.extraProperties }}
 
-- ${{ if and(parameters.isBuiltFromVmr, ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true)) }}:
+- ${{ if and(parameters.isBuiltFromVmr, ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true), ne(variables.isCodeqlActive, 'true')) }}:
   - stage: VMR_SourceOnly_Validation
     displayName: VMR Source-Only Validation
     dependsOn:
