@@ -45,6 +45,37 @@ public class IntegrationTestEnvironment
     /// </summary>
     public static string ExtensionsDirectory { get; } = Path.Combine(PublishDirectory, $"Microsoft.TestPlatform.{IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}.nupkg", "tools", "net462", "Common7", "IDE", "Extensions", "TestPlatform", "Extensions");
 
+    /// <summary>
+    /// The patched dotnet installation that the acceptance suite's AssemblyInitialize copies and
+    /// then runs <c>dotnet test</c> from. ONE PER TEST RUN, and that is the whole point of it.
+    ///
+    /// This used to be a fixed path, <c>artifacts/tmp/.dotnet</c>, shared by every run. The x64 and
+    /// x86 runs of the acceptance suite execute at the same time and both copied into it, so one
+    /// executed hostfxr.dll out of the directory while the other overwrote it, and every test in the
+    /// losing run failed in AssemblyInitialize with
+    ///
+    ///   IOException: The process cannot access the file
+    ///   '...\artifacts\tmp\.dotnet\host\fxr\10.0.6\hostfxr.dll' because it is being used by another process.
+    ///
+    /// Measured on 18.0's build 3076303: 620 of 661 tests in the net48_x86 run, all with that one
+    /// exception. It had never been seen because the x64 run used to fail first, which suppressed
+    /// the x86 half entirely - so the two never overlapped until the compatibility rows were
+    /// filtered out and x64 started passing.
+    ///
+    /// A mutex around the copy does not fix it: the conflict is one run EXECUTING from the directory
+    /// while another OVERWRITES it, which outlives the copy.
+    ///
+    /// AppContext.BaseDirectory already differs per target framework and architecture, so hashing it
+    /// gives one directory per run without inventing a discriminator. GetPathHash is the same helper
+    /// the acceptance suite already uses to shorten its compatibility asset names.
+    ///
+    /// COMPUTED HERE AND ONLY HERE. Two places used to derive this path independently - Build.cs
+    /// wrote it and IntegrationTestBase read it - and discriminating in one of them would have left
+    /// the other looking in the old shared location for something no longer there.
+    /// </summary>
+    public static string PatchedDotnetDirectory { get; } = Path.GetFullPath(
+        Path.Combine(RepoRootDirectory, "artifacts", "tmp", $".dotnet-{GetPathHash(AppContext.BaseDirectory)}"));
+
     private static Dictionary<string, string>? s_dependencyVersions;
 
     private string? _targetRuntime;

@@ -37,6 +37,8 @@ public class SocketCommunicationManager : ICommunicationManager
     /// TCP Client that can connect to a TCP listener
     /// </summary>
     private TcpClient? _tcpClient;
+    private TcpClient? _acceptedTcpClient;
+    private CancellationTokenSource _connectionCancellation = new();
 
     /// <summary>
     /// Binary Writer to write to channel stream
@@ -98,6 +100,12 @@ public class SocketCommunicationManager : ICommunicationManager
     /// <returns>Port of the listener</returns>
     public IPEndPoint HostServer(IPEndPoint endpoint)
     {
+        if (_connectionCancellation.IsCancellationRequested)
+        {
+            _connectionCancellation.Dispose();
+            _connectionCancellation = new CancellationTokenSource();
+        }
+
         _tcpListener = new TcpListener(endpoint);
         _tcpListener.Start();
         EqtTrace.Info("Listening on Endpoint : {0}", (IPEndPoint)_tcpListener.LocalEndpoint);
@@ -111,14 +119,36 @@ public class SocketCommunicationManager : ICommunicationManager
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task AcceptClientAsync()
     {
-        if (_tcpListener == null)
+        var listener = _tcpListener;
+        var cancellation = _connectionCancellation.Token;
+        if (listener is null || cancellation.IsCancellationRequested)
         {
             return;
         }
 
         _clientConnectedEvent.Reset();
 
-        var client = await _tcpListener.AcceptTcpClientAsync();
+        TcpClient client;
+        try
+        {
+            client = await listener.AcceptTcpClientAsync();
+        }
+        catch (ObjectDisposedException) when (cancellation.IsCancellationRequested)
+        {
+            return;
+        }
+        catch (SocketException) when (cancellation.IsCancellationRequested)
+        {
+            return;
+        }
+
+        if (cancellation.IsCancellationRequested)
+        {
+            client.Close();
+            return;
+        }
+
+        _acceptedTcpClient = client;
         _socket = client.Client;
         _socket.NoDelay = true;
 
@@ -152,8 +182,11 @@ public class SocketCommunicationManager : ICommunicationManager
     /// </summary>
     public void StopServer()
     {
+        _connectionCancellation.Cancel();
         _tcpListener?.Stop();
         _tcpListener = null;
+        _acceptedTcpClient?.Close();
+        _acceptedTcpClient = null;
         _binaryReader?.Dispose();
         _binaryWriter?.Dispose();
     }
@@ -171,6 +204,12 @@ public class SocketCommunicationManager : ICommunicationManager
     {
         // TODO: pass cancellation token, if user cancels the operation, so we don't wait 50 secs to connect
         // for now added a check for validation of this.tcpclient
+        if (_connectionCancellation.IsCancellationRequested)
+        {
+            _connectionCancellation.Dispose();
+            _connectionCancellation = new CancellationTokenSource();
+        }
+
         _clientConnectionAcceptedEvent.Reset();
         EqtTrace.Info("Trying to connect to server on socket : {0} ", endpoint);
         _tcpClient = new TcpClient { NoDelay = true };
@@ -229,6 +268,7 @@ public class SocketCommunicationManager : ICommunicationManager
     /// </summary>
     public void StopClient()
     {
+        _connectionCancellation.Cancel();
         // tcpClient.Close() calls tcpClient.Dispose().
         _tcpClient?.Close();
         _tcpClient = null;

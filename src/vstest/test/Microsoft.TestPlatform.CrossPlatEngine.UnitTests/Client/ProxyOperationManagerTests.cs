@@ -450,8 +450,14 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
     {
         // Raise host exited when end session is called
         _mockTestHostManager.Setup(tmh => tmh.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>()))
-            .Callback(() => _mockTestHostManager.Raise(t => t.HostLaunched += null, new HostProviderEventArgs(string.Empty)))
+            .Callback(() => _mockTestHostManager.Raise(t => t.HostLaunched += null, CreateCurrentHostLaunchedArgs()))
             .Returns(Task.FromResult(launchStatus));
+    }
+
+    private static HostProviderEventArgs CreateCurrentHostLaunchedArgs()
+    {
+        using var process = Process.GetCurrentProcess();
+        return new HostProviderEventArgs(string.Empty, 0, process.Id);
     }
 
     [TestMethod]

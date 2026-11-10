@@ -94,6 +94,7 @@ stages:
             extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
           
           - buildNameFormat: 'SB_{0}_Mono_Offline_CurrentSourceBuiltSdk'
+            useBuiltSdkForTests: true
             distro: centos
             targetArchitecture: x64
             buildFromArchive: true             # ✅
@@ -127,6 +128,7 @@ stages:
           - ${{ if containsValue(parameters.verifications, 'source-build-stage2') }}:
 
             - buildNameFormat: 'SB_{0}_Offline_CurrentSourceBuiltSdk'
+              useBuiltSdkForTests: true
               distro: centos
               targetArchitecture: x64
               buildFromArchive: false            # 🚫
@@ -242,6 +244,7 @@ stages:
               createSourceArtifact: false        # 🚫
 
             - buildNameFormat: 'SB_{0}_Offline_CurrentSourceBuiltSdk'
+              useBuiltSdkForTests: true
               distro: fedora
               targetArchitecture: x64
               buildFromArchive: false            # 🚫
