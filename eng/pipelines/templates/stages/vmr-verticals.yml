@@ -315,7 +315,7 @@ stages:
             crossRootFs: '/crossrootfs/x64'
             targetOS: browser
             targetArchitecture: wasm
-            extraProperties: /p:DotNetBuildUseMonoRuntime=false
+            extraProperties: /p:RuntimeFlavor=CoreCLR
             brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
@@ -436,7 +436,7 @@ stages:
             crossRootFs: '/crossrootfs/x64'
             targetOS: wasi
             targetArchitecture: wasm
-            extraProperties: /p:DotNetBuildUseMonoRuntime=false
+            extraProperties: /p:RuntimeFlavor=CoreCLR
             brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
@@ -466,22 +466,6 @@ stages:
           targetOS: osx
           targetArchitecture: x64
           brandingType: ${{ variables.brandingType }}
-
-      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            buildName: OSX_Shortstack_Mono_LLVMAOT
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            isCodeqlActive: ${{ parameters.isCodeqlActive }}
-            sign: ${{ variables.signEnabled }}
-            signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac_ShortStack }}
-            useMonoRuntime: true
-            targetOS: osx
-            targetArchitecture: x64
-            extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
-            brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -515,26 +499,6 @@ stages:
           targetArchitecture: x64
           extraProperties: /p:PgoInstrument=true /p:TargetCxxStandardLibrary=libc++ /p:TargetCxxStandardLibraryStatic=true /p:TargetCxxAbiLibrary=libstdc++
           brandingType: ${{ variables.brandingType }}
-
-      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            buildName: Linux_Shortstack_Mono_LLVMAOT
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            isCodeqlActive: ${{ parameters.isCodeqlActive }}
-            sign: ${{ variables.signEnabled }}
-            signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Linux_Shortstack }}
-            container:
-              name: ${{ variables.azurelinuxX64CrossContainerName }}
-              image: ${{ variables.azurelinuxX64CrossContainerImage }}
-            crossRootFs: '/crossrootfs/x64'
-            useMonoRuntime: true
-            targetOS: linux
-            targetArchitecture: x64
-            extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
-            brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -636,25 +600,6 @@ stages:
           targetArchitecture: arm64
           targetRid: ${{ variables.linuxMuslArm64Rid }}
           brandingType: ${{ variables.brandingType }}
-
-      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            buildName: Linux_Shortstack_Mono_LLVMAOT
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            isCodeqlActive: ${{ parameters.isCodeqlActive }}
-            sign: ${{ variables.signEnabled }}
-            signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Linux_Shortstack }}
-            container:
-              name: ${{ variables.azurelinuxArm64CrossContainerName }}
-              image: ${{ variables.azurelinuxArm64CrossContainerImage }}
-            crossRootFs: '/crossrootfs/arm64'
-            useMonoRuntime: true
-            targetOS: linux
-            targetArchitecture: arm64
-            extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
-            brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:

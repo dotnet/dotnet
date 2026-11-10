@@ -203,10 +203,6 @@ The `VMR_Validation` stage includes `ValidateSigning` jobs that run on Windows, 
 
 Signing verification failures indicate unsigned or incorrectly signed binaries in the output.
 
-## Outer-loop builds
-
-The source-build outer-loop pipeline (`eng/pipelines/source-build-outer-loop.yml`) runs additional SB legs that are too expensive or specialized for the main PR/CI pipeline. These include Mono runtime builds.
-
 ## Key VMR files
 
 | File | Purpose |

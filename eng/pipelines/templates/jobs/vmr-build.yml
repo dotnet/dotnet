@@ -38,11 +38,6 @@ parameters:
   type: string
   default: ''
 
-- name: useMonoRuntime
-  displayName: True when build output uses the mono runtime
-  type: boolean
-  default: false
-
 - name: sign
   displayName: True when build output should be signed (includes dry runs)
   type: boolean
@@ -914,10 +909,6 @@ jobs:
           fi
 
           extraBuildProperties="$extraBuildProperties $(runtimeSourceFeedKeyProperties)"
-
-          if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
-            customBuildArgs="$customBuildArgs --use-mono-runtime"
-          fi
 
           if [[ -n "${{ parameters.targetRid }}" ]]; then
             customBuildArgs="$customBuildArgs --target-rid ${{ parameters.targetRid }}"
