@@ -1,14 +1,14 @@
 {
   "tools": {
-    "dotnet": "12.0.100-alpha.1.26531.102"
+    "dotnet": "12.0.100-alpha.1.26555.106"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "12.0.0-beta.26555.106",
-    "Microsoft.DotNet.Helix.Sdk": "12.0.0-beta.26555.106",
+    "Microsoft.DotNet.Arcade.Sdk": "12.0.0-beta.26556.115",
+    "Microsoft.DotNet.Helix.Sdk": "12.0.0-beta.26556.115",
     "Microsoft.Build.Traversal": "3.4.0"
   },
   "sdk": {
-    "version": "12.0.100-alpha.1.26531.102",
+    "version": "12.0.100-alpha.1.26555.106",
     "allowPrerelease": true,
     "rollForward": "major",
     "paths": [
