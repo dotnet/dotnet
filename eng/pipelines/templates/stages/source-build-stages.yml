@@ -28,6 +28,11 @@ parameters:
   type: boolean
   default: true
 
+- name: isCodeqlActive
+  displayName: True when the pipeline is configured to run CodeQL
+  type: boolean
+  default: false
+
 # True when the build is a build run from the production pipeline
 - name: isOfficialBuild
   type: boolean
@@ -64,6 +69,7 @@ stages:
       pool_LinuxArm64: ${{ parameters.pool_LinuxArm64 }}
       useMicrosoftBuildAssetsForTests: ${{ parameters.useMicrosoftBuildAssetsForTests }}
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      isCodeqlActive: ${{ parameters.isCodeqlActive }}
       isOfficialBuild: ${{ parameters.isOfficialBuild }}
       desiredSigning: ${{ parameters.desiredSigning }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
