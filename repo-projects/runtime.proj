@@ -33,11 +33,11 @@
     <BuildArgs Condition="'$(BuildBootstrap)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)bootstrap</BuildArgs>
 
     <!-- If this build is not a "special flavor" build, build everything that can be built for this target. -->
-    <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' != 'true' and '$(TargetOS)' != 'browser'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
-    <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' == 'false' and '$(TargetOS)' == 'browser'">$(BuildArgs) /p:RuntimeFlavor=CoreCLR</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' != 'true' and '$(TargetArchitecture)' != 'wasm'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' == 'false' and '$(TargetArchitecture)' == 'wasm'">$(BuildArgs) /p:RuntimeFlavor=CoreCLR /p:_BuildNativeAOTRuntimePack=true</BuildArgs>
 
-    <!-- NativeAOT wasm builds are not yet supported in the VMR. -->
-    <BuildArgs Condition="'$(TargetArchitecture)' == 'wasm'">$(BuildArgs) /p:NativeAotSupported=false</BuildArgs>
+    <!-- NativeAOT wasm builds are not yet supported by the SDK that builds the VMR. -->
+    <BuildArgs Condition="'$(TargetArchitecture)' == 'wasm'">$(BuildArgs) /p:SupportsNativeAotComponents=false</BuildArgs>
 
     <!-- When we're actually doing signing and the ESRP tool is available, forward down the path to the repo builds. -->
     <BuildArgs Condition="'$(DotNetBuildSign)' == 'true' and '$(ForceDryRunSigning)' != 'true' and '$(DotNetEsrpToolPath)' != ''">$(BuildArgs) /p:DotNetEsrpToolPath=$(DotNetEsrpToolPath)</BuildArgs>
