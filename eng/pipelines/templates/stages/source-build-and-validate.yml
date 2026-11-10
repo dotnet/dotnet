@@ -155,7 +155,7 @@ stages:
         
         # We only want to publish SB artifacts for each distinct distro/version/arch combination.
         # Stage 2 legs (those with reuseBuildArtifactsFrom) also get extraPropertiesStage2.
-        ${{ if and(endsWith(leg.buildNameFormat, 'Offline_MsftSdk'), not(contains(leg.buildNameFormat, '_Mono_'))) }}:
+        ${{ if endsWith(leg.buildNameFormat, 'Offline_MsftSdk') }}:
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             extraProperties: ${{ leg.extraProperties }} ${{ parameters.extraPropertiesStage2 }} /p:DotNetSourceOnlyPublishArtifacts=true
           ${{ else }}:

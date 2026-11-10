@@ -4,7 +4,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
@@ -40,7 +39,6 @@ internal partial class DotNetHelper
     });
 
     private ITestOutputHelper OutputHelper { get; }
-    public bool IsMonoRuntime { get; }
 
     public DotNetHelper(ITestOutputHelper outputHelper)
     {
@@ -48,8 +46,6 @@ internal partial class DotNetHelper
 
         lock (s_lockObj)
         {
-            IsMonoRuntime = DetermineIsMonoRuntime(Config.DotNetDirectory);
-
             if (!Directory.Exists(ProjectsDirectory))
             {
                 Directory.CreateDirectory(ProjectsDirectory);
@@ -257,26 +253,6 @@ internal partial class DotNetHelper
             content,
             "<!-- " + PlaceholderComment + " -->");
         File.WriteAllText(destPath, sanitized);
-    }
-
-    private static bool DetermineIsMonoRuntime(string dotnetRoot)
-    {
-        string sharedFrameworkRoot = Path.Combine(dotnetRoot, "shared", "Microsoft.NETCore.App");
-        if (!Directory.Exists(sharedFrameworkRoot))
-        {
-            return false;
-        }
-
-        string? version = Directory.GetDirectories(sharedFrameworkRoot).FirstOrDefault();
-        if (version is null)
-        {
-            return false;
-        }
-
-        string sharedFramework = Path.Combine(sharedFrameworkRoot, version);
-
-        // Check the presence of one of the mono header files.
-        return File.Exists(Path.Combine(sharedFramework, "mono-gc.h"));
     }
 
     private static string GetProjectDirectory(string projectName) => Path.Combine(ProjectsDirectory, projectName);
