@@ -38,8 +38,8 @@
       of a .NET major or minor release, prebuilts may be needed. When the release is mature, prebuilts
       are not necessary, and this property is removed from the file.
     -->
-    <PrivateSourceBuiltSdkVersion>10.0.114-servicing.26522.126</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>10.0.114-servicing.26522.126</PrivateSourceBuiltArtifactsVersion>
+    <PrivateSourceBuiltSdkVersion>10.0.115-servicing.26529.108</PrivateSourceBuiltSdkVersion>
+    <PrivateSourceBuiltArtifactsVersion>10.0.115-servicing.26529.108</PrivateSourceBuiltArtifactsVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
@@ -48,11 +48,11 @@
     <NuGetProtocolVersion>7.0.3</NuGetProtocolVersion>
     <NuGetProjectModelVersion>7.0.3</NuGetProjectModelVersion>
     <!-- runtime dependencies -->
-    <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.11</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftExtensionsLoggingConsoleVersion>10.0.11</MicrosoftExtensionsLoggingConsoleVersion>
-    <MicrosoftExtensionsLoggingVersion>10.0.11</MicrosoftExtensionsLoggingVersion>
-    <MicrosoftExtensionsHostingVersion>10.0.11</MicrosoftExtensionsHostingVersion>
-    <SystemSecurityCryptographyXmlVersion>10.0.11</SystemSecurityCryptographyXmlVersion>
+    <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.13</MicrosoftExtensionsFileSystemGlobbingVersion>
+    <MicrosoftExtensionsLoggingConsoleVersion>10.0.13</MicrosoftExtensionsLoggingConsoleVersion>
+    <MicrosoftExtensionsLoggingVersion>10.0.13</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftExtensionsHostingVersion>10.0.13</MicrosoftExtensionsHostingVersion>
+    <SystemSecurityCryptographyXmlVersion>10.0.13</SystemSecurityCryptographyXmlVersion>
     <!-- external dependencies -->
     <NewtonsoftJsonVersion>13.0.4</NewtonsoftJsonVersion>
     <OctokitVersion>14.0.0</OctokitVersion>
