@@ -834,7 +834,7 @@ nuget push foo.nupkg -Timeout 360</target>
       </trans-unit>
       <trans-unit id="RestoreCommandUsageSummary">
         <source>[&lt;solution&gt; | &lt;packages.config file&gt; | &lt;Microsoft Build project&gt;] [options]</source>
-        <target state="translated">[&lt;solution&gt; | &lt;packages.config file&gt; | &lt;Microsoft Build project&gt;] [options]</target>
+        <target state="translated">[&lt;解決方案&gt; | &lt;packages.config 檔案&gt; | &lt;Microsoft Build 專案&gt;] [選項]</target>
         <note>Please don't localize "packages.config"</note>
       </trans-unit>
       <trans-unit id="RestoreCommandUseLockFile">

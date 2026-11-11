@@ -194,7 +194,7 @@
       </trans-unit>
       <trans-unit id="NoLatestVersionFound">
         <source>No latest version found for '{0}' for the given source repositories and resolution context</source>
-        <target state="translated">지정된 소스 리포지토리와 확인 컨텍스트에서 '{0}'에 대한 최신 버전을 찾을 수 없습니다.</target>
+        <target state="translated">지정된 소스 리포지토리와 해결 컨텍스트에서 '{0}'에 대한 최신 버전을 찾을 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoPackageUpdates">
@@ -351,7 +351,7 @@
       </trans-unit>
       <trans-unit id="ResolutionSuccessfulNoAction">
         <source>Resolution was successful but resulted in no action</source>
-        <target state="translated">성공적으로 확인되었지만 작업이 수행되지 않았습니다.</target>
+        <target state="translated">성공적으로 해결되었지만 작업이 수행되지 않았습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ResolvedActionsToInstallPackage">

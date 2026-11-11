@@ -34,7 +34,7 @@
       </trans-unit>
       <trans-unit id="Error_CopilotRequestFailed">
         <source>GitHub Copilot was unable to complete the request. See the Activity Log for details.</source>
-        <target state="new">GitHub Copilot was unable to complete the request. See the Activity Log for details.</target>
+        <target state="translated">GitHub Copilot 無法完成要求。如需詳細資料，請查看活動記錄。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotServiceNotAvailable">
@@ -244,17 +244,17 @@
       </trans-unit>
       <trans-unit id="Text_MinPublishAgeExceptions_Description">
         <source>Package ID patterns exempt from minimum publish age checks. [Learn more](https://aka.ms/nuget/min-publish-age)</source>
-        <target state="new">Package ID patterns exempt from minimum publish age checks. [Learn more](https://aka.ms/nuget/min-publish-age)</target>
+        <target state="translated">不受最低發佈年齡檢查限制的套件識別碼模式。[深入了解](https://aka.ms/nuget/min-publish-age)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_MinPublishAgeExceptions_Title">
         <source>Minimum publish age exceptions</source>
-        <target state="new">Minimum publish age exceptions</target>
+        <target state="translated">最低發佈年齡例外狀況</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_MinPublishAgeHours_Header">
         <source>Minimum publish age (hours)</source>
-        <target state="new">Minimum publish age (hours)</target>
+        <target state="translated">最低發佈年齡 (小時)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">

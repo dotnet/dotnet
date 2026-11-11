@@ -889,6 +889,89 @@ namespace NuGet.Packaging.Test
             }
         }
 
+        [Theory]
+        [InlineData("../outside.txt")]
+        [InlineData("%2e%2e/outside.txt")]
+        [InlineData("%2e%2e%2foutside.txt")]
+        [InlineData("../destination-sibling/outside.txt")]
+        [InlineData(".")]
+        [InlineData("%2e")]
+        [InlineData("subdir/../..")]
+        public async Task CopyFiles_UnsafeEntry_ThrowsBeforeInvokingExtractionDelegate(string packageFile)
+        {
+            using (var root = TestDirectory.Create())
+            {
+                var identity = new PackageIdentity("A", new NuGetVersion("2.0.3"));
+                var packageFileInfo = await TestPackagesCore.GeneratePackageAsync(
+                    root,
+                    identity.Id,
+                    identity.Version.ToString(),
+                    entryModifiedTime: DateTimeOffset.Now,
+                    packageFile);
+
+                using (var packageStream = File.OpenRead(packageFileInfo.FullName))
+                using (var packageReader = new PackageArchiveReader(packageStream))
+                {
+                    var extractionDelegateInvoked = false;
+
+                    Assert.Throws<UnsafePackageEntryException>(() => packageReader.CopyFiles(
+                        Path.Combine(root.Path, "destination"),
+                        new[] { Uri.UnescapeDataString(packageFile) },
+                        (source, target, stream) =>
+                        {
+                            extractionDelegateInvoked = true;
+                            return null;
+                        },
+                        NullLogger.Instance,
+                        CancellationToken.None));
+
+                    Assert.False(extractionDelegateInvoked);
+                }
+            }
+        }
+
+        [Theory]
+        [InlineData("content/a.txt", "content/a.txt")]
+        [InlineData("content/a%20b.txt", "content/a b.txt")]
+        [InlineData("content/../a.txt", "a.txt")]
+        [InlineData("content/%2e%2e/a.txt", "a.txt")]
+        [InlineData("content%2fa.txt", "content/a.txt")]
+        [InlineData("/content/a.txt", "content/a.txt")]
+        public async Task CopyFiles_SafeEntry_UsesValidatedCanonicalPath(string packageFile, string relativeTargetPath)
+        {
+            using (var root = TestDirectory.Create())
+            {
+                var identity = new PackageIdentity("A", new NuGetVersion("2.0.3"));
+                var packageFileInfo = await TestPackagesCore.GeneratePackageAsync(
+                    root,
+                    identity.Id,
+                    identity.Version.ToString(),
+                    entryModifiedTime: DateTimeOffset.Now,
+                    packageFile);
+                var destination = Path.Combine(root.Path, "destination");
+                var expectedFilePath = Path.Combine(destination, relativeTargetPath.Replace('/', Path.DirectorySeparatorChar));
+
+                using (var packageStream = File.OpenRead(packageFileInfo.FullName))
+                using (var packageReader = new PackageArchiveReader(packageStream))
+                {
+                    var files = packageReader.CopyFiles(
+                        destination,
+                        new[] { Uri.UnescapeDataString(packageFile) },
+                        (source, target, stream) =>
+                        {
+                            Assert.Equal(expectedFilePath, target);
+                            Directory.CreateDirectory(Path.GetDirectoryName(target));
+                            return ExtractFile(source, target, stream);
+                        },
+                        NullLogger.Instance,
+                        CancellationToken.None);
+
+                    Assert.Equal(expectedFilePath, Assert.Single(files));
+                    Assert.True(File.Exists(expectedFilePath));
+                }
+            }
+        }
+
         [Fact]
         public async Task CopyFiles_ContainsInvalidEntry_Fail()
         {
@@ -1032,7 +1115,7 @@ namespace NuGet.Packaging.Test
                             NullLogger.Instance,
                             CancellationToken.None);
 
-                        var expectedFilePath = Path.Combine(destination.Path.ToUpper(), "readme~.txt");
+                        var expectedFilePath = Path.GetFullPath(Path.Combine(destination.Path.ToUpper(), "readme~.txt"));
 
                         Assert.Equal(1, files.Count());
                         Assert.Equal(expectedFilePath, files.Single());
@@ -1619,12 +1702,88 @@ namespace NuGet.Packaging.Test
             using (TestDirectory testDirectory = TestDirectory.Create())
             {
                 string firstFile = package.Reader.GetFiles().First();
-                string destination = Path.Combine(testDirectory, firstFile);
+                string destination = Path.Combine(testDirectory, "extracted-file");
 
                 // Act
+#pragma warning disable CS0618 // Verify compatibility of the obsolete overload.
                 package.Reader.ExtractFile(firstFile, destination, logger: null);
+#pragma warning restore CS0618
 
-                // Assert is just that no exception was thrown.
+                // Assert
+                Assert.True(File.Exists(destination));
+            }
+        }
+
+        [Fact]
+        public void ExtractFile_WithDestinationAndNullLogger_UsesCanonicalTargetPath()
+        {
+            using (var package = PackageReaderTest.Create(TestPackagesCore.GetPackageCoreReaderTestPackage()))
+            using (var directory = TestDirectory.Create())
+            {
+                string firstFile = package.Reader.GetFiles().First();
+                string expectedPath = Path.Combine(directory.Path, "renamed.nuspec");
+
+                string extractedPath = package.Reader.ExtractFile(
+                    firstFile, directory.Path, "content/../renamed.nuspec", logger: null);
+
+                Assert.Equal(expectedPath, extractedPath);
+                using (var expected = new MemoryStream())
+                using (var source = package.Reader.GetStream(firstFile))
+                {
+                    source.CopyTo(expected);
+                    Assert.Equal(expected.ToArray(), File.ReadAllBytes(extractedPath));
+                }
+            }
+        }
+
+        [Theory]
+        [InlineData("../destination-sibling/outside.nuspec", false)]
+        [InlineData("../destination-sibling/outside.nuspec", true)]
+        [InlineData("", false)]
+        public void ExtractFile_WithDestinationAndUnsafeTarget_ThrowsBeforeWriting(
+            string targetFilePath, bool absolutePath)
+        {
+            using (var package = PackageReaderTest.Create(TestPackagesCore.GetPackageCoreReaderTestPackage()))
+            using (var directory = TestDirectory.Create())
+            {
+                string firstFile = package.Reader.GetFiles().First();
+                string destination = Path.Combine(directory.Path, "destination");
+                if (absolutePath)
+                {
+                    targetFilePath = Path.GetFullPath(Path.Combine(destination, targetFilePath));
+                }
+
+                Assert.Throws<UnsafePackageEntryException>(
+                    () => package.Reader.ExtractFile(firstFile, destination, targetFilePath, NullLogger.Instance));
+
+                Assert.False(Directory.Exists(destination));
+                Assert.False(Directory.Exists(Path.Combine(directory.Path, "destination-sibling")));
+            }
+        }
+
+        [Theory]
+        [InlineData(null, "destination", "target.nuspec", "packageFile")]
+        [InlineData("source.nuspec", null, "target.nuspec", "destination")]
+        [InlineData("source.nuspec", "destination", null, "targetFilePath")]
+        public void ExtractFile_WithDestinationAndNullArgument_Throws(
+            string packageFile, string destination, string targetFilePath, string parameterName)
+        {
+            using (var package = PackageReaderTest.Create(TestPackagesCore.GetPackageCoreReaderTestPackage()))
+            {
+                var exception = Assert.Throws<ArgumentNullException>(
+                    () => package.Reader.ExtractFile(packageFile, destination, targetFilePath, NullLogger.Instance));
+
+                Assert.Equal(parameterName, exception.ParamName);
+            }
+        }
+
+        [Fact]
+        public void ExtractFile_WithEmptyDestination_Throws()
+        {
+            using (var package = PackageReaderTest.Create(TestPackagesCore.GetPackageCoreReaderTestPackage()))
+            {
+                Assert.Throws<ArgumentException>(
+                    () => package.Reader.ExtractFile("Aa.nuspec", string.Empty, "target.nuspec", NullLogger.Instance));
             }
         }
 

@@ -246,25 +246,28 @@ public class SqlServerStringMethodTranslator(
                 method.ReturnType);
         }
 
-        // If the pattern is an empty string, we need to special case to always return 0 (since CHARINDEX return 0, which we'd subtract to
-        // -1). Handle separately for constant and non-constant patterns.
+        // If the pattern is an empty string, we need to special case to return the starting position (0 by default), as .NET does: CHARINDEX
+        // returns 0 for an empty pattern regardless of its start location, which we'd subtract to -1. Handle separately for constant and
+        // non-constant patterns.
         if (searchExpression is SqlConstantExpression { Value: "" })
         {
             return sqlExpressionFactory.Case(
-                [new CaseWhenClause(sqlExpressionFactory.IsNotNull(instance), sqlExpressionFactory.Constant(0))],
+                [new CaseWhenClause(sqlExpressionFactory.IsNotNull(instance), startIndex ?? sqlExpressionFactory.Constant(0))],
                 elseResult: null
             );
         }
 
+        // Use LIKE rather than equality to detect the empty pattern: SQL Server ignores trailing spaces in equality comparisons, so a
+        // whitespace-only pattern would be treated as empty (as in the Contains translation, see #19402).
         var offsetExpression = searchExpression is SqlConstantExpression
             ? sqlExpressionFactory.Constant(1)
             : sqlExpressionFactory.Case(
                 [
                     new CaseWhenClause(
-                        sqlExpressionFactory.Equal(
+                        sqlExpressionFactory.Like(
                             searchExpression,
                             sqlExpressionFactory.Constant(string.Empty, stringTypeMapping)),
-                        sqlExpressionFactory.Constant(0))
+                        startIndex is null ? sqlExpressionFactory.Constant(0) : sqlExpressionFactory.Negate(startIndex))
                 ],
                 sqlExpressionFactory.Constant(1));
 

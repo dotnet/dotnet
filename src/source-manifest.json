@@ -1,149 +1,149 @@
 {
   "repositories": [
     {
-      "barId": 335931,
+      "barId": 340809,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "7dad90156e9d69e991ad499ece9cf805cabcf506"
+      "commitSha": "305558e284ce35e7b35ac9ebd75802915394fd3e"
     },
     {
-      "barId": 336188,
+      "barId": 340550,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "77e4202bed594e8c1063e697b289221e57858bd5"
+      "commitSha": "eeceb660128d3d00ea9b35effe4fad3fac3d42e3"
     },
     {
-      "barId": 332483,
+      "barId": 338683,
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "1ac3140b7996a34f89a684a480b39e40deaa1199"
+      "commitSha": "a1daff94c5cfe452443ebac0f8c0cf4f7bfaaab7"
     },
     {
-      "barId": 336223,
+      "barId": 340712,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "d06ff716f77d3187145ac735606eb92ce5739279"
+      "commitSha": "1b0c04a4ac1651129c72533ceae51e791430429e"
     },
     {
-      "barId": 329538,
+      "barId": 339190,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "2ee21e1b8f7721ea9cb89cd4db4f589b37b579d7"
+      "commitSha": "940e0b0b2cb05cd142f8e9760fda2779175127bb"
     },
     {
-      "barId": 335441,
+      "barId": 340640,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "7a10c17f261504de6d9c67bbfc6cc4c371da642a"
+      "commitSha": "2eba842a0f080e27c29baaa2f4d6847563e7ce44"
     },
     {
-      "barId": 335792,
+      "barId": 340746,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "2892c33e249bff10930e49844a6ee411804494db"
+      "commitSha": "3e837776e37f372fb966434d167460aab5c84dca"
     },
     {
-      "barId": 335697,
+      "barId": 340648,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "36f4c4465f70697bf6ebc5871f7289881d0e6794"
+      "commitSha": "73b35435288b2cb43bdad2f97b90cd7779d6c9b7"
     },
     {
-      "barId": 336212,
+      "barId": 340731,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "c5a9c026ac65f674ed4830d5d11c80b66b8c8118"
+      "commitSha": "59c747725ef5ec90ce9a9751f9509db13e395f31"
     },
     {
-      "barId": 336412,
+      "barId": 340747,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "c1c99ee05981494f34191590eb8ec2e47dba1958"
+      "commitSha": "51359c8f2b3484ba1994f4304037edad4941923b"
     },
     {
-      "barId": 336481,
+      "barId": 340818,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "627980548b6851041101b9d85092fc4e51b7abb6"
+      "commitSha": "c8fd8f80fcf7532e3c6064b5ff2a245c1a9db1c5"
     },
     {
-      "barId": 335416,
+      "barId": 340138,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "526803117ad8da970f54e6df3ac1916f0041d112"
+      "commitSha": "3fdf3c3fff5747937bf99568f41bf12db657e014"
     },
     {
-      "barId": 336516,
+      "barId": 340967,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "00cc05139240bca32b3e778ee2f6ffd7c6a5bd60"
+      "commitSha": "b9c78928daab8af1306c588a3b3aa7211c4339b6"
     },
     {
-      "barId": 335115,
+      "barId": 340292,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "33071a16e5320a16a9dc4da5240fb61515c8d064"
+      "commitSha": "b14ecbad07974d4ad92637f6092ad984f4f7bcad"
     },
     {
-      "barId": 335788,
+      "barId": 340856,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "bdf6a59a376b141815580500d147c31b95d63a64"
+      "commitSha": "6623b2f6a9665efda99a799ec766eeae54feb2b6"
     },
     {
-      "barId": 335894,
+      "barId": 339449,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "6d519fc6b007c4471ad08e0fca5d970ed474b1d8"
+      "commitSha": "3fc2853ea93385e4adace3b5fef0a300e1d888dd"
     },
     {
-      "barId": 324879,
+      "barId": 339178,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "b989174b808b9065982d25f36419cb05644258a8"
+      "commitSha": "ba04c001f5696905e81cca2ae6a61d2af31d7285"
     },
     {
-      "barId": 326919,
+      "barId": 340492,
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",
-      "commitSha": "260aefcbf91e84ea4a4941336a0210656edd55d7"
+      "commitSha": "d598569d63dfba306a5a10a68d0c566cc2a7440d"
     },
     {
-      "barId": 335104,
+      "barId": 340512,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "05cd78191d1e42585744353e492f81dc3f2c2470"
+      "commitSha": "7ed69f5c0bcc4accc6ffe5839a5fd0c9a314a377"
     },
     {
-      "barId": 335429,
+      "barId": 340394,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "e95b692aa80fb9aee711ad6847b1a8dd0a5d786a"
+      "commitSha": "9929f42c6069d45abf7a1cac9e60441926544561"
     },
     {
-      "barId": 335533,
+      "barId": 340637,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "73d13499a0d4bae1ffeac838c5f458c7831335fc"
+      "commitSha": "8a9523128c090c550f68a5a2bc5effc0e0b1e44d"
     },
     {
-      "barId": 335437,
+      "barId": 340460,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "82c6fe2a2ae467fb6345808c77b75ef898492a26"
+      "commitSha": "1fdaaaab9b20a0c00c3a53fa1a61d047fac96d2a"
     },
     {
-      "barId": 326568,
+      "barId": 338729,
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",
-      "commitSha": "2414cbd4d70dee77b185cb3369d2fe5751036637"
+      "commitSha": "480f24d55faf82033891822d0fcc38a62ba56ed4"
     }
   ],
   "submodules": [
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "988ea2c1798de7779f656df2281dd36d6039a17a"
+      "commitSha": "a8380b01a25ebdb130097b607b3afed2a58d04ba"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
@@ -159,6 +159,11 @@
       "path": "source-build-assets/src/externalPackages/src/abstractions-xunit",
       "remoteUri": "https://github.com/xunit/abstractions.xunit",
       "commitSha": "b75d54d73b141709f805c2001b16f3dd4d71539d"
+    },
+    {
+      "path": "source-build-assets/src/externalPackages/src/antissrf",
+      "remoteUri": "https://github.com/microsoft/AntiSSRF.git",
+      "commitSha": "8366ff53e9c75a52d1edcc06fde7b1620243928c"
     },
     {
       "path": "source-build-assets/src/externalPackages/src/antlr4",
@@ -204,6 +209,11 @@
       "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet",
       "remoteUri": "https://github.com/open-telemetry/opentelemetry-dotnet",
       "commitSha": "611868a27afda59761da60b98610f8d3b85497dc"
+    },
+    {
+      "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet-1.18",
+      "remoteUri": "https://github.com/open-telemetry/opentelemetry-dotnet",
+      "commitSha": "9db92a4e978b4ae432183c790259be48a475578f"
     },
     {
       "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet-contrib",

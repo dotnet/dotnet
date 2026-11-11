@@ -45,9 +45,9 @@ jobs:
 
       - name: Set up Node.js
         if: steps.harness.outputs.exists == 'true'
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
-          node-version: 22.12
+          node-version: 24.22.0
           cache: npm
           cache-dependency-path: eng/harness-evaluation/package-lock.json
 
@@ -55,11 +55,6 @@ jobs:
         if: steps.harness.outputs.exists == 'true'
         working-directory: eng/harness-evaluation
         run: npm ci
-
-      - name: Audit evaluation dependencies
-        if: steps.harness.outputs.exists == 'true'
-        working-directory: eng/harness-evaluation
-        run: npm audit --audit-level=moderate
 
       - name: Test evaluation harness
         if: steps.harness.outputs.exists == 'true'

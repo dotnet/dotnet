@@ -7,6 +7,8 @@
     <!-- Newtonsoft.Json 13.0.4 includes the AOT annotations this compatibility test needs. -->
     <SkipEnsureNewtonsoftJsonVersion>true</SkipEnsureNewtonsoftJsonVersion>
     <PublishAot>true</PublishAot>
+    <!-- Work around https://github.com/dotnet/sdk/issues/56653 while retaining documentation generation for analyzers. -->
+    <PublishDocumentationFile>false</PublishDocumentationFile>
     <TrimmerSingleWarn>false</TrimmerSingleWarn>
     <!-- Ignore the single warn files marked below to suppress their known warnings. -->
     <NoWarn>$(NoWarn);IL2104;IL3053</NoWarn>

@@ -1,0 +1,8 @@
+# Everything one QB creates for their own sessions lives in local/ and is never published:
+# qb-config.local.json (your email address), reports, logs, evidence, your owner notes, the optional team roster, and any notes or
+# drafts. Preflight stops the run if a config holding your email address is tracked by Git or not ignored.
+/local/
+# Your own settings (an email address) from copying qb-config.template.json. Ignored wherever it is.
+qb-config.local.json
+# Your own copy of knowledge/routing.json, made once on first use. It belongs in local/knowledge/; ignored wherever it is.
+routing.local.json

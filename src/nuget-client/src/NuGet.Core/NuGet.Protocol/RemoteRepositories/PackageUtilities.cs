@@ -23,7 +23,7 @@ namespace NuGet.Protocol
                 using (var reader = new PackageArchiveReader(nupkgStream, leaveStreamOpen: true))
                 using (var nuspecStream = reader.GetNuspec())
                 {
-                    if (nupkgStream == null)
+                    if (nuspecStream == null)
                     {
                         throw new FatalProtocolException(string.Format(CultureInfo.CurrentCulture, Strings.Log_FailedToGetNuspecStream, id));
                     }

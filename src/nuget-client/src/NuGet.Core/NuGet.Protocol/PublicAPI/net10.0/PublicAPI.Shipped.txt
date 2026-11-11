@@ -829,6 +829,12 @@ NuGet.Protocol.PackageSearchResourceV2FeedProvider.PackageSearchResourceV2FeedPr
 NuGet.Protocol.PackageSearchResourceV3
 NuGet.Protocol.PackageSearchResourceV3Provider
 NuGet.Protocol.PackageSearchResourceV3Provider.PackageSearchResourceV3Provider() -> void
+NuGet.Protocol.PackageStagingResourceV3
+NuGet.Protocol.PackageStagingResourceV3.PushPackageAsync(string! packagePath, string? apiKey, string? groupId, System.TimeSpan requestTimeout, bool allowInsecureConnections, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+NuGet.Protocol.PackageStagingResourceV3.PushSymbolsAsync(string! packagePath, string? apiKey, string? groupId, System.TimeSpan requestTimeout, bool allowInsecureConnections, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+NuGet.Protocol.PackageStagingResourceV3.SourceUri.get -> System.Uri!
+NuGet.Protocol.PackageStagingResourceV3Provider
+NuGet.Protocol.PackageStagingResourceV3Provider.PackageStagingResourceV3Provider() -> void
 NuGet.Protocol.PackageUpdateResourceV2Provider
 NuGet.Protocol.PackageUpdateResourceV2Provider.PackageUpdateResourceV2Provider() -> void
 NuGet.Protocol.PackageUpdateResourceV3Provider
@@ -1782,8 +1788,9 @@ override NuGet.Protocol.PackageSearchResourceV2Feed.SearchAsync(string! searchTe
 override NuGet.Protocol.PackageSearchResourceV2Feed.SupportsPackageTypeFiltering.get -> bool
 override NuGet.Protocol.PackageSearchResourceV2FeedProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.PackageSearchResourceV3.SearchAsync(string! searchTerm, NuGet.Protocol.Core.Types.SearchFilter! filter, int skip, int take, NuGet.Common.ILogger! log, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata!>!>!
-override NuGet.Protocol.PackageSearchResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.PackageSearchResourceV3.SupportsPackageTypeFiltering.get -> bool
+override NuGet.Protocol.PackageSearchResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
+override NuGet.Protocol.PackageStagingResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.PackageUpdateResourceV2Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.PackageUpdateResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.PluginFindPackageByIdResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
@@ -2064,6 +2071,7 @@ static readonly NuGet.Protocol.ServiceTypes.LegacyGallery -> string![]!
 static readonly NuGet.Protocol.ServiceTypes.PackageBaseAddress -> string![]!
 static readonly NuGet.Protocol.ServiceTypes.PackageDetailsUriTemplate -> string![]!
 static readonly NuGet.Protocol.ServiceTypes.PackagePublish -> string![]!
+static readonly NuGet.Protocol.ServiceTypes.PackageStaging -> string![]!
 static readonly NuGet.Protocol.ServiceTypes.RegistrationsBaseUrl -> string![]!
 static readonly NuGet.Protocol.ServiceTypes.ReportAbuse -> string![]!
 static readonly NuGet.Protocol.ServiceTypes.RepositorySignatures -> string![]!

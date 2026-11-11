@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(UseMicrosoftTestingPlatformRunner)' != 'true' OR '$(UseVSTestRunner)' == 'true'">
-    <PackageReference Include="xunit.runner.visualstudio" Version="$(MicrosoftTestingPlatformVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="$(XUnitRunnerVisualStudioVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
   </ItemGroup>
 
   <PropertyGroup>

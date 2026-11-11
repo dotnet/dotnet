@@ -14,7 +14,8 @@
     <PackageReference Include="Microsoft.NET.Sdk.WorkloadManifestReader" />
     <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller" />
     <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller.Package" />
-    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Plugins.SwixBuild" GeneratePathProperty="true" />
+    <!-- Pin the SWIX toolset used by workload tests independently of the Arcade SDK. -->
+    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Plugins.SwixBuild" VersionOverride="1.1.973" GeneratePathProperty="true" />
     <PackageReference Include="AwesomeAssertions" />
 
     <!-- WiX toolset CLI is a tool package so we need to set ExcludeAssets. -->

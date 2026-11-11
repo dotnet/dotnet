@@ -40,7 +40,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Execution;
 /// <summary>
 /// The base run tests.
 /// </summary>
-internal abstract class BaseRunTests
+internal abstract class BaseRunTests : IDisposable
 {
     private readonly ITestCaseEventsHandler? _testCaseEventsHandler;
     private readonly ITestPlatformEventSource _testPlatformEventSource;
@@ -198,6 +198,7 @@ internal abstract class BaseRunTests
     public void RunTests()
     {
         using (TestRunCache)
+        using (FrameworkHandle)
         {
             TimeSpan? elapsedTime = null;
             Exception? exception = null;
@@ -253,6 +254,21 @@ internal abstract class BaseRunTests
         }
 
         EqtTrace.Verbose("BaseRunTests.RunTests: Run is complete.");
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            FrameworkHandle.Dispose();
+            TestRunCache.Dispose();
+        }
     }
 
     internal void Abort()

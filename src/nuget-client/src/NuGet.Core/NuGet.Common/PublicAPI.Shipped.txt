@@ -182,6 +182,7 @@ NuGet.Common.NuGetLogCode.NU1016 = 1016 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1017 = 1017 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1018 = 1018 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1019 = 1019 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU1020 = 1020 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1100 = 1100 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1101 = 1101 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1102 = 1102 -> NuGet.Common.NuGetLogCode
@@ -457,6 +458,7 @@ NuGet.Common.SignatureAlgorithmName.Unknown = 0 -> NuGet.Common.SignatureAlgorit
 NuGet.Common.SignatureValidationMode
 NuGet.Common.SignatureValidationMode.Accept = 0 -> NuGet.Common.SignatureValidationMode
 NuGet.Common.SignatureValidationMode.Require = 1 -> NuGet.Common.SignatureValidationMode
+NuGet.Common.StaticState
 NuGet.Common.TelemetryActivity
 NuGet.Common.TelemetryActivity.Dispose() -> void
 NuGet.Common.TelemetryActivity.EndIntervalMeasure(string! propertyName) -> void
@@ -645,6 +647,8 @@ static NuGet.Common.RuntimeEnvironmentHelper.IsMacOSX.get -> bool
 static NuGet.Common.RuntimeEnvironmentHelper.IsMono.get -> bool
 static NuGet.Common.RuntimeEnvironmentHelper.IsRunningInVisualStudio.get -> bool
 static NuGet.Common.RuntimeEnvironmentHelper.IsWindows.get -> bool
+static NuGet.Common.StaticState.BuildEnded -> System.Action?
+static NuGet.Common.StaticState.RaiseBuildEnded() -> void
 static NuGet.Common.TelemetryActivity.Create(NuGet.Common.TelemetryEvent! telemetryEvent) -> NuGet.Common.TelemetryActivity!
 static NuGet.Common.TelemetryActivity.Create(System.Guid parentId, NuGet.Common.TelemetryEvent! telemetryEvent) -> NuGet.Common.TelemetryActivity!
 static NuGet.Common.TelemetryActivity.Create(System.Guid parentId, string! eventName) -> NuGet.Common.TelemetryActivity!

@@ -251,7 +251,7 @@ for your release builds:
 
 - For any other problems with the tasks or templates, you can reach out to the [.NET Engineering
   Services
-  team](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/107/How-to-get-a-hold-of-Engineering-Servicing).
+  team](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/1907/Contact-Engineering-Services).
 
 ## Further Reading
 

@@ -1053,7 +1053,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_PackageFormatApply">
         <source>The package manager format will apply to the following projects in this Solution</source>
-        <target state="translated">패키지 관리자 형식은 이 Solution의 다음 프로젝트에 적용됩니다.</target>
+        <target state="translated">패키지 관리자 형식은 이 솔루션의 다음 프로젝트에 적용됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageLevelTopLevel">

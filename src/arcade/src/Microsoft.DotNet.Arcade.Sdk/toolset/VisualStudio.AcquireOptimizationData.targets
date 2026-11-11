@@ -18,8 +18,7 @@
   <PropertyGroup>
     <_VisualStudioBuildTasksAssembly>$(NuGetPackageRoot)microsoft.dotnet.build.tasks.visualstudio\$(MicrosoftDotNetBuildTasksVisualStudioVersion)\tools\net\Microsoft.DotNet.Build.Tasks.VisualStudio.dll</_VisualStudioBuildTasksAssembly>
   </PropertyGroup>
-  <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
-  <UsingTask AssemblyFile="$(_VisualStudioBuildTasksAssembly)" TaskName="Microsoft.DotNet.Build.Tasks.VisualStudio.FindLatestDrop" Runtime="NET" Architecture="*" />
+  <UsingTask AssemblyFile="$(_VisualStudioBuildTasksAssembly)" TaskName="Microsoft.DotNet.Build.Tasks.VisualStudio.FindLatestDrop" Runtime="NET" />
 
   <PropertyGroup>
     <EnableNgenOptimization Condition="'$(EnableNgenOptimization)' == '' and '$(Configuration)' == 'Release' and '$(OfficialBuild)' == 'true'">true</EnableNgenOptimization>
@@ -57,7 +56,6 @@
     <Error Text="VisualStudioDropAccessToken property has to be specified when EnableNgenOptimization and OfficialBuild is true" Condition="'$(VisualStudioDropAccessToken)' == '' and '$(OfficialBuild)' == 'true'"/>
     <Error Text="VisualStudioIbcRepositoryName property has to be specified when EnableNgenOptimization is true and VisualStudioIbcDrop is not set" Condition="'$(VisualStudioIbcDrop)' == '' and '$(VisualStudioIbcRepositoryName)' == ''"/>
     <Error Text="VisualStudioIbcSourceBranchName property has to be specified when EnableNgenOptimization is true and VisualStudioIbcDrop is not set" Condition="'$(VisualStudioIbcDrop)' == '' and '$(VisualStudioIbcSourceBranchName)' == ''"/>
-    <Error Text="VisualStudioIbcSourceBranchName property cannot be specified when using the VisualStudioIbcDrop property" Condition="'$(VisualStudioIbcDrop)' != '' and '$(VisualStudioIbcSourceBranchName)' != ''" />
     <Error Text="VisualStudioIbcDropId property cannot be specified when using the VisualStudioIbcDrop property" Condition="'$(VisualStudioIbcDrop)' != '' and '$(VisualStudioIbcDropId)' != ''" />
 
     <PropertyGroup>

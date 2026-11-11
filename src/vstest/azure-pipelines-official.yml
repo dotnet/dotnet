@@ -156,6 +156,15 @@ extends:
               name: $(DncEngInternalBuildPool)
               image: windows.vs2026preview.scout.amd64
               os: windows
+            templateContext:
+              outputs:
+              - ${{ if eq(parameters.isRTM, True) }}:
+                - output: pipelineArtifact
+                  displayName: Publish ReleasePackages
+                  targetPath: '$(Build.ArtifactStagingDirectory)\ReleasePackages'
+                  artifactName: ReleasePackages
+                  sbomEnabled: false
+                  condition: and(succeeded(), eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest'))
             steps:
             # This steps help to understand versions of .NET runtime installed on the machine,
             # which is useful to diagnose some governance issues.
@@ -234,6 +243,23 @@ extends:
               inputs:
                 PathtoPublish: '$(Build.SourcesDirectory)/artifacts/VSSetup/Release'
                 ArtifactName: VSSetupArtifacts
+
+            - ${{ if eq(parameters.isRTM, True) }}:
+              - pwsh: |
+                  $ErrorActionPreference = 'Stop'
+                  $source = "$(Build.SourcesDirectory)\artifacts\packages\Release\Shipping"
+                  $destination = "$(Build.ArtifactStagingDirectory)\ReleasePackages"
+                  $packages = @(Get-ChildItem -LiteralPath $source -Filter '*.nupkg' -File |
+                    Where-Object { $_.Name -notlike '*.symbols.nupkg' })
+                  if ($packages.Count -eq 0) {
+                    throw "No shipping NuGet packages were found in '$source'."
+                  }
+                  New-Item -ItemType Directory -Path $destination -Force | Out-Null
+                  foreach ($package in $packages) {
+                    Copy-Item -LiteralPath $package.FullName -Destination $destination
+                  }
+                displayName: Stage ReleasePackages
+                condition: and(succeeded(), eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest'))
 
           - ${{ each pool in parameters.otherOsPools }}:
             - job: ${{ pool.os }}

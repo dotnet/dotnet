@@ -1,0 +1,454 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+using System.Diagnostics;
+using OpenTelemetry.Internal;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Trace;
+
+namespace OpenTelemetry.Exporter.OpenTelemetryProtocol.Implementation.Serializer;
+
+internal static class ProtobufOtlpLogSerializer
+{
+    private const int ReserveSizeForLength = 4;
+    private const int TraceIdSize = 16;
+    private const int SpanIdSize = 8;
+
+    [ThreadStatic]
+    private static Stack<List<LogRecord>>? logsListPool;
+    [ThreadStatic]
+    private static Dictionary<InstrumentationScope, List<LogRecord>>? scopeLogsList;
+
+    [ThreadStatic]
+    private static SerializationState? threadSerializationState;
+
+    internal static int WriteLogsData(
+        ref byte[] buffer,
+        int writePosition,
+        SdkLimitOptions sdkLimitOptions,
+        ExperimentalOptions experimentalOptions,
+        Resources.Resource? resource,
+        in Batch<LogRecord> logRecordBatch,
+        int maxBufferSize = ProtobufSerializer.MaxBufferSize)
+    {
+        logsListPool ??= [];
+        scopeLogsList ??= [];
+
+        // Note: The grouped batch is held in thread-static state, so it has to be
+        // released even when serialization fails. TryWriteResourceLogs rethrows
+        // once the buffer cannot be grown any further; leaving the batch behind
+        // would merge it into the next export on this thread and leak the pooled
+        // LogRecord references taken below.
+        try
+        {
+            foreach (var logRecord in logRecordBatch)
+            {
+                var logger = logRecord.Logger;
+                var scope = new InstrumentationScope(logger.Name, logger.Version);
+                if (!scopeLogsList.TryGetValue(scope, out var logRecords))
+                {
+                    logRecords = logsListPool.Count > 0 ? logsListPool.Pop() : [];
+                    scopeLogsList[scope] = logRecords;
+                }
+
+                if (logRecord.Source == LogRecord.LogRecordSource.FromSharedPool)
+                {
+                    Debug.Assert(logRecord.PoolReferenceCount > 0, "logRecord PoolReferenceCount value was unexpected");
+
+                    // Note: AddReference call here prevents the LogRecord from
+                    // being given back to the pool by Batch<LogRecord>.
+                    logRecord.AddReference();
+                }
+
+                logRecords.Add(logRecord);
+            }
+
+            writePosition = TryWriteResourceLogs(
+                ref buffer,
+                writePosition,
+                sdkLimitOptions,
+                experimentalOptions,
+                resource,
+                scopeLogsList,
+                maxBufferSize);
+        }
+        finally
+        {
+            // Keep the reusable state object, but release its reference to
+            // the exporter-owned buffer.
+            threadSerializationState?.TagWriterState = default;
+
+            ReturnLogRecordListToPool();
+        }
+
+        return writePosition;
+    }
+
+    internal static int TryWriteResourceLogs(
+        ref byte[] buffer,
+        int writePosition,
+        SdkLimitOptions sdkLimitOptions,
+        ExperimentalOptions experimentalOptions,
+        Resources.Resource? resource,
+        Dictionary<InstrumentationScope, List<LogRecord>> scopeLogs,
+        int maxBufferSize = ProtobufSerializer.MaxBufferSize)
+    {
+        while (true)
+        {
+            var entryWritePosition = writePosition;
+
+            try
+            {
+                writePosition = ProtobufSerializer.WriteTag(buffer, writePosition, ProtobufOtlpLogFieldNumberConstants.LogsData_Resource_Logs, ProtobufWireType.LEN);
+                var logsDataLengthPosition = writePosition;
+                writePosition += ReserveSizeForLength;
+
+                writePosition = WriteResourceLogs(buffer, writePosition, sdkLimitOptions, experimentalOptions, resource, scopeLogs);
+
+                ProtobufSerializer.WriteReservedLength(buffer, logsDataLengthPosition, writePosition - (logsDataLengthPosition + ReserveSizeForLength));
+
+                // Serialization succeeded, return the final write position
+                return writePosition;
+            }
+            catch (Exception ex) when (ex is IndexOutOfRangeException or ArgumentException)
+            {
+                // Reset write position and attempt to increase the buffer size
+                writePosition = entryWritePosition;
+
+                if (!ProtobufSerializer.IncreaseBufferSize(ref buffer, OtlpSignalType.Logs, maxBufferSize))
+                {
+                    throw;
+                }
+
+                // Continue the loop to retry serialization with the larger buffer. The loop
+                // is bounded by IncreaseBufferSize, which refuses to grow beyond beyond
+                // ProtobufSerializer.MaxBufferSize, so this cannot become an infinite loop.
+            }
+        }
+    }
+
+    internal static void ReturnLogRecordListToPool()
+    {
+        if (scopeLogsList is { Count: > 0 })
+        {
+            foreach (var entry in scopeLogsList)
+            {
+                foreach (var logRecord in entry.Value)
+                {
+                    if (logRecord.Source == LogRecord.LogRecordSource.FromSharedPool)
+                    {
+                        Debug.Assert(logRecord.PoolReferenceCount > 0, "logRecord PoolReferenceCount value was unexpected");
+
+                        // Note: Try to return the LogRecord to the shared pool
+                        // now that work is done.
+                        LogRecordSharedPool.Current.Return(logRecord);
+                    }
+                }
+
+                entry.Value.Clear();
+                logsListPool?.Push(entry.Value);
+            }
+
+            scopeLogsList.Clear();
+        }
+    }
+
+    internal static int WriteResourceLogs(byte[] buffer, int writePosition, SdkLimitOptions sdkLimitOptions, ExperimentalOptions experimentalOptions, Resources.Resource? resource, Dictionary<InstrumentationScope, List<LogRecord>> scopeLogs)
+    {
+        writePosition = ProtobufOtlpResourceSerializer.WriteResource(buffer, writePosition, resource);
+        writePosition = WriteScopeLogs(buffer, writePosition, sdkLimitOptions, experimentalOptions, scopeLogs);
+
+        if (resource?.SchemaUrl is { Length: > 0 } schemaUrl)
+        {
+            writePosition = ProtobufSerializer.WriteStringWithTag(buffer, writePosition, ProtobufOtlpLogFieldNumberConstants.ResourceLogs_Schema_Url, schemaUrl);
+        }
+
+        return writePosition;
+    }
+
+    internal static int WriteScopeLogs(byte[] buffer, int writePosition, SdkLimitOptions sdkLimitOptions, ExperimentalOptions experimentalOptions, Dictionary<InstrumentationScope, List<LogRecord>> scopeLogs)
+    {
+        if (scopeLogs != null)
+        {
+            foreach (var entry in scopeLogs)
+            {
+                writePosition = ProtobufSerializer.WriteTag(buffer, writePosition, ProtobufOtlpLogFieldNumberConstants.ResourceLogs_Scope_Logs, ProtobufWireType.LEN);
+                var resourceLogsScopeLogsLengthPosition = writePosition;
+                writePosition += ReserveSizeForLength;
+
+                writePosition = WriteScopeLog(buffer, writePosition, sdkLimitOptions, experimentalOptions, entry.Key, entry.Value);
+                ProtobufSerializer.WriteReservedLength(buffer, resourceLogsScopeLogsLengthPosition, writePosition - (resourceLogsScopeLogsLengthPosition + ReserveSizeForLength));
+            }
+        }
+
+        return writePosition;
+    }
+
+    internal static int WriteScopeLog(byte[] buffer, int writePosition, SdkLimitOptions sdkLimitOptions, ExperimentalOptions experimentalOptions, in InstrumentationScope scope, List<LogRecord> logRecords)
+    {
+        writePosition = ProtobufSerializer.WriteTag(buffer, writePosition, ProtobufOtlpLogFieldNumberConstants.ScopeLogs_Scope, ProtobufWireType.LEN);
+
+        var scopeLengthPosition = writePosition;
+        writePosition += ReserveSizeForLength;
+
+        writePosition = ProtobufSerializer.WriteStringWithTag(buffer, writePosition, ProtobufOtlpCommonFieldNumberConstants.InstrumentationScope_Name, scope.Name);
+
+        if (scope.Version != null)
+        {
+            writePosition = ProtobufSerializer.WriteStringWithTag(buffer, writePosition, ProtobufOtlpCommonFieldNumberConstants.InstrumentationScope_Version, scope.Version);
+        }
+
+        ProtobufSerializer.WriteReservedLength(buffer, scopeLengthPosition, writePosition - (scopeLengthPosition + ReserveSizeForLength));
+
+        for (var i = 0; i < logRecords.Count; i++)
+        {
+            writePosition = WriteLogRecord(buffer, writePosition, sdkLimitOptions, experimentalOptions, logRecords[i]);
+        }
+
+        return writePosition;
+    }
+
+    internal static int WriteLogRecord(byte[] buffer, int writePosition, SdkLimitOptions sdkLimitOptions, ExperimentalOptions experimentalOptions, LogRecord logRecord)
+    {
+        var state = threadSerializationState ??= new();
+
+        state.AttributeValueLengthLimit = sdkLimitOptions.LogRecordAttributeValueLengthLimit;
+        state.AttributeCountLimit = sdkLimitOptions.LogRecordAttributeCountLimit ?? int.MaxValue;
+        state.TagWriterState = new ProtobufOtlpTagWriter.OtlpTagWriterState
+        {
+            Buffer = buffer,
+            WritePosition = writePosition,
+            TagCount = 0,
+            DroppedTagCount = 0,
+        };
+
+        ref var otlpTagWriterState = ref state.TagWriterState;
+
+        otlpTagWriterState.WritePosition = ProtobufSerializer.WriteTag(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, ProtobufOtlpLogFieldNumberConstants.ScopeLogs_Log_Records, ProtobufWireType.LEN);
+        var logRecordLengthPosition = otlpTagWriterState.WritePosition;
+        otlpTagWriterState.WritePosition += ReserveSizeForLength;
+
+        var timeUnixNano = logRecord.Timestamp == DateTime.MinValue ? 0 : (ulong)logRecord.Timestamp.ToUnixTimeNanoseconds();
+        var observedTimeUnixNano = logRecord.ObservedTimestamp == logRecord.Timestamp ? timeUnixNano
+            : (ulong)logRecord.ObservedTimestamp.ToUnixTimeNanoseconds();
+        otlpTagWriterState.WritePosition = ProtobufSerializer.WriteFixed64WithTag(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, ProtobufOtlpLogFieldNumberConstants.LogRecord_Time_Unix_Nano, timeUnixNano);
+        otlpTagWriterState.WritePosition = ProtobufSerializer.WriteFixed64WithTag(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, ProtobufOtlpLogFieldNumberConstants.LogRecord_Observed_Time_Unix_Nano, observedTimeUnixNano);
+
+        otlpTagWriterState.WritePosition = ProtobufSerializer.WriteEnumWithTag(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, ProtobufOtlpLogFieldNumberConstants.LogRecord_Severity_Number, logRecord.Severity.HasValue ? (int)logRecord.Severity : 0);
+
+        if (!string.IsNullOrWhiteSpace(logRecord.SeverityText))
+        {
+#pragma warning disable IDE0370 // Suppression is unnecessary
+            otlpTagWriterState.WritePosition = ProtobufSerializer.WriteStringWithTag(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, ProtobufOtlpLogFieldNumberConstants.LogRecord_Severity_Text, logRecord.SeverityText!);
+#pragma warning restore IDE0370 // Suppression is unnecessary
+        }
+        else if (logRecord.Severity.HasValue)
+        {
+            otlpTagWriterState.WritePosition = ProtobufSerializer.WriteStringWithTag(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, ProtobufOtlpLogFieldNumberConstants.LogRecord_Severity_Text, logRecord.Severity.Value.ToShortName());
+        }
+
+        if (experimentalOptions.EmitLogEventAttributes)
+        {
+            if (logRecord.EventId.Id != default)
+            {
+                AddLogAttribute(state, ExperimentalOptions.LogRecordEventIdAttribute, logRecord.EventId.Id);
+            }
+        }
+
+        if (logRecord.Exception != null)
+        {
+            AddLogAttribute(state, SemanticConventions.AttributeExceptionType, logRecord.Exception.GetType().Name);
+            AddLogAttribute(state, SemanticConventions.AttributeExceptionMessage, logRecord.Exception.Message);
+            AddLogAttribute(state, SemanticConventions.AttributeExceptionStacktrace, logRecord.Exception.ToInvariantString());
+        }
+
+        var bodyPopulatedFromFormattedMessage = false;
+        var isLogRecordBodySet = false;
+
+        if (logRecord.FormattedMessage != null)
+        {
+            otlpTagWriterState.WritePosition = WriteLogRecordBody(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, logRecord.FormattedMessage);
+            bodyPopulatedFromFormattedMessage = true;
+            isLogRecordBodySet = true;
+        }
+
+        var attributes = logRecord.Attributes;
+        if (attributes != null)
+        {
+            for (var i = 0; i < attributes.Count; i++)
+            {
+                var attribute = attributes[i];
+
+                // Special casing {OriginalFormat}
+                // See https://github.com/open-telemetry/opentelemetry-dotnet/pull/3182
+                // for explanation.
+                if (string.Equals(attribute.Key, "{OriginalFormat}", StringComparison.Ordinal) && !bodyPopulatedFromFormattedMessage)
+                {
+                    if (attribute.Value is string originalFormat)
+                    {
+                        otlpTagWriterState.WritePosition = WriteLogRecordBody(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, originalFormat);
+                        isLogRecordBodySet = true;
+                    }
+                    else
+                    {
+                        AddLogAttribute(state, attribute);
+                    }
+                }
+                else
+                {
+                    AddLogAttribute(state, attribute);
+                }
+            }
+
+            // Supports setting Body directly on LogRecord for the Logs Bridge API.
+            if (!isLogRecordBodySet && logRecord.Body != null)
+            {
+                // If {OriginalFormat} is not present in the attributes,
+                // use logRecord.Body if it is set.
+                otlpTagWriterState.WritePosition = WriteLogRecordBody(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, logRecord.Body);
+            }
+        }
+
+        if (logRecord.TraceId != default && logRecord.SpanId != default)
+        {
+            otlpTagWriterState.WritePosition = ProtobufSerializer.WriteTagAndLength(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, TraceIdSize, ProtobufOtlpLogFieldNumberConstants.LogRecord_Trace_Id, ProtobufWireType.LEN);
+            otlpTagWriterState.WritePosition = ProtobufOtlpTraceSerializer.WriteTraceId(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, logRecord.TraceId);
+
+            otlpTagWriterState.WritePosition = ProtobufSerializer.WriteTagAndLength(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, SpanIdSize, ProtobufOtlpLogFieldNumberConstants.LogRecord_Span_Id, ProtobufWireType.LEN);
+            otlpTagWriterState.WritePosition = ProtobufOtlpTraceSerializer.WriteSpanId(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, logRecord.SpanId);
+
+            var traceFlags = (uint)logRecord.TraceFlags
+                & ProtobufOtlpLogFieldNumberConstants.LogRecord_Flags_Trace_Flags_Mask;
+            otlpTagWriterState.WritePosition = ProtobufSerializer.WriteFixed32WithTag(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, ProtobufOtlpLogFieldNumberConstants.LogRecord_Flags, traceFlags);
+        }
+
+        if (logRecord.EventId.Name != null)
+        {
+            otlpTagWriterState.WritePosition = ProtobufSerializer.WriteStringWithTag(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, ProtobufOtlpLogFieldNumberConstants.LogRecord_Event_Name, logRecord.EventId.Name);
+        }
+
+        logRecord.ForEachScope(ProcessScope, state);
+
+        if (otlpTagWriterState.DroppedTagCount > 0)
+        {
+            otlpTagWriterState.WritePosition = ProtobufSerializer.WriteTag(buffer, otlpTagWriterState.WritePosition, ProtobufOtlpLogFieldNumberConstants.LogRecord_Dropped_Attributes_Count, ProtobufWireType.VARINT);
+            otlpTagWriterState.WritePosition = ProtobufSerializer.WriteVarInt32(buffer, otlpTagWriterState.WritePosition, (uint)otlpTagWriterState.DroppedTagCount);
+        }
+
+        ProtobufSerializer.WriteReservedLength(otlpTagWriterState.Buffer, logRecordLengthPosition, otlpTagWriterState.WritePosition - (logRecordLengthPosition + ReserveSizeForLength));
+
+        return otlpTagWriterState.WritePosition;
+
+        static void ProcessScope(LogRecordScope scope, SerializationState state)
+        {
+            foreach (var scopeItem in scope)
+            {
+                if (string.IsNullOrEmpty(scopeItem.Key) || string.Equals(scopeItem.Key, "{OriginalFormat}", StringComparison.Ordinal))
+                {
+                    // Ignore if the scope key is empty.
+                    // Ignore if the scope key is {OriginalFormat}
+                    // Attributes should not contain duplicates,
+                    // and it is expensive to de-dup, so this
+                    // exporter is going to pass the scope items as is.
+                    // {OriginalFormat} is going to be the key
+                    // if one uses formatted string for scopes
+                    // and if there are nested scopes, this is
+                    // guaranteed to create duplicate keys.
+                    // Similar for empty keys, which is what the
+                    // key is going to be if user simply
+                    // passes a string as scope.
+                    // To summarize this exporter only allows
+                    // IReadOnlyList<KeyValuePair<string, object?>>
+                    // or IEnumerable<KeyValuePair<string, object?>>.
+                    // and expect users to provide unique keys.
+                    // Note: It is possible that we allow users
+                    // to override this exporter feature. So not blocking
+                    // empty/{OriginalFormat} in the SDK itself.
+                }
+                else
+                {
+                    AddLogAttribute(state, scopeItem);
+                }
+            }
+        }
+    }
+
+    private static int WriteLogRecordBody(byte[] buffer, int writePosition, string value)
+    {
+        var numberOfUtf8CharsInString = ProtobufSerializer.GetNumberOfUtf8CharsInString(value);
+        var serializedLengthSize = ProtobufSerializer.ComputeVarInt64Size((ulong)numberOfUtf8CharsInString);
+
+        // length = numberOfUtf8CharsInString + tagSize + length field size.
+        writePosition = ProtobufSerializer.WriteTagAndLength(buffer, writePosition, numberOfUtf8CharsInString + 1 + serializedLengthSize, ProtobufOtlpLogFieldNumberConstants.LogRecord_Body, ProtobufWireType.LEN);
+        writePosition = ProtobufSerializer.WriteStringWithTag(buffer, writePosition, ProtobufOtlpCommonFieldNumberConstants.AnyValue_String_Value, numberOfUtf8CharsInString, value);
+        return writePosition;
+    }
+
+    private static void AddLogAttribute(SerializationState state, KeyValuePair<string, object?> attribute)
+        => AddLogAttribute(state, attribute.Key, attribute.Value);
+
+    private static void AddLogAttribute(SerializationState state, string key, object? value)
+    {
+        if (state.TagWriterState.TagCount == state.AttributeCountLimit)
+        {
+            state.TagWriterState.DroppedTagCount++;
+        }
+        else
+        {
+            ProtobufOtlpTagWriter.WriteKeyValue(
+                ref state.TagWriterState,
+                ProtobufOtlpLogFieldNumberConstants.LogRecord_Attributes,
+                key,
+                value,
+                state.AttributeValueLengthLimit);
+
+            state.TagWriterState.TagCount++;
+        }
+    }
+
+    /// <summary>
+    /// Identifies the instrumentation scope log records are grouped by. Loggers
+    /// sharing a name but reporting different versions are distinct scopes and
+    /// must be emitted as separate ScopeLogs entries.
+    /// </summary>
+    internal readonly record struct InstrumentationScope
+    {
+        public readonly string Name;
+        public readonly string? Version;
+
+        public InstrumentationScope(string name, string? version)
+        {
+            this.Name = name;
+            this.Version = version;
+        }
+
+        public bool Equals(InstrumentationScope other)
+            => string.Equals(this.Name, other.Name, StringComparison.Ordinal)
+            && string.Equals(this.Version, other.Version, StringComparison.Ordinal);
+
+        public override int GetHashCode()
+        {
+#if NET || NETSTANDARD2_1_OR_GREATER
+            HashCode hashCode = default;
+            hashCode.Add(this.Name, StringComparer.Ordinal);
+            hashCode.Add(this.Version, StringComparer.Ordinal);
+            return hashCode.ToHashCode();
+#else
+            unchecked
+            {
+                var hash = 17;
+                hash = (hash * 31) + (this.Name is null ? 0 : StringComparer.Ordinal.GetHashCode(this.Name));
+                hash = (hash * 31) + (this.Version is null ? 0 : StringComparer.Ordinal.GetHashCode(this.Version));
+                return hash;
+            }
+#endif
+        }
+    }
+
+    private sealed class SerializationState
+    {
+        public int? AttributeValueLengthLimit;
+        public int AttributeCountLimit;
+        public ProtobufOtlpTagWriter.OtlpTagWriterState TagWriterState;
+    }
+}

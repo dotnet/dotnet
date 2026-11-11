@@ -16,8 +16,6 @@ parameters:
   - lite
   # run everything
   - full
-  # run source build outer loop (Mono jobs)
-  - source-build-outer-loop
 
 - name: useMicrosoftBuildAssetsForTests
   type: boolean
@@ -27,6 +25,11 @@ parameters:
 - name: isBuiltFromVmr
   type: boolean
   default: true
+
+- name: isCodeqlActive
+  displayName: True when the pipeline is configured to run CodeQL
+  type: boolean
+  default: false
 
 # True when the build is a build run from the production pipeline
 - name: isOfficialBuild
@@ -64,6 +67,7 @@ stages:
       pool_LinuxArm64: ${{ parameters.pool_LinuxArm64 }}
       useMicrosoftBuildAssetsForTests: ${{ parameters.useMicrosoftBuildAssetsForTests }}
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      isCodeqlActive: ${{ parameters.isCodeqlActive }}
       isOfficialBuild: ${{ parameters.isOfficialBuild }}
       desiredSigning: ${{ parameters.desiredSigning }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
@@ -84,181 +88,139 @@ stages:
 
         ### Source-build verification legs ###
 
-        - ${{ if in(parameters.scope, 'source-build-outer-loop') }}:
+        # Stage 1 leg is built in full scope, or lite when any of the `source-build-` verifications are requested.
+        - buildNameFormat: 'SB_{0}_Online_MsftSdk'
+          distro: centos
+          targetArchitecture: x64
+          buildFromArchive: false            # 🚫
+          enablePoison: false                # 🚫
+          runOnline: true                    # ✅
+          useSystemLibraries: false          # 🚫
+          withPreviousSDK: false             # 🚫
+          disableSigning: true               # ✅
+          createSourceArtifact: false        # 🚫
+          sourceIndexName: dotnet-dotnet
+          sourceIndexExcludeRepos: 'winforms wpf windowsdesktop aspnetcore source-build-assets'
+          ${{ if in(parameters.scope, 'lite') }}:
+            extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
 
-          - buildNameFormat: 'SB_{0}_Mono_Offline_MsftSdk'
+        - ${{ if containsValue(parameters.verifications, 'source-build-stage2') }}:
+
+          - buildNameFormat: 'SB_{0}_Offline_CurrentSourceBuiltSdk'
             distro: centos
             targetArchitecture: x64
-            buildFromArchive: true             # ✅
+            buildFromArchive: false            # 🚫
             enablePoison: false                # 🚫
             runOnline: false                   # 🚫
-            useMonoRuntime: true               # ✅
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             disableSigning: true               # ✅
             createSourceArtifact: false        # 🚫
-            extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
+            reuseBuildArtifactsFrom: 'SB_{0}_Online_MsftSdk_x64'
+            ${{ if in(parameters.scope, 'lite') }}:
+              extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
 
-          - buildNameFormat: 'SB_{0}_Mono_Offline_CurrentSourceBuiltSdk'
-            distro: centos
+        ### Additional legs for full build ###
+        - ${{ if in(parameters.scope, 'full') }}:
+
+          - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
+            distro: ubuntu
             targetArchitecture: x64
-            buildFromArchive: true             # ✅
+            buildFromArchive: false            # 🚫
             enablePoison: false                # 🚫
+            excludeOmniSharpTests: false       # 🚫
             runOnline: false                   # 🚫
-            useMonoRuntime: true               # ✅
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             disableSigning: true               # ✅
             createSourceArtifact: false        # 🚫
-            reuseBuildArtifactsFrom: 'SB_{0}_Mono_Offline_MsftSdk_x64'
-            extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
 
-        - ${{ else }}:
+          - buildNameFormat: 'SB_{0}_Offline_PreviousSourceBuiltSdk'
+            distro: centos
+            targetArchitecture: x64
+            buildFromArchive: false            # 🚫
+            enablePoison: true                 # ✅
+            runOnline: false                   # 🚫
+            useSystemLibraries: false          # 🚫
+            withPreviousSDK: true              # ✅
+            disableSigning: true               # ✅
+            createSourceArtifact: false        # 🚫
 
-          # Stage 1 leg is built in full scope, or lite when any of the `source-build-` verifications are requested.
-          - buildNameFormat: 'SB_{0}_Online_MsftSdk'
+          - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
+            distro: almalinux
+            targetArchitecture: x64
+            buildFromArchive: false            # 🚫
+            enablePoison: false                # 🚫
+            runOnline: false                   # 🚫
+            useSystemLibraries: false          # 🚫
+            withPreviousSDK: false             # 🚫
+            disableSigning: true               # ✅
+            createSourceArtifact: false        # 🚫
+
+          - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
+            distro: alpine
+            targetArchitecture: x64
+            buildFromArchive: false            # 🚫
+            enablePoison: false                # 🚫
+            runOnline: false                   # 🚫
+            useSystemLibraries: false          # 🚫
+            withPreviousSDK: false             # 🚫
+            disableSigning: true               # ✅
+            createSourceArtifact: false        # 🚫
+
+          - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
+            distro: centos
+            targetArchitecture: x64
+            buildFromArchive: false            # 🚫
+            enablePoison: false                # 🚫
+            runOnline: false                   # 🚫
+            useSystemLibraries: false          # 🚫
+            withPreviousSDK: false             # 🚫
+            disableSigning: false              # 🚫
+            createSourceArtifact: true         # ✅
+
+          - buildNameFormat: 'SB_{0}_Online_PreviousSourceBuiltSdk'
             distro: centos
             targetArchitecture: x64
             buildFromArchive: false            # 🚫
             enablePoison: false                # 🚫
             runOnline: true                    # ✅
-            useMonoRuntime: false              # 🚫
+            useSystemLibraries: false          # 🚫
+            withPreviousSDK: true              # ✅
+            disableSigning: true               # ✅
+            createSourceArtifact: false        # 🚫
+
+          - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
+            distro: fedora
+            targetArchitecture: x64
+            buildFromArchive: true             # ✅
+            enablePoison: false                # 🚫
+            runOnline: false                   # 🚫
+            useSystemLibraries: true           # ✅
+            withPreviousSDK: false             # 🚫
+            disableSigning: true               # ✅
+            createSourceArtifact: false        # 🚫
+            disableBinaryAnalysisCaching: true
+
+          - buildNameFormat: 'SB_{0}Arm64_Offline_MsftSdk'
+            distro: ubuntu
+            targetArchitecture: arm64
+            buildFromArchive: false            # 🚫
+            enablePoison: false                # 🚫
+            runOnline: false                   # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             disableSigning: true               # ✅
             createSourceArtifact: false        # 🚫
-            sourceIndexName: dotnet-dotnet
-            sourceIndexExcludeRepos: 'winforms wpf windowsdesktop aspnetcore source-build-assets'
-            ${{ if in(parameters.scope, 'lite') }}:
-              extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
 
-          - ${{ if containsValue(parameters.verifications, 'source-build-stage2') }}:
-
-            - buildNameFormat: 'SB_{0}_Offline_CurrentSourceBuiltSdk'
-              distro: centos
-              targetArchitecture: x64
-              buildFromArchive: false            # 🚫
-              enablePoison: false                # 🚫
-              runOnline: false                   # 🚫
-              useMonoRuntime: false              # 🚫
-              useSystemLibraries: false          # 🚫
-              withPreviousSDK: false             # 🚫
-              disableSigning: true               # ✅
-              createSourceArtifact: false        # 🚫
-              reuseBuildArtifactsFrom: 'SB_{0}_Online_MsftSdk_x64'
-              ${{ if in(parameters.scope, 'lite') }}:
-                extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
-
-          ### Additional legs for full build ###
-          - ${{ if in(parameters.scope, 'full') }}:
-
-            - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
-              distro: ubuntu
-              targetArchitecture: x64
-              buildFromArchive: false            # 🚫
-              enablePoison: false                # 🚫
-              excludeOmniSharpTests: false       # 🚫
-              runOnline: false                   # 🚫
-              useMonoRuntime: false              # 🚫
-              useSystemLibraries: false          # 🚫
-              withPreviousSDK: false             # 🚫
-              disableSigning: true               # ✅
-              createSourceArtifact: false        # 🚫
-
-            - buildNameFormat: 'SB_{0}_Offline_PreviousSourceBuiltSdk'
-              distro: centos
-              targetArchitecture: x64
-              buildFromArchive: false            # 🚫
-              enablePoison: true                 # ✅
-              runOnline: false                   # 🚫
-              useMonoRuntime: false              # 🚫
-              useSystemLibraries: false          # 🚫
-              withPreviousSDK: true              # ✅
-              disableSigning: true               # ✅
-              createSourceArtifact: false        # 🚫
-
-            - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
-              distro: almalinux
-              targetArchitecture: x64
-              buildFromArchive: false            # 🚫
-              enablePoison: false                # 🚫
-              runOnline: false                   # 🚫
-              useMonoRuntime: false              # 🚫
-              useSystemLibraries: false          # 🚫
-              withPreviousSDK: false             # 🚫
-              disableSigning: true               # ✅
-              createSourceArtifact: false        # 🚫
-
-            - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
-              distro: alpine
-              targetArchitecture: x64
-              buildFromArchive: false            # 🚫
-              enablePoison: false                # 🚫
-              runOnline: false                   # 🚫
-              useMonoRuntime: false              # 🚫
-              useSystemLibraries: false          # 🚫
-              withPreviousSDK: false             # 🚫
-              disableSigning: true               # ✅
-              createSourceArtifact: false        # 🚫
-
-            - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
-              distro: centos
-              targetArchitecture: x64
-              buildFromArchive: false            # 🚫
-              enablePoison: false                # 🚫
-              runOnline: false                   # 🚫
-              useMonoRuntime: false              # 🚫
-              useSystemLibraries: false          # 🚫
-              withPreviousSDK: false             # 🚫
-              disableSigning: false              # 🚫
-              createSourceArtifact: true         # ✅
-
-            - buildNameFormat: 'SB_{0}_Online_PreviousSourceBuiltSdk'
-              distro: centos
-              targetArchitecture: x64
-              buildFromArchive: false            # 🚫
-              enablePoison: false                # 🚫
-              runOnline: true                    # ✅
-              useMonoRuntime: false              # 🚫
-              useSystemLibraries: false          # 🚫
-              withPreviousSDK: true              # ✅
-              disableSigning: true               # ✅
-              createSourceArtifact: false        # 🚫
-
-            - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
-              distro: fedora
-              targetArchitecture: x64
-              buildFromArchive: true             # ✅
-              enablePoison: false                # 🚫
-              runOnline: false                   # 🚫
-              useMonoRuntime: false              # 🚫
-              useSystemLibraries: true           # ✅
-              withPreviousSDK: false             # 🚫
-              disableSigning: true               # ✅
-              createSourceArtifact: false        # 🚫
-              disableBinaryAnalysisCaching: true
-
-            - buildNameFormat: 'SB_{0}Arm64_Offline_MsftSdk'
-              distro: ubuntu
-              targetArchitecture: arm64
-              buildFromArchive: false            # 🚫
-              enablePoison: false                # 🚫
-              runOnline: false                   # 🚫
-              useMonoRuntime: false              # 🚫
-              useSystemLibraries: false          # 🚫
-              withPreviousSDK: false             # 🚫
-              disableSigning: true               # ✅
-              createSourceArtifact: false        # 🚫
-
-            - buildNameFormat: 'SB_{0}_Offline_CurrentSourceBuiltSdk'
-              distro: fedora
-              targetArchitecture: x64
-              buildFromArchive: false            # 🚫
-              enablePoison: false                # 🚫
-              runOnline: false                   # 🚫
-              useMonoRuntime: false              # 🚫
-              useSystemLibraries: false          # 🚫
-              withPreviousSDK: false             # 🚫
-              disableSigning: true               # ✅
-              createSourceArtifact: false        # 🚫
-              reuseBuildArtifactsFrom: 'SB_{0}_Offline_MsftSdk_x64'
+          - buildNameFormat: 'SB_{0}_Offline_CurrentSourceBuiltSdk'
+            distro: fedora
+            targetArchitecture: x64
+            buildFromArchive: false            # 🚫
+            enablePoison: false                # 🚫
+            runOnline: false                   # 🚫
+            useSystemLibraries: false          # 🚫
+            withPreviousSDK: false             # 🚫
+            disableSigning: true               # ✅
+            createSourceArtifact: false        # 🚫
+            reuseBuildArtifactsFrom: 'SB_{0}_Offline_MsftSdk_x64'

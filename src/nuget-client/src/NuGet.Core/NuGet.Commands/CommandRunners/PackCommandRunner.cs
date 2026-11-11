@@ -224,19 +224,22 @@ namespace NuGet.Commands
                         _packArgs.Path));
             }
 
-            // We must use the Path.GetTempPath() which NuGetFolderPath.Temp uses as a root because writing temp files
-            // to the package directory with a guid would break some build tools caching
             var manifest = new Manifest(new ManifestMetadata(builder), files: null);
-            string tempOutputPath = Path.Combine(
-                NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp),
-                Path.GetRandomFileName());
-
-            using (var stream = new FileStream(tempOutputPath, FileMode.Create))
+            // Keep staging files outside the package directory to avoid breaking build tools' caching.
+            string tempOutputPath = Path.GetTempFileName();
+            try
             {
-                manifest.Save(stream);
-            }
+                using (var stream = new FileStream(tempOutputPath, FileMode.Create))
+                {
+                    manifest.Save(stream);
+                }
 
-            FileUtility.Replace(tempOutputPath, resolvedNuSpecOutputPath);
+                FileUtility.Replace(tempOutputPath, resolvedNuSpecOutputPath);
+            }
+            finally
+            {
+                File.Delete(tempOutputPath);
+            }
         }
 
         /// <summary>
@@ -250,12 +253,6 @@ namespace NuGet.Commands
             Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
 
             string sha512OutputPath = Path.Combine(outputPath + ".sha512");
-
-            // We must use the Path.GetTempPath() which NuGetFolderPath.Temp uses as a root because writing temp files
-            // to the package directory with a guid would break some build tools caching
-            string tempOutputPath = Path.Combine(
-                NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp),
-                Path.GetRandomFileName());
 
             _packArgs.Logger.Log(
                 PackagingLogMessage.CreateMessage(
@@ -274,8 +271,17 @@ namespace NuGet.Commands
                 sha512hash = cryptoHashProvider.CalculateHash(fileStream);
             }
 
-            File.WriteAllText(tempOutputPath, Convert.ToBase64String(sha512hash));
-            FileUtility.Replace(tempOutputPath, sha512OutputPath);
+            // Keep staging files outside the package directory to avoid breaking build tools' caching.
+            string tempOutputPath = Path.GetTempFileName();
+            try
+            {
+                File.WriteAllText(tempOutputPath, Convert.ToBase64String(sha512hash));
+                FileUtility.Replace(tempOutputPath, sha512OutputPath);
+            }
+            finally
+            {
+                File.Delete(tempOutputPath);
+            }
         }
 
         private void InitCommonPackageBuilderProperties(PackageBuilder builder)
@@ -777,9 +783,10 @@ namespace NuGet.Commands
                         Strings.NuGetDocs));
             }
 
-            string outputPath = GetOutputPath(symbolsBuilder, _packArgs, symbols: true);
-
+            // The version suffix is applied here, so it has to happen before the file name is computed from the version
             InitCommonPackageBuilderProperties(symbolsBuilder);
+
+            string outputPath = GetOutputPath(symbolsBuilder, _packArgs, symbols: true);
             return BuildPackage(symbolsBuilder, outputPath, symbolsPackage: false);
         }
 

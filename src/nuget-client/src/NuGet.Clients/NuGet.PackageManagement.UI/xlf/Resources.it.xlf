@@ -1053,7 +1053,7 @@ Errore: {1}</target>
       </trans-unit>
       <trans-unit id="Text_PackageFormatApply">
         <source>The package manager format will apply to the following projects in this Solution</source>
-        <target state="translated">Il formato di gestione pacchetti verrà applicato ai progetti seguenti in questo elemento Solution</target>
+        <target state="translated">Il formato di gestione pacchetti verrà applicato ai progetti seguenti in questa soluzione</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageLevelTopLevel">

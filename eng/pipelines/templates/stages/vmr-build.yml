@@ -20,13 +20,16 @@ parameters:
   - lite
   # run everything
   - full
-  # run source build outer loop (Mono jobs)
-  - source-build-outer-loop
 
 # True when build is running from dotnet/dotnet directly
 - name: isBuiltFromVmr
   type: boolean
   default: true
+
+- name: isCodeqlActive
+  displayName: True when the pipeline is configured to run CodeQL
+  type: boolean
+  default: false
 
 # True when the build is a build run from the production pipeline
 - name: isOfficialBuild
@@ -108,26 +111,26 @@ parameters:
   default: ''
 
 stages:
-- ${{ if notin(parameters.scope, 'source-build-outer-loop') }}:
-  - template: vmr-verticals.yml
-    parameters:
-      desiredSigning: ${{ parameters.desiredSigning }}
-      isOfficialBuild: ${{ parameters.isOfficialBuild }}
-      desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
-      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-      scope: ${{ parameters.scope }}
-      verifications: ${{ parameters.verifications }}
-      excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
-      ${{ if eq(variables['System.TeamProject'], 'public') }}:
-        pool_Mac: ${{ parameters.pool_Mac }}
-      ${{ else }}:
-        pool_Mac:
-          name: Azure Pipelines
-          vmImage: $(poolImage_Mac_Hosted)
-          os: macOS
-      pool_Mac_ShortStack: ${{ parameters.pool_Mac_ShortStack }}
+- template: vmr-verticals.yml
+  parameters:
+    desiredSigning: ${{ parameters.desiredSigning }}
+    isOfficialBuild: ${{ parameters.isOfficialBuild }}
+    desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
+    isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+    isCodeqlActive: ${{ parameters.isCodeqlActive }}
+    scope: ${{ parameters.scope }}
+    verifications: ${{ parameters.verifications }}
+    excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
+    ${{ if eq(variables['System.TeamProject'], 'public') }}:
+      pool_Mac: ${{ parameters.pool_Mac }}
+    ${{ else }}:
+      pool_Mac:
+        name: Azure Pipelines
+        vmImage: $(poolImage_Mac_Hosted)
+        os: macOS
+    pool_Mac_ShortStack: ${{ parameters.pool_Mac_ShortStack }}
 
-- ${{ if and(parameters.isBuiltFromVmr, eq(parameters.isOfficialBuild, true)) }}:
+- ${{ if and(parameters.isBuiltFromVmr, eq(parameters.isOfficialBuild, true), not(parameters.isCodeqlActive)) }}:
   - stage: Publish_Build_Assets
     displayName: Publish Assets
     dependsOn:
@@ -146,7 +149,7 @@ stages:
           **/manifests/**/*.xml
           !*Sdk_*_Artifacts/**/VerticalManifest.xml
 
-- ${{ if and(ne(variables['System.TeamProject'], 'public'), in(parameters.scope, 'full')) }}:
+- ${{ if and(ne(variables['System.TeamProject'], 'public'), in(parameters.scope, 'full'), not(parameters.isCodeqlActive)) }}:
   - template: vmr-validation.yml
     parameters:
       desiredSigning: ${{ parameters.desiredSigning }}
@@ -159,6 +162,7 @@ stages:
       pool_LinuxArm64: ${{ parameters.pool_LinuxArm64 }}
       scope: ${{ parameters.scope }}
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      isCodeqlActive: ${{ parameters.isCodeqlActive }}
       isOfficialBuild: ${{ parameters.isOfficialBuild }}
       desiredSigning: ${{ parameters.desiredSigning }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}

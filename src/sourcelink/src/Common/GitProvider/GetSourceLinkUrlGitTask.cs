@@ -121,11 +121,8 @@ namespace Microsoft.Build.Tasks.SourceControl
                 return;
             }
 
-            static bool IsHexDigit(char c)
-                => c is >= '0' and <= '9' or >= 'a' and <= 'f' or >= 'A' and <= 'F';
-
             var revisionId = SourceRoot.GetMetadata(Names.SourceRoot.RevisionId);
-            if (revisionId == null || revisionId.Length != 40 || !revisionId.All(IsHexDigit))
+            if (!GitUtilities.IsValidObjectId(revisionId))
             {
                 Log.LogError(CommonResources.ValueOfWithIdentityIsNotValidCommitHash, Names.SourceRoot.RevisionIdFullName, SourceRoot.ItemSpec, revisionId);
                 return;

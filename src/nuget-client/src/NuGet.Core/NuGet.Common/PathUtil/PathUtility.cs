@@ -453,7 +453,6 @@ namespace NuGet.Common
                 var listOfPathsToCheck = new Func<string>[]
                 {
                     () => NuGetEnvironment.GetFolderPath(NuGetFolderPath.NuGetHome),
-                    () => NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp),
                     () => Directory.GetCurrentDirectory()
                 };
 

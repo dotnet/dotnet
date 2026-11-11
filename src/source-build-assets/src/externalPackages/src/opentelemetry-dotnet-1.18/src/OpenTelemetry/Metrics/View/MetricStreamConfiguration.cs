@@ -1,0 +1,166 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+#if EXPOSE_EXPERIMENTAL_FEATURES
+using System.Diagnostics.CodeAnalysis;
+#endif
+using OpenTelemetry.Internal;
+
+namespace OpenTelemetry.Metrics;
+
+/// <summary>
+/// Stores configuration for a MetricStream.
+/// </summary>
+public class MetricStreamConfiguration
+{
+    /// <summary>
+    /// Gets the drop configuration.
+    /// </summary>
+    /// <remarks>
+    /// Note: All metrics for the given instrument will be dropped (not
+    /// collected).
+    /// </remarks>
+    public static MetricStreamConfiguration Drop { get; } = new MetricStreamConfiguration { ViewId = -1 };
+
+    /// <summary>
+    /// Gets or sets the optional name of the metric stream.
+    /// </summary>
+    /// <remarks>
+    /// <para>Note: If not provided the instrument name will be used.</para>
+    /// <para>The name supplied here is used as-is; it is not required to
+    /// follow the instrument name syntax. This lets you rename instruments
+    /// to names that the OpenTelemetry instrument naming rules would
+    /// otherwise reject (for example, legacy or third-party names, or
+    /// OS-level counter names).</para>
+    /// </remarks>
+    public string? Name { get; set; }
+
+    /// <summary>
+    /// Gets or sets the optional description of the metric stream.
+    /// </summary>
+    /// <remarks>
+    /// Note: If not provided the instrument description will be used.
+    /// </remarks>
+    public string? Description { get; set; }
+
+#pragma warning disable CA1819 // Properties should not return arrays
+    /// <summary>
+    /// Gets or sets the optional tag keys to include in the metric stream.
+    /// </summary>
+    /// <remarks>
+    /// Notes:
+    /// <list type="bullet">
+    /// <item>If not provided, all the tags provided by the instrument
+    /// while reporting measurements will be used for aggregation.
+    /// If provided, only those tags in this list will be used
+    /// for aggregation. Providing an empty array will result
+    /// in a metric stream without any tags.
+    /// </item>
+    /// <item>A copy is made of the provided array.</item>
+    /// </list>
+    /// </remarks>
+    public string[]? TagKeys
+#pragma warning restore CA1819 // Properties should not return arrays
+    {
+        get => this.CopiedTagKeys?.ToArray();
+        set => this.CopiedTagKeys = value?.ToArray();
+    }
+
+    /// <summary>
+    /// Gets or sets a positive integer value defining the maximum number of
+    /// data points allowed for the metric managed by the view.
+    /// </summary>
+    /// <remarks>
+    /// <para>Spec reference: <see
+    /// href="https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#cardinality-limits">Cardinality
+    /// limits</see>.</para>
+    /// Note: The cardinality limit determines the maximum number of unique
+    /// dimension combinations for metrics.
+    /// Metrics with zero dimensions and overflow metrics are treated specially
+    /// and do not count against this limit.
+    /// If not set the default
+    /// MeterProvider cardinality limit of 2000 will apply.
+    /// </remarks>
+    public int? CardinalityLimit
+    {
+        get;
+        set
+        {
+            if (value != null)
+            {
+                Guard.ThrowIfOutOfRange(value.Value, min: 1, max: int.MaxValue);
+            }
+
+            field = value;
+        }
+    }
+
+#pragma warning disable CA1819 // Properties should not return arrays
+    /// <summary>
+    /// Gets or sets the optional tag keys to exclude from the metric stream.
+    /// </summary>
+    /// <remarks>
+    /// Notes:
+    /// <list type="bullet">
+    /// <item>If not provided, all the tags provided by the instrument
+    /// while reporting measurements will be used for aggregation.
+    /// If provided, only those tags not in this list will be used
+    /// for aggregation. Providing an empty array will result in no tags
+    /// being excluded (same effect as the default behavior: all attributes
+    /// are preserved).
+    /// </item>
+    /// <item>A copy is made of the provided array.</item>
+    /// <item>This is mutually exclusive with <see cref="TagKeys"/>
+    /// setting both will cause the view to be ignored.</item>
+    /// <item>Tags excluded from the metric stream by this setting may still
+    /// be exported on <see cref="Exemplar"/>s as <see
+    /// cref="Exemplar.FilteredTags"/>. To avoid this, disable exemplars by
+    /// configuring <see cref="ExemplarFilterType.AlwaysOff"/> on the meter
+    /// provider, or use <see cref="ExemplarReservoirFactory"/> to control
+    /// which measurements are sampled as exemplars.</item>
+    /// </list>
+    /// </remarks>
+    public string[]? ExcludedTagKeys
+#pragma warning restore CA1819 // Properties should not return arrays
+    {
+        get => this.CopiedExcludedTagKeys?.ToArray();
+        set => this.CopiedExcludedTagKeys = value?.ToArray();
+    }
+
+#if EXPOSE_EXPERIMENTAL_FEATURES
+    /// <summary>
+    /// Gets or sets a factory function used to generate an <see
+    /// cref="ExemplarReservoir"/> for the metric managed by the view to use
+    /// when storing <see cref="Exemplar"/>s.
+    /// </summary>
+    /// <remarks>
+    /// <inheritdoc cref="ExemplarReservoir" path="/remarks/para[@experimental-warning='true']"/>
+    /// <para>Note: Returning <see langword="null"/> from the factory function will
+    /// result in the default <see cref="ExemplarReservoir"/> being chosen by
+    /// the SDK based on the type of metric.</para>
+    /// Specification: <see
+    /// href="https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#stream-configuration"/>.
+    /// </remarks>
+    [Experimental(DiagnosticDefinitions.ExemplarReservoirExperimentalApi, UrlFormat = DiagnosticDefinitions.ExperimentalApiUrlFormat)]
+    public Func<ExemplarReservoir?>? ExemplarReservoirFactory { get; set; }
+#else
+    internal Func<ExemplarReservoir?>? ExemplarReservoirFactory { get; set; }
+#endif
+
+    internal string[]? CopiedTagKeys { get; private set; }
+
+    internal string[]? CopiedExcludedTagKeys { get; private set; }
+
+    internal int? ViewId { get; set; }
+
+    internal void Validate()
+    {
+        if (this.CopiedTagKeys != null && this.CopiedExcludedTagKeys != null)
+        {
+            throw new InvalidOperationException(
+                "TagKeys and ExcludedTagKeys cannot both be set. They are mutually exclusive. " +
+                "Use only one filtering strategy per view. For combined behavior, use the " +
+                "Func<Instrument, MetricStreamConfiguration> overload of AddView with custom logic.");
+        }
+    }
+}

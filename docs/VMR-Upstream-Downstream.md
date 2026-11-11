@@ -85,8 +85,6 @@ The table below represents branches that are present in various VMRs. Some branc
 | Preview SDK development post MAJOR.MINOR GA. Has non-SDK components cloaked or inoperable, pre-GA | Upstream, Microsoft | Preview SDK features | Upstream | release/MAJOR.MINOR.SDK_BAND (e.g. release/8.0.2xx) |
 | SDK-only VMR branch with security fixes | N/A – Security fixes should not be applied to an SDK-only VMR | | | |
 
-**Note: Addendum at https://dev.azure.com/dnceng/internal/_git/dotnet-eng-wiki?path=/Documentation/unified-build/VMR-Upstream-Downstream-Addendum.md**
-
 ## Inter-branch relationships and flow
 
 There is code flow between various branches of the VMR and across various VMR forks. The following code flow methods are used:
@@ -190,8 +188,6 @@ Based on these flow methods and directions, we can now establish the desired flo
 
 - **Trigger**: Every commit to source branch
 - **System Responsible**: Maestro Mirror Service
-
-**Note: Addendum at https://dev.azure.com/dnceng/internal/_git/dotnet-eng-wiki?path=/Documentation/unified-build/VMR-Upstream-Downstream-Addendum.md**
 
 ## Development Repository Branch Flow from Older Releases
 

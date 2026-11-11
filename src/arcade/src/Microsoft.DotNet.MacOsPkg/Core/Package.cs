@@ -13,19 +13,23 @@ internal static class Package
 {
     internal static void Unpack(string srcPath, string dstPath)
     {
-        ExpandPackage(srcPath, dstPath);
+        // Read the archive's table of contents to identify the package type without extracting payloads.
+        string[] entries = ExecuteHelper.Run("xar", $"-tf {srcPath}").Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
-        string? distribution = Utilities.FindInPath("Distribution", dstPath, isDirectory: false, searchOption: SearchOption.TopDirectoryOnly);
-        if (!string.IsNullOrEmpty(distribution))
+        // A top-level Distribution identifies an installer bundle.
+        // Its components have their own nested PackageInfo files.
+        if (entries.Contains("Distribution", StringComparer.Ordinal))
         {
-            UnpackInstallerPackage(dstPath, distribution!);
+            ExpandPackageContainer(srcPath, dstPath);
+            UnpackInstallerPackage(dstPath);
             return;
         }
 
-        string? packageInfo = Utilities.FindInPath("PackageInfo", dstPath, isDirectory: false, searchOption: SearchOption.TopDirectoryOnly);
-        if (!string.IsNullOrEmpty(packageInfo))
+        // A top-level PackageInfo identifies a component package.
+        // Unlike a bundle, its payload is fully expanded for signing.
+        if (entries.Contains("PackageInfo", StringComparer.Ordinal))
         {
-            UnpackComponentPackage(dstPath);
+            UnpackComponentPackage(srcPath, dstPath);
             return;
         }
 
@@ -51,9 +55,9 @@ internal static class Package
         throw new Exception("Cannot pack: no 'Distribution' or 'PackageInfo' file found in package");
     }
 
-    private static void UnpackInstallerPackage(string dstPath, string distribution)
+    private static void UnpackInstallerPackage(string dstPath)
     {
-        var xml = XElement.Load(distribution);
+        var xml = XElement.Load(Path.Combine(dstPath, "Distribution"));
         List<XElement> componentPackages = xml.Elements("pkg-ref").Where(e => e.Value.Trim() != "").ToList();
         foreach (var package in componentPackages)
         {
@@ -70,9 +74,10 @@ internal static class Package
     }
 
     /// <summary>
-    /// Unpack the payload of the .pkg, and package up .app directories as .zips
+    /// Fully expand the component's payload, and package up .app directories as .zips.
     /// </summary>
-    /// <param name="dstPath"></param>
+    /// <param name="srcPath">The original component package.</param>
+    /// <param name="dstPath">The directory where the component package is expanded.</param>
     /// <remarks>
     /// In a pkg, the .app bundles are represented by directories with a standard file structure.
     /// The directory is typically marked with a .app extension, though apparently this is not required.
@@ -94,9 +99,10 @@ internal static class Package
     /// will NOT be met. For now, this method will throw an exception in this case so that further examination can be
     /// made.
     /// </remarks>
-    private static void UnpackComponentPackage(string dstPath)
+    private static void UnpackComponentPackage(string srcPath, string dstPath)
     {
-        UnpackPayload(dstPath);
+        // Expand the container and decompress its payload (gzip or pbzx) in a single pass.
+        ExecuteHelper.Run("pkgutil", $"--expand-full {srcPath} {dstPath}");
 
         // Zip the nested app bundles
         IEnumerable<string> nestedApps = Directory.GetDirectories(dstPath, "*.app", SearchOption.AllDirectories).Where(app => AppBundle.IsBundle(app));
@@ -163,6 +169,11 @@ internal static class Package
         string installLocation = GetPackageInfoAttribute(pkgInfo, "install-location");
 
         string args = $"--root {payloadDirectoryPath} --identifier {identifier} --version {version} --install-location {installLocation}";
+        string? minimumSystemVersion = pkgInfo.Attribute("minimumSystemVersion")?.Value;
+        if (!string.IsNullOrEmpty(minimumSystemVersion))
+        {
+            args += $" --compression latest --min-os-version {minimumSystemVersion}";
+        }
         string? script = Utilities.FindInPath("Scripts", srcPath, isDirectory: true, searchOption: SearchOption.TopDirectoryOnly);
         if (!string.IsNullOrEmpty(script))
         {
@@ -176,27 +187,11 @@ internal static class Package
     private static void FlattenComponentPackage(string sourcePath, string destinationPath)
         => ExecuteHelper.Run("pkgutil", $"--flatten {sourcePath} {destinationPath}");
 
-    private static void UnpackPayload(string dstPath)
-    {
-        string payloadFilePath = GetPayloadPath(dstPath, isDirectory: false);
-
-        // Payloads can contain executable app bundles; keep extraction within the caller's workspace.
-        string tempDir = Path.Combine(dstPath, Path.GetRandomFileName());
-        Directory.CreateDirectory(tempDir);
-
-        ExecuteHelper.Run("cat", $"{payloadFilePath} | gzip -d | cpio -id", tempDir);
-
-        // Remove the payload file and replace it with
-        // a directory of the same name containing the unpacked contents
-        File.Delete(payloadFilePath);
-        Directory.Move(tempDir, payloadFilePath);
-    }
-
     private static string GetPayloadPath(string searchPath, bool isDirectory) =>
         Path.GetFullPath(Utilities.FindInPath("Payload", searchPath, isDirectory, searchOption: SearchOption.TopDirectoryOnly)
         ?? throw new Exception("Payload was not found"));
 
-    private static void ExpandPackage(string srcPath, string dstPath) =>
+    private static void ExpandPackageContainer(string srcPath, string dstPath) =>
         ExecuteHelper.Run("pkgutil", $"--expand {srcPath} {dstPath}");
 
     private static string GetPackageInfoAttribute(XElement pkgInfo, string elementName) =>

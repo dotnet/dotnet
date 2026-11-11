@@ -67,3 +67,38 @@ index ------------
  ./sdk/x.y.z/es/
  ./sdk/x.y.z/es/cs/
  ./sdk/x.y.z/es/cs/Microsoft.VisualStudio.TestPlatform.Client.resources.dll
+@@ ------------ @@
+ ./sdk/x.y.z/FSharp/ko/FSharp.DependencyManager.Nuget.resources.dll
+ ./sdk/x.y.z/FSharp/library-packs/
+ ./sdk/x.y.z/FSharp/library-packs/FSharp.Core.x.y.z.nupkg
+-./sdk/x.y.z/FSharp/MessagePack.Annotations.dll
+-./sdk/x.y.z/FSharp/MessagePack.dll
+ ./sdk/x.y.z/FSharp/Microsoft.Build.Framework.dll
+ ./sdk/x.y.z/FSharp/Microsoft.Build.Tasks.Core.dll
+ ./sdk/x.y.z/FSharp/Microsoft.Build.Utilities.Core.dll
+@@ ------------ @@
+ ./sdk/x.y.z/FSharp/Microsoft.FSharp.Targets
+ ./sdk/x.y.z/FSharp/Microsoft.NET.StringTools.dll
+ ./sdk/x.y.z/FSharp/Microsoft.Portable.FSharp.Targets
+-./sdk/x.y.z/FSharp/Microsoft.VisualStudio.Threading.dll
+-./sdk/x.y.z/FSharp/Microsoft.VisualStudio.Validation.dll
+-./sdk/x.y.z/FSharp/Nerdbank.MessagePack.dll
+-./sdk/x.y.z/FSharp/Nerdbank.Streams.dll
+-./sdk/x.y.z/FSharp/Newtonsoft.Json.dll
+ ./sdk/x.y.z/FSharp/pl/
+ ./sdk/x.y.z/FSharp/pl/FSharp.Build.resources.dll
+ ./sdk/x.y.z/FSharp/pl/FSharp.Compiler.Interactive.Settings.resources.dll
+ ./sdk/x.y.z/FSharp/pl/FSharp.Compiler.Service.resources.dll
+ ./sdk/x.y.z/FSharp/pl/FSharp.DependencyManager.Nuget.resources.dll
+-./sdk/x.y.z/FSharp/PolyType.dll
+ ./sdk/x.y.z/FSharp/pt-BR/
+ ./sdk/x.y.z/FSharp/pt-BR/FSharp.Build.resources.dll
+ ./sdk/x.y.z/FSharp/pt-BR/FSharp.Compiler.Interactive.Settings.resources.dll
+@@ ------------ @@
+ ./sdk/x.y.z/FSharp/runtimes/win/lib/netx.y/System.Diagnostics.EventLog.dll
+ ./sdk/x.y.z/FSharp/runtimes/win/lib/netx.y/System.Diagnostics.EventLog.Messages.dll
+ ./sdk/x.y.z/FSharp/runtimes/win/lib/netx.y/System.Security.Cryptography.Pkcs.dll
+-./sdk/x.y.z/FSharp/StreamJsonRpc.dll
+ ./sdk/x.y.z/FSharp/System.CodeDom.dll
+ ./sdk/x.y.z/FSharp/System.Configuration.ConfigurationManager.dll
+ ./sdk/x.y.z/FSharp/System.Diagnostics.EventLog.dll

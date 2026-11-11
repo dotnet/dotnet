@@ -42,9 +42,6 @@
     <!-- DefaultVersions.props -->
     <OfficialBuild Condition="'$(OfficialBuild)' != ''">false</OfficialBuild>
     <OfficialBuild Condition="'$(OfficialBuildId)' != ''">true</OfficialBuild>
-
-    <!-- TargetFrameworkDefaults.props -->
-    <NetCurrent>net11.0</NetCurrent>
   </PropertyGroup>
 
   <!-- Manually import the Versions.props file when the Arcade SDK isn't used. -->

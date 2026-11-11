@@ -2,11 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Runtime.Serialization;
 
 namespace NuGet.Configuration
 {
-    [Serializable]
     public class NuGetConfigurationException : Exception
     {
         public NuGetConfigurationException(string message)
@@ -16,13 +14,6 @@ namespace NuGet.Configuration
 
         public NuGetConfigurationException(string message, Exception? innerException)
             : base(message, innerException)
-        {
-        }
-
-#if NET8_0_OR_GREATER
-        [Obsolete(DiagnosticId = "SYSLIB0051")] // https://github.com/dotnet/docs/issues/34893
-#endif
-        protected NuGetConfigurationException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

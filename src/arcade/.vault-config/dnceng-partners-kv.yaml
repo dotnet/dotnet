@@ -42,16 +42,6 @@ secrets:
       permissions: rl
       service: blob|file
 
-  BotAccount-dotnet-bot-content-rw-grained-pat:
-    type: github-access-token
-    parameters:
-      gitHubBotAccountSecret:
-        name: BotAccount-dotnet-bot
-        location: EngKeyVault
-      gitHubBotAccountName: BotAccount-dotnet-bot
-      requiredScopes: content
-      description: "This pat is under the beta fine-grained tokens using dotnet as owner and repository specific for vscode-csharp and roslyn. The permissions are: Content - Read and write."
-
   # repo, workflow scopes (classic token)
   BotAccount-dotnet-renovate-bot-PAT:
     type: github-access-token

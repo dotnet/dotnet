@@ -131,7 +131,7 @@
       </trans-unit>
       <trans-unit id="Cmdlet_NoCompatibleProjects">
         <source>No compatible project(s) found in the active solution.</source>
-        <target state="translated">在使用中方案中找不到相容的專案。</target>
+        <target state="translated">在使用中解決方案中找不到相容的專案。</target>
         <note />
       </trans-unit>
       <trans-unit id="Cmdlet_NoPackageActions">
@@ -156,7 +156,7 @@
       </trans-unit>
       <trans-unit id="Cmdlet_NoSolution">
         <source>The current environment doesn't have a solution open.</source>
-        <target state="translated">目前環境未開啟方案。</target>
+        <target state="translated">目前環境未開啟解決方案。</target>
         <note />
       </trans-unit>
       <trans-unit id="Cmdlet_PackageNotInstalled">

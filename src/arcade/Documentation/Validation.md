@@ -54,7 +54,7 @@ Validate-DotNet runs each day at 4 PM Pacific Time. Each run is tagged with the 
 
 ### Automatic Notifications
 
-[Build Monitor](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/185/BuildFailureManagement) automatically monitors Validate-DotNet builds for a particular repository and opens issues when failures occur. If an issue is already open for Validate-DotNet failures in your repository for builds on a given channel, it will append a new comment.
+[Build Monitor](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/1724/notifications-for-validate-dotnet) automatically monitors Validate-DotNet builds for a particular repository and opens issues when failures occur. If an issue is already open for Validate-DotNet failures in your repository for builds on a given channel, it will append a new comment.
 
 To onboard, you will need to update both the `Builds` array and the `Issues` array in Build Monitor's [settings.json](https://github.com/dotnet/arcade-services/blob/main/src/DotNet.Status.Web/.config/settings.json#L23).
 
@@ -110,14 +110,14 @@ For example, for runtime, we would do:
 
 Validation failures come in many forms. Most will be actual problems found with the assets in a drop for your repository. These are the responsibility of the product teams to fix. Any failures in the `Required Validation` stage should be fixed as soon as possible, as they are possible release blockers.
 
-Some failures may be infrastructure issues. If you believe this is a case, please reach out to [DNCEng First Responders](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/107/How-to-get-a-hold-of-Engineering-Servicing), and someone will help diagnose and fix the issue found.
+Some failures may be infrastructure issues. If you believe this is a case, please reach out to [DNCEng First Responders](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/1907/Contact-Engineering-Services), and someone will help diagnose and fix the issue found.
 
 Errors we commonly see in validation jobs include:
 
 * Signing Validation
   * Files that are not intended to be signed are not listed in the `eng/SignCheckExclusionsFile.txt` for that repository, so validation complains that the files are not signed. Mitigation: add that file type to the `eng/SignCheckExclusionsFile.txt` in your repository.
 * SDL Validation (now handled by 1ES Pipeline Templates, which will open TSA issues for any failures found)
-  * Any pipeline failures in these legs should be reported to [DNCEng First Responders](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/107/How-to-get-a-hold-of-Engineering-Servicing), as it suggests an infrastructure failure. SDL failures should automatically create TSA issues, which you should address as appropriate.
+  * Any pipeline failures in these legs should be reported to [DNCEng First Responders](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/1907/Contact-Engineering-Services), as it suggests an infrastructure failure. SDL failures should automatically create TSA issues, which you should address as appropriate.
 * Localization Validation
   * Localization is done closer to release time. Localization failures suggest that either the localization team hasn't finished translations, or the translation PR hasn't been checked into your repository and should be. The closer to release we get, the more important fixing these failures becomes.
 * Nuget Metadata Validation

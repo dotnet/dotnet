@@ -35,7 +35,7 @@ public static class EqtHash
         // Any algorithm or logic change must require a sign off from feature owners of above
         // Also, TPV2 and TPV1 must use same Algorithm until the time TPV1 is completely deleted to be on-par
         // If LUT or .Net core scenario uses TPV2 to discover, but if it uses TPV1 in Devenv, then there will be testcase matching issues
-        using HashAlgorithm provider = SHA1.Create();
+        using HashAlgorithm provider = SHA1.Create(); // CodeQL [SM02196] SHA1 is used only to derive a non-security test identifier, never for integrity or authentication. It is being phased out: the xxHash128 algorithm is available behind an opt-in flag, will become the default, and SHA1 will then be removed.
         byte[] hash = provider.ComputeHash(Encoding.Unicode.GetBytes(data));
 
         // Guid is always 16 bytes

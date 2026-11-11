@@ -19,12 +19,12 @@
       </trans-unit>
       <trans-unit id="CertUtilityCertificateCaIssuersUrl">
         <source>CA Issuers URL: {0}</source>
-        <target state="new">CA Issuers URL: {0}</target>
+        <target state="translated">URL des émetteurs de l’autorité de certification : {0}</target>
         <note>0 - certificate authority issuers URL</note>
       </trans-unit>
       <trans-unit id="CertUtilityCertificateFreshestCrlUrl">
         <source>Freshest CRL URL: {0}</source>
-        <target state="new">Freshest CRL URL: {0}</target>
+        <target state="translated">URL de liste de révocation de certificats la plus récente : {0}</target>
         <note>0 - freshest CRL distribution point URL</note>
       </trans-unit>
       <trans-unit id="CertUtilityCertificateHash">

@@ -1,0 +1,5 @@
+{
+  "readme": "Optional. Copy this file to local/qb-config.local.json (git-ignored) to choose a model or custom plugin directory. Reports are saved to local/reports. Leave pluginRoot blank unless your Copilot plugins are not under COPILOT_HOME or ~/.copilot/installed-plugins.",
+  "model": "",
+  "pluginRoot": ""
+}

@@ -135,12 +135,12 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
       </trans-unit>
       <trans-unit id="Error_CannotGetGetAllProjectFileNamesMethod">
         <source>Cannot get the GetAllProjectFileNamesMethod from type  Mono.XBuild.CommandLine.SolutionParser.</source>
-        <target state="translated">GetAllProjectFileNamesMethod vom Typ „Mono.XBuild.CommandLine.SolutionParser“ kann nicht abgerufen werden.</target>
+        <target state="translated">GetAllProjectFileNamesMethod vom Typ Mono.XBuild.CommandLine.SolutionParser kann nicht abgerufen werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_CannotGetXBuildSolutionParser">
         <source>Cannot get type Mono.XBuild.CommandLine.SolutionParser.</source>
-        <target state="translated">Der Typ „Mono.XBuild.CommandLine.SolutionParser“ kann nicht abgerufen werden.</target>
+        <target state="translated">Typ Mono.XBuild.CommandLine.SolutionParser kann nicht abgerufen werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_CannotKillMsBuild">
@@ -150,12 +150,12 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
       </trans-unit>
       <trans-unit id="Error_CannotLoadTypeProjectInSolution">
         <source>Cannot load type Microsoft.Build.Construction.ProjectInSolution from Microsoft.Build.dll</source>
-        <target state="translated">Der Typ „Microsoft.Build.Construction.ProjectInSolution“ kann nicht aus Microsoft.Build.dll geladen werden</target>
+        <target state="translated">Typ Microsoft.Build.Construction.ProjectInSolution kann nicht aus Microsoft.Build.dll geladen werden</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_CannotLoadTypeSolutionParser">
         <source>Cannot load type Microsoft.Build.Construction.SolutionParser from Microsoft.Build.dll</source>
-        <target state="translated">Der Typ „Microsoft.Build.Construction.SolutionParser“ kann nicht aus Microsoft.Build.dll geladen werden</target>
+        <target state="translated">Typ Microsoft.Build.Construction.SolutionParser kann nicht aus Microsoft.Build.dll geladen werden</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_CannotLocateSolutionFile">
@@ -329,7 +329,7 @@ Sie können die Umgebungsvariable „{1}“ auf „true“ festlegen, um diese F
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsBuildForSolutionFilter">
         <source>This version of MSBuild not support Solution filter: '{0}'. Use a MSBuild version greater than or equal to 16.7 to use this feature.</source>
-        <target state="translated">Diese Version von MSBuild unterstützt keinen Lösungsfilter: „{0}“. Verwenden Sie eine MSBuild-Version größer oder gleich 16.7, um dieses Feature zu verwenden.</target>
+        <target state="translated">Diese Version von MSBuild unterstützt keinen Projektmappenfilter: '{0}'. Verwenden Sie eine MSBuild-Version größer oder gleich 16.7, um dieses Feature zu verwenden.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsbuild">
@@ -735,7 +735,7 @@ Sie können die Umgebungsvariable „{1}“ auf „true“ festlegen, um diese F
       </trans-unit>
       <trans-unit id="RestoreCommandCannotDetermineGlobalPackagesFolder">
         <source>'globalPackagesFolder' setting is a relative path. To determine full path, specify either -SolutionDirectory or a solution file as a parameter. To ignore 'globalPackagesFolder' setting, specify -PackagesDirectory.</source>
-        <target state="translated">Die Einstellung „globalPackagesFolder“ ist ein relativer Pfad. Geben Sie entweder -SolutionDirectory oder eine Lösungsdatei als Parameter an, um den vollständigen Pfad zu bestimmen. Geben Sie -PackagesDirectory an, um die Einstellung „globalPackagesFolder“ zu ignorieren.</target>
+        <target state="translated">Die Einstellung 'globalPackagesFolder' ist ein relativer Pfad. Geben Sie entweder -SolutionDirectory oder eine Projektmappendatei als Parameter an, um den vollständigen Pfad zu bestimmen. Geben Sie -PackagesDirectory an, um die Einstellung 'globalPackagesFolder' zu ignorieren.</target>
         <note>Please do not localize 'globalPackagesFolder', -SolutionDirectory or -PackagesDirectory</note>
       </trans-unit>
       <trans-unit id="RestoreCommandCannotDeterminePackagesFolder">

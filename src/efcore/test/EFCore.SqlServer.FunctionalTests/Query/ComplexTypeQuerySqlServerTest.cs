@@ -204,6 +204,13 @@ FROM [Customer] AS [c]
 """);
     }
 
+    public override async Task Include_complex_property(bool async)
+    {
+        await base.Include_complex_property(async);
+
+        AssertSql();
+    }
+
     public override async Task Complex_type_equals_complex_type(bool async)
     {
         await base.Complex_type_equals_complex_type(async);
@@ -1185,20 +1192,12 @@ GROUP BY [c].[ShippingAddress_Country_Code], [c].[ShippingAddress_Country_FullNa
 
         AssertSql(
             """
-SELECT [c3].[Id], [c3].[Name], [c3].[BillingAddress_AddressLine1], [c3].[BillingAddress_AddressLine2], [c3].[BillingAddress_Tags], [c3].[BillingAddress_ZipCode], [c3].[BillingAddress_Country_Code], [c3].[BillingAddress_Country_FullName], [c3].[OptionalAddress_AddressLine1], [c3].[OptionalAddress_AddressLine2], [c3].[OptionalAddress_Tags], [c3].[OptionalAddress_ZipCode], [c3].[OptionalAddress_Country_Code], [c3].[OptionalAddress_Country_FullName], [c3].[ShippingAddress_AddressLine1], [c3].[ShippingAddress_AddressLine2], [c3].[ShippingAddress_Tags], [c3].[ShippingAddress_ZipCode], [c3].[ShippingAddress_Country_Code], [c3].[ShippingAddress_Country_FullName]
+SELECT [c0].[Id], [c0].[Name], [c0].[BillingAddress_AddressLine1], [c0].[BillingAddress_AddressLine2], [c0].[BillingAddress_Tags], [c0].[BillingAddress_ZipCode], [c0].[BillingAddress_Country_Code], [c0].[BillingAddress_Country_FullName], [c0].[OptionalAddress_AddressLine1], [c0].[OptionalAddress_AddressLine2], [c0].[OptionalAddress_Tags], [c0].[OptionalAddress_ZipCode], [c0].[OptionalAddress_Country_Code], [c0].[OptionalAddress_Country_FullName], [c0].[ShippingAddress_AddressLine1], [c0].[ShippingAddress_AddressLine2], [c0].[ShippingAddress_Tags], [c0].[ShippingAddress_ZipCode], [c0].[ShippingAddress_Country_Code], [c0].[ShippingAddress_Country_FullName]
 FROM (
-    SELECT [c].[Id]
+    SELECT [c].[Id], [c].[Name], [c].[BillingAddress_AddressLine1], [c].[BillingAddress_AddressLine2], [c].[BillingAddress_Tags], [c].[BillingAddress_ZipCode], [c].[BillingAddress_Country_Code], [c].[BillingAddress_Country_FullName], [c].[OptionalAddress_AddressLine1], [c].[OptionalAddress_AddressLine2], [c].[OptionalAddress_Tags], [c].[OptionalAddress_ZipCode], [c].[OptionalAddress_Country_Code], [c].[OptionalAddress_Country_FullName], [c].[ShippingAddress_AddressLine1], [c].[ShippingAddress_AddressLine2], [c].[ShippingAddress_Tags], [c].[ShippingAddress_ZipCode], [c].[ShippingAddress_Country_Code], [c].[ShippingAddress_Country_FullName], ROW_NUMBER() OVER(PARTITION BY [c].[Id] ORDER BY [c].[Id]) AS [row]
     FROM [Customer] AS [c]
-    GROUP BY [c].[Id]
-) AS [c1]
-LEFT JOIN (
-    SELECT [c2].[Id], [c2].[Name], [c2].[BillingAddress_AddressLine1], [c2].[BillingAddress_AddressLine2], [c2].[BillingAddress_Tags], [c2].[BillingAddress_ZipCode], [c2].[BillingAddress_Country_Code], [c2].[BillingAddress_Country_FullName], [c2].[OptionalAddress_AddressLine1], [c2].[OptionalAddress_AddressLine2], [c2].[OptionalAddress_Tags], [c2].[OptionalAddress_ZipCode], [c2].[OptionalAddress_Country_Code], [c2].[OptionalAddress_Country_FullName], [c2].[ShippingAddress_AddressLine1], [c2].[ShippingAddress_AddressLine2], [c2].[ShippingAddress_Tags], [c2].[ShippingAddress_ZipCode], [c2].[ShippingAddress_Country_Code], [c2].[ShippingAddress_Country_FullName]
-    FROM (
-        SELECT [c0].[Id], [c0].[Name], [c0].[BillingAddress_AddressLine1], [c0].[BillingAddress_AddressLine2], [c0].[BillingAddress_Tags], [c0].[BillingAddress_ZipCode], [c0].[BillingAddress_Country_Code], [c0].[BillingAddress_Country_FullName], [c0].[OptionalAddress_AddressLine1], [c0].[OptionalAddress_AddressLine2], [c0].[OptionalAddress_Tags], [c0].[OptionalAddress_ZipCode], [c0].[OptionalAddress_Country_Code], [c0].[OptionalAddress_Country_FullName], [c0].[ShippingAddress_AddressLine1], [c0].[ShippingAddress_AddressLine2], [c0].[ShippingAddress_Tags], [c0].[ShippingAddress_ZipCode], [c0].[ShippingAddress_Country_Code], [c0].[ShippingAddress_Country_FullName], ROW_NUMBER() OVER(PARTITION BY [c0].[Id] ORDER BY [c0].[Id]) AS [row]
-        FROM [Customer] AS [c0]
-    ) AS [c2]
-    WHERE [c2].[row] <= 1
-) AS [c3] ON [c1].[Id] = [c3].[Id]
+) AS [c0]
+WHERE [c0].[row] <= 1
 """);
     }
 
@@ -1309,10 +1308,10 @@ FROM [EntityType] AS [e]
 
         AssertSql(
             """
-SELECT [t].[Id], [t].[ChildProperty], NULL AS [ChildProperty1], [t].[PropertyInsideComplexThing], [t].[ChildComplexProperty_PropertyInsideComplexThing], NULL AS [ChildComplexProperty_PropertyInsideComplexThing1], N'TpcChild1' AS [Discriminator]
+SELECT [t].[Id], [t].[ChildProperty], NULL AS [ChildProperty1], [t].[BaseComplexProperty_PropertyInsideComplexThing], [t].[ChildComplexProperty_PropertyInsideComplexThing], NULL AS [ChildComplexProperty_PropertyInsideComplexThing1], N'TpcChild1' AS [Discriminator]
 FROM [TpcChild1] AS [t]
 UNION ALL
-SELECT [t0].[Id], NULL AS [ChildProperty], [t0].[ChildProperty] AS [ChildProperty1], [t0].[PropertyInsideComplexThing], NULL AS [ChildComplexProperty_PropertyInsideComplexThing], [t0].[ChildComplexProperty_PropertyInsideComplexThing] AS [ChildComplexProperty_PropertyInsideComplexThing1], N'TpcChild2' AS [Discriminator]
+SELECT [t0].[Id], NULL AS [ChildProperty], [t0].[ChildProperty] AS [ChildProperty1], [t0].[BaseComplexProperty_PropertyInsideComplexThing], NULL AS [ChildComplexProperty_PropertyInsideComplexThing], [t0].[ChildComplexProperty_PropertyInsideComplexThing] AS [ChildComplexProperty_PropertyInsideComplexThing1], N'TpcChild2' AS [Discriminator]
 FROM [TpcChild2] AS [t0]
 """);
     }
@@ -1651,6 +1650,74 @@ LEFT JOIN (
             """);
     }
 
+    public override async Task Json_complex_properties_on_sibling_types_mapped_to_same_column()
+    {
+        await base.Json_complex_properties_on_sibling_types_mapped_to_same_column();
+
+        AssertSql(
+            """
+SELECT TOP(2) [a].[Id], [a].[Discriminator], [a].[Name], [a].[Details]
+FROM [Animal] AS [a]
+WHERE [a].[Discriminator] = N'Cat'
+""",
+            //
+            """
+@p0='{"Lives":8}' (Nullable = false) (Size = 11)
+@p1='1'
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Animal] SET [Details] = @p0
+OUTPUT 1
+WHERE [Id] = @p1;
+""",
+            //
+            """
+SELECT [a].[Id], [a].[Discriminator], [a].[Name], [a].[Details], [a].[Details]
+FROM [Animal] AS [a]
+ORDER BY [a].[Name]
+""",
+            //
+            """
+SELECT TOP(2) [a].[Id], [a].[Discriminator], [a].[Name], [a].[Details]
+FROM [Animal] AS [a]
+WHERE [a].[Discriminator] = N'Dog' AND JSON_VALUE([a].[Details], '$.Breed') = N'Collie'
+""");
+    }
+
+    public override async Task Json_complex_properties_on_base_and_derived_types_mapped_to_same_column_with_TPT()
+    {
+        await base.Json_complex_properties_on_base_and_derived_types_mapped_to_same_column_with_TPT();
+
+        AssertSql(
+            """
+SELECT TOP(2) [a].[Id], [a].[Name], [a].[Details], [d].[Details]
+FROM [Animal] AS [a]
+INNER JOIN [Dog] AS [d] ON [a].[Id] = [d].[Id]
+""",
+            //
+            """
+@p0='{"Weight":31}' (Nullable = false) (Size = 13)
+@p1='1'
+@p2='{"Breed":"Border Collie"}' (Nullable = false) (Size = 25)
+@p3='1'
+
+SET NOCOUNT ON;
+UPDATE [Animal] SET [Details] = @p0
+OUTPUT 1
+WHERE [Id] = @p1;
+UPDATE [Dog] SET [Details] = @p2
+OUTPUT 1
+WHERE [Id] = @p3;
+""",
+            //
+            """
+SELECT TOP(2) [a].[Id], [a].[Name], [a].[Details], [d].[Details]
+FROM [Animal] AS [a]
+INNER JOIN [Dog] AS [d] ON [a].[Id] = [d].[Id]
+""");
+    }
+
     #endregion Non-shared test resources
 
     [Fact]
@@ -1664,5 +1731,12 @@ LEFT JOIN (
     {
         protected override ITestStoreFactory TestStoreFactory
             => SqlServerTestStoreFactory.Instance;
+
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            base.ConfigureConventions(configurationBuilder);
+
+            configurationBuilder.Properties<List<string>>().HaveColumnType("nvarchar(max)");
+        }
     }
 }

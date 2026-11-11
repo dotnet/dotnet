@@ -47,12 +47,21 @@ parameters:
     - Preview (produces assets with a .final branding suffix)
     - Release (produces assets without a branding suffix)
 
+- name: forceCodeql
+  displayName: 'Force running CodeQL?'
+  type: boolean
+  default: false
+
 variables:
 - name: isScheduleTrigger
   value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
 
-- name: Codeql.DoNotStartTimes
-  value: 'Mon;Tue;Wed;Thu;Fri;Sat' # run only on the unsigned scheduled build on Sunday
+- ${{ if eq(parameters.forceCodeql, true) }}:
+  - name: Codeql.Cadence
+    value: 0
+- ${{ else }}:
+  - name: Codeql.DoNotStartTimes
+    value: 'Mon;Tue;Wed;Thu;Fri;Sat' # run only on the unsigned scheduled build on Sunday
 
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
   - name: skipComponentGovernanceDetection  # we run CG on internal builds only
@@ -100,6 +109,8 @@ extends:
         runSourceLanguagesInSourceAnalysis: true
       binskim:
         enabled: true
+      suppression:
+        suppressionFile: $(Build.SourcesDirectory)/.config/guardian/.gdnsuppress
       policheck:
         enabled: true
       credscan:
@@ -195,6 +206,7 @@ extends:
           desiredSigning: ${{ parameters.desiredSigning }}
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
         isOfficialBuild: true
+        isCodeqlActive: ${{ or(parameters.forceCodeql, eq(variables['Build.CronSchedule.DisplayName'], 'Unsigned CodeQL main build on Sundays')) }}
         scope: full
         # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
         # This is enabled for all branches except main and 1xx

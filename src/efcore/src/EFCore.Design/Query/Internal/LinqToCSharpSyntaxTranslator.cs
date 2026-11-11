@@ -1198,24 +1198,26 @@ public class LinqToCSharpSyntaxTranslator : ExpressionVisitor
             var enumType = e.GetType();
 
             var formatted = Enum.Format(enumType, e, "G");
-            if (char.IsDigit(formatted[0]))
-            {
-                // Unknown value, render as a cast of the underlying integral value
-                if (!Enum.IsDefined(e.GetType(), e))
-                {
-                    var underlyingType = enumType.GetEnumUnderlyingType();
 
-                    return CastExpression(
-                        Generate(enumType),
-                        LiteralExpression(
-                            SyntaxKind.NumericLiteralExpression,
-                            underlyingType == typeof(sbyte)
-                            || underlyingType == typeof(short)
-                            || underlyingType == typeof(int)
-                            || underlyingType == typeof(long)
-                                ? Literal(long.Parse(formatted))
-                                : Literal(ulong.Parse(formatted))));
-                }
+            // Unknown values are formatted as a (possibly negative) number rather than as member names
+            if (!char.IsLetter(formatted[0]) && formatted[0] != '_')
+            {
+                // Render as a cast of the underlying integral value
+                var underlyingType = enumType.GetEnumUnderlyingType();
+                var isSigned = underlyingType == typeof(sbyte)
+                    || underlyingType == typeof(short)
+                    || underlyingType == typeof(int)
+                    || underlyingType == typeof(long);
+                var signedValue = isSigned ? Convert.ToInt64(e, CultureInfo.InvariantCulture) : 0;
+
+                ExpressionSyntax literal = LiteralExpression(
+                    SyntaxKind.NumericLiteralExpression,
+                    isSigned
+                        ? Literal(signedValue)
+                        : Literal(Convert.ToUInt64(e, CultureInfo.InvariantCulture)));
+
+                // A negative value must be enclosed in parentheses, otherwise e.g. (MyEnum)-1 doesn't compile
+                return CastExpression(Generate(enumType), signedValue < 0 ? ParenthesizedExpression(literal) : literal);
             }
 
             var components = formatted.Split(", ");
@@ -2617,7 +2619,7 @@ public class LinqToCSharpSyntaxTranslator : ExpressionVisitor
         {
             ExpressionType.Negate => _g.NegateExpression(operand),
             ExpressionType.NegateChecked => _g.NegateExpression(operand),
-            ExpressionType.Not when unary.Type == typeof(bool) => _g.LogicalNotExpression(operand),
+            ExpressionType.Not when unary.Type.UnwrapNullableType() == typeof(bool) => _g.LogicalNotExpression(operand),
             ExpressionType.Not => _g.BitwiseNotExpression(operand),
             ExpressionType.OnesComplement => _g.BitwiseNotExpression(operand),
             ExpressionType.IsFalse => _g.LogicalNotExpression(operand),
@@ -2632,8 +2634,8 @@ public class LinqToCSharpSyntaxTranslator : ExpressionVisitor
             ExpressionType.Quote => operand,
             ExpressionType.UnaryPlus => PrefixUnaryExpression(SyntaxKind.UnaryPlusExpression, operand),
             ExpressionType.Unbox => operand,
-            ExpressionType.Increment => Translate(Expression.Add(unary.Operand, Expression.Constant(1))),
-            ExpressionType.Decrement => Translate(Expression.Subtract(unary.Operand, Expression.Constant(1))),
+            ExpressionType.Increment => Translate(IncrementOrDecrement(ExpressionType.Add, unary.Operand)),
+            ExpressionType.Decrement => Translate(IncrementOrDecrement(ExpressionType.Subtract, unary.Operand)),
             ExpressionType.PostIncrementAssign => PostfixUnaryExpression(SyntaxKind.PostIncrementExpression, operand),
             ExpressionType.PostDecrementAssign => PostfixUnaryExpression(SyntaxKind.PostDecrementExpression, operand),
             ExpressionType.PreIncrementAssign => PrefixUnaryExpression(SyntaxKind.PreIncrementExpression, operand),
@@ -2643,6 +2645,23 @@ public class LinqToCSharpSyntaxTranslator : ExpressionVisitor
         };
 
         return unary;
+
+        // C# promotes short/ushort arithmetic to int, so compute in int and convert back to keep the expression's type
+        static Expression IncrementOrDecrement(ExpressionType binaryType, Expression operand)
+        {
+            var type = operand.Type;
+            if (type.UnwrapNullableType() is var underlyingType && (underlyingType == typeof(short) || underlyingType == typeof(ushort)))
+            {
+                var promotedType = type.IsNullableType() ? typeof(int?) : typeof(int);
+
+                return Expression.Convert(
+                    Expression.MakeBinary(binaryType, Expression.Convert(operand, promotedType), Expression.Constant(1, promotedType)),
+                    type);
+            }
+
+            return Expression.MakeBinary(
+                binaryType, operand, Expression.Constant(Convert.ChangeType(1, underlyingType, CultureInfo.InvariantCulture), type));
+        }
     }
 
     /// <inheritdoc />

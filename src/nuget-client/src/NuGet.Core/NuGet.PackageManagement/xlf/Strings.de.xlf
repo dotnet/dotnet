@@ -194,7 +194,7 @@
       </trans-unit>
       <trans-unit id="NoLatestVersionFound">
         <source>No latest version found for '{0}' for the given source repositories and resolution context</source>
-        <target state="translated">Für "{0}" für die angegebenen Quellrepositorys und den Auflösungskontext wurde keine aktuelle Version gefunden.</target>
+        <target state="translated">Keine aktuelle Version für '{0}' für die angegebenen Quellrepositorys und den Auflösungskontext gefunden</target>
         <note />
       </trans-unit>
       <trans-unit id="NoPackageUpdates">
@@ -351,7 +351,7 @@
       </trans-unit>
       <trans-unit id="ResolutionSuccessfulNoAction">
         <source>Resolution was successful but resulted in no action</source>
-        <target state="translated">Die Auflösung war erfolgreich, hat aber zu keiner Aktion geführt.</target>
+        <target state="translated">Auflösung erfolgreich, führte aber zu keiner Aktion</target>
         <note />
       </trans-unit>
       <trans-unit id="ResolvedActionsToInstallPackage">
@@ -401,12 +401,12 @@
       </trans-unit>
       <trans-unit id="SolutionDirectoryNotAvailable">
         <source>Solution is not opened or not saved. Ensure you have an open and saved solution.</source>
-        <target state="translated">Die Lösung ist nicht geöffnet oder wurde nicht gespeichert. Stellen Sie sicher, dass Sie über eine geöffnete und gespeicherte Lösung verfügen.</target>
+        <target state="translated">Die Projektmappe wurde nicht geöffnet oder nicht gespeichert. Vergewissern Sie sich, dass Ihre Projektmappe geöffnet und gespeichert ist.</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionManagerNotAvailableForUninstall">
         <source>Uninstall is not supported when SolutionManager is not available</source>
-        <target state="translated">Die Deinstallation wird nicht unterstützt, wenn "SolutionManager" nicht verfügbar ist.</target>
+        <target state="translated">Deinstallation wird nicht unterstützt, wenn SolutionManager nicht verfügbar ist</target>
         <note />
       </trans-unit>
       <trans-unit id="SuccessfullyInstalled">

@@ -1,0 +1,30 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'OpenTelemetry.slnx'))\build\Common.targets" />
+
+  <PropertyGroup>
+    <!-- Note: PackageValidationBaselineVersion and IsPackable are defined in
+    targets because $(MinVerTagPrefix) is not available in props files as they
+    apply before csproj. -->
+    <PackageValidationBaselineVersion Condition="'$(MinVerTagPrefix)' == 'core-'">$(OTelLatestStableVer)</PackageValidationBaselineVersion>
+    <IsPackable Condition="'$(PackTag)' != '' AND $(PackTag.StartsWith($(MinVerTagPrefix))) == false">false</IsPackable>
+
+    <TargetFrameworkMonikerAssemblyAttributesPath>$([System.IO.Path]::Combine('$(IntermediateOutputPath)','$(TargetFrameworkMoniker).AssemblyAttributes$(DefaultLanguageSourceExtension)'))</TargetFrameworkMonikerAssemblyAttributesPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedFiles Include="$(GeneratedAssemblyInfoFile)"/>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IsPackable)' == 'true'">
+    <None Include="$(PackagePrimaryLicenseFile)"
+          PackagePath="$([System.IO.Path]::GetFileName('$(PackagePrimaryLicenseFile)'))"
+          Pack="true"
+          Visible="false" />
+    <None Include="$(PackageThirdPartyNoticesFile)"
+          PackagePath="$([System.IO.Path]::GetFileName('$(PackageThirdPartyNoticesFile)'))"
+          Pack="true"
+          Visible="false" />
+  </ItemGroup>
+
+</Project>

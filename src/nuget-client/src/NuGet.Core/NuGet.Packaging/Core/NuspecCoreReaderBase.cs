@@ -82,7 +82,17 @@ namespace NuGet.Packaging.Core
         public virtual string GetId()
         {
             var node = MetadataNode.Elements(XName.Get(Id, MetadataNode.GetDefaultNamespace().NamespaceName)).FirstOrDefault();
-            return node == null ? null! : node.Value;
+
+            if (node == null)
+            {
+                return null!;
+            }
+
+            string id = node.Value;
+
+            PackageIdValidator.ValidatePackageId(id);
+
+            return id;
         }
 
         /// <summary>

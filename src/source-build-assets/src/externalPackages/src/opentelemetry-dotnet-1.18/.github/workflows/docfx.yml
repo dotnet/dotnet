@@ -1,0 +1,34 @@
+name: Build docfx
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  run-docfx-build:
+    name: Build docfx
+    runs-on: windows-2025
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        filter: 'tree:0'
+        persist-credentials: false
+        show-progress: false
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+
+    - name: Install docfx
+      shell: pwsh
+      env:
+        # renovate: datasource=nuget depName=docfx
+        DOCFX_VERSION: '2.78.5'
+      run: dotnet tool install -g docfx --version ${env:DOCFX_VERSION}
+
+    - name: Build docfx
+      shell: pwsh
+      run: .\build\docfx.cmd

@@ -65,6 +65,8 @@ extends:
         name: $(DncEngInternalBuildPool)
         image: 1es-windows-2022
         os: windows
+      suppression:
+        suppressionFile: $(Build.SourcesDirectory)/.config/guardian/.gdnsuppress
 
     containers:
       ${{ variables.almaLinuxContainerName }}:

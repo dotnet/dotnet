@@ -5,13 +5,6 @@
     <IsPackable>false</IsPackable>
     <TargetFramework>netstandard2.0</TargetFramework>
 
-    <!-- Declare Platforms so EnableDynamicPlatformResolution (set globally in
-         server/Directory.Build.props) doesn't emit MSB3982 when this project is
-         referenced as an analyzer from a project that targets a specific platform
-         (e.g. Microsoft.NET.ProjectData.Tasks). The SetPlatform="" on the
-         ProjectReference is insufficient on its own. -->
-    <Platforms>AnyCPU</Platforms>
-
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <EnableAotAnalyzer>false</EnableAotAnalyzer>
     <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
@@ -27,7 +20,22 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <PackageReference Include="System.Text.Json" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <!-- SourceBuild runs the generator inside the bootstrap compiler, not the product being built.
+         Targeting netstandard2.0 does not prevent live BCL packages from requiring newer assembly
+         versions than that compiler can load. Pin the BCL dependency chain, including transitive
+         dependencies, to the bundled SDK versions. -->
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" VersionOverride="$(BundledNETCoreAppPackageVersion)" PrivateAssets="all" />
+    <PackageReference Include="System.Collections.Immutable" VersionOverride="$(BundledNETCoreAppPackageVersion)" PrivateAssets="all" />
+    <PackageReference Include="System.IO.Pipelines" VersionOverride="$(BundledNETCoreAppPackageVersion)" PrivateAssets="all" />
+    <PackageReference Include="System.Text.Encodings.Web" VersionOverride="$(BundledNETCoreAppPackageVersion)" PrivateAssets="all" />
+    <PackageReference Include="System.Text.Json" VersionOverride="$(BundledNETCoreAppPackageVersion)" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

@@ -32,6 +32,31 @@ public abstract class PrecompiledQueryRelationalTestBase
     #region Expression types
 
     [Fact]
+    public virtual Task Class_constant_in_predicate()
+        => FullSourceTest(
+            """
+public static class TestContainer
+{
+    private const int BlogId = 8;
+
+    public static async Task Test(DbContextOptions dbContextOptions)
+    {
+        await using var context = new PrecompiledQueryContext(dbContextOptions);
+        var blog = await ExecuteAsync(context, CancellationToken.None);
+        Assert.NotNull(blog);
+        Assert.Equal(8, blog.Id);
+        Assert.Equal("Blog1", blog.Name);
+    }
+
+    private static Task<Blog?> ExecuteAsync(PrecompiledQueryContext suppliedContext, CancellationToken cancellationToken)
+    {
+        var context = suppliedContext;
+        return context.Blogs.SingleOrDefaultAsync(b => b.Id == BlogId, cancellationToken);
+    }
+}
+""");
+
+    [Fact]
     public virtual Task BinaryExpression()
         => Test(
             """
@@ -272,6 +297,10 @@ _ = await context.Blogs.OrderBy(b => b.Name).Take(toTake).ToListAsync();
     [Fact]
     public virtual Task Final_GroupBy_projecting_grouping_elements()
         => Test("""var blogs = await context.Blogs.GroupBy(b => b.Name).Select(g => g.Select(b => b.Id).ToList()).ToListAsync();""");
+
+    [Fact]
+    public virtual Task GroupBy_Select_first_grouping_element()
+        => Test("""var blogs = await context.Blogs.GroupBy(b => b.Name).Select(g => g.OrderBy(b => b.Id).First()).ToListAsync();""");
 
     #endregion Regular operators
 
@@ -855,6 +884,23 @@ Assert.Equal("Blog1", (await context.Blogs.Where(b => b.Id == 8).FirstOrDefaultA
 Assert.Null(await context.Blogs.Where(b => b.Id == 7).FirstOrDefaultAsync(token));
 """);
 
+    [Fact] // #37961
+    public virtual Task Terminating_with_ConfigureAwait()
+        => Test(
+            """
+CancellationTokenSource source = new CancellationTokenSource();
+CancellationToken token = source.Token;
+Assert.Equal("Blog1", (await context.Blogs.Where(b => b.Id == 8).FirstOrDefaultAsync(token).ConfigureAwait(false)).Name);
+""");
+
+    [Fact]
+    public virtual Task Terminating_followed_by_instance_method_call()
+        => Test(
+            """
+var id = 8;
+Assert.Equal("1", context.Blogs.Count(b => b.Id == id).ToString());
+""");
+
     #endregion Reducing terminating operators
 
     #region SQL expression quotability
@@ -1102,6 +1148,73 @@ public static class TestContainer
     #endregion Different DbContext expressions
 
     #region Captured variable handling
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task Captured_nullable_value_in_guarded_query(bool async)
+        => Test(
+            $$"""
+foreach (var suppliedId in new int?[] { 8, 9, null })
+{
+    var id = suppliedId;
+    var queryId = id;
+    var blogs = id.HasValue
+        ? {{(async ? "await " : "")}}context.Blogs.AsNoTracking()
+            .Where(b => b.Id == queryId.Value)
+            .Select(b => new { b.Id, b.Name })
+            .{{(async ? "ToListAsync()" : "ToList()")}}
+        : {{(async ? "await " : "")}}context.Blogs.AsNoTracking()
+            .Select(b => new { b.Id, b.Name })
+            .{{(async ? "ToListAsync()" : "ToList()")}};
+
+    Assert.Equal(
+        id.HasValue ? new[] { id.Value } : new[] { 8, 9 },
+        blogs.OrderBy(b => b.Id).Select(b => b.Id));
+    Assert.Equal(
+        id.HasValue ? new[] { id == 8 ? "Blog1" : "Blog2" } : new[] { "Blog1", "Blog2" },
+        blogs.OrderBy(b => b.Id).Select(b => b.Name));
+}
+""");
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task Captured_object_properties(bool async)
+        => Test(
+            $$"""
+var item = new Blog { Id = 8, Name = "Blog1" };
+var blog = {{(async ? "await context.Blogs.FirstOrDefaultAsync" : "context.Blogs.FirstOrDefault")}}(b => b.Id == item.Id && b.Name == item.Name);
+Assert.NotNull(blog);
+Assert.Equal(8, blog.Id);
+Assert.Equal("Blog1", blog.Name);
+""");
+
+    [Fact]
+    public virtual Task Captured_entity_property()
+        => Test(
+            """
+var item = await context.Blogs.SingleAsync(b => b.Id == 8);
+var blog = await context.Blogs.FirstOrDefaultAsync(b => b.Id == item.Id);
+Assert.Same(item, blog);
+""");
+
+    [Fact]
+    public virtual Task Captured_null_object_property_throws_at_runtime()
+        => Test(
+            """
+Blog item = null!;
+await Assert.ThrowsAsync<NullReferenceException>(() => context.Blogs.AnyAsync(b => b.Id == item.Id));
+""");
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task Captured_foreach_object_properties(bool async)
+        => Test(
+            $$"""
+var items = new[] { new Blog { Id = 8, Name = "Blog1" }, new Blog { Id = 9, Name = "Blog2" } };
+foreach (var item in items)
+{
+    var blog = {{(async ? "await context.Blogs.SingleAsync" : "context.Blogs.Single")}}(b => b.Id == item.Id && b.Name == item.Name);
+    Assert.Equal(item.Id, blog.Id);
+    Assert.Equal(item.Name, blog.Name);
+}
+""");
 
     [Fact]
     public virtual Task Captured_method_parameter_in_lambda()

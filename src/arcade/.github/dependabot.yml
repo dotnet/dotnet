@@ -10,6 +10,11 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      microsoft-diagnostics:
+        patterns:
+          - "Microsoft.Diagnostics.NETCore.Client"
+          - "Microsoft.Diagnostics.Runtime"
     ignore:
       # Manually updated dependencies
       - dependency-name: "Microsoft.Build.NoTargets"

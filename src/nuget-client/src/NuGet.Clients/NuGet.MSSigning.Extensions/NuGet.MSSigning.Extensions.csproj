@@ -56,7 +56,7 @@
           Condition="'$(BuildingInsideVisualStudio)' != 'true'">
     <Error Text="Build dependencies are inconsistent with mergeinclude specified in ilmerge.props" Condition="'@(BuildArtifacts-&gt;Count())' != '@(MergeInclude-&gt;Count())'" />
     <PropertyGroup>
-      <IlmergeCommand>$(ILRepack) $(PathToBuiltNuGetExe) /lib:$(OutputPath) @(BuildArtifacts->'%(fullpath)', ' ') /out:$(PathToMergedNuGetExe) @(MergeAllowDup -> '/allowdup:%(Identity)', ' ') /log:$(OutputPath)IlMergeLog.txt /allowduplicateresources</IlmergeCommand>
+      <IlmergeCommand>&quot;$(ILRepack)&quot; $(PathToBuiltNuGetExe) /lib:$(OutputPath) @(BuildArtifacts->'%(fullpath)', ' ') /out:$(PathToMergedNuGetExe) @(MergeAllowDup -> '/allowdup:%(Identity)', ' ') /log:$(OutputPath)IlMergeLog.txt /allowduplicateresources</IlmergeCommand>
       <IlmergeCommand Condition="'$(SkipSigning)' != 'true' And Exists($(AssemblyOriginatorKeyFile))">$(IlmergeCommand) /delaysign /keyfile:$(AssemblyOriginatorKeyFile)</IlmergeCommand>
     </PropertyGroup>
     <Error Condition="'$(ILRepack)' == ''" Text="ILRepack not found" />

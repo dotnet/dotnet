@@ -31,7 +31,7 @@ The [Helix C# Client](/src/Microsoft.DotNet.Helix/Client/CSharp) and [JobSender]
 	- Anonymous execution and machines are supported, as well as authenticated work using a GitHub authentication token. Sensitive workloads can be locked down to one or more GitHub user names, which must match to use these queues. 
 	- Users are also able to directly interact with the Helix API via its swagger endpoints in both anonymous and authenticated fashion.
 
-Additional Helix implementation details are available in the private .NET Engineering Services wiki: https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/606/HelixDocumentation
+Additional Helix implementation details are available in the private [.NET Engineering Services wiki](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/1703/Helix-Documentation).
 
 ## Features of Helix
 

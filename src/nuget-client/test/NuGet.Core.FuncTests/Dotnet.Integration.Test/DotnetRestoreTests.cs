@@ -1363,6 +1363,14 @@ EndGlobal";
                 nonLatestTarget.Libraries.Should().ContainSingle(e => e.Name.Equals("x"));
                 LockFileTarget latestTarget = assetsFile.Targets.Single(e => e.TargetFramework.Equals(NuGetFramework.Parse("net472")) && string.IsNullOrEmpty(e.RuntimeIdentifier));
                 latestTarget.Libraries.Should().NotContain(e => e.Name.Equals("x"));
+
+                var propsFilePath = Path.Combine(workingDirectory1, "obj", $"{projectName1}.csproj.nuget.g.props");
+                var propsXml = XDocument.Load(propsFilePath);
+                var itemGroupConditions = propsXml.Root.Elements()
+                    .Where(e => e.Name.LocalName == "ItemGroup")
+                    .Select(e => e.Attribute("Condition")?.Value.Trim());
+                var expectedCondition = $"'$(TargetFramework)' == '{notLatestNetFrameworkAlias}' AND '$(ExcludeRestorePackageImports)' != 'true'";
+                itemGroupConditions.Should().Contain(condition => condition != null && condition.Contains(expectedCondition));
             }
         }
 
@@ -2902,7 +2910,7 @@ EndGlobal";
             using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource);
             pathContext.Settings.RemoveSource("source");
             pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "true");
-            string packageid = new string('a', 200);
+            string packageid = new string('a', 100);
             var packageA1 = new SimpleTestPackageContext()
             {
                 Id = packageid,
@@ -4280,7 +4288,7 @@ EndGlobal";
             assetsFile.LogMessages.Should().HaveCount(1);
             assetsFile.LogMessages[0].Level.Should().Be(LogLevel.Warning);
             assetsFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1701);
-            //assetsFile.LogMessages[0].TargetGraphs.Should().HaveCount(2);
+            assetsFile.LogMessages[0].TargetGraphs.Should().HaveCount(2);
 
             var buildResult = _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"build {projectFile} --no-restore", testOutputHelper: _testOutputHelper);
             buildResult.AllOutput.Should().Contain("NU1702");

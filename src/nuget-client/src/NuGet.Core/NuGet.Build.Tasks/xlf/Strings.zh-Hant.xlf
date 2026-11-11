@@ -154,7 +154,7 @@
       </trans-unit>
       <trans-unit id="RestoreNoSolutionFound">
         <source>No solution found. Restore against a solution or pass in /p:SolutionDir</source>
-        <target state="translated">找不到任何方案。請根據方案還原或傳遞至 /p:SolutionDir</target>
+        <target state="translated">找不到任何解決方案。請根據解決方案還原或傳遞至 /p:SolutionDir</target>
         <note />
       </trans-unit>
       <trans-unit id="UnsupportedFallbackFramework">

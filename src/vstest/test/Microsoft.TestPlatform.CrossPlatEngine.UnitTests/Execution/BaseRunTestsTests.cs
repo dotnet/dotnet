@@ -98,6 +98,7 @@ public class BaseRunTestsTests
     [TestCleanup]
     public void Cleanup()
     {
+        _runTestsInstance.Dispose();
         TestExecutorExtensionManager.Destroy();
         TestPluginCacheHelper.ResetExtensionsCache();
     }

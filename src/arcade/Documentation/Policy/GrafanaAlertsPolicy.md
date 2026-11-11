@@ -16,8 +16,8 @@ Whenever you're setting up a new alert in Grafana make sure that:
 - Panels in Grafana dashboards have a description that explains what the graph/chart/table/panel shows and why we measure that particular metric.  
     Example:  
     ![image](https://user-images.githubusercontent.com/7013027/156360267-4f92d4c3-c136-4dc3-b559-71c2dc5bc3af.png)
-- For every Grafana alert there is a page with alert guide tagged as `[Alert]` in the [internal wiki](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/884/Wiki-for-Grafana-Alerts) dedicated to this specific alert
-  - The page is marked as `[Alert]` and contains the the category tag `!!Category-Alerts` so that is is listed in the [Alerts category page](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/925/Category-Alerts)
+- For every Grafana alert there is a page with alert guide tagged as `[Alert]` in the [internal wiki](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/1864/Wiki-for-Grafana-Alerts) dedicated to this specific alert
+  - The page is marked as `[Alert]` and listed in the [current alerts catalog](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/1864/Wiki-for-Grafana-Alerts?anchor=current-alerts)
   - The page contains information about the alert, why it fired, what's the impact/urgency, what actions to take and more. Please see a [more exhaustive list below](#recommended-content-of-guides-to-alerts).
 - The panel that the alert is associated with contains a link to the alert page in its description (the grey panel description mentioned above).  
     Example:  

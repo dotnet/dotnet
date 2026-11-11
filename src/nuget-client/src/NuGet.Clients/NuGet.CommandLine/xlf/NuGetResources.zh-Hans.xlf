@@ -155,7 +155,7 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
       </trans-unit>
       <trans-unit id="Error_CannotLoadTypeSolutionParser">
         <source>Cannot load type Microsoft.Build.Construction.SolutionParser from Microsoft.Build.dll</source>
-        <target state="translated">Cannot load type Microsoft.Build.Construction.SolutionParser from Microsoft.Build.dll</target>
+        <target state="translated">无法从 Microsoft.Build.dll 加载类型 Microsoft.Build.Construction.SolutionParser</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_CannotLocateSolutionFile">
@@ -294,7 +294,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="Error_SolutionFileParseError">
         <source>Error parsing solution file at {0}: {1}</source>
-        <target state="translated">Error parsing solution file at {0}: {1}</target>
+        <target state="translated">在 {0} 处分析解决方案文件时出错: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_SourceProviderIsNull">

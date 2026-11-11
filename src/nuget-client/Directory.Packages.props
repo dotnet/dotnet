@@ -1,15 +1,16 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <Net10PackagesVersion>10.0.13</Net10PackagesVersion>
 
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion Condition="'$(MicrosoftCodeAnalysisPublicApiAnalyzersVersion)' == ''">3.3.4</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <!-- Microsoft.VisualStudio.RpcContracts has a dependency on Newtonsoft.Json 13.0.4, but we cannot update Newtonsoft.Json to 13.0.4 due to compatibility issues. We manually downgrade newtonsoft.json -->
     <NewtonsoftJsonPackageVersion Condition="'$(NewtonsoftJsonPackageVersion)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">13.0.4</NewtonsoftJsonPackageVersion>
     <NewtonsoftJsonPackageVersion Condition="'$(NewtonsoftJsonPackageVersion)' == ''">13.0.3</NewtonsoftJsonPackageVersion>
-    <SystemFormatsAsn1PackageVersion Condition="'$(SystemFormatsAsn1PackageVersion)' == ''">8.0.2</SystemFormatsAsn1PackageVersion>
+    <SystemFormatsAsn1PackageVersion Condition="'$(SystemFormatsAsn1PackageVersion)' == ''">$(Net10PackagesVersion)</SystemFormatsAsn1PackageVersion>
 
     <!-- Read docs/updating-packages.md before updating System.Text.Json's version -->
-    <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == ''">8.0.5</SystemTextJsonVersion>
+    <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == ''">10.0.10</SystemTextJsonVersion>
     <SystemCommandLineVersion Condition="'$(SystemCommandLineVersion)' == ''">2.0.0-beta7.25374.102</SystemCommandLineVersion>
     <MSTestPackageVersion>3.4.3</MSTestPackageVersion>
   </PropertyGroup>
@@ -27,8 +28,8 @@
     <MicrosoftWebXdtPackageVersion Condition="'$(MicrosoftWebXdtPackageVersion)' == ''">3.2.0</MicrosoftWebXdtPackageVersion>
     <SystemComponentModelCompositionPackageVersion Condition="'$(SystemComponentModelCompositionPackageVersion)' == ''">4.5.0</SystemComponentModelCompositionPackageVersion>
     <SystemMemoryPackageVersion Condition="'$(SystemMemoryPackageVersion)' == ''">4.6.3</SystemMemoryPackageVersion>
-    <SystemSecurityCryptographyPkcsVersion Condition="'$(SystemSecurityCryptographyPkcsVersion)' == ''">8.0.1</SystemSecurityCryptographyPkcsVersion>
-    <SystemSecurityCryptographyProtectedDataVersion Condition="'$(SystemSecurityCryptographyProtectedDataVersion)' == ''">8.0.0</SystemSecurityCryptographyProtectedDataVersion>
+    <SystemSecurityCryptographyPkcsVersion Condition="'$(SystemSecurityCryptographyPkcsVersion)' == ''">$(Net10PackagesVersion)</SystemSecurityCryptographyPkcsVersion>
+    <SystemSecurityCryptographyProtectedDataVersion Condition="'$(SystemSecurityCryptographyProtectedDataVersion)' == ''">$(Net10PackagesVersion)</SystemSecurityCryptographyProtectedDataVersion>
     <MicrosoftDotNetXliffTasksVersion Condition="'$(MicrosoftDotNetXliffTasksVersion)' == ''">10.0.0-beta.25260.104</MicrosoftDotNetXliffTasksVersion>
   </PropertyGroup>
 
@@ -88,7 +89,8 @@
     <PackageVersion Include="SharpZipLib" Version="1.4.2" />
     <PackageVersion Include="Spectre.Console" Version="0.54.0" />
     <PackageVersion Include="Spectre.Console.Testing" Version="0.54.0" />
-    <PackageVersion Include="System.Collections.Immutable" Version="8.0.0" />
+    <!-- Match VSSDK BuildTools' copy to avoid a CreatePkgDef type-loading failure. -->
+    <PackageVersion Include="System.Collections.Immutable" Version="10.0.8" />
     <PackageVersion Include="System.CommandLine" Version="$(SystemCommandLineVersion)" />
     <PackageVersion Include="System.ComponentModel.Composition" Version="$(SystemComponentModelCompositionPackageVersion)" />
     <PackageVersion Include="System.Formats.Asn1" Version="$(SystemFormatsAsn1PackageVersion)" />
@@ -108,7 +110,7 @@
     Once the packages depending on these packages are upgraded, these PackageVersions can be removed.
   -->
   <ItemGroup>
-    <PackageVersion Include="MessagePack" Version="2.5.302" />
+    <PackageVersion Include="MessagePack" Version="2.5.305" />
     <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="5.7.0" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="5.7.0" />
   </ItemGroup>

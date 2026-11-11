@@ -62,7 +62,6 @@ public class LocalizedTemplateTests : IClassFixture<ScenarioTestFixture>
     [Theory]
     [MemberData(nameof(GetAspNetCoreTemplateLocaleData))]
     [Trait("Category", "Offline")]
-    [Trait("Category", TestCategories.RequiresNet12RuntimeTargetingPack)]
     public void VerifyAspNetCoreTemplateInstantiationInLocale(string culture, DotNetSdkTemplate template, DotNetLanguage language)
         => VerifyTemplateInstantiation(culture, template, language);
 

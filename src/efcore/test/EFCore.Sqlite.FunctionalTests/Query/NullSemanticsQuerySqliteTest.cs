@@ -1633,6 +1633,45 @@ WHERE COALESCE("e"."NullableBoolA", "e"."BoolA" OR "e"."BoolB")
 """);
     }
 
+    public override async Task Correlated_collection_uses_csharp_semantics(bool async)
+    {
+        await base.Correlated_collection_uses_csharp_semantics(async);
+
+        AssertSql(
+            """
+SELECT "e"."Id", "e0"."Id"
+FROM "Entities1" AS "e"
+LEFT JOIN "Entities2" AS "e0" ON "e"."NullableIntA" = "e0"."NullableIntB" OR ("e"."NullableIntA" IS NULL AND "e0"."NullableIntB" IS NULL)
+ORDER BY "e"."Id"
+""");
+    }
+
+    public override async Task Correlated_collection_uses_csharp_semantics_with_composite_correlation(bool async)
+    {
+        await base.Correlated_collection_uses_csharp_semantics_with_composite_correlation(async);
+
+        AssertSql(
+            """
+SELECT "e"."Id", "e0"."Id"
+FROM "Entities1" AS "e"
+LEFT JOIN "Entities2" AS "e0" ON ("e"."NullableIntA" = "e0"."NullableIntB" OR ("e"."NullableIntA" IS NULL AND "e0"."NullableIntB" IS NULL)) AND ("e"."NullableStringA" = "e0"."NullableStringB" OR ("e"."NullableStringA" IS NULL AND "e0"."NullableStringB" IS NULL))
+ORDER BY "e"."Id"
+""");
+    }
+
+    public override void Correlated_collection_using_relational_null_semantics()
+    {
+        base.Correlated_collection_using_relational_null_semantics();
+
+        AssertSql(
+            """
+SELECT "e"."NullableIntA", "e"."Id", "e0"."Id"
+FROM "Entities1" AS "e"
+LEFT JOIN "Entities2" AS "e0" ON "e"."NullableIntA" = "e0"."NullableIntB"
+ORDER BY "e"."Id"
+""");
+    }
+
     public override async Task Join_uses_database_semantics(bool async)
     {
         await base.Join_uses_database_semantics(async);
@@ -1854,6 +1893,38 @@ WHERE NOT (COALESCE("e"."StringA" IN (
     SELECT "e0"."NullableStringA"
     FROM "Entities2" AS "e0"
 ), 0))
+""");
+    }
+
+    public override async Task Null_semantics_contains_with_subquery_projecting_nullable_comparison(bool async)
+    {
+        await base.Null_semantics_contains_with_subquery_projecting_nullable_comparison(async);
+
+        AssertSql(
+            """
+SELECT "e"."Id"
+FROM "Entities1" AS "e"
+WHERE 0 IN (
+    SELECT CASE
+        WHEN "e0"."NullableIntA" > 1 THEN 1
+        ELSE 0
+    END
+    FROM "Entities2" AS "e0"
+    WHERE "e0"."Id" = "e"."Id"
+)
+""",
+            //
+            """
+SELECT "e"."Id"
+FROM "Entities1" AS "e"
+WHERE "e"."BoolA" IN (
+    SELECT CASE
+        WHEN "e0"."NullableIntA" > 1 THEN 1
+        ELSE 0
+    END
+    FROM "Entities2" AS "e0"
+    WHERE "e0"."Id" = "e"."Id"
+)
 """);
     }
 

@@ -310,7 +310,7 @@ Fehlerdetails: {1}: {2}</target>
       </trans-unit>
       <trans-unit id="TrxLoggerWriteFailed">
         <source>Failed to write the results file '{0}'. {1}</source>
-        <target state="new">Failed to write the results file '{0}'. {1}</target>
+        <target state="translated">Не удалось записать файл результатов {0}. {1}</target>
         <note />
       </trans-unit>
     </body>

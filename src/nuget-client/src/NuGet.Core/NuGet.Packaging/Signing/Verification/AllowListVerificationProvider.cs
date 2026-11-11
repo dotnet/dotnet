@@ -56,7 +56,12 @@ namespace NuGet.Packaging.Signing
                 issues.Add(SignatureLog.Issue(fatal: treatIssuesAsErrors, code: NuGetLogCode.NU3034, message: _noMatchErrorMessage));
             }
 
-            return new SignedPackageVerificationResult(status, signature, issues);
+            return new SignedPackageVerificationResult(status, signature, issues)
+            {
+                RejectionReasons = status != SignatureVerificationStatus.Valid
+                    ? SignatureVerificationRejectionReasons.Other : SignatureVerificationRejectionReasons.None,
+                HasNonX509Rejection = status != SignatureVerificationStatus.Valid
+            };
         }
 
         private bool IsSignatureAllowed(

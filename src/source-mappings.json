@@ -111,6 +111,7 @@
         "src/externalPackages/src/opentelemetry-dotnet/docs/**",
         "src/externalPackages/src/opentelemetry-dotnet/examples/**",
         "src/externalPackages/src/opentelemetry-dotnet/test/**",
+        "src/externalPackages/src/opentelemetry-dotnet-1.18/test/**",
         "src/externalPackages/src/opentelemetry-dotnet-contrib/.github/**",
         "src/externalPackages/src/opentelemetry-dotnet-contrib/.vscode/**",
         "src/externalPackages/src/opentelemetry-dotnet-contrib/examples/**",

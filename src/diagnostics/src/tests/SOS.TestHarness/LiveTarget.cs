@@ -36,7 +36,8 @@ public sealed class LiveTarget : Target
     private bool _disposed;
 
     internal LiveTarget(Host hostKind, TargetDefinition definition, Flavor flavor, string exePath,
-                        CoreVersion coreVersion = CoreVersion.Net10, Dac dac = Dac.Legacy)
+                        CoreVersion coreVersion = CoreVersion.Net10, Dac dac = Dac.Legacy,
+                        HostRuntime hostRuntime = HostRuntime.Managed, GcType gcType = GcType.Workstation)
         : base(hostKind, definition.Name, flavor)
     {
         _definition = definition;
@@ -49,7 +50,17 @@ public sealed class LiveTarget : Target
         _gateHeld = true;
         try
         {
-            _host = HostFactory.CreateLiveHost(hostKind, flavor, exePath, coreVersion, dac);
+            Dictionary<string, string> environment = definition.EnvironmentVariables is null
+                ? new()
+                : new(definition.EnvironmentVariables);
+            if (gcType == GcType.Server)
+            {
+                environment["DOTNET_gcServer"] = "1";
+                environment["DOTNET_GCHeapCount"] = "4";
+                environment["DOTNET_GCDynamicAdaptationMode"] = "0";
+            }
+
+            _host = HostFactory.CreateLiveHost(hostKind, flavor, exePath, coreVersion, dac, hostRuntime, environment);
         }
         catch
         {
@@ -114,6 +125,21 @@ public sealed class LiveTarget : Target
         Engine.RunToBreakpoint();
         _at = null; // arbitrary, caller-managed location — not a named point
         ReplayContext.Current?.Add(ReplayStepKind.Navigate, "RunToBreakpoint()", null);
+    }
+
+    /// <summary>
+    /// Clear both SOS's pending managed breakpoints and any native breakpoints it already bound in the
+    /// underlying debugger.
+    /// </summary>
+    public void ClearBreakpoints()
+    {
+        Sos("bpmd -clearall");
+        Execute(Host switch
+        {
+            Host.Cdb => "bc *",
+            Host.Lldb => "breakpoint delete --force",
+            _ => throw new InvalidOperationException($"Unexpected live host '{Host}'."),
+        });
     }
 
     /// <summary>

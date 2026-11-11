@@ -191,6 +191,85 @@ namespace NuGet.Packaging.Test
             }
         }
 
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public void GetStream_PathOutsideRoot_Throws(bool absolutePath, bool trailingSeparator)
+        {
+            using (var directory = TestDirectory.Create())
+            {
+                var root = Path.Combine(directory.Path, "package");
+                var sibling = Path.Combine(directory.Path, "package-sibling");
+                Directory.CreateDirectory(root);
+                Directory.CreateDirectory(sibling);
+                File.WriteAllText(Path.Combine(sibling, "NuGet.exe"), "outside");
+                var path = absolutePath
+                    ? Path.Combine(sibling, "NuGet.exe")
+                    : Path.Combine("..", "package-sibling", "NuGet.exe");
+
+                using (var reader = new PackageFolderReader(trailingSeparator ? PathUtility.EnsureTrailingSlash(root) : root))
+                {
+                    Assert.Throws<FileNotFoundException>(() =>
+                    {
+                        using (reader.GetStream(path))
+                        {
+                        }
+                    });
+                }
+            }
+        }
+
+        [Theory]
+        [InlineData("file.txt", false)]
+        [InlineData("file.txt", true)]
+        [InlineData("tools/file.txt", false)]
+        [InlineData("tools/file.txt", true)]
+        [InlineData("tools/../file.txt", false)]
+        [InlineData("tools/../file.txt", true)]
+        public void GetStream_PathInsideRoot_ReturnsContent(string filePath, bool trailingSeparator)
+        {
+            using (var directory = TestDirectory.Create())
+            {
+                var root = Path.Combine(directory.Path, "package");
+                var tools = Path.Combine(root, "tools");
+                Directory.CreateDirectory(tools);
+                File.WriteAllText(Path.Combine(root, "file.txt"), "inside");
+                File.WriteAllText(Path.Combine(tools, "file.txt"), "inside");
+
+                using (var reader = new PackageFolderReader(trailingSeparator ? PathUtility.EnsureTrailingSlash(root) : root))
+                using (var stream = reader.GetStream(filePath))
+                using (var streamReader = new StreamReader(stream))
+                {
+                    Assert.Equal("inside", streamReader.ReadToEnd());
+                }
+            }
+        }
+
+        [PlatformFact(Platform.Linux)]
+        public void GetStream_CaseDistinctSibling_Throws()
+        {
+            using (var directory = TestDirectory.Create())
+            {
+                var root = Path.Combine(directory.Path, "package");
+                var sibling = Path.Combine(directory.Path, "PACKAGE");
+                Directory.CreateDirectory(root);
+                Directory.CreateDirectory(sibling);
+                File.WriteAllText(Path.Combine(sibling, "NuGet.exe"), "outside");
+
+                using (var reader = new PackageFolderReader(root))
+                {
+                    Assert.Throws<FileNotFoundException>(() =>
+                    {
+                        using (reader.GetStream(Path.Combine("..", "PACKAGE", "NuGet.exe")))
+                        {
+                        }
+                    });
+                }
+            }
+        }
+
         [Fact]
         public void GetFiles_ReturnsFiles()
         {

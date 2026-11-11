@@ -45,7 +45,9 @@ namespace NuGet.Commands
 
                 foreach (var library in libraries.Where(e => e.Type == LibraryType.Package))
                 {
-                    var identity = new PackageIdentity(library.Name!, library.Version);
+                    string libraryName = library.Name
+                        ?? throw new InvalidDataException("A package library is missing its name.");
+                    var identity = new PackageIdentity(libraryName, library.Version);
 
                     var dependency = new LockFileDependency()
                     {
@@ -56,10 +58,10 @@ namespace NuGet.Commands
                     };
 
                     var framework_dep = framework?.Dependencies.FirstOrDefault(
-                        dep => StringComparer.OrdinalIgnoreCase.Equals(dep.Name, library.Name));
+                        dep => StringComparer.OrdinalIgnoreCase.Equals(dep.Name, libraryName));
 
                     CentralPackageVersion? centralPackageVersion = null;
-                    framework?.CentralPackageVersions.TryGetValue(library.Name, out centralPackageVersion);
+                    framework?.CentralPackageVersions.TryGetValue(libraryName, out centralPackageVersion);
 
                     if (framework_dep != null)
                     {

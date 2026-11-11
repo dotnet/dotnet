@@ -26,6 +26,11 @@ parameters:
   type: boolean
   default: true
 
+- name: isCodeqlActive
+  displayName: True when the pipeline is configured to run CodeQL
+  type: boolean
+  default: false
+
 # True when the build is a build run from the production pipeline
 - name: isOfficialBuild
   type: boolean
@@ -113,6 +118,7 @@ stages:
         parameters:
           buildName: ${{ format('{0}_Ubuntu_BuildTests', variables.ubuntuName) }}
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           pool: ${{ parameters.pool_Linux }}
           container:
             name: ${{ variables.ubuntuContainerName }}
@@ -127,6 +133,7 @@ stages:
         parameters:
           buildName: Windows_BuildTests
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: x64
@@ -151,6 +158,7 @@ stages:
         parameters:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           signDac: ${{ variables.signDacEnabled }}
@@ -158,6 +166,7 @@ stages:
           targetOS: windows
           targetArchitecture: x64
           tagPipelineBuildWithSdkVersion: ${{ parameters.isOfficialBuild }}
+          tagPipelineBuildWithCodeql: ${{ parameters.isCodeqlActive }}
           enableAstred: ${{ parameters.isOfficialBuild }}
           brandingType: ${{ variables.brandingType }}
           sourceIndexName: dotnet-dotnet-windows
@@ -168,6 +177,7 @@ stages:
         parameters:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           signDac: ${{ variables.signDacEnabled }}
@@ -183,6 +193,7 @@ stages:
           parameters:
             buildName: Android_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -198,6 +209,7 @@ stages:
           parameters:
             buildName: Browser_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -214,6 +226,7 @@ stages:
           parameters:
             buildName: iOSSimulator_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Mac_ShortStack }}
@@ -230,6 +243,7 @@ stages:
           parameters:
             buildName: Android_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -244,6 +258,7 @@ stages:
           parameters:
             buildName: Android_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -258,6 +273,7 @@ stages:
           parameters:
             buildName: Android_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -272,6 +288,7 @@ stages:
           parameters:
             buildName: Browser_Multithreaded_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -288,6 +305,7 @@ stages:
           parameters:
             buildName: Browser_CoreCLR_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -297,13 +315,14 @@ stages:
             crossRootFs: '/crossrootfs/x64'
             targetOS: browser
             targetArchitecture: wasm
-            extraProperties: /p:DotNetBuildUseMonoRuntime=false
+            extraProperties: /p:RuntimeFlavor=CoreCLR
             brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: LinuxBionic_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -318,6 +337,7 @@ stages:
           parameters:
             buildName: LinuxBionic_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -332,6 +352,7 @@ stages:
           parameters:
             buildName: LinuxBionic_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -346,6 +367,7 @@ stages:
           parameters:
             buildName: iOS_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Mac_ShortStack }}
@@ -355,19 +377,9 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
-            buildName: iOSSimulator_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            sign: ${{ variables.signEnabled }}
-            signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac_ShortStack }}
-            targetOS: iossimulator
-            targetArchitecture: x64
-            brandingType: ${{ variables.brandingType }}
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
             buildName: MacCatalyst_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Mac_ShortStack }}
@@ -379,6 +391,7 @@ stages:
           parameters:
             buildName: MacCatalyst_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Mac_ShortStack }}
@@ -390,6 +403,7 @@ stages:
           parameters:
             buildName: tvOS_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Mac_ShortStack }}
@@ -401,6 +415,7 @@ stages:
           parameters:
             buildName: tvOSSimulator_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Mac_ShortStack }}
@@ -410,19 +425,25 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
-            buildName: tvOSSimulator_Shortstack
+            buildName: Wasi_CoreCLR_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac_ShortStack }}
-            targetOS: tvossimulator
-            targetArchitecture: x64
+            pool: ${{ parameters.pool_Linux_Shortstack }}
+            container:
+              name: ${{ variables.wasiCrossContainerName }}
+              image: ${{ variables.wasiCrossContainerImage }}
+            crossRootFs: '/crossrootfs/x64'
+            targetOS: wasi
+            targetArchitecture: wasm
+            extraProperties: /p:RuntimeFlavor=CoreCLR
             brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Wasi_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Linux_Shortstack }}
@@ -438,6 +459,7 @@ stages:
         parameters:
           buildName: OSX
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Mac }}
@@ -445,25 +467,11 @@ stages:
           targetArchitecture: x64
           brandingType: ${{ variables.brandingType }}
 
-      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            buildName: OSX_Shortstack_Mono_LLVMAOT
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            sign: ${{ variables.signEnabled }}
-            signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac_ShortStack }}
-            useMonoRuntime: true
-            targetOS: osx
-            targetArchitecture: x64
-            extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
-            brandingType: ${{ variables.brandingType }}
-
       - template: ../jobs/vmr-build.yml
         parameters:
           buildName: Linux
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux }}
@@ -480,6 +488,7 @@ stages:
         parameters:
           buildName: Linux_Pgo
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: false
           pool: ${{ parameters.pool_Linux }}
           container:
@@ -492,29 +501,11 @@ stages:
           brandingType: ${{ variables.brandingType }}
 
       - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            buildName: Linux_Shortstack_Mono_LLVMAOT
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            sign: ${{ variables.signEnabled }}
-            signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Linux_Shortstack }}
-            container:
-              name: ${{ variables.azurelinuxX64CrossContainerName }}
-              image: ${{ variables.azurelinuxX64CrossContainerImage }}
-            crossRootFs: '/crossrootfs/x64'
-            useMonoRuntime: true
-            targetOS: linux
-            targetArchitecture: x64
-            extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
-            brandingType: ${{ variables.brandingType }}
-
-      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
         - template: ../jobs/vmr-build.yml
           parameters:
             buildName: Linux
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Linux }}
@@ -531,6 +522,7 @@ stages:
         parameters:
           buildName: Linux
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux }}
@@ -547,6 +539,7 @@ stages:
         parameters:
           buildName: Linux_Pgo
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: false
           pool: ${{ parameters.pool_Linux }}
           container:
@@ -562,6 +555,7 @@ stages:
         parameters:
           buildName: Linux_Alpine
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux }}
@@ -579,6 +573,7 @@ stages:
           parameters:
             buildName: Linux_Alpine
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             pool: ${{ parameters.pool_Linux }}
@@ -595,6 +590,7 @@ stages:
         parameters:
           buildName: Linux_Alpine
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux }}
@@ -607,28 +603,11 @@ stages:
           targetRid: ${{ variables.linuxMuslArm64Rid }}
           brandingType: ${{ variables.brandingType }}
 
-      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            buildName: Linux_Shortstack_Mono_LLVMAOT
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            sign: ${{ variables.signEnabled }}
-            signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Linux_Shortstack }}
-            container:
-              name: ${{ variables.azurelinuxArm64CrossContainerName }}
-              image: ${{ variables.azurelinuxArm64CrossContainerImage }}
-            crossRootFs: '/crossrootfs/arm64'
-            useMonoRuntime: true
-            targetOS: linux
-            targetArchitecture: arm64
-            extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
-            brandingType: ${{ variables.brandingType }}
-
       - template: ../jobs/vmr-build.yml
         parameters:
           buildName: OSX
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Mac }}
@@ -640,6 +619,7 @@ stages:
         parameters:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           signDac: ${{ variables.signDacEnabled }}
@@ -653,6 +633,7 @@ stages:
           parameters:
             buildName: Windows
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             signDac: ${{ variables.signDacEnabled }}
@@ -665,6 +646,7 @@ stages:
         parameters:
           buildName: Windows_Pgo
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: false
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
@@ -677,6 +659,7 @@ stages:
           parameters:
             buildName: Windows_Pgo
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: false
             pool: ${{ parameters.pool_Windows }}
             targetOS: windows
@@ -688,6 +671,7 @@ stages:
         parameters:
           buildName: Windows_Pgo
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: false
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
@@ -704,6 +688,7 @@ stages:
           parameters:
             buildName: Windows
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            isCodeqlActive: ${{ parameters.isCodeqlActive }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
             signDac: ${{ variables.signDacEnabled }}
@@ -725,6 +710,7 @@ stages:
         parameters:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Windows }}
@@ -743,6 +729,7 @@ stages:
         parameters:
           buildName: Windows_Workloads
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           brandingType: ${{ variables.brandingType }}
@@ -760,6 +747,7 @@ stages:
             - Browser_CoreCLR_Shortstack_wasm
             - Browser_Shortstack_wasm
             - Browser_Multithreaded_Shortstack_wasm
+            - Wasi_CoreCLR_Shortstack_wasm
             - Wasi_Shortstack_wasm
             - Android_Shortstack_arm64
             - Android_Shortstack_arm
@@ -767,10 +755,8 @@ stages:
             - Android_Shortstack_x86
             - iOS_Shortstack_arm64
             - iOSSimulator_Shortstack_arm64
-            - iOSSimulator_Shortstack_x64
             - tvOS_Shortstack_arm64
             - tvOSSimulator_Shortstack_arm64
-            - tvOSSimulator_Shortstack_x64
             - MacCatalyst_Shortstack_arm64
             - MacCatalyst_Shortstack_x64
 
@@ -781,6 +767,7 @@ stages:
         parameters:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           brandingType: ${{ variables.brandingType }}
@@ -799,6 +786,7 @@ stages:
         parameters:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           brandingType: ${{ variables.brandingType }}
@@ -831,6 +819,7 @@ stages:
       parameters:
         buildName: Windows
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        isCodeqlActive: ${{ parameters.isCodeqlActive }}
         sign: ${{ variables.signEnabled }}
         signType: ${{ variables.signType }}
         brandingType: ${{ variables.brandingType }}
@@ -844,6 +833,7 @@ stages:
         parameters:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+          isCodeqlActive: ${{ parameters.isCodeqlActive }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           brandingType: ${{ variables.brandingType }}
@@ -856,6 +846,7 @@ stages:
       parameters:
         buildName: Windows
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        isCodeqlActive: ${{ parameters.isCodeqlActive }}
         sign: ${{ variables.signEnabled }}
         signType: ${{ variables.signType }}
         brandingType: ${{ variables.brandingType }}
@@ -871,6 +862,7 @@ stages:
       parameters:
         buildName: Windows
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        isCodeqlActive: ${{ parameters.isCodeqlActive }}
         sign: ${{ variables.signEnabled }}
         signType: ${{ variables.signType }}
         brandingType: ${{ variables.brandingType }}

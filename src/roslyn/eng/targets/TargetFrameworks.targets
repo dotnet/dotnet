@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(OutputType)' == 'Exe' and
+                            '$(TargetFramework)' == '$(NetRoslynBuildTool)' and '$(NetRoslynBuildTool)' != '$(NetCurrent)'">
+    <!-- These standalone build executables must run on the bootstrap SDK, but still consume the live
+         Roslyn and BCL packages, so they stay on the bundled framework and resolve the packages'
+         netstandard assets. Source-built BCL packages advertise the current TFM as their minimum
+         supported framework, so their support guards warn about that deliberate fallback.
+         Suppress only those support-policy warnings; assembly identity conflicts stay visible. -->
+    <SuppressTfmSupportBuildWarnings Condition="'$(SuppressTfmSupportBuildWarnings)' == ''">true</SuppressTfmSupportBuildWarnings>
+  </PropertyGroup>
+
   <!-- Throw an Error if NetVSShared doesn't contain both NetVS and NetVSCode -->
   <Target Name="CheckNetVSShared" BeforeTargets="Build">
     <Error Condition="!$(NetVSShared.Contains($(NetVS)))" Text="NetVSShared must contain NetVS" />

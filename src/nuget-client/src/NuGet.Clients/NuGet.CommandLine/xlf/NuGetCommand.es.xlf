@@ -373,7 +373,7 @@ nuget init \\foo\packages \\bar\packages</target>
       </trans-unit>
       <trans-unit id="InstallCommandDependencyVersion">
         <source>Overrides the default dependency resolution behavior.</source>
-        <target state="translated">Overrides the default dependency resolution behavior.</target>
+        <target state="translated">Invalida el comportamiento de resolución de dependencias predeterminado.</target>
         <note />
       </trans-unit>
       <trans-unit id="InstallCommandDescription">
@@ -834,7 +834,7 @@ nuget push foo.nupkg -Timeout 360</target>
       </trans-unit>
       <trans-unit id="RestoreCommandUsageSummary">
         <source>[&lt;solution&gt; | &lt;packages.config file&gt; | &lt;Microsoft Build project&gt;] [options]</source>
-        <target state="translated">[&lt;solution&gt; | &lt;packages.config archivo&gt; | &lt;Microsoft Build project&gt;] [options]</target>
+        <target state="translated">[&lt;solution&gt; | &lt;packages.config archivo&gt; | &lt;Microsoft Build project&gt;] [opciones]</target>
         <note>Please don't localize "packages.config"</note>
       </trans-unit>
       <trans-unit id="RestoreCommandUseLockFile">

@@ -19,6 +19,7 @@
     <NewtonsoftJsonBootstrapVersion>13.0.4</NewtonsoftJsonBootstrapVersion>
 
     <Antlr4Version>4.13.1</Antlr4Version>
+    <AntiSSRFReleaseVersion>1.0.0</AntiSSRFReleaseVersion>
     <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>8.19.2</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
     <IdentityModelMicrosoftBclCryptographyVersion>10.0.10</IdentityModelMicrosoftBclCryptographyVersion>
     <CssParserReleaseVersionSuffix>20230414.1</CssParserReleaseVersionSuffix>
@@ -28,6 +29,7 @@
     <VsSolutionPersistenceReleaseVersion>1.0.52</VsSolutionPersistenceReleaseVersion>
     <SpectreConsoleReleaseVersion>0.54.0</SpectreConsoleReleaseVersion>
     <OpenTelemetryDotNetReleaseVersion>1.16.0</OpenTelemetryDotNetReleaseVersion>
+    <OpenTelemetryDotNet118ReleaseVersion>1.18.0</OpenTelemetryDotNet118ReleaseVersion>
     <OpenTelemetryDotNetContribHttpReleaseVersion>1.16.0</OpenTelemetryDotNetContribHttpReleaseVersion>
     <OpenTelemetryDotNetContribRuntimeReleaseVersion>1.15.1</OpenTelemetryDotNetContribRuntimeReleaseVersion>
     <OpenTelemetryDotNetContribPersistentStorageAbstractionsReleaseVersion>1.1.0</OpenTelemetryDotNetContribPersistentStorageAbstractionsReleaseVersion>

@@ -1,0 +1,43 @@
+name: Publish & Verify AOT Compatibility
+
+on:
+  workflow_call:
+    inputs:
+      trigger:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  run-verify-aot-compat:
+    name: Verify AOT compatibility
+
+    strategy:
+      fail-fast: ${{ inputs.trigger == 'merge_group' }}
+      matrix:
+        os:
+          # renovate: datasource=github-runners depType=github-runner
+          - ubuntu-24.04
+          # renovate: datasource=github-runners depType=github-runner
+          - windows-2025
+        version: [ net8.0, net9.0, net10.0 ]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        filter: 'tree:0'
+        persist-credentials: false
+        show-progress: false
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+
+    - name: Publish AOT testApp, assert static analysis warning count, and run the app
+      shell: pwsh
+      run: .\build\scripts\test-aot-compatibility.ps1 ${env:TARGET_FRAMEWORK}
+      env:
+        TARGET_FRAMEWORK: ${{ matrix.version }}
