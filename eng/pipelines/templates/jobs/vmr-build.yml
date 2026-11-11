@@ -235,8 +235,13 @@ jobs:
     value: N/A
   - name: additionalBuildArgs
     value: ''
-  - name: runTestsTimeout
-    value: 30
+  # arm64 source-build test legs routinely need ~30 minutes, so give them more headroom.
+  - ${{ if eq(parameters.targetArchitecture, 'arm64') }}:
+    - name: runTestsTimeout
+      value: 60
+  - ${{ else }}:
+    - name: runTestsTimeout
+      value: 30
 
   - ${{ if parameters.buildSourceOnly }}:
     - name: sharedComponentsDir
