@@ -49,16 +49,6 @@
     <PreReleaseVersion>$(BuildNumber)</PreReleaseVersion>
   </PropertyGroup>
 
-  <!-- Offset the CI build number by 100 for the 18.12 line only, so that the produced package versions
-       don't collide with packages already published to immutable feeds after the build revision counter
-       was reset (7.12 and 8.0 both map to VS 18.12). The offset is only applied when the result still fits
-       in the UInt16 assembly/file-version field (<= 65535). That guard skips the local/default sentinel
-       (65534, which some pipelines feed back in as BuildNumber) since 65534 + 100 would overflow, while
-       still offsetting the small revision counters used by the official build. -->
-  <PropertyGroup Condition="'$(BuildNumber)' != '' and '$(VsTargetMajorVersion).$(VsTargetMinorVersion)' == '18.12' and $([MSBuild]::Add($(BuildNumber), 100)) &lt;= 65535">
-    <PreReleaseVersion>$([MSBuild]::Add($(BuildNumber), 100))</PreReleaseVersion>
-  </PropertyGroup>
-
   <PropertyGroup>
     <!-- Keep the VSIX version above previously shipped 19.0 versions to avoid VS setup downgrades.
          Encode the NuGet version as major * 10000 + minor * 100 + patch, followed by the build revision. -->
