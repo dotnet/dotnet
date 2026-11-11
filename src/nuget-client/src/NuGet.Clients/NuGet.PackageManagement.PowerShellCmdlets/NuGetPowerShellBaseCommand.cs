@@ -54,6 +54,7 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
         private readonly IDeleteOnRestartManager _deleteOnRestartManager;
         private readonly IRestoreProgressReporter _nuGetProgressReporter;
         private Guid _operationId;
+        private long _solutionSessionId;
 
         protected int _packageCount;
         protected NuGetOperationStatus _status = NuGetOperationStatus.Succeeded;
@@ -724,6 +725,7 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
 
         protected override void BeginProcessing()
         {
+            _solutionSessionId = NuGetPowerShellUsage.SolutionSessionId;
             IsExecuting = true;
         }
 
@@ -1055,6 +1057,11 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
                 {
                     string command = "& " + PathUtility.EscapePSPath(path) + " $__rootPath $__toolsPath $__package $__project";
                     LogCore(MessageLevel.Info, string.Format(CultureInfo.CurrentCulture, Resources.Cmdlet_ExecutingScript, path));
+
+                    if (string.Equals(System.IO.Path.GetFileName(path), PowerShellScripts.Init, StringComparison.OrdinalIgnoreCase))
+                    {
+                        NuGetPowerShellUsage.RaiseInitPs1ExecuteEvent(_solutionSessionId);
+                    }
 
                     InvokeCommand.InvokeScript(command, false, PipelineResultTypes.Error, null, null);
                 }
