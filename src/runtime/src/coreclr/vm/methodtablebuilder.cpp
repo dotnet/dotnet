@@ -3768,7 +3768,24 @@ MethodTableBuilder::EnumerateClassMethods()
                     asyncFlags |= AsyncMethodFlags::Thunk;
 
                 if (insertCount == 2)
+                {
                     asyncFlags |= (AsyncMethodFlags::Thunk | AsyncMethodFlags::ReturnDroppingThunk);
+                    // Only the target implementation should acquire the receiver's monitor.
+                    asyncImplFlags &= ~miSynchronized;
+                }
+
+                if (isCovariantTaskOverride)
+                {
+                    // The method itself does not return the well-known Task/Task<T>, so its IL cannot be
+                    // compiled as an async version. The async variant is a thunk that calls the ordinary
+                    // variant and awaits the returned Task.
+                    _ASSERTE(hasAsyncFlags(asyncFlags, AsyncMethodFlags::Thunk));
+                    asyncFlags |= AsyncMethodFlags::CovariantForwardingThunk;
+                    // The forwarding thunk is concrete even when the ordinary variant is abstract.
+                    asyncMemberAttrs &= ~mdAbstract;
+                    // Only the ordinary variant should acquire the receiver's monitor.
+                    asyncImplFlags &= ~miSynchronized;
+                }
 
                 if (isCovariantTaskOverride)
                 {
