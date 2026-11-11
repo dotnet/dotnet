@@ -92,7 +92,6 @@ internal sealed partial class CSharpCompilerCommand
             language: RequestLanguage.CSharpCompile,
             arguments: ["/noconfig", "/nologo", $"@{EscapeSingleArg(rspPath)}"],
             workingDirectory: BaseDirectory,
-            tempDirectory: Path.GetTempPath(),
             keepAlive: null,
             libDirectory: null,
             compilerHash: GetCompilerCommitHash());
