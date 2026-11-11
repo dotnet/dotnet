@@ -11,9 +11,9 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26529.119</MicrosoftDotNetArcadeSdkPackageVersion>
     <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.26529.119</MicrosoftDotNetBuildManifestPackageVersion>
     <MicrosoftDotNetSignCheckTaskPackageVersion>10.0.0-beta.26529.119</MicrosoftDotNetSignCheckTaskPackageVersion>
-    <MicrosoftNETSdkPackageVersion>10.0.113-servicing.26504.104</MicrosoftNETSdkPackageVersion>
-    <MicrosoftNETCoreAppRefPackageVersion>10.0.13</MicrosoftNETCoreAppRefPackageVersion>
-    <MicrosoftNETCorePlatformsPackageVersion>10.0.13-servicing.26504.104</MicrosoftNETCorePlatformsPackageVersion>
+    <MicrosoftNETSdkPackageVersion>10.0.115-servicing.26529.108</MicrosoftNETSdkPackageVersion>
+    <MicrosoftNETCoreAppRefPackageVersion>10.0.15</MicrosoftNETCoreAppRefPackageVersion>
+    <MicrosoftNETCorePlatformsPackageVersion>10.0.15-servicing.26529.108</MicrosoftNETCorePlatformsPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
