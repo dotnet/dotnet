@@ -236,6 +236,7 @@ public class TestRequestSender : ITestRequestSender
         // Test host sends back the lower number of the two. So the highest protocol version, that both sides support is used.
         // Error case: test host can send a protocol error if it cannot find a supported version
         var protocolNegotiated = new ManualResetEvent(false);
+        TestPlatformException? protocolError = null;
 
         EventHandler<MessageReceivedEventArgs> onMessageReceived = (sender, args) =>
         {
@@ -252,15 +253,16 @@ public class TestRequestSender : ITestRequestSender
             else if (message.MessageType == MessageType.TestMessage)
             {
                 // Ignore test messages. Currently we don't have handler(which sends messages to client/console.) here.
-                // Above we are logging it to EqtTrace.
+                // Above we are logging it to EqtTrace. Keep waiting for the actual negotiation response.
+                return;
             }
             else if (message.MessageType == MessageType.ProtocolError)
             {
-                throw new TestPlatformException(CommonResources.VersionCheckFailed);
+                protocolError = new TestPlatformException(CommonResources.VersionCheckFailed);
             }
             else
             {
-                throw new TestPlatformException(string.Format(
+                protocolError = new TestPlatformException(string.Format(
                     CultureInfo.CurrentCulture,
                     CommonResources.UnexpectedMessage,
                     MessageType.VersionCheck,
@@ -286,6 +288,11 @@ public class TestRequestSender : ITestRequestSender
             if (!protocolNegotiated.WaitOne(timeout * 1000))
             {
                 throw new TestPlatformException(string.Format(CultureInfo.CurrentCulture, CommonResources.VersionCheckTimedout, timeout, EnvironmentHelper.VstestConnectionTimeout));
+            }
+
+            if (protocolError is not null)
+            {
+                throw protocolError;
             }
         }
         finally
@@ -530,7 +537,7 @@ public class TestRequestSender : ITestRequestSender
         try
         {
             var rawMessage = messageReceived.Data;
-            EqtTrace.Verbose("TestRequestSender.OnExecutionMessageReceived: Received message: {0}", rawMessage);
+            EqtTrace.Verbose("TestRequestSender.OnExecutionMessageReceived: Received message: {0}", Microsoft.VisualStudio.TestPlatform.Common.Utilities.SecretRedaction.RedactSecretsInJson(rawMessage ?? string.Empty));
             TPDebug.Assert(rawMessage is not null, "rawMessage is null");
             TPDebug.Assert(_channel is not null, "_channel is null");
 
@@ -611,7 +618,7 @@ public class TestRequestSender : ITestRequestSender
             TPDebug.Assert(rawMessage is not null, "rawMessage is null");
 
             // Currently each of the operations are not separate tasks since they should not each take much time. This is just a notification.
-            EqtTrace.Verbose("TestRequestSender.OnDiscoveryMessageReceived: Received message: {0}", rawMessage);
+            EqtTrace.Verbose("TestRequestSender.OnDiscoveryMessageReceived: Received message: {0}", Microsoft.VisualStudio.TestPlatform.Common.Utilities.SecretRedaction.RedactSecretsInJson(rawMessage));
 
             // Send raw message first to unblock handlers waiting to send message to IDEs
             discoveryEventsHandler.HandleRawMessage(rawMessage);
@@ -619,7 +626,7 @@ public class TestRequestSender : ITestRequestSender
             var data = _dataSerializer.DeserializeMessage(rawMessage);
             if (data is null)
             {
-                EqtTrace.Error("TestRequestSender.OnDiscoveryMessageReceived: Deserialized message is null: {0}", rawMessage);
+                EqtTrace.Error("TestRequestSender.OnDiscoveryMessageReceived: Deserialized message is null: {0}", Microsoft.VisualStudio.TestPlatform.Common.Utilities.SecretRedaction.RedactSecretsInJson(rawMessage));
                 OnDiscoveryAbort(discoveryEventsHandler, null, false);
                 return;
             }

@@ -80,6 +80,25 @@ public class VsTestConsoleWrapperTests
     }
 
     [TestMethod]
+    public async Task StartSessionAsyncShouldStartConsoleBeforeWaitingForConnection()
+    {
+        var consoleStarted = false;
+        _mockProcessManager.Setup(pm => pm.StartProcess(_consoleParameters))
+            .Callback(() => consoleStarted = true);
+        _mockRequestSender.Setup(rs => rs.WaitForRequestHandlerConnection(It.IsAny<int>()))
+            .Returns(() => consoleStarted);
+
+#pragma warning disable CS0618 // Verify the existing async startup API.
+        await _consoleWrapper.StartSessionAsync();
+#pragma warning restore CS0618
+
+        Assert.IsTrue(consoleStarted);
+        _mockRequestSender.Verify(rs => rs.InitializeCommunication(), Times.Once);
+        _mockRequestSender.Verify(rs => rs.InitializeCommunicationAsync(It.IsAny<int>()), Times.Never);
+        _mockRequestSender.Verify(rs => rs.WaitForRequestHandlerConnection(It.IsAny<int>()), Times.Once);
+    }
+
+    [TestMethod]
     public void StartSessionShouldThrowExceptionOnBadPort()
     {
         _mockRequestSender.Setup(rs => rs.InitializeCommunication()).Returns(-1);

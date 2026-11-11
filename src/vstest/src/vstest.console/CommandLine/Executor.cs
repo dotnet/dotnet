@@ -439,7 +439,10 @@ internal class Executor
         string? assemblyVersion = Product.Version;
         if (!isDiag)
         {
-            var end = Product.Version?.IndexOf("-release");
+            // Drop the whole suffix, not just the -release one, so a -hotfix or any other build prints a
+            // clean version rather than 18.12.0-hotfixaaa23423. Diag mode keeps the full version,
+            // which is what a bug report needs.
+            var end = Product.Version?.IndexOf("-");
 
             if (end >= 0)
             {
