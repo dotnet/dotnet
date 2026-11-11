@@ -26,6 +26,11 @@ V4 publishing is functionally very similar to V3 publishing, with the following 
 - **Stable symbol packages are no longer published to NuGet feeds** -  https://github.com/dotnet/arcade/pull/15561 - Instead, symbol packages are always published to unique blob paths.
 - **IsStable manifest bit no longer used to determine whether to create stable feeds** -  https://github.com/dotnet/arcade/pull/15561 - Instead, CouldBeStable==true is used to determine whether to create these feeds, and identify which files should go on these feeds.
 
+The manifest version is configured with `PublishingVersion` in `eng/Publishing.props`.
+Match it in pipeline templates using `publishingVersion` for `publish-build-assets.yml`
+and `publishingInfraVersion` for `post-build.yml`. Both publishing paths pass that
+value to `darc add-build-to-channel --publishing-infra-version`.
+
 ## Basic onboarding scenario for new repositories to the current publishing version (V3)
 
 In order to use the new publishing mechanism, the easiest way to start is by turning your existing build pipeline into an AzDO YAML stage, and then making use of a YAML template ([eng/common/templates/post-build/post-build.yml](https://github.com/dotnet/arcade/blob/66175ebd3756697a3ca515e16cd5ffddc30582cd/eng/common/templates/post-build/post-build.yml)) provided by Arcade to use the default publishing stages. The process is explained below step by step.

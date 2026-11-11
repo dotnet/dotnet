@@ -66,9 +66,9 @@
 
   <!-- external -->
   <ItemGroup>
-    <PackageVersion Include="Azure.Core" Version="1.63.0" />
+    <PackageVersion Include="Azure.Core" Version="1.64.0" />
     <PackageVersion Include="Azure.Identity" Version="1.21.0" />
-    <PackageVersion Include="Azure.Storage.Blobs" Version="12.29.2" />
+    <PackageVersion Include="Azure.Storage.Blobs" Version="12.30.1" />
     <PackageVersion Include="AwesomeAssertions" Version="9.6.0" />
     <PackageVersion Include="Handlebars.Net" Version="2.4.3" />
     <PackageVersion Include="MSBuild.ProjectCreation" Version="19.1.4" />
@@ -78,9 +78,9 @@
     <PackageVersion Include="Microsoft.Data.Services.Client" Version="5.8.5" />
     <PackageVersion Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.746701" />
     <PackageVersion Include="Microsoft.Diagnostics.Runtime" Version="4.1.747802" />
-    <PackageVersion Include="Microsoft.Identity.Client" Version="4.90.0" />
-    <PackageVersion Include="Microsoft.OpenApi" Version="3.10.2" />
-    <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.10.2" />
+    <PackageVersion Include="Microsoft.Identity.Client" Version="4.91.0" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="3.11.0" />
+    <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.11.0" />
     <PackageVersion Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.OLE.Interop" Version="17.14.40260" />
     <PackageVersion Include="Microsoft.WixToolset.Heat" Version="$(MicrosoftWixToolsetSdkVersion)" />
