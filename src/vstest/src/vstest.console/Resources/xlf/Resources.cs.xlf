@@ -385,9 +385,9 @@
         <source>--Platform|/Platform:&lt;Platform type&gt;
       Target platform architecture to be used for test execution. 
       Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.</source>
-        <target state="new">--Platform|/Platform:&lt;Platform type&gt;
-      Target platform architecture to be used for test execution. 
-      Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.</target>
+        <target state="translated">--Platform|/Platform:&lt;typ platformy&gt;
+      Cílová architektura platformy, která se použije ke spuštění testu. 
+      Platnými hodnotami jsou x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 a LoongArch64.</target>
         <note />
       </trans-unit>
       <trans-unit id="SwitchToIsolationInMultiTargetingMode">
@@ -400,10 +400,10 @@
       Target .Net Framework version to be used for test execution. 
       Valid values are short names such as net48 and net10.0, or long names such as ".NETFramework,Version=v4.8" and ".NETCoreApp,Version=v10.0".
       Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
-        <target state="new">--Framework|/Framework:&lt;Framework Version&gt;
-      Target .Net Framework version to be used for test execution. 
-      Valid values are short names such as net48 and net10.0, or long names such as ".NETFramework,Version=v4.8" and ".NETCoreApp,Version=v10.0".
-      Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</target>
+        <target state="translated">--Framework|/Framework:&lt;verze rozhraní Framework&gt;
+      Cílová verze rozhraní .NET Framework, která se použije při spouštění testů. 
+      Platnými hodnotami jsou krátké názvy, například net48 a net10.0, nebo dlouhé názvy, například ".NETFramework,Version=v4.8" a ".NETCoreApp,Version=v10.0".
+      Další podporované hodnoty jsou Framework40, Framework45, FrameworkCore10 a FrameworkUap10.</target>
         <note />
       </trans-unit>
       <trans-unit id="FrameworkVersionRequired">

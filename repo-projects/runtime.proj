@@ -1,9 +1,6 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <!-- Temporarily disable building tests until the next runtime codeflow with an updated SDK. -->
-    <DotNetBuildTestsOptOut>true</DotNetBuildTestsOptOut>
-
     <!-- Use the repo root build script -->
     <BuildScript>$(ProjectDirectory)build$(ShellExtension)</BuildScript>
 
@@ -16,28 +13,20 @@
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)os $(TargetOS)</BuildArgs>
 
     <!--
-      When building a vertical where we explicitly request using the Mono runtime, only build the Mono runtime.
-      This is generally used in source-build scenarios where the target RID is only supported on Mono
-      or Mono-LLVMAOT runtime pack builds.
-    -->
-    <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)usemonoruntime</BuildArgs>
-
-    <!--
       Always bootstrap our build so we are building the shipping product from a cohesive commit (no LKG usage).
       Some targets don't build any assets that use the LKG bits at from a dev build at runtime. Those platforms
       can skip the bootstrapping build.
     -->
     <BuildBootstrap Condition="'$(TargetsMobile)' != 'true' and '$(TargetOS)' != 'linux-bionic'">true</BuildBootstrap>
-    <BuildBootstrap Condition="'$(DotNetBuildUseMonoRuntime)' == 'true'">false</BuildBootstrap>
     <BuildBootstrap Condition="'$(DotNetBuildPass)' != '' and '$(DotNetBuildPass)' != '1'">false</BuildBootstrap>
     <BuildArgs Condition="'$(BuildBootstrap)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)bootstrap</BuildArgs>
 
     <!-- If this build is not a "special flavor" build, build everything that can be built for this target. -->
-    <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' != 'true' and '$(TargetOS)' != 'browser'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
-    <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' == 'false' and '$(TargetOS)' == 'browser'">$(BuildArgs) /p:RuntimeFlavor=CoreCLR</BuildArgs>
+    <BuildArgs Condition="'$(TargetArchitecture)' != 'wasm'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
+    <BuildArgs Condition="'$(RuntimeFlavor)' == 'CoreCLR' and '$(TargetArchitecture)' == 'wasm'">$(BuildArgs) /p:RuntimeFlavor=CoreCLR /p:_BuildNativeAOTRuntimePack=true</BuildArgs>
 
-    <!-- NativeAOT wasm builds are not yet supported in the VMR. -->
-    <BuildArgs Condition="'$(TargetArchitecture)' == 'wasm'">$(BuildArgs) /p:NativeAotSupported=false</BuildArgs>
+    <!-- NativeAOT wasm builds are not yet supported by the SDK that builds the VMR. -->
+    <BuildArgs Condition="'$(TargetArchitecture)' == 'wasm'">$(BuildArgs) /p:SupportsNativeAotComponents=false</BuildArgs>
 
     <!-- When we're actually doing signing and the ESRP tool is available, forward down the path to the repo builds. -->
     <BuildArgs Condition="'$(DotNetBuildSign)' == 'true' and '$(ForceDryRunSigning)' != 'true' and '$(DotNetEsrpToolPath)' != ''">$(BuildArgs) /p:DotNetEsrpToolPath=$(DotNetEsrpToolPath)</BuildArgs>

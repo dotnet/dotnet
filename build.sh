@@ -57,7 +57,6 @@ usage()
   echo "  --msbuildMultiThreaded <value>  Sets MSBuild's multi-threaded mode, i.e. the -mt switch ('true' or 'false') (short: --mt)"
   echo "  --prepareMachine                Prepare machine for CI run, clean up processes after build"
   echo "  --projects <value>              Project or solution file to build"
-  echo "  --use-mono-runtime              Output uses the mono runtime"
   echo "  --warnAsError <value>           Sets warnaserror msbuild parameter ('true' or 'false')"
 
   echo ""
@@ -278,9 +277,6 @@ while [[ $# > 0 ]]; do
       ;;
     -preparemachine)
       prepare_machine=true
-      ;;
-    -use-mono-runtime)
-      properties+=( "/p:DotNetBuildUseMonoRuntime=true" )
       ;;
     -warnaserror)
       warn_as_error=$2

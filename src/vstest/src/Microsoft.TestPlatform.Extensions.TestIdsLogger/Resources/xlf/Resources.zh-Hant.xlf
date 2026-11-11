@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="TestIdsReportFile">
         <source>Test id report file : {0}</source>
-        <target state="new">Test id report file : {0}</target>
+        <target state="translated">測試識別碼報告檔案 : {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestIdsLoggerWriteFailed">
         <source>Failed to write the test id report to '{0}'. {1}</source>
-        <target state="new">Failed to write the test id report to '{0}'. {1}</target>
+        <target state="translated">無法將測試識別碼報告寫入 '{0}'。{1}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestIdsReportIncomplete">
         <source>The test run did not complete, so the test id report '{0}' covers only the tests that were reported before it stopped. Do not use an incomplete report to migrate stored test ids.</source>
-        <target state="new">The test run did not complete, so the test id report '{0}' covers only the tests that were reported before it stopped. Do not use an incomplete report to migrate stored test ids.</target>
+        <target state="translated">測試執行未完成，因此測試識別碼報告「{0}」僅涵蓋停止前已報告的測試。請勿使用不完整的報告來移轉已儲存的測試識別碼。</target>
         <note />
       </trans-unit>
     </body>

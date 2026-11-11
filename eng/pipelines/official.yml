@@ -206,6 +206,7 @@ extends:
           desiredSigning: ${{ parameters.desiredSigning }}
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
         isOfficialBuild: true
+        isCodeqlActive: ${{ or(parameters.forceCodeql, eq(variables['Build.CronSchedule.DisplayName'], 'Unsigned CodeQL main build on Sundays')) }}
         scope: full
         # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
         # This is enabled for all branches except main and 1xx

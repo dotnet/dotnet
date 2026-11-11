@@ -38,11 +38,6 @@ parameters:
   type: string
   default: ''
 
-- name: useMonoRuntime
-  displayName: True when build output uses the mono runtime
-  type: boolean
-  default: false
-
 - name: sign
   displayName: True when build output should be signed (includes dry runs)
   type: boolean
@@ -157,11 +152,21 @@ parameters:
   type: boolean
   default: false
 
+# Tag Azure Pipelines builds configured to run CodeQL.
+- name: tagPipelineBuildWithCodeql
+  type: boolean
+  default: false
+
 #### repo parameters ####
 
 - name: isBuiltFromVmr
   displayName: True when build is running from dotnet/dotnet directly
   type: boolean
+
+- name: isCodeqlActive
+  displayName: True when the pipeline is configured to run CodeQL
+  type: boolean
+  default: false
 
 # Disable binary analysis caching by busting the cache key
 - name: disableBinaryAnalysisCaching
@@ -345,7 +350,11 @@ jobs:
   # timeout below, and a canceled job skips the log collection steps, losing every diagnostic.
   - name: repoBuildTimeoutMinutes
     ${{ if and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-      value: 300
+      # CodeQL extraction adds substantial build overhead.
+      ${{ if parameters.isCodeqlActive }}:
+        value: 600
+      ${{ else }}:
+        value: 300
     ${{ else }}:
       value: 150
 
@@ -408,7 +417,10 @@ jobs:
   # Timeout
   ## internal builds can take longer due to real signing or CodeQL, increase the timeout to allow for that
   ${{ if and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-    timeoutInMinutes: 720
+    ${{ if parameters.isCodeqlActive }}:
+      timeoutInMinutes: 900
+    ${{ else }}:
+      timeoutInMinutes: 720
   ${{ elseif and(startswith(parameters.buildName, 'OSX'), ne(variables['System.TeamProject'], 'internal')) }}:
     timeoutInMinutes: 360
   ${{ else }}:
@@ -458,6 +470,10 @@ jobs:
   - checkout: self
     fetchDepth: 1
     retryCountOnTaskFailure: 5
+
+  - ${{ if eq(parameters.tagPipelineBuildWithCodeql, true) }}:
+    - pwsh: Write-Host "##vso[build.addbuildtag]CodeQL"
+      displayName: Tag build with CodeQL
 
   - ${{ if in(parameters.targetOS, 'osx', 'maccatalyst', 'ios', 'iossimulator', 'tvos', 'tvossimulator') }}:
     - template: ../steps/select-xcode.yml
@@ -700,7 +716,7 @@ jobs:
           Write-Host "##vso[build.addbuildtag]SDK $sdkVersion"
         displayName: Tag build with SDK version
 
-    - ${{ if eq(parameters.runTests, 'True') }}:
+    - ${{ if and(eq(parameters.runTests, 'True'), not(parameters.isCodeqlActive)) }}:
       - script: build.cmd
           $(baseArguments)
           $(targetProperties)
@@ -894,10 +910,6 @@ jobs:
 
           extraBuildProperties="$extraBuildProperties $(runtimeSourceFeedKeyProperties)"
 
-          if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
-            customBuildArgs="$customBuildArgs --use-mono-runtime"
-          fi
-
           if [[ -n "${{ parameters.targetRid }}" ]]; then
             customBuildArgs="$customBuildArgs --target-rid ${{ parameters.targetRid }}"
           fi
@@ -948,7 +960,7 @@ jobs:
         displayName: Update owner of artifacts staging directory
 
     # Only run tests if enabled
-    - ${{ if eq(parameters.runTests, 'True') }}:
+    - ${{ if and(eq(parameters.runTests, 'True'), not(parameters.isCodeqlActive)) }}:
       - ${{ parameters.testInitSteps }}
 
       # Setup the NuGet sources used by the tests to use private feeds. This is necessary when testing internal-only product
@@ -1081,7 +1093,7 @@ jobs:
     condition: always()
 
   # Only copy test results when tests ran (skip if Run Tests was skipped, e.g. Build failed)
-  - ${{ if eq(parameters.runTests, 'True') }}:
+  - ${{ if and(eq(parameters.runTests, 'True'), not(parameters.isCodeqlActive)) }}:
     - task: CopyFiles@2
       displayName: Copy TestResults to BuildLogs staging
       inputs:
@@ -1113,7 +1125,7 @@ jobs:
       condition: always()
 
   # Only upload test results when tests ran (skip if Run Tests was skipped, e.g. Build failed)
-  - ${{ if eq(parameters.runTests, 'True') }}:
+  - ${{ if and(eq(parameters.runTests, 'True'), not(parameters.isCodeqlActive)) }}:
     - task: PublishTestResults@2
       displayName: Publish Test Results
       condition: and(eq(variables['hasTestResults'], 'true'), succeededOrFailed())
