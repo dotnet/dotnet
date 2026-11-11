@@ -15,7 +15,7 @@ namespace NuGet.Packaging
         /// In case update this value please update in src\NuGet.Core\NuGet.Configuration\PackageSourceMapping\PackageSourceMapping.cs too.
         /// </summary>
         public const int MaxPackageIdLength = 100;
-        private static readonly Regex IdRegex = new Regex(pattern: @"^\w+([.-]\w+)*$",
+        private static readonly Regex IdRegex = new Regex(pattern: @"^\w+([.-]\w+)*\z",
             options: RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant,
             matchTimeout: TimeSpan.FromSeconds(10));
 

@@ -12,6 +12,7 @@ namespace NuGet.Protocol.Tests.Utility
         [InlineData("../contoso")]
         [InlineData("contoso/../package")]
         [InlineData("contoso/.?///?")]
+        [InlineData("contoso\n")]
         public void Validate_InvalidId_Throws(string id)
         {
             // Act & Assert
