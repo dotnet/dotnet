@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using FluentAssertions;
+using Microsoft.Build.Graph;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -25,6 +26,93 @@ namespace NuGet.Build.Tasks.Console.Test
 {
     public class MSBuildStaticGraphRestoreTests
     {
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void LoadProjects_FinalizesProjectBeforeReturning(bool failBuild)
+        {
+            using var testDirectory = TestDirectory.Create();
+            string projectPath = Path.Combine(testDirectory, "test.proj");
+            File.WriteAllText(projectPath, $"""
+                <Project>
+                  <Target Name="_IsProjectRestoreSupported" />
+                  <Target Name="_CollectRestoreInputs" DependsOnTargets="{(failBuild ? "MissingTarget" : "")}" />
+                </Project>
+                """);
+
+            using var restore = new MSBuildStaticGraphRestore();
+            bool finalized = false;
+            var projects = restore.LoadProjects(
+                new[] { new ProjectGraphEntryPoint(projectPath) },
+                interactive: false,
+                binaryLoggerParameters: null,
+                createProjectFactory: (path, _) => path,
+                updateProjectFactory: (_, project, _) => project,
+                projectFinalizeDelegate: _ => finalized = true);
+
+            finalized.Should().BeTrue();
+            if (failBuild)
+            {
+                projects.Should().BeNull();
+            }
+            else
+            {
+                projects.Should().ContainSingle().Which.Should().Be(
+                    new KeyValuePair<string, string>(projectPath, projectPath));
+            }
+        }
+
+        [Theory]
+        [InlineData("net10.0")]
+        [InlineData("net9.0;net10.0")]
+        public void LoadProjects_WithInnerBuilds_GroupsAllTargetFrameworksBeforeFinalizing(string targetFrameworks)
+        {
+            using var testDirectory = TestDirectory.Create();
+            string projectPath = Path.Combine(testDirectory, "test.proj");
+            File.WriteAllText(projectPath, $"""
+                <Project>
+                  <PropertyGroup>
+                    <TargetFrameworks>{targetFrameworks}</TargetFrameworks>
+                    <InnerBuildProperty>TargetFramework</InnerBuildProperty>
+                    <InnerBuildPropertyValues>TargetFrameworks</InnerBuildPropertyValues>
+                  </PropertyGroup>
+                  <Target Name="_IsProjectRestoreSupported" />
+                  <Target Name="_CollectRestoreInputs" />
+                </Project>
+                """);
+
+            using var restore = new MSBuildStaticGraphRestore();
+            int finalizedCount = 0;
+            var projects = restore.LoadProjects(
+                new[] { new ProjectGraphEntryPoint(projectPath) },
+                interactive: false,
+                binaryLoggerParameters: null,
+                createProjectFactory: (path, build) =>
+                {
+                    (var projectInstance, var targetFramework) = build;
+                    var project = new RestoreProjectAdapter(path, projectInstance.GlobalProperties);
+                    project.AddTargetFramework(targetFramework, new TargetFrameworkAdapter(projectInstance));
+                    return project;
+                },
+                updateProjectFactory: (_, project, build) =>
+                {
+                    (var projectInstance, var targetFramework) = build;
+                    project.AddTargetFramework(targetFramework, new TargetFrameworkAdapter(projectInstance));
+                    return project;
+                },
+                projectFinalizeDelegate: project =>
+                {
+                    project.OuterBuild.Should().NotBeNull();
+                    project.TargetFrameworks.Keys.Should().BeEquivalentTo(targetFrameworks.Split(';'));
+                    project.Prepare();
+                    finalizedCount++;
+                });
+
+            projects.Should().ContainSingle().Which.Key.Should().Be(projectPath);
+            projects[projectPath].TargetFrameworks.Keys.Should().BeEquivalentTo(targetFrameworks.Split(';'));
+            finalizedCount.Should().Be(1);
+        }
+
         [Theory]
         [InlineData(true, "", "", "LogFile=nuget.binlog")]
         [InlineData(true, "", "LogFile=custom.binlog%3BProjectImports=zip", "LogFile=custom.binlog%3BProjectImports=zip")]
