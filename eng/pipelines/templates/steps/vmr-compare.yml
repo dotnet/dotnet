@@ -117,21 +117,21 @@ steps:
     inlineScript: |
       & '$(Build.SourcesDirectory)/eng/common/Get-GitHubAppToken.ps1' `
         -KeyVaultName EngKeyVault `
-        -AppClientId 4992078 `
+        -AppIdSecretName vmr-artifact-reader-github-app-app-id `
         -KeyName vmr-artifact-reader-github-app-key `
         -InstallationOwner dotnet `
         -OutputVariableName DotnetGitHubAppInstallationToken
 
       & '$(Build.SourcesDirectory)/eng/common/Get-GitHubAppToken.ps1' `
         -KeyVaultName EngKeyVault `
-        -AppClientId 4992078 `
+        -AppIdSecretName vmr-artifact-reader-github-app-app-id `
         -KeyName vmr-artifact-reader-github-app-key `
         -InstallationOwner NuGet `
         -OutputVariableName NuGetGitHubAppInstallationToken
 
       & '$(Build.SourcesDirectory)/eng/common/Get-GitHubAppToken.ps1' `
         -KeyVaultName EngKeyVault `
-        -AppClientId 4992078 `
+        -AppIdSecretName vmr-artifact-reader-github-app-app-id `
         -KeyName vmr-artifact-reader-github-app-key `
         -InstallationOwner microsoft `
         -OutputVariableName MicrosoftGitHubAppInstallationToken
