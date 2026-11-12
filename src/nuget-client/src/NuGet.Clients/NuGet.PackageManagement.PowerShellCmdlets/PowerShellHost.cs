@@ -294,6 +294,7 @@ namespace NuGetConsole.Host.PowerShell.Implementation
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public void Initialize(IConsole console)
         {
+            var solutionSessionId = NuGetPowerShellUsage.SolutionSessionId;
             NuGetUIThreadHelper.JoinableTaskFactory.Run(async delegate
             {
                 ActiveConsole = console;
@@ -332,7 +333,7 @@ namespace NuGetConsole.Host.PowerShell.Implementation
 
                         NuGetPowerShellUsage.RaisePowerShellLoadEvent(isPMC: _isPmc);
 
-                        await ExecuteInitScriptsAsync();
+                        await ExecuteInitScriptsAsync(solutionSessionId);
 
                         // check if PMC console is actually opened, then only hook to solution load/close events.
                         if (_isPmc)
@@ -381,6 +382,7 @@ namespace NuGetConsole.Host.PowerShell.Implementation
 
         private void HandleSolutionOpened()
         {
+            var solutionSessionId = NuGetPowerShellUsage.SolutionSessionId;
             _scriptExecutor.Value.Reset();
 
             // Solution opened event is raised on the UI thread
@@ -396,7 +398,7 @@ namespace NuGetConsole.Host.PowerShell.Implementation
                     {
                         if (await _solutionManager.Value.IsAllProjectsNominatedAsync())
                         {
-                            await ExecuteInitScriptsAsync();
+                            await ExecuteInitScriptsAsync(solutionSessionId);
                             break;
                         }
 
@@ -432,7 +434,7 @@ namespace NuGetConsole.Host.PowerShell.Implementation
             });
         }
 
-        private async Task ExecuteInitScriptsAsync()
+        private async Task ExecuteInitScriptsAsync(long solutionSessionId)
         {
             // Fix for Bug 1426 Disallow ExecuteInitScripts from being executed concurrently by multiple threads.
 #pragma warning disable RS0030 // Do not used banned APIs
@@ -474,7 +476,7 @@ namespace NuGetConsole.Host.PowerShell.Implementation
 
                 foreach (var installedPackage in installedPackages)
                 {
-                    await ExecuteInitPs1Async(installedPackage.InstallPath, installedPackage.Identity);
+                    await ExecuteInitPs1Async(installedPackage.InstallPath, installedPackage.Identity, solutionSessionId);
                 }
 
                 // We are done executing scripts, so record the restore and solution directory that we executed for.
@@ -485,7 +487,7 @@ namespace NuGetConsole.Host.PowerShell.Implementation
 #pragma warning restore RS0030 // Do not used banned APIs
         }
 
-        private async Task ExecuteInitPs1Async(string installPath, PackageIdentity identity)
+        private async Task ExecuteInitPs1Async(string installPath, PackageIdentity identity, long solutionSessionId)
         {
             try
             {
@@ -505,6 +507,8 @@ namespace NuGetConsole.Host.PowerShell.Implementation
                             await TaskScheduler.Default;
 
                             var request = new ScriptExecutionRequest(scriptPath, installPath, identity, project: null);
+
+                            NuGetPowerShellUsage.RaiseInitPs1ExecuteEvent(solutionSessionId);
 
                             Runspace.Invoke(
                                 request.BuildCommand(),
@@ -548,6 +552,8 @@ namespace NuGetConsole.Host.PowerShell.Implementation
 
         public bool Execute(IConsole console, string command, params object[] inputs)
         {
+            var solutionSessionId = NuGetPowerShellUsage.SolutionSessionId;
+
             if (console == null)
             {
                 throw new ArgumentNullException(nameof(console));
@@ -564,7 +570,7 @@ namespace NuGetConsole.Host.PowerShell.Implementation
             // to run it once for each solution
             NuGetUIThreadHelper.JoinableTaskFactory.Run(async () =>
             {
-                await ExecuteInitScriptsAsync();
+                await ExecuteInitScriptsAsync(solutionSessionId);
             });
 
             ActiveConsole = console;
