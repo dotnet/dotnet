@@ -33,6 +33,25 @@ namespace NuGet.Packaging.Test
             Assert.False(isValid);
         }
 
+        [Theory]
+        [InlineData("Package\n")]
+        [InlineData("Package.Name\n")]
+        [InlineData("Package\n\n")]
+        [InlineData("Package\r\n")]
+        [InlineData("Package\r")]
+        [InlineData("Package\t")]
+        [InlineData("Package ")]
+        [InlineData(" Package")]
+        [InlineData("\nPackage")]
+        [InlineData("Pack\nage")]
+        public void PackageIdWithWhitespaceIsInvalid(string packageId)
+        {
+            Assert.False(PackageIdValidator.IsValidPackageId(packageId));
+            Assert.False(PackageIdValidator.IsValidPackageId(packageId, useRestrictedCharacterSet: false));
+            Assert.False(PackageIdValidator.IsValidPackageId(packageId, useRestrictedCharacterSet: true));
+            Assert.Throws<ArgumentException>(() => PackageIdValidator.ValidatePackageId(packageId));
+        }
+
         [Fact]
         public void NullThrowsException()
         {
