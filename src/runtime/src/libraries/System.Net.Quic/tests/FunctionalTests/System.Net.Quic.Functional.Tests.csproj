@@ -46,7 +46,7 @@
   <!-- Support running tests on older windows by explicitly including OpenSSL version of MsQuic,
        The binary will be used only if "System.Net.Quic.AppLocalMsQuic" appctx switch is 'true',
        Which we manually flip in the test setup on appropriate platform. -->
-  <!--ItemGroup Condition="'$(TargetPlatformIdentifier)' == 'windows'">
+  <ItemGroup Condition="'$(TargetPlatformIdentifier)' == 'windows'">
     <PackageReference Include="Microsoft.Native.Quic.MsQuic.OpenSSL"
                       Version="$(MicrosoftNativeQuicMsQuicSchannelVersion)"
                       PrivateAssets="all"
