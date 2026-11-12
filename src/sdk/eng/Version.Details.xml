@@ -528,13 +528,13 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>539e5050b0f98330b0ed3889255802daf3725d01</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Testing.Platform" Version="2.6.0-preview.26531.5">
+    <Dependency Name="Microsoft.Testing.Platform" Version="3.0.0-preview.26559.7">
       <Uri>https://github.com/microsoft/testfx</Uri>
-      <Sha>2a8ebadb17a3b388b62bbb0cedd407999e3ce10a</Sha>
+      <Sha>cb5805342d403ed9f7e7ddd116c81fee789ef7f9</Sha>
     </Dependency>
-    <Dependency Name="MSTest" Version="4.6.0-preview.26531.5">
+    <Dependency Name="MSTest" Version="5.0.0-preview.26559.7">
       <Uri>https://github.com/microsoft/testfx</Uri>
-      <Sha>2a8ebadb17a3b388b62bbb0cedd407999e3ce10a</Sha>
+      <Sha>cb5805342d403ed9f7e7ddd116c81fee789ef7f9</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Configuration.Ini" Version="12.0.0-alpha.1.26528.111">
       <Uri>https://github.com/dotnet/dotnet</Uri>
@@ -552,9 +552,9 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>539e5050b0f98330b0ed3889255802daf3725d01</Sha>
     </Dependency>
-    <Dependency Name="MSTest.Sdk" Version="4.6.0-preview.26531.5">
+    <Dependency Name="MSTest.Sdk" Version="5.0.0-preview.26559.7">
       <Uri>https://github.com/microsoft/testfx</Uri>
-      <Sha>2a8ebadb17a3b388b62bbb0cedd407999e3ce10a</Sha>
+      <Sha>cb5805342d403ed9f7e7ddd116c81fee789ef7f9</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
