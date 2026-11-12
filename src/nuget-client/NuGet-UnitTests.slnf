@@ -38,6 +38,7 @@
       "src\\NuGet.Core\\NuGet.Resolver\\NuGet.Resolver.csproj",
       "src\\NuGet.Core\\NuGet.Versioning\\NuGet.Versioning.csproj",
       "test\\NuGet.Clients.Tests\\NuGet.CommandLine.Test\\NuGet.CommandLine.Test.csproj",
+      "test\\NuGet.Clients.Tests\\NuGet.Console.Test\\NuGet.Console.Test.csproj",
       "test\\NuGet.Clients.Tests\\NuGet.Indexing.Test\\NuGet.Indexing.Test.csproj",
       "test\\NuGet.Clients.Tests\\NuGet.PackageManagement.UI.Test\\NuGet.PackageManagement.UI.Test.csproj",
       "test\\NuGet.Clients.Tests\\NuGet.PackageManagement.VisualStudio.Test\\NuGet.PackageManagement.VisualStudio.Test.csproj",
