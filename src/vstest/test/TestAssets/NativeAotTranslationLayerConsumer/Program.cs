@@ -4,13 +4,14 @@
 // Minimal consumer of the TranslationLayer API surface to exercise code paths
 // that must be AoT-safe. This app is published with PublishAot=true by the
 // NativeAotCompatibilityTests integration test, which reads the IL warnings the
-// publish reports and asserts that none of them come from the serialization code.
+// publish reports and runs the executable to check serialization at runtime.
 //
 // The app doesn't need to actually run against a vstest.console instance; it
-// just needs to reference enough API surface for the linker to analyze the
-// full call graph.
+// deserializes representative wire payloads directly.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using Microsoft.TestPlatform.VsTestConsole.TranslationLayer;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
@@ -71,3 +72,75 @@ if (deserializedCriteria.TestSessionInfo?.Id != testSessionInfo.Id
 }
 
 Console.WriteLine("NativeAOT serialization round trip succeeded.");
+
+// Use wire JSON rather than constructing the traits locally, so the linker cannot
+// accidentally preserve types that are only instantiated by deserialization.
+const string discoveredTestsJson = """
+    [{
+        "Id": "38b22f0b-0e57-41ff-4460-496b3c84a3f9",
+        "FullyQualifiedName": "Namespace.Class.Method",
+        "DisplayName": "Namespace.Class.Method",
+        "ExecutorUri": "executor://xunit/VsTestRunner3/netcore/",
+        "Source": "test.dll",
+        "Properties": [{
+            "Key": {
+                "Id": "TestObject.Traits",
+                "Label": "Traits",
+                "ValueType": "System.Collections.Generic.KeyValuePair`2[[System.String],[System.String]][]",
+                "Attributes": 0
+            },
+            "Value": [
+                {"Key": "Category", "Value": "First"},
+                {"Key": "Category", "Value": "Second"},
+                {"Key": "Escaped", "Value": "quote: \" newline: \n unicode: \u263a"}
+            ]
+        }]
+    }]
+    """;
+
+foreach (int version in new[] { 2, 7 })
+{
+    var foundMessage = JsonDataSerializer.Instance.DeserializeMessage($$"""
+        {"Version":{{version}},"MessageType":"{{MessageType.TestCasesFound}}","Payload":{{discoveredTestsJson}}}
+        """);
+    var foundTests = JsonDataSerializer.Instance.DeserializePayload<IEnumerable<TestCase>>(foundMessage)
+        ?? throw new InvalidOperationException("TestCasesFound deserialization returned null.");
+    VerifyDiscoveredTraits(foundTests.Single());
+
+    var completeMessage = JsonDataSerializer.Instance.DeserializeMessage($$"""
+        {
+            "Version": {{version}},
+            "MessageType": "{{MessageType.DiscoveryComplete}}",
+            "Payload": {
+                "TotalTests": 1,
+                "IsAborted": false,
+                "LastDiscoveredTests": {{discoveredTestsJson}}
+            }
+        }
+        """);
+    var completePayload = JsonDataSerializer.Instance.DeserializePayload<DiscoveryCompletePayload>(completeMessage)
+        ?? throw new InvalidOperationException("DiscoveryComplete deserialization returned null.");
+    if (completePayload.TotalTests != 1 || completePayload.IsAborted)
+    {
+        throw new InvalidOperationException("DiscoveryComplete did not preserve the discovery status.");
+    }
+
+    var lastDiscoveredTests = completePayload.LastDiscoveredTests
+        ?? throw new InvalidOperationException("DiscoveryComplete did not preserve the last batch of tests.");
+    VerifyDiscoveredTraits(lastDiscoveredTests.Single());
+}
+
+Console.WriteLine("NativeAOT discovery traits deserialization succeeded.");
+
+static void VerifyDiscoveredTraits(TestCase discoveredTest)
+{
+    var traits = discoveredTest.Traits.ToArray();
+    if (discoveredTest.FullyQualifiedName != "Namespace.Class.Method"
+        || traits.Length != 3
+        || traits[0].Name != "Category" || traits[0].Value != "First"
+        || traits[1].Name != "Category" || traits[1].Value != "Second"
+        || traits[2].Name != "Escaped" || traits[2].Value != "quote: \" newline: \n unicode: \u263a")
+    {
+        throw new InvalidOperationException("Discovered test traits did not preserve duplicates, order, or escaped values.");
+    }
+}

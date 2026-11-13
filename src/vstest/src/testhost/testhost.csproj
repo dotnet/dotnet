@@ -20,7 +20,7 @@
 
   <!-- Publish the .NET testhost once into the canonical packaging-publish folder; the
        Microsoft.TestPlatform tool package harvests it into its TestHostNet payload. See
-       eng/PublishForPackaging.targets. Scoped to net8.0 for now; the .NET Framework testhosts
+       eng/PublishForPackaging.targets. Scoped to net10.0 for now; the .NET Framework testhosts
        (consumed by the runner root) will be opted in when that slice moves to publish. -->
   <PropertyGroup Condition="'$(TargetFramework)' == '$(NetCoreAppMinimum)'">
     <PublishForPackaging>true</PublishForPackaging>

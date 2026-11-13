@@ -7,8 +7,8 @@
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
 
-  <!-- NativeAOT / trimming compatibility analysis (net8.0+ only) -->
-  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+  <!-- NativeAOT / trimming compatibility analysis for the supported .NET target. -->
+  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)'))">
     <IsAotCompatible>true</IsAotCompatible>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
     <EnableAotAnalyzer>true</EnableAotAnalyzer>

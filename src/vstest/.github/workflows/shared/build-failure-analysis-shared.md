@@ -30,8 +30,8 @@ failed.
 
 3. Otherwise, launch the `build-failure-analyst` agent as a **background**
    task (`task` tool, `agent_type: "general-purpose"`,
-   `model: "claude-opus-4.6"`, `mode: "background"`). In the sub-agent prompt
-   include:
+   `mode: "background"`). Omit the `model` override to use automatic model
+   selection. In the sub-agent prompt include:
    - All six `GH_AW_*` environment values verbatim so the sub-agent knows
      which binlog to query (`GH_AW_BINLOG_PATH` is the in-container path
      `/data/build.binlog` exposed by the `binlog-mcp` MCP server) and where

@@ -15,7 +15,7 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 #if NETFRAMEWORK
 [Serializable]
 #endif
-public class TestCanceledException : Exception
+public class TestCanceledException : Exception // CodeQL [SM02227] Not deserialized with an unsafe formatter; the serialization constructor only forwards to the Exception base constructor.
 {
     /// <summary>
     /// Creates a new TestCanceledException

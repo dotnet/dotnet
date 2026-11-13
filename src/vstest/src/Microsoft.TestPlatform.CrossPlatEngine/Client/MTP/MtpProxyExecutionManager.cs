@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 
 using Microsoft.Testing.Platform.ServerMode.Client;
+using Microsoft.TestPlatform.Hashing;
 
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection;
@@ -67,6 +68,12 @@ internal sealed class MtpProxyExecutionManager : IProxyExecutionManager, IDispos
     /// profiler settings supplied by the data collector.
     /// </summary>
     public IDictionary<string, string?>? EnvironmentVariables { get; set; }
+
+    /// <summary>
+    /// The test id algorithm declared for this run in runsettings, or <see langword="null"/> when the
+    /// run does not declare one and the runner's own environment should decide.
+    /// </summary>
+    private TestCaseIdAlgorithm? _testCaseIdAlgorithm;
 
     public void Initialize(bool skipDefaultAdapters) => _isInitialized = true;
 
@@ -339,7 +346,7 @@ internal sealed class MtpProxyExecutionManager : IProxyExecutionManager, IDispos
                 // what makes crash attribution work when the test never reaches a terminal state.
                 if (_testCaseEventForwarder is { } forwarder && MtpTestNodeConverter.IsInProgressState(state))
                 {
-                    forwarder.NotifyTestCaseStart(MtpTestNodeConverter.ToTestCase(change, source));
+                    forwarder.NotifyTestCaseStart(MtpTestNodeConverter.ToTestCase(change, source, _testCaseIdAlgorithm));
                     continue;
                 }
 
@@ -348,7 +355,7 @@ internal sealed class MtpProxyExecutionManager : IProxyExecutionManager, IDispos
                     continue;
                 }
 
-                TestResult result = MtpTestNodeConverter.ToTestResult(change, source);
+                TestResult result = MtpTestNodeConverter.ToTestResult(change, source, _testCaseIdAlgorithm);
                 _testCaseEventForwarder?.NotifyTestCaseEnd(result);
                 results.Add(result);
             }
@@ -424,6 +431,16 @@ internal sealed class MtpProxyExecutionManager : IProxyExecutionManager, IDispos
     private void ApplyRunSettingsEnvironmentVariables(string? runSettings)
     {
         Dictionary<string, string?>? runSettingsEnvironmentVariables = InferRunSettingsHelper.GetEnvironmentVariables(runSettings);
+
+        // The test id algorithm selection is read by TestCase in whichever process builds the test
+        // case. Here that is the runner, which does not receive these variables, so capture the
+        // declared choice and pass it explicitly when converting nodes.
+        //
+        // Assigned before the early return below, and unconditionally, so that a run declaring
+        // nothing clears what a previous run on this instance declared instead of inheriting it.
+        // Resolving from a null or empty set yields null, which is exactly "nothing was declared".
+        _testCaseIdAlgorithm = MtpTestNodeConverter.ResolveTestCaseIdAlgorithm(runSettingsEnvironmentVariables);
+
         if (runSettingsEnvironmentVariables is null || runSettingsEnvironmentVariables.Count == 0)
         {
             return;

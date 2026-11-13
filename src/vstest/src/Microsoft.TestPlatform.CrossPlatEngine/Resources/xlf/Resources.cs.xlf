@@ -184,7 +184,7 @@
       </trans-unit>
       <trans-unit id="MtpTestCaseMissingNodeUid">
         <source>Cannot run test '{0}' because it does not carry a Microsoft.Testing.Platform node identifier. The test case was not produced by a Microsoft.Testing.Platform discovery, or the identifier was lost in transit. Re-run discovery for this project, or run without a test selection.</source>
-        <target state="new">Cannot run test '{0}' because it does not carry a Microsoft.Testing.Platform node identifier. The test case was not produced by a Microsoft.Testing.Platform discovery, or the identifier was lost in transit. Re-run discovery for this project, or run without a test selection.</target>
+        <target state="translated">Test {0} nelze spustit, protože neobsahuje identifikátor uzlu Microsoft.Testing.Platform. Testovací případ nebyl vytvořen zjišťováním Microsoft.Testing.Platform nebo se jeho identifikátor při přenosu ztratil. Spusťte zjišťování pro tento projekt znovu nebo spusťte test bez výběru testu.</target>
         <note />
       </trans-unit>
       <trans-unit id="SkippingSource">

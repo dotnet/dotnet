@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework Condition="'$(SingleTargetFramework)' != ''">$(SingleTargetFramework)</TargetFramework>
+    <TargetFrameworks Condition="'$(SingleTargetFramework)' == ''">net11.0;net11.0-android;net11.0-windows</TargetFrameworks>
+    <EnableDefaultItems>false</EnableDefaultItems>
+  </PropertyGroup>
+
+  <Target Name="GetTestHostContent">
+    <ItemGroup Condition="'$(IsCrossTargetingBuild)' == 'true'">
+      <_Framework Include="$(TargetFrameworks)" />
+    </ItemGroup>
+    <MSBuild Condition="'$(IsCrossTargetingBuild)' == 'true'"
+             Projects="$(MSBuildProjectFullPath)" Targets="GetTestHostContent"
+             Properties="TargetFramework=%(_Framework.Identity)" />
+    <WriteLinesToFile Condition="'$(IsCrossTargetingBuild)' != 'true'"
+                      File="$(MSBuildProjectDirectory)/$(TargetFramework).content"
+                      Lines="@(Content->'%(Link)|%(CopyToOutputDirectory)|%(Visible)')"
+                      Overwrite="true" />
+  </Target>
+</Project>

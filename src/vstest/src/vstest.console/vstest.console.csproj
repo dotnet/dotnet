@@ -47,8 +47,8 @@
   </PropertyGroup>
 
   <!-- Publish the .NET runner once into the canonical packaging-publish folder; the
-       Microsoft.TestPlatform.Portable tool package harvests it into its net8.0 tools root.
-       See eng/PublishForPackaging.targets. Scoped to the portable .NET runner TFM (net8.0). -->
+       Microsoft.TestPlatform.Portable tool package harvests it into its net10.0 tools root.
+       See eng/PublishForPackaging.targets. Scoped to the portable .NET runner TFM (net10.0). -->
   <PropertyGroup Condition="'$(TargetFramework)' == '$(NetCoreAppMinimum)'">
     <PublishForPackaging>true</PublishForPackaging>
   </PropertyGroup>

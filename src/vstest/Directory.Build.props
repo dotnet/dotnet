@@ -17,7 +17,7 @@
   <PropertyGroup>
     <!-- Override the AssemblyVersion as 15.0.0 since protocol depends on this version for serialization. This is also defined in build script. -->
     <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">15.0.0</AssemblyVersion>
-    <!-- Auto generating binding redirects breaks testhost when running under net8.0 vstest.console as .NET Framework net462.  -->
+    <!-- Auto generating binding redirects breaks testhost when running under net10.0 vstest.console as .NET Framework net462.  -->
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <!-- But not autogenerating binding redirects also breaks build occasionally, so we tell MSBuild to unify assembly versions,
     without outputting binding redirectes. -->
@@ -43,7 +43,7 @@
   <PropertyGroup>
     <!-- Naming is based on dotnet/runtime one -->
     <NetFrameworkMinimum>net462</NetFrameworkMinimum>
-    <NetCoreAppMinimum>net8.0</NetCoreAppMinimum>
+    <NetCoreAppMinimum>net10.0</NetCoreAppMinimum>
     <NetCoreAppStable>net10.0</NetCoreAppStable>
     <!--
       Arcade is making things hard to work with. This property is unset when its value is equal to NetMinimum.
@@ -69,6 +69,7 @@
     -->
     <NetPortableTargetFrameworks>$(NetCoreAppMinimum)</NetPortableTargetFrameworks>
     <NetRunnerTargetFrameworks>$(NetSDKTargetFramework);$(NetPortableTargetFrameworks)</NetRunnerTargetFrameworks>
+    <NetRunnerTargetFrameworks Condition="'$(NetSDKTargetFramework)' == '$(NetPortableTargetFrameworks)'">$(NetSDKTargetFramework)</NetRunnerTargetFrameworks>
     <RunnerTargetFrameworks>$(NetFrameworkRunnerTargetFramework);$(NetRunnerTargetFrameworks)</RunnerTargetFrameworks>
 
     <!--
@@ -91,7 +92,7 @@
       https://dotnet.microsoft.com/en-us/platform/support/policy
       https://learn.microsoft.com/en-us/lifecycle/products/microsoft-net-framework
 
-      Currently that is net8 (until November 10, 2026) and .NET Framework 4.6.2 (until Jan 12, 2027).
+      Currently that is net10 and .NET Framework 4.6.2 (until Jan 12, 2027).
     -->
     <TestHostMinimumTargetFrameworks>$(NetCoreAppMinimum);$(NetFrameworkMinimum)</TestHostMinimumTargetFrameworks>
     <!--

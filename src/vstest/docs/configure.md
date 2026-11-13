@@ -97,8 +97,8 @@ document.
     <!-- [x86] | x64: architecture of test host -->  
     <TargetPlatform>x86</TargetPlatform>
   
-    <!-- net462 | net8.0 | net9.0 | net10.0 (or a valid FrameworkName such as .NETFramework,Version=v4.8) -->
-    <TargetFrameworkVersion>net8.0</TargetFrameworkVersion>
+    <!-- net462 | net10.0 (or a valid FrameworkName such as .NETFramework,Version=v4.8) -->
+    <TargetFrameworkVersion>net10.0</TargetFrameworkVersion>
   
     <!-- Path to Test Adapters -->  
     <TestAdaptersPaths>%SystemDrive%\Temp\foo;%SystemDrive%\Temp\bar</TestAdaptersPaths>
@@ -213,7 +213,7 @@ _Example_
 <RunSettings>  
   <RunConfiguration>  
     <TargetPlatform>x86</TargetPlatform>  
-    <TargetFrameworkVersion>net8.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>net10.0</TargetFrameworkVersion>
     <TestAdaptersPaths>%SystemDrive%\Temp\foo;%SystemDrive%\Temp\bar</TestAdaptersPaths>  
     <ResultsDirectory>.\TestResults</ResultsDirectory>  
     <SolutionDirectory>.\TestResults</SolutionDirectory>  
@@ -240,11 +240,9 @@ _Description_
 Examples of valid `TargetFrameworkVersion`:
 
 * net462
-* net8.0
-* net9.0
 * net10.0
 * .NETFramework,Version=v4.8
-* .NETCoreApp,Version=v8.0
+* .NETCoreApp,Version=v10.0
 
 [FrameworkName]: https://learn.microsoft.com/dotnet/standard/frameworks
 

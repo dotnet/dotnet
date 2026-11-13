@@ -133,6 +133,14 @@ This document lists environment variables that are currently handled by VSTest s
 - **Values**: Set to `0` to opt in to the experimental MTP testhost; any other value keeps it disabled
 - **Example**: `VSTEST_DISABLE_MTP_TESTHOST=0`
 
+### VSTEST_DISABLE_XXHASH128_TESTCASE_ID
+- **Description**: Disables computing `TestCase.Id`, the GUID that identifies a test, with the experimental and currently unsupported xxHash128 algorithm, falling back to the SHA1 ids vstest has always produced. xxHash128 is a faster non-cryptographic replacement that produces an [RFC 9562](https://www.rfc-editor.org/rfc/rfc9562.html#name-uuid-version-8) version 8 UUID, and matches the ids MSTest computes for the same input. Only affects tests whose id the platform computes - adapters that assign `TestCase.Id` themselves, such as MSTest v3 and v4, are unaffected.
+- **Default**: `1` (disabled, so ids are unchanged)
+- **Values**: Set to `0` to opt in to the xxHash128 ids; any other value keeps them disabled
+- **Example**: `VSTEST_DISABLE_XXHASH128_TESTCASE_ID=0`
+- **Note**: xxHash128 ships to gather feedback and may change or be removed, see [experimental APIs](experimental-apis.md#vstest001). It is intended to become the default in a later release, at which point the default of this variable flips to `0`. The meaning of each value stays the same, so setting `1` pins today's ids across that change.
+- **Migrating stored ids**: To find out which of your stored ids change when you opt in, and which do not, use the temporary [test id report logger](test-ids-logger.md) (`/logger:testids`). It reports every test once with both the SHA1 and the xxHash128 id, and flags the tests whose id an adapter assigned and which therefore do not change at all.
+
 ### VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING
 - **Description**: Disables artifact post-processing functionality.
 - **Values**: Set to any non-zero value to disable
@@ -143,6 +151,12 @@ This document lists environment variables that are currently handled by VSTest s
 - **Values**: Set to any non-zero value to disable
 - **Example**: `VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING_NEW_SDK_UX=1`
 - **Usage**: Useful when parsing console output and need to maintain compatibility
+
+### VSTEST_DISABLE_ARTIFACTS_DIRECTORY_VERIFICATION
+- **Description**: Disables the Unix checks around the directory holding the test session artifacts: narrowing a directory vstest creates to its owner, and verifying on Linux that a directory given by `VSTEST_ARTIFACTS_DIRECTORY` is a real directory, owned by the current user, that no other user can reach. On Linux every directory leading to it must also be owned by the current user or root, and must not let other users rename what it contains (a sticky directory such as `/tmp` is accepted). On Linux, when the system cannot report owners and permissions (no `statx`), the artifacts are not used unless this variable is set.
+- **Values**: Set to any non-zero value to disable
+- **Example**: `VSTEST_DISABLE_ARTIFACTS_DIRECTORY_VERIFICATION=1`
+- **Usage**: Needed where the ownership or the permissions of that directory cannot be represented or changed, such as a mounted Windows or network volume. Has no effect on Windows.
 
 ### VSTEST_DISABLE_FASTER_JSON_SERIALIZATION
 - **Description**: Disables the faster JSON serialization mechanism and falls back to standard serialization.
@@ -251,6 +265,10 @@ This document lists environment variables that are currently handled by VSTest s
 - **Description**: Skips Microsoft Fakes configuration during test execution.
 - **Values**: Set to "1" to skip
 - **Example**: `VSTEST_SKIP_FAKES_CONFIGURATION=1`
+
+### VSTEST_ARTIFACTS_DIRECTORY
+- **Description**: Absolute path to an existing directory that vstest.console writes the test session artifacts into, as `<directory>/<testSessionCorrelationId>/...`. Set by the .NET SDK, which creates the directory, gives every vstest.console process of one invocation the same value, and deletes it when the invocation finishes. vstest.console never creates, widens or deletes this directory, only what it puts inside it. When the variable is absent, or is not an absolute path, the artifacts go under the temporary directory instead. On Linux the directory is verified before it is used; see `VSTEST_DISABLE_ARTIFACTS_DIRECTORY_VERIFICATION`. Not typically set by hand.
+- **Example**: `VSTEST_ARTIFACTS_DIRECTORY=/tmp/3f2504e0-4f89-11d3-9a0c-0305e82c3301`
 
 ## Discovery Variables
 

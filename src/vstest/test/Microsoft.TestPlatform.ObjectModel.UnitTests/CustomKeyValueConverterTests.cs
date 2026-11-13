@@ -94,4 +94,30 @@ public class CustomKeyValueConverterTests
 
         Assert.IsNull(data);
     }
+
+    [TestMethod]
+    [DataRow("""[{"Key":"escaped \"key\"","Value":"line\nslash\\unicode \u263a"}]""", "escaped \"key\"", "line\nslash\\unicode \u263a")]
+    [DataRow("""[{"Value":"value","Key":"key","Ignored":{"Nested":true}}]""", "key", "value")]
+    [DataRow("""[{"Key":null,"Value":null}]""", null, null)]
+    [DataRow("""[{"Key":"key"}]""", "key", null)]
+    [DataRow("""[{"Value":"value"}]""", null, "value")]
+    [DataRow("""[{}]""", null, null)]
+    public void CustomKeyValueConverterShouldPreserveNullableAndEscapedMembers(string json, string? expectedKey, string? expectedValue)
+    {
+        var data = _customKeyValueConverter.ConvertFrom(null, CultureInfo.InvariantCulture, json) as KeyValuePair<string?, string?>[];
+
+        Assert.IsNotNull(data);
+        Assert.HasCount(1, data);
+        Assert.AreEqual(expectedKey, data[0].Key);
+        Assert.AreEqual(expectedValue, data[0].Value);
+    }
+
+    [TestMethod]
+    public void CustomKeyValueConverterShouldDeserializeJsonNullAsEmptyArray()
+    {
+        var data = _customKeyValueConverter.ConvertFrom(null, CultureInfo.InvariantCulture, "null") as KeyValuePair<string, string>[];
+
+        Assert.IsNotNull(data);
+        Assert.IsEmpty(data);
+    }
 }
