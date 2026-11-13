@@ -1,8 +1,7 @@
 <Project>
 
   <ItemGroup>
-    <Artifact Include="$(ArtifactsDir)nupkgs/*.nupkg"
-              Kind="Package">
+    <Artifact Include="$(ArtifactsDir)nupkgs/*.nupkg" Kind="Package">
       <Visibility Condition="'$(EnableDefaultRidSpecificArtifacts)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">Vertical</Visibility>
     </Artifact>
   </ItemGroup>
