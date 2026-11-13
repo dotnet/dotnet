@@ -1,0 +1,46 @@
+parameters:
+- name: artifactName
+  type: string
+
+steps:
+- task: DownloadPipelineArtifact@2
+  displayName: Download Bootstrap SDK
+  inputs:
+    artifactName: ${{ parameters.artifactName }}
+    itemPattern: assets/*/Sdk/**/dotnet-sdk-*-win-x64.zip
+    targetPath: $(Agent.TempDirectory)/bootstrap-sdk-download
+
+- task: DownloadPipelineArtifact@2
+  displayName: Download Bootstrap Packages
+  inputs:
+    artifactName: ${{ parameters.artifactName }}
+    itemPattern: packages/*/NonShipping/arcade/**
+    targetPath: $(Agent.TempDirectory)/bootstrap-packages-download
+
+- pwsh: |
+    $ErrorActionPreference = 'Stop'
+
+    $sdkArchive = Get-ChildItem -Path '$(Agent.TempDirectory)/bootstrap-sdk-download' -Recurse -File -Filter 'dotnet-sdk-*-win-x64.zip' |
+      Select-Object -First 1
+    if ($null -eq $sdkArchive) {
+      throw "No win-x64 SDK archive was downloaded from '${{ parameters.artifactName }}'."
+    }
+
+    $sdkDir = '$(Agent.TempDirectory)/bootstrap-sdk'
+    New-Item -ItemType Directory -Force -Path $sdkDir | Out-Null
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($sdkArchive.FullName, $sdkDir)
+
+    $packagesDir = '$(Agent.TempDirectory)/bootstrap-packages'
+    New-Item -ItemType Directory -Force -Path $packagesDir | Out-Null
+    Get-ChildItem -Path '$(Agent.TempDirectory)/bootstrap-packages-download' -Recurse -File -Filter '*.nupkg' |
+      ForEach-Object { Copy-Item $_.FullName -Destination $packagesDir -Force }
+
+    $packageCount = (Get-ChildItem -Path $packagesDir -File -Filter '*.nupkg').Count
+    if ($packageCount -eq 0) {
+      throw "No Arcade packages were downloaded from '${{ parameters.artifactName }}'."
+    }
+
+    Write-Host "Using bootstrap SDK '$($sdkArchive.Name)' and $packageCount package(s)."
+    Write-Host "##vso[task.setvariable variable=bootstrapArguments]-withSdk `"$sdkDir`" -withPackages `"$packagesDir`""
+  displayName: Prepare Bootstrap Toolset
