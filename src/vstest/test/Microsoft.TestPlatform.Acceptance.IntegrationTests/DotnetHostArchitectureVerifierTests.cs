@@ -39,10 +39,12 @@ public class DotnetHostArchitectureVerifierTests : IntegrationTestBase
         var environmentVariables = new Dictionary<string, string?>
         {
             ["DOTNET_MULTILEVEL_LOOKUP"] = "0",
-            ["ExpectedArchitecture"] = architecture
+            ["ExpectedArchitecture"] = architecture,
+            ["DOTNET_CLI_HOME"] = CreateIsolatedTemplateEngineHome(TempDirectory.Path)
         };
 
         ExecuteApplication(dotnetPath, "new mstest", out _, out _, out _, environmentVariables, TempDirectory.Path);
+        UseLocallyBuiltTestSdk(TempDirectory.Path);
 
         // Patch test file
         File.WriteAllText(Path.Combine(TempDirectory.Path, "UnitTest1.cs"),

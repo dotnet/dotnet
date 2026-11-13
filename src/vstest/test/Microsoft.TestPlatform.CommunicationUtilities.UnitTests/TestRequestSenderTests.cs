@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -93,9 +94,11 @@ public class TestRequestSenderTests
         _connectedEventArgs = new ConnectedEventArgs(new SocketException());
         SetupFakeCommunicationChannel();
 
-        var connected = _testRequestSender.WaitForRequestHandlerConnection(1, It.IsAny<CancellationToken>());
+        var stopwatch = Stopwatch.StartNew();
+        var connected = _testRequestSender.WaitForRequestHandlerConnection(5000, It.IsAny<CancellationToken>());
 
         Assert.IsFalse(connected);
+        Assert.IsTrue(stopwatch.ElapsedMilliseconds < 1000, "A failed connection should not wait for the full timeout.");
     }
 
     [TestMethod]
@@ -257,6 +260,41 @@ public class TestRequestSenderTests
     }
 
     [TestMethod]
+    public async Task CheckVersionWithTestHostShouldWaitForVersionAfterTestMessage()
+    {
+        const string testMessageData = "testMessage";
+        const string versionData = "version";
+        using var testMessageSent = new ManualResetEventSlim(false);
+        _mockDataSerializer.Setup(ds => ds.DeserializeMessage(testMessageData))
+            .Returns(new Message { MessageType = MessageType.TestMessage });
+        _mockDataSerializer.Setup(ds => ds.DeserializeMessage(versionData))
+            .Returns(new Message { MessageType = MessageType.VersionCheck });
+        _mockDataSerializer.Setup(ds => ds.DeserializePayload<int>(It.Is<Message>(m => m.MessageType == MessageType.VersionCheck)))
+            .Returns(Dummynegotiatedprotocolversion);
+        _mockChannel.Setup(mc => mc.Send(It.IsAny<string>())).Callback(() =>
+        {
+            _mockChannel.Object.MessageReceived.Notify(
+                _mockChannel.Object, new MessageReceivedEventArgs { Data = testMessageData }, nameof(CheckVersionWithTestHostShouldWaitForVersionAfterTestMessage));
+            testMessageSent.Set();
+        });
+        SetupFakeCommunicationChannel();
+
+        var versionCheck = Task.Run(_testRequestSender.CheckVersionWithTestHost);
+        try
+        {
+            Assert.IsTrue(testMessageSent.Wait(5000));
+            Assert.IsFalse(versionCheck.Wait(100), "A log message is not a version response.");
+        }
+        finally
+        {
+            _mockChannel.Object.MessageReceived.Notify(
+                _mockChannel.Object, new MessageReceivedEventArgs { Data = versionData }, nameof(CheckVersionWithTestHostShouldWaitForVersionAfterTestMessage));
+        }
+
+        await versionCheck;
+    }
+
+    [TestMethod]
     public void CheckVersionWithTestHostShouldThrowIfTestHostVersionDoesNotMatch()
     {
         SetupDeserializeMessage(MessageType.ProtocolError, string.Empty);
@@ -264,6 +302,25 @@ public class TestRequestSenderTests
         SetupFakeCommunicationChannel();
 
         Assert.ThrowsException<TestPlatformException>(() => _testRequestSender.CheckVersionWithTestHost());
+    }
+
+    [TestMethod]
+    public void CheckVersionWithTestHostShouldReportProtocolErrorFromCommunicationThread()
+    {
+        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionTimeout, "1");
+        const string protocolError = "protocolError";
+        _mockDataSerializer.Setup(ds => ds.DeserializeMessage(protocolError))
+            .Returns(new Message { MessageType = MessageType.ProtocolError });
+        _mockChannel.Setup(mc => mc.Send(It.IsAny<string>())).Callback(() =>
+            _ = Task.Run(() => _mockChannel.Object.MessageReceived.Notify(
+                _mockChannel.Object,
+                new MessageReceivedEventArgs { Data = protocolError },
+                nameof(CheckVersionWithTestHostShouldReportProtocolErrorFromCommunicationThread))));
+        SetupFakeCommunicationChannel();
+
+        var error = Assert.ThrowsException<TestPlatformException>(() => _testRequestSender.CheckVersionWithTestHost());
+
+        StringAssert.Contains(error.Message, "Protocol version check failed");
     }
 
     [TestMethod]

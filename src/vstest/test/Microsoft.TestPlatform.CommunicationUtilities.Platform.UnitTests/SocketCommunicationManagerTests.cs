@@ -118,6 +118,33 @@ public class SocketCommunicationManagerTests : IDisposable
         Assert.ThrowsException<AggregateException>(() => _tcpClient.ConnectAsync(IPAddress.Loopback, port).Wait());
     }
 
+    [TestMethod]
+    public async Task StopServerShouldCompletePendingAccept()
+    {
+        _communicationManager.HostServer(new IPEndPoint(IPAddress.Loopback, 0));
+        var acceptClient = _communicationManager.AcceptClientAsync();
+
+        _communicationManager.StopServer();
+
+        Assert.AreSame(acceptClient, await Task.WhenAny(acceptClient, Task.Delay(5000)));
+        await acceptClient;
+        Assert.IsFalse(_communicationManager.WaitForClientConnection(0));
+    }
+
+    [TestMethod]
+    public async Task StopServerShouldCloseAcceptedClient()
+    {
+        var port = _communicationManager.HostServer(new IPEndPoint(IPAddress.Loopback, 0)).Port;
+        var acceptClient = _communicationManager.AcceptClientAsync();
+        await _tcpClient.ConnectAsync(IPAddress.Loopback, port);
+        await acceptClient;
+
+        _communicationManager.StopServer();
+
+        Assert.IsTrue(_tcpClient.Client.Poll(5_000_000, SelectMode.SelectRead));
+        Assert.AreEqual(0, _tcpClient.Client.Available);
+    }
+
     #endregion
 
     #region Client tests

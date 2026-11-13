@@ -54,7 +54,6 @@ public class VsTestConsoleWrapperTests
 
         _mockRequestSender.Setup(rs => rs.WaitForRequestHandlerConnection(It.IsAny<int>())).Returns(true);
         _mockRequestSender.Setup(rs => rs.InitializeCommunication()).Returns(100);
-        _mockRequestSender.Setup(rs => rs.InitializeCommunicationAsync(It.IsAny<int>())).Returns(Task.FromResult(100));
     }
 
     [TestMethod]
@@ -85,6 +84,39 @@ public class VsTestConsoleWrapperTests
         _mockRequestSender.Setup(rs => rs.InitializeCommunication()).Returns(-1);
 
         Assert.ThrowsException<TransationLayerException>(() => _consoleWrapper.StartSession());
+    }
+
+    [TestMethod]
+    public async Task StartSessionAsyncShouldLaunchConsoleBeforeWaitingForConnection()
+    {
+        var calls = new List<string>();
+        _mockRequestSender.Setup(rs => rs.InitializeCommunication())
+            .Callback(() => calls.Add("HostServer"))
+            .Returns(123);
+        _mockProcessManager.Setup(pm => pm.StartProcess(_consoleParameters))
+            .Callback(() => calls.Add("StartProcess"));
+        _mockRequestSender.Setup(rs => rs.WaitForRequestHandlerConnection(It.IsAny<int>()))
+            .Callback(() => calls.Add("WaitForConnection"))
+            .Returns(true);
+
+        await ((VsTestConsoleWrapper)_consoleWrapper).StartSessionAsync();
+
+        CollectionAssert.AreEqual(
+            new[] { "HostServer", "StartProcess", "WaitForConnection" },
+            calls);
+        Assert.AreEqual(123, _consoleParameters.PortNumber);
+        _mockRequestSender.Verify(rs => rs.InitializeCommunicationAsync(It.IsAny<int>()), Times.Never);
+    }
+
+    [TestMethod]
+    public async Task StartSessionAsyncShouldNotLaunchConsoleWhenHostingFails()
+    {
+        _mockRequestSender.Setup(rs => rs.InitializeCommunication()).Returns(-1);
+
+        await Assert.ThrowsExceptionAsync<TransationLayerException>(() => ((VsTestConsoleWrapper)_consoleWrapper).StartSessionAsync());
+
+        _mockRequestSender.Verify(rs => rs.Close(), Times.Once);
+        _mockProcessManager.Verify(pm => pm.StartProcess(It.IsAny<ConsoleParameters>()), Times.Never);
     }
 
     [TestMethod]

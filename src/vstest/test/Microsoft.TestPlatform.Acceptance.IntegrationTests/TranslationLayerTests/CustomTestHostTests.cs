@@ -33,6 +33,7 @@ public class CustomTestHostTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [TestCategory("Compatibility")]
     [TestCategory("Windows-Review")]
     [RunnerCompatibilityDataSource(BeforeFeature = Features.ATTACH_DEBUGGER_FLOW)]
     // This does not work with testhosts that are earlier than when the feature was introduced,
@@ -62,6 +63,7 @@ public class CustomTestHostTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [TestCategory("Compatibility")]
     [TestCategory("Windows-Review")]
     // [RunnerCompatibilityDataSource(BeforeFeature = Features.ATTACH_DEBUGGER_FLOW)]
     [TestHostCompatibilityDataSource(DEFAULT_RUNNER_NETFX, DEFAULT_RUNNER_NETCORE, "LegacyStable", BeforeFeature = Features.ATTACH_DEBUGGER_FLOW, DebugVSTestConsole = true)]
@@ -92,6 +94,7 @@ public class CustomTestHostTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [TestCategory("Compatibility")]
     [TestCategory("Windows-Review")]
     [RunnerCompatibilityDataSource(AfterFeature = Features.ATTACH_DEBUGGER_FLOW)]
     // [TestHostCompatibilityDataSource(AfterFeature = Features.ATTACH_DEBUGGER_FLOW)]
@@ -116,6 +119,7 @@ public class CustomTestHostTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [TestCategory("Compatibility")]
     [TestCategory("Windows-Review")]
     [Ignore("This is not working. The compatibility code only checks the protocol version (in handler), which is dictated by testhost. "
         + "It sees 6 but does not realize that the provided CustomTesthostLauncher is not supporting the new feature, it ends up calling back to EditoAttachDebugger" +
@@ -141,6 +145,7 @@ public class CustomTestHostTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [TestCategory("Compatibility")]
     [TestCategory("Windows-Review")]
     [TestCategory("Feature")]
     // "Just row" used here because mstest does not cooperate with older versions of vstest.console correctly, so we test with just the latest version available..
@@ -192,6 +197,7 @@ public class CustomTestHostTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [TestCategory("Compatibility")]
     [TestCategory("Windows-Review")]
     [TestCategory("BackwardCompatibilityWithRunner")]
     // "Just row" used here because mstest does not cooperate with older versions of vstest.console correctly, so we test with just the single version available
@@ -327,4 +333,3 @@ public class CustomTestHostTests : AcceptanceTestBase
     }
 }
 #pragma warning restore CS0618 // Type or member is obsolete
-

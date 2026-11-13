@@ -657,9 +657,8 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
 
         _testPlatformEventSource.TranslationLayerInitializeStart();
 
-        var timeout = EnvironmentHelper.GetConnectionTimeout();
         // Start communication
-        var port = await _requestSender.InitializeCommunicationAsync(timeout * 1000).ConfigureAwait(false);
+        var port = _requestSender.InitializeCommunication();
 
         if (port > 0)
         {
@@ -674,6 +673,7 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
 
             // Start vstest.console.exe process
             _vstestConsoleProcessManager.StartProcess(_consoleParameters);
+            _sessionStarted = await Task.Run(WaitForConnection).ConfigureAwait(false);
         }
         else
         {
