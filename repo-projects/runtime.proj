@@ -21,21 +21,16 @@
     <BuildBootstrap Condition="'$(DotNetBuildPass)' != '' and '$(DotNetBuildPass)' != '1'">false</BuildBootstrap>
     <BuildArgs Condition="'$(BuildBootstrap)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)bootstrap</BuildArgs>
 
-    <!-- If this build is not a "special flavor" build, build everything that can be built for this target. -->
-    <BuildArgs Condition="'$(TargetArchitecture)' != 'wasm'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
-    <BuildArgs Condition="'$(RuntimeFlavor)' == 'CoreCLR' and '$(TargetArchitecture)' == 'wasm'">$(BuildArgs) /p:RuntimeFlavor=CoreCLR /p:_BuildNativeAOTRuntimePack=true</BuildArgs>
+    <!-- Build every supported runtime pack for the target. -->
+    <BuildArgs>$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
 
-    <!-- NativeAOT wasm builds are not yet supported by the SDK that builds the VMR. -->
+    <!-- TODO: Revisit WASM cDAC native-component publishing; the non-bootstrap net10.0 path fails NETSDK1203. -->
     <BuildArgs Condition="'$(TargetArchitecture)' == 'wasm'">$(BuildArgs) /p:SupportsNativeAotComponents=false</BuildArgs>
 
     <!-- When we're actually doing signing and the ESRP tool is available, forward down the path to the repo builds. -->
     <BuildArgs Condition="'$(DotNetBuildSign)' == 'true' and '$(ForceDryRunSigning)' != 'true' and '$(DotNetEsrpToolPath)' != ''">$(BuildArgs) /p:DotNetEsrpToolPath=$(DotNetEsrpToolPath)</BuildArgs>
 
     <!-- Pass through special build modes controlled by properties -->
-    <BuildArgs Condition="'$(WasmEnableThreads)' != ''">$(BuildArgs) /p:WasmEnableThreads=$(WasmEnableThreads)</BuildArgs>
-    <BuildArgs Condition="'$(MonoEnableLLVM)' != ''">$(BuildArgs) /p:MonoEnableLLVM=$(MonoEnableLLVM)</BuildArgs>
-    <BuildArgs Condition="'$(MonoAOTEnableLLVM)' != ''">$(BuildArgs) /p:MonoAOTEnableLLVM=$(MonoAOTEnableLLVM)</BuildArgs>
-    <BuildArgs Condition="'$(MonoBundleLLVMOptimizer)' != ''">$(BuildArgs) /p:MonoBundleLLVMOptimizer=$(MonoBundleLLVMOptimizer)</BuildArgs>
     <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)pgoinstrument</BuildArgs>
     <!-- Pass through the C++ library selection properties. -->
     <BuildArgs Condition="'$(TargetCxxStandardLibrary)' != ''">$(BuildArgs) /p:TargetCxxStandardLibrary=$(TargetCxxStandardLibrary)</BuildArgs>
