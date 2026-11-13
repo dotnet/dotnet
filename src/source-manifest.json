@@ -31,10 +31,10 @@
       "commitSha": "940e0b0b2cb05cd142f8e9760fda2779175127bb"
     },
     {
-      "barId": 340640,
+      "barId": 341144,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "2eba842a0f080e27c29baaa2f4d6847563e7ce44"
+      "commitSha": "3c3d5d7c8b82fb250b2bdd116814865ef00c7142"
     },
     {
       "barId": 340975,
@@ -55,10 +55,10 @@
       "commitSha": "59c747725ef5ec90ce9a9751f9509db13e395f31"
     },
     {
-      "barId": 340747,
+      "barId": 341113,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "51359c8f2b3484ba1994f4304037edad4941923b"
+      "commitSha": "36212bbe82870bcb230a5b7a5f4366491ec776c4"
     },
     {
       "barId": 341020,
@@ -121,10 +121,10 @@
       "commitSha": "9929f42c6069d45abf7a1cac9e60441926544561"
     },
     {
-      "barId": 340998,
+      "barId": 341164,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "43590ddbc8b9cd3b27fa9058ec423028ace17867"
+      "commitSha": "1526885b1a65c9b1c34cc7aa4d268e6a1d46d7fc"
     },
     {
       "barId": 340908,
