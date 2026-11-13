@@ -1250,11 +1250,11 @@ namespace NuGet.Build.Tasks.Console
         /// <param name="createProjectFactory">A factory method that creates a project adapter from an MSBuild ProjectInstance.</param>
         /// <param name="updateProjectFactory">A factory method that updates a project adapter with a target framework and MSBuild ProjectInstance.</param>
         /// <param name="projectFinalizeDelegate">An option delegate to finalize a project adapter once all projects have been evaluated.</param>
-        /// <returns>An <see cref="ICollection{ProjectWithInnerNodes}" /> object containing projects and their inner nodes if they are targeting multiple frameworks.</returns>
+        /// <returns>A read-only dictionary containing projects and their inner nodes if they are targeting multiple frameworks.</returns>
 #if NET
         [RequiresUnreferencedCode("In-process MSBuild execution loads task assemblies and loggers via reflection and is not trim-safe.")]
 #endif
-        private ConcurrentDictionary<string, TProject> LoadProjects<TProject>(
+        internal IReadOnlyDictionary<string, TProject> LoadProjects<TProject>(
             IEnumerable<ProjectGraphEntryPoint> entryProjects,
             bool interactive,
             string binaryLoggerParameters,
@@ -1283,7 +1283,7 @@ namespace NuGet.Build.Tasks.Console
                     logTaskInputs = true;
                 }
 
-                var projects = new ConcurrentDictionary<string, TProject>(PathUtility.GetStringComparerBasedOnOS());
+                var projects = new Dictionary<string, TProject>(PathUtility.GetStringComparerBasedOnOS());
 
                 using var projectCollection = new ProjectCollection(
                     globalProperties: null,
@@ -1320,6 +1320,8 @@ namespace NuGet.Build.Tasks.Console
 
                 int buildCount = 0;
                 int failedBuildSubmissionCount = 0;
+                var buildSubmissions =
+                    new List<(BuildSubmission submission, ProjectInstance projectInstance, string targetFramework)>(projectGraph.ProjectNodes.Count);
 
                 var buildParameters = new BuildParameters(projectCollection)
                 {
@@ -1358,28 +1360,38 @@ namespace NuGet.Build.Tasks.Console
                                 // Suppresses an error that a target does not exist because it may or may not contain the targets that we're running
                                 BuildRequestDataFlags.SkipNonexistentTargets));
 
-                        buildSubmission.ExecuteAsync((submission) =>
-                        {
-                            BuildResult result = submission.BuildResult;
-                            if (result.OverallResult == BuildResultCode.Failure)
-                            {
-                                failedBuildSubmissionCount++;
-                            }
+                        buildSubmissions.Add((buildSubmission, projectInstance, targetFramework));
 
-                            buildCount++;
-
-                            projects.AddOrUpdate(
-                                projectInstance.FullPath,
-                                createProjectFactory,
-                                updateProjectFactory,
-                                (projectInstance, targetFramework));
-                        }, context: null);
+                        // Queue the build submission but do not wait for each individual build to complete.
+                        // Only 1 build is allowed to run at a time since the BuildManager is configured to only have 1 node, but allows them to be queued up quickly.
+                        buildSubmission.ExecuteAsync(callback: null, context: null);
                     }
                 }
                 finally
                 {
                     // EndBuild blocks until all builds are complete
                     BuildManager.DefaultBuildManager.EndBuild();
+                }
+
+                foreach ((BuildSubmission submission, ProjectInstance projectInstance, string targetFramework) in buildSubmissions)
+                {
+                    if (submission.BuildResult.OverallResult == BuildResultCode.Failure)
+                    {
+                        failedBuildSubmissionCount++;
+                    }
+
+                    buildCount++;
+
+                    if (projects.TryGetValue(projectInstance.FullPath, out TProject project))
+                    {
+                        projects[projectInstance.FullPath] = updateProjectFactory(
+                            projectInstance.FullPath, project, (projectInstance, targetFramework));
+                    }
+                    else
+                    {
+                        projects.Add(projectInstance.FullPath, createProjectFactory(
+                            projectInstance.FullPath, (projectInstance, targetFramework)));
+                    }
                 }
 
                 sw.Stop();
@@ -1507,4 +1519,3 @@ namespace NuGet.Build.Tasks.Console
         }
     }
 }
-
