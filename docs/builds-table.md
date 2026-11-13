@@ -19,15 +19,6 @@
 </configuration>
 ```
 
-### For .NET 10 builds
-```xml
-<configuration>
-  <packageSources>
-    <add key="dotnet10" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet10/nuget/v3/index.json" />
-  </packageSources>
-</configuration>
-```
-
 ### Supported Platforms
 
 --------------------------------------------------------------------------------------------------------------------------------
