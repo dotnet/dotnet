@@ -160,6 +160,114 @@ public class SocketServerTests : SocketTestsBase, IDisposable
     }
 
     [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    public async Task SocketServerShouldNotPublishChannelWhenFactoryReturnsAfterStop(bool stopInsideFactory)
+    {
+        var connectedClients = await CreateConnectedTcpClients();
+        using var tcpClient = connectedClients.Client;
+        using var acceptedClient = connectedClients.AcceptedClient;
+        using var factoryEntered = new ManualResetEventSlim(false);
+        using var releaseFactory = new ManualResetEventSlim(false);
+        var channel = new Mock<ICommunicationChannel>();
+        var connectedCount = 0;
+        var disconnectedCount = 0;
+        var stopCompletedDuringDisposal = false;
+        SocketServer? socketServer = null;
+        socketServer = new SocketServer(
+            _ =>
+            {
+                factoryEntered.Set();
+                if (stopInsideFactory)
+                {
+                    socketServer!.Stop();
+                }
+                else
+                {
+                    releaseFactory.Wait(Timeout * 2, TestContext.CancellationToken);
+                }
+
+                return channel.Object;
+            },
+            _ => Task.FromResult(acceptedClient));
+        channel.Setup(communicationChannel => communicationChannel.Dispose()).Callback(() =>
+        {
+            var stopTask = Task.Run(socketServer.Stop, TestContext.CancellationToken);
+            stopCompletedDuringDisposal = stopTask.Wait(Timeout, TestContext.CancellationToken);
+        });
+        socketServer.Connected += (_, _) => Interlocked.Increment(ref connectedCount);
+        socketServer.Disconnected += (_, _) => Interlocked.Increment(ref disconnectedCount);
+        var startTask = Task.Run(() => socketServer.Start(_defaultConnection), TestContext.CancellationToken);
+
+        try
+        {
+            Assert.IsTrue(factoryEntered.Wait(Timeout, TestContext.CancellationToken));
+            if (!stopInsideFactory)
+            {
+                socketServer.Stop();
+            }
+
+            releaseFactory.Set();
+            Assert.IsTrue(startTask.Wait(Timeout, TestContext.CancellationToken));
+            await startTask;
+
+            Assert.AreEqual(0, connectedCount, "A channel returned after Stop must not be published.");
+            Assert.AreEqual(0, disconnectedCount, "An unpublished channel must not enter the message loop.");
+            channel.Verify(communicationChannel => communicationChannel.Dispose(), Times.Once);
+            Assert.IsTrue(stopCompletedDuringDisposal, "Channel disposal must run outside the state lock.");
+            channel.Verify(communicationChannel => communicationChannel.NotifyDataAvailable(It.IsAny<CancellationToken>()), Times.Never);
+            Assert.IsTrue(tcpClient.Client.Poll(Timeout * 1000, SelectMode.SelectRead));
+            Assert.AreEqual(0, tcpClient.Client.Available);
+            socketServer.Stop();
+            channel.Verify(communicationChannel => communicationChannel.Dispose(), Times.Once);
+        }
+        finally
+        {
+            releaseFactory.Set();
+            socketServer.Stop();
+            Assert.IsTrue(startTask.Wait(Timeout, TestContext.CancellationToken));
+        }
+    }
+
+    [TestMethod]
+    public async Task SocketServerShouldCloseClientAcceptedAfterStopWithoutCreatingChannel()
+    {
+        var connectedClients = await CreateConnectedTcpClients();
+        using var tcpClient = connectedClients.Client;
+        using var acceptedClient = connectedClients.AcceptedClient;
+        var acceptCompletion = new TaskCompletionSource<TcpClient>();
+        var channel = new Mock<ICommunicationChannel>();
+        var factoryCount = 0;
+        var connectedCount = 0;
+        var socketServer = new SocketServer(
+            _ =>
+            {
+                Interlocked.Increment(ref factoryCount);
+                return channel.Object;
+            },
+            _ => acceptCompletion.Task);
+        socketServer.Connected += (_, _) => Interlocked.Increment(ref connectedCount);
+
+        try
+        {
+            socketServer.Start(_defaultConnection);
+            socketServer.Stop();
+            acceptCompletion.SetResult(acceptedClient);
+
+            Assert.IsTrue(tcpClient.Client.Poll(Timeout * 1000, SelectMode.SelectRead));
+            Assert.AreEqual(0, tcpClient.Client.Available);
+            Assert.AreEqual(0, factoryCount);
+            Assert.AreEqual(0, connectedCount);
+            channel.Verify(communicationChannel => communicationChannel.Dispose(), Times.Never);
+        }
+        finally
+        {
+            socketServer.Stop();
+            acceptCompletion.TrySetResult(acceptedClient);
+        }
+    }
+
+    [TestMethod]
     public void SocketServerStopShouldCloseClient()
     {
         using ManualResetEventSlim waitEvent = new(false);

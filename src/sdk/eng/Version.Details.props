@@ -85,7 +85,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETRuntimeEmscriptenInternalPackageVersion>11.0.0</MicrosoftNETRuntimeEmscriptenInternalPackageVersion>
     <MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>11.1.0-preview.26527.113</MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>
     <MicrosoftNETSdkWindowsDesktopPackageVersion>11.0.0-rtm.26527.113</MicrosoftNETSdkWindowsDesktopPackageVersion>
-    <MicrosoftNETTestSdkPackageVersion>18.11.0-release-26527-113</MicrosoftNETTestSdkPackageVersion>
+    <MicrosoftNETTestSdkPackageVersion>18.12.0-hotfix-26528-38</MicrosoftNETTestSdkPackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>11.0.0</MicrosoftNETCoreAppRefPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>11.0.0-rtm.26527.113</MicrosoftNETCorePlatformsPackageVersion>
     <MicrosoftSourceLinkAzureReposGitPackageVersion>11.0.100</MicrosoftSourceLinkAzureReposGitPackageVersion>
@@ -93,8 +93,8 @@ This file should be imported by eng/Versions.props
     <MicrosoftSourceLinkCommonPackageVersion>11.0.100</MicrosoftSourceLinkCommonPackageVersion>
     <MicrosoftSourceLinkGitHubPackageVersion>11.0.100</MicrosoftSourceLinkGitHubPackageVersion>
     <MicrosoftSourceLinkGitLabPackageVersion>11.0.100</MicrosoftSourceLinkGitLabPackageVersion>
-    <MicrosoftTestPlatformBuildPackageVersion>18.11.0-release-26527-113</MicrosoftTestPlatformBuildPackageVersion>
-    <MicrosoftTestPlatformCLIPackageVersion>18.11.0-release-26527-113</MicrosoftTestPlatformCLIPackageVersion>
+    <MicrosoftTestPlatformBuildPackageVersion>18.12.0-hotfix-26528-38</MicrosoftTestPlatformBuildPackageVersion>
+    <MicrosoftTestPlatformCLIPackageVersion>18.12.0-hotfix-26528-38</MicrosoftTestPlatformCLIPackageVersion>
     <MicrosoftWebXdtPackageVersion>3.3.0</MicrosoftWebXdtPackageVersion>
     <MicrosoftWin32SystemEventsPackageVersion>11.0.0</MicrosoftWin32SystemEventsPackageVersion>
     <MicrosoftWindowsDesktopAppInternalPackageVersion>11.0.0-rtm.26527.113</MicrosoftWindowsDesktopAppInternalPackageVersion>

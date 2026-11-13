@@ -27,8 +27,13 @@ imports:
 - shared/formatting.md
 - shared/reporting.md
 safe-outputs:
+  github-app:
+    client-id: ${{ vars.APP_ID }}
+    private-key: ${{ secrets.APP_PRIVATE_KEY }}
+    ignore-if-missing: true
   create-pull-request:
     expires: 1d
+    github-token-for-extra-empty-commit: app
     labels:
     - agentic-workflows
     protected-files: fallback-to-issue

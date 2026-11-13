@@ -9,5 +9,7 @@
     <TargetFrameworks>net11.0;net481</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <AssemblyName>Microsoft.TestPlatform.ObjectModel.UnitTests</AssemblyName>
+    <!-- Tests cover the experimental xxHash128 test id API, so they call it on purpose. -->
+    <NoWarn>$(NoWarn);VSTEST001</NoWarn>
   </PropertyGroup>
 </Project>

@@ -196,6 +196,19 @@ Build scripts must check exit codes, use proper idioms, avoid stale command copi
 
 **Severity**: Major when missing exit-code checks can silently produce broken artifacts. Minor for style issues in scripts.
 
+#### Generated workflow action versions
+
+Apply these checks to GitHub Actions updates and recompilation changes, including Dependabot PRs that only edit `.github/workflows/*.lock.yml`. This is build correctness, not a security assessment. A successful compilation alone does not prove version consistency.
+
+- CHECK: For each changed action `uses:` ref, compare the PR base and head in the same workflow/job/step context. Read the full corresponding `.md` source at the PR head even if it is unchanged, including frontmatter, jobs, steps, and recursively imported shared `.md` files. Also inspect the base sources when needed to explain the change.
+- CHECK: Trace each generated reference to its owning source or compiler default. Read relevant action-pin configuration (including `.github/aw/actions-lock.json`) and the recorded gh-aw compiler version when needed. Compiler-injected actions need not have a direct `.md` reference; absence alone is not a defect. Do not require unrelated jobs or workflows to use identical action versions.
+- CHECK: Verify actual refs against the action repository's tags, releases, and commits using the GitHub tools. Resolve annotated tags to commits when necessary. Version comments are hints, not evidence: a comment-only edit is not an upgrade, and hash strings have no version ordering. A major tag is valid when its verified resolution matches the generated commit. If the mapping cannot be verified, state that uncertainty in the review rather than claiming a confirmed mismatch or downgrade.
+- CHECK: Warn when a generated action has been upgraded but its owning source or effective pin still selects an older version, so recompilation would undo the upgrade. Compare resolved refs, not just tag spelling. Check shared sources as well as the workflow's own source.
+- CHECK: Compare base and head resolved release versions for downgrades introduced by recompilation, including compiler-injected actions. Flag an unexplained downgrade even if the new source and generated file agree. Read the PR explanation and source comments for an explicit, relevant rollback or compatibility reason; do not flag an intentionally justified downgrade as accidental.
+- CHECK: For confirmed drift or an unexplained downgrade, cite the action, verified old/new versions or refs, owning source/pin or compiler, and the consequence of recompiling. Comment on the changed `uses:` line (or in the review body if the relevant source is unchanged). Ask for the intended source/pin or compiler version to be updated and the affected workflow regenerated with `gh aw compile <workflow-id>`; never suggest hand-editing generated YAML.
+
+**Severity**: Warn with a COMMENT for confirmed source/generated drift or an unexplained downgrade. Request changes only when the evidence also proves a build or runtime failure. An aligned source+lock upgrade, a verified matching major tag, a comment-only change, or an unchanged compiler-owned action is not a version-consistency finding.
+
 ### 15. Null Safety & Boundary Validation
 
 Proper null/empty validation at API boundaries while trusting nullable annotations internally.
@@ -230,7 +243,8 @@ Gather context before reviewing code:
 - Read PR title, description, linked issues, and labels
 - Load the full diff (files changed, insertions, deletions)
 - Check existing review comments to avoid duplicating feedback
-- Identify which dimensions are most relevant based on files touched
+- For PR reviews, use this checklist and [the expert-reviewing routing skill](../skills/expert-review/SKILL.md) from the immutable PR `base.sha`: use copies already fetched by the caller, or fetch them from the base repository using the GitHub tools. Do not fall back to checked-out or PR-head copies. For local reviews without PR context, use workspace instructions.
+- Identify relevant dimensions from changed paths and dependency manifests. Dependabot authorship and generated-only changes do not make a PR out of scope.
 
 ### Wave 1: Find (Parallel Analysis)
 
