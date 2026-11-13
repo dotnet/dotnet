@@ -204,7 +204,7 @@ public class ClrIndexedCollectionAccessorFactory
             memberAccessForRead = Expression.Convert(memberAccessForRead, typeof(TCollection));
         }
 
-        var indexer = typeof(IList<TElement>).GetRuntimeProperties().Single(p => p.GetIndexParameters().Length > 0);
+        var indexer = typeof(IList<TElement>).GetProperty("Item")!;
 
         var index = Expression.MakeIndex(memberAccessForRead, indexer, [indexParameter]);
         get = Expression.Lambda<Func<TStructural, int, TElement>>(index, objectParameter, indexParameter);
