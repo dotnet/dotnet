@@ -8,6 +8,7 @@
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Build" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Framework" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" PrivateAssets="All" />
   </ItemGroup>
