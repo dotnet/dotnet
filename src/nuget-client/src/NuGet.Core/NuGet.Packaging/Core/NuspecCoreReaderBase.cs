@@ -90,7 +90,7 @@ namespace NuGet.Packaging.Core
 
             string id = node.Value;
 
-            PackageIdValidator.ValidatePackageId(id);
+            PackageIdValidator.ValidatePackageId(id, useRestrictedSet: false);
 
             return id;
         }
