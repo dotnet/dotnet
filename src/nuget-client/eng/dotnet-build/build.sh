@@ -16,7 +16,6 @@ from_vmr=false
 ci=false
 node_reuse=true
 binary_log=false
-warn_as_error=true
 warn_not_as_error=''
 
 # resolve $SOURCE until the file is no longer a symlink
@@ -61,10 +60,6 @@ while [[ $# > 0 ]]; do
       ;;
     --nodereuse)
       node_reuse=$2
-      shift
-      ;;
-    -warnaserror)
-      warn_as_error=$2
       shift
       ;;
     --warnnotaserror)
@@ -138,14 +133,9 @@ if [[ "$ci" == true ]]; then
   node_reuse=false
 fi
 
-warnaserror_switch=""
-if [[ $warn_as_error == true ]]; then
-  warnaserror_switch="/warnaserror"
-fi
-
 warnnotaserror_switch=""
-if [[ -n "$warn_not_as_error" && "$warn_as_error" == true ]]; then
+if [[ -n "$warn_not_as_error" ]]; then
   warnnotaserror_switch="/warnnotaserror:$warn_not_as_error /p:AdditionalWarningsNotAsErrors=${warn_not_as_error//;/%3B}"
 fi
 
-"$DOTNET" msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse /p:ContinuousIntegrationBuild=$ci $bl $warnaserror_switch $warnnotaserror_switch /p:TreatWarningsAsErrors=$warn_as_error ${dotnetArguments[@]+"${dotnetArguments[@]}"} ${args[@]+"${args[@]}"}
+"$DOTNET" msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse /p:ContinuousIntegrationBuild=$ci $bl $warnnotaserror_switch ${dotnetArguments[@]+"${dotnetArguments[@]}"} ${args[@]+"${args[@]}"}
