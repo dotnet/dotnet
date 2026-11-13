@@ -42,6 +42,11 @@
     <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
   </PropertyGroup>
 
+  <PropertyGroup Label="RuntimeProductsOnly">
+    <!-- These platforms retain runtime products but no longer produce a native SDK. -->
+    <BuildRuntimeProductsOnly Condition="'$(ShortStack)' != 'true' and (('$(TargetOS)' == 'windows' and '$(TargetArchitecture)' == 'x86') or (('$(TargetOS)' == 'linux' or '$(TargetOS)' == 'linux-musl') and '$(TargetArchitecture)' == 'arm'))">true</BuildRuntimeProductsOnly>
+  </PropertyGroup>
+
   <PropertyGroup Label="CalculateRID">
     <!-- Use current machine distro RID if set. Otherwise, fall back to RuntimeInformation.RuntimeIdentifier -->
     <BuildRid Condition="'$(BuildRid)' == '' and '$(MSBuildRuntimeType)' == 'core'">$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)</BuildRid>
