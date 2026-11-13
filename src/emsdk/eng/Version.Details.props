@@ -20,11 +20,11 @@ This file should be imported by eng/Versions.props
     <runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>11.0.0-alpha.1.26552.3</runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>
     <runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>11.0.0-alpha.1.26552.3</runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>
     <!-- dotnet-dotnet dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26559.106</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetBuildTasksFileCatalogPackageVersion>11.0.0-beta.26559.106</MicrosoftDotNetBuildTasksFileCatalogPackageVersion>
-    <MicrosoftDotNetBuildTasksPackagingPackageVersion>11.0.0-beta.26559.106</MicrosoftDotNetBuildTasksPackagingPackageVersion>
-    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.26559.106</MicrosoftDotNetHelixSdkPackageVersion>
-    <MicrosoftDotNetXliffTasksPackageVersion>11.0.0-beta.26559.106</MicrosoftDotNetXliffTasksPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26560.108</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetBuildTasksFileCatalogPackageVersion>11.0.0-beta.26560.108</MicrosoftDotNetBuildTasksFileCatalogPackageVersion>
+    <MicrosoftDotNetBuildTasksPackagingPackageVersion>11.0.0-beta.26560.108</MicrosoftDotNetBuildTasksPackagingPackageVersion>
+    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.26560.108</MicrosoftDotNetHelixSdkPackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>11.0.0-beta.26560.108</MicrosoftDotNetXliffTasksPackageVersion>
     <!-- dotnet-emscripten dependencies -->
     <MicrosoftNETCoreRuntimeWasmEmscriptenTransportPackageVersion>11.0.0-alpha.1.26552.3</MicrosoftNETCoreRuntimeWasmEmscriptenTransportPackageVersion>
     <!-- dotnet-llvm-project dependencies -->
