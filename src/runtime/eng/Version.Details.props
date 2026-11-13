@@ -10,9 +10,9 @@ This file should be imported by eng/Versions.props
     <MicrosoftCodeAnalysisAnalyzersPackageVersion>5.14.0-1.26561.116</MicrosoftCodeAnalysisAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersPackageVersion>5.14.0-1.26561.116</MicrosoftCodeAnalysisBannedApiAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisCSharpPackageVersion>5.14.0-1.26561.116</MicrosoftCodeAnalysisCSharpPackageVersion>
-    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>5.14.0-1.26528.120</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
+    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>5.14.0-1.26561.116</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
     <MicrosoftCodeAnalysisNetAnalyzersPackageVersion>12.0.100-alpha.1.26561.116</MicrosoftCodeAnalysisNetAnalyzersPackageVersion>
-    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>5.14.0-1.26528.120</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
+    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>5.14.0-1.26561.116</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
     <MicrosoftDotNetApiCompatTaskPackageVersion>12.0.100-alpha.1.26561.116</MicrosoftDotNetApiCompatTaskPackageVersion>
     <MicrosoftDotNetArcadeSdkPackageVersion>12.0.0-beta.26561.116</MicrosoftDotNetArcadeSdkPackageVersion>
     <MicrosoftDotNetBuildTasksArchivesPackageVersion>12.0.0-beta.26561.116</MicrosoftDotNetBuildTasksArchivesPackageVersion>
