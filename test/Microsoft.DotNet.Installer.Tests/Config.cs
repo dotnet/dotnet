@@ -46,9 +46,6 @@ public static class Config
     public static string MicrosoftNETCoreAppRefVersion1xx { get; } = TryGetRuntimeConfig(MicrosoftNETCoreAppRefVersion1xxSwitch, out string? value) ? value : string.Empty;
     const string MicrosoftNETCoreAppRefVersion1xxSwitch = RuntimeConfigSwitchPrefix + nameof(MicrosoftNETCoreAppRefVersion1xx);
 
-    public static string MicrosoftNETCorePlatformsVersion1xx { get; } = TryGetRuntimeConfig(MicrosoftNETCorePlatformsVersion1xxSwitch, out string? value) ? value : string.Empty;
-    const string MicrosoftNETCorePlatformsVersion1xxSwitch = RuntimeConfigSwitchPrefix + nameof(MicrosoftNETCorePlatformsVersion1xx);
-
     public static string TargetProductVersion { get; } = TryGetRuntimeConfig(TargetProductVersionSwitch, out string? value) ? value : string.Empty;
     const string TargetProductVersionSwitch = RuntimeConfigSwitchPrefix + nameof(TargetProductVersion);
 

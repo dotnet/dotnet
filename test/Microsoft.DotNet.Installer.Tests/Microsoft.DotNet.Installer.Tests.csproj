@@ -60,9 +60,6 @@
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).DotNetBuildSharedComponents">
         <Value>$(DotNetBuildSharedComponents)</Value>
       </RuntimeHostConfigurationOption>
-      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).MicrosoftNETCorePlatformsVersion1xx">
-        <Value>$(MicrosoftNETCorePlatformsVersion)</Value>
-      </RuntimeHostConfigurationOption>
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).MicrosoftNETCoreAppRefVersion1xx">
         <Value>$(MicrosoftNETCoreAppRefVersion)</Value>
       </RuntimeHostConfigurationOption>

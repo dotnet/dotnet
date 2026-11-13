@@ -353,8 +353,32 @@ public partial class LinuxInstallerTests : IDisposable
         string runtimeLocation = "Runtime",
         string distroLabel = "")
     {
-        Uri packageUrl = new Uri($"https://ci.dot.net/public/{runtimeLocation}/{Config.MicrosoftNETCorePlatformsVersion1xx}/{packagePrefix}{Config.MicrosoftNETCoreAppRefVersion1xx}{distroLabel}-{architecture}.{packageType.ToString().ToLower()}");
+        Uri packageUrl = new Uri($"https://ci.dot.net/public/{runtimeLocation}/{Config.MicrosoftNETCoreAppRefVersion1xx}/{packagePrefix}{Config.MicrosoftNETCoreAppRefVersion1xx}{distroLabel}-{architecture}.{packageType.ToString().ToLower()}");
         downloadsToProcess.Add((packageUrl, packageUrl.Segments.Last()));
+    }
+
+    [Theory]
+    [InlineData("x64", true, "Runtime")]
+    [InlineData("arm64", true, "Runtime")]
+    [InlineData("x64", false, "Runtime")]
+    [InlineData("arm64", false, "Runtime")]
+    [InlineData("x64", true, "aspnetcore/Runtime")]
+    [InlineData("arm64", true, "aspnetcore/Runtime")]
+    [InlineData("x64", false, "aspnetcore/Runtime")]
+    [InlineData("arm64", false, "aspnetcore/Runtime")]
+    public void RuntimePackageDownloadUrlTest(string architecture, bool rpm, string runtimeLocation)
+    {
+        var downloads = new List<(Uri url, string fileName)>();
+        string packagePrefix = runtimeLocation == "Runtime" ? DotnetRuntimeDepsPrefix : AspNetCoreRuntimePrefix;
+        string distroLabel = rpm && runtimeLocation == "Runtime" ? "-azl.3" : "";
+        string extension = rpm ? "rpm" : "deb";
+
+        AddRuntimePackageForDownload(downloads, packagePrefix, architecture, rpm ? PackageType.Rpm : PackageType.Deb, runtimeLocation, distroLabel);
+
+        var (url, fileName) = Assert.Single(downloads);
+        string expectedFileName = $"{packagePrefix}{Config.MicrosoftNETCoreAppRefVersion1xx}{distroLabel}-{architecture}.{extension}";
+        Assert.Equal($"https://ci.dot.net/public/{runtimeLocation}/{Config.MicrosoftNETCoreAppRefVersion1xx}/{expectedFileName}", url.AbsoluteUri);
+        Assert.Equal(expectedFileName, fileName);
     }
 
     private bool ShouldCopyPackage(string package)
