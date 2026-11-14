@@ -67,7 +67,7 @@ Use `HangDumpType=none` when you want blame to abort a run after the hang timeou
 | --- | --- | --- | --- | --- |
 | `CollectDumpOnTestSessionHang` | Element name | Off | Configured by `--blame-hang` | `<CollectDumpOnTestSessionHang ... />` |
 | `MonitorPostmortemDebugger` | Element name with `DumpDirectoryPath` attribute | Off | No direct equivalent | `<MonitorPostmortemDebugger DumpDirectoryPath="..." />` |
-| `Framework` | Target framework moniker, for example `.NETCoreApp,Version=v8.0` | Supplied by the test platform | No direct equivalent | `<Framework>...</Framework>` |
+| `Framework` | Target framework moniker, for example `.NETCoreApp,Version=v10.0` | Supplied by the test platform | No direct equivalent | `<Framework>...</Framework>` |
 
 `MonitorPostmortemDebugger` is intended for scenarios that monitor an external postmortem debugger dump directory. Most users should use `CollectDump` or `CollectDumpOnTestSessionHang` instead.
 

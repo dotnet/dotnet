@@ -30,7 +30,7 @@ public class EditorAttachDebugger2SerializationTests
     private static readonly EditorAttachDebuggerPayload Payload = new()
     {
         ProcessID = 12345,
-        TargetFramework = ".NETCoreApp,Version=v9.0",
+        TargetFramework = ".NETCoreApp,Version=v10.0",
         Sources = new List<string> { "Tests.dll" },
     };
 
@@ -41,7 +41,7 @@ public class EditorAttachDebugger2SerializationTests
           "MessageType": "TestExecution.EditorAttachDebugger2",
           "Payload": {
             "ProcessID": 12345,
-            "TargetFramework": ".NETCoreApp,Version=v9.0",
+            "TargetFramework": ".NETCoreApp,Version=v10.0",
             "Sources": [
               "Tests.dll"
             ]
@@ -57,7 +57,7 @@ public class EditorAttachDebugger2SerializationTests
           "MessageType": "TestExecution.EditorAttachDebugger2",
           "Payload": {
             "ProcessID": 12345,
-            "TargetFramework": ".NETCoreApp,Version=v9.0",
+            "TargetFramework": ".NETCoreApp,Version=v10.0",
             "Sources": [
               "Tests.dll"
             ]
@@ -128,7 +128,7 @@ public class EditorAttachDebugger2SerializationTests
     {
         Assert.IsNotNull(result);
         Assert.AreEqual(12345, result.ProcessID);
-        Assert.AreEqual(".NETCoreApp,Version=v9.0", result.TargetFramework);
+        Assert.AreEqual(".NETCoreApp,Version=v10.0", result.TargetFramework);
         Assert.IsNotNull(result.Sources);
         Assert.Contains("Tests.dll", result.Sources);
     }

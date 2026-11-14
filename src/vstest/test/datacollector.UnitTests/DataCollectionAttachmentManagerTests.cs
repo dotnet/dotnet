@@ -25,7 +25,8 @@ public class DataCollectionAttachmentManagerTests
     private readonly DataCollectionAttachmentManager _attachmentManager;
     private readonly Mock<IMessageSink> _messageSink;
     private readonly SessionId _sessionId;
-    private static readonly string TempDirectoryPath = Path.GetTempPath();
+
+    private string TempDirectoryPath { get; }
 
     public TestContext TestContext { get; set; }
 
@@ -35,13 +36,13 @@ public class DataCollectionAttachmentManagerTests
         _messageSink = new Mock<IMessageSink>();
         var guid = Guid.NewGuid();
         _sessionId = new SessionId(guid);
+        TempDirectoryPath = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), guid.ToString())).FullName;
     }
 
     [TestCleanup]
     public void Cleanup()
     {
-        File.Delete(Path.Combine(TempDirectoryPath, "filename.txt"));
-        File.Delete(Path.Combine(TempDirectoryPath, "filename1.txt"));
+        Directory.Delete(TempDirectoryPath, recursive: true);
     }
 
     [TestMethod]

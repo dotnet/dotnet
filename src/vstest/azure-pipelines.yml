@@ -188,6 +188,18 @@ stages:
           fetchDepth: 1
           clean: true
 
+        # The artifacts-directory fallback (GetUserPrivateTempPath) uses /run/user/<uid>, which a login session
+        # creates through pam_systemd. Hosted agents are not guaranteed to have it, so create it the same way
+        # azure-pipelines-official.yml does, rather than let the fallback tests depend on the image.
+        - script: |
+            set -e
+            uid=$(id -u)
+            sudo mkdir -p "/run/user/$uid"
+            sudo chown "$uid" "/run/user/$uid"
+            sudo chmod 700 "/run/user/$uid"
+          displayName: Ensure the XDG runtime directory exists
+          condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+
         # Build but don't pack, packing does not work on non-windows and we want to test what we built on Windows
         # anyway. Because that is what we will publish.
         - script: ./build.sh

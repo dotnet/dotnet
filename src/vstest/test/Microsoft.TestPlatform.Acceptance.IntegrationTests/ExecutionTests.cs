@@ -422,7 +422,7 @@ public class ExecutionTests : AcceptanceTestBase
         //       ! * *\*TestAdapter.dll
         //       ! * *\obj\**
         // Because of this in typical run we get a lot of dlls that we are sure don't have tests, like Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
-        // or testhost.dll. Those dlls are built for net8.0 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
+        // or testhost.dll. Those dlls are built for net10.0 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
         // or deps.json, and fails the run.
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
@@ -447,7 +447,7 @@ public class ExecutionTests : AcceptanceTestBase
         //       ! * *\*TestAdapter.dll
         //       ! * *\obj\**
         // Because of this in typical run we get a lot of dlls that we are sure don't have tests, like Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
-        // or testhost.dll. Those dlls are built for net8.0 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
+        // or testhost.dll. Those dlls are built for net10.0 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
         // or deps.json, and fails the run.
         //
         // IF THIS TEST FAILS ADD THE DLL TO KnownPlatformSources.
@@ -473,7 +473,7 @@ public class ExecutionTests : AcceptanceTestBase
         //       ! * *\*TestAdapter.dll
         //       ! * *\obj\**
         // Because of this in typical run we get a lot of dlls that we are sure don't have tests, like Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
-        // or testhost.dll. Those dlls are built for net8.0 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
+        // or testhost.dll. Those dlls are built for net10.0 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
         // or deps.json, and fails the run.
         //
         // IF THIS TEST FAILS ADD THE DLL TO KnownPlatformSources.
@@ -498,7 +498,7 @@ public class ExecutionTests : AcceptanceTestBase
         //       ! * *\*TestAdapter.dll
         //       ! * *\obj\**
         // Because of this in typical run we get a lot of dlls that we are sure don't have tests, like Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
-        // or testhost.dll. Those dlls are built for net8.0 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
+        // or testhost.dll. Those dlls are built for net10.0 tfm, so theoretically they should be tests, but attempting to run them fails to find runtimeconfig.json
         // or deps.json, and fails the run.
         //
         // IF THIS TEST FAILS ADD THE DLL TO KnownPlatformSources.

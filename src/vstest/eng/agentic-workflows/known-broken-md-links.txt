@@ -1,0 +1,23 @@
+# Accepted broken relative markdown links and anchors.
+#
+# Fingerprint for .github/workflows/md-link-check-probe.yml. The probe runs
+# .github/workflows/scripts/check-md-links.py every Friday and only wakes the
+# md-link-checker agent when the current broken set differs from this file, so a link
+# that has been reviewed and found unfixable stops costing an agent run every week.
+#
+# One entry per line, "source_file|link", with the link exactly as written in the
+# markdown and the source path relative to the repo root using forward slashes.
+# Blank lines and '#' comments are ignored.
+#
+# The set is currently empty: every relative link and anchor under docs/ and in
+# README.md resolves. Regenerate the entries rather than hand-writing them — a line that
+# does not match the script's output byte for byte would make the probe fire every week.
+# From the repo root:
+#
+#   KNOWN=eng/agentic-workflows/known-broken-md-links.txt
+#   OUT_DIR=/tmp/link-check python3 .github/workflows/scripts/check-md-links.py
+#   { grep '^#' "$KNOWN"; cat /tmp/link-check/broken-links.txt; } > "$KNOWN.new"
+#   mv "$KNOWN.new" "$KNOWN"
+#
+# The grep is what keeps this header. The same entries are published as broken-links.txt
+# in each probe run's md-link-check-probe artifact.

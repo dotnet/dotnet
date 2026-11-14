@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="de">
+    <body>
+      <trans-unit id="TestIdsReportFile">
+        <source>Test id report file : {0}</source>
+        <target state="translated">Berichtsdatei zu den Testkennungen: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestIdsLoggerWriteFailed">
+        <source>Failed to write the test id report to '{0}'. {1}</source>
+        <target state="translated">Der Bericht zu den Testkennungen konnte nicht in „{0}“ geschrieben werden. {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestIdsReportIncomplete">
+        <source>The test run did not complete, so the test id report '{0}' covers only the tests that were reported before it stopped. Do not use an incomplete report to migrate stored test ids.</source>
+        <target state="translated">Der Testlauf wurde nicht abgeschlossen, daher umfasst der Bericht zu den Testkennungen „{0}“ nur die Tests, die vor dem Abbruch gemeldet wurden. Verwenden Sie keinen unvollständigen Bericht, um gespeicherte Testkennungen zu migrieren.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

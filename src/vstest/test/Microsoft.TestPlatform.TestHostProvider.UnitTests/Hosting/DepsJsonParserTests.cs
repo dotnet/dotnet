@@ -22,12 +22,12 @@ public class DepsJsonParserTests
     {
         var depsJson = @"
         {
-            ""runtimeTarget"": { ""name"": "".NETCoreApp,Version=v8.0"" },
+            ""runtimeTarget"": { ""name"": "".NETCoreApp,Version=v10.0"" },
             ""targets"": {
-                "".NETCoreApp,Version=v8.0"": {
+                "".NETCoreApp,Version=v10.0"": {
                     ""Microsoft.TestPlatform.TestHost/18.6.0-dev"": {
                         ""runtime"": {
-                            ""lib/net8.0/testhost.dll"": {}
+                            ""lib/net10.0/testhost.dll"": {}
                         }
                     }
                 }
@@ -47,7 +47,7 @@ public class DepsJsonParserTests
         Assert.AreEqual("Microsoft.TestPlatform.TestHost", result.Name);
         Assert.AreEqual("18.6.0-dev", result.Version);
         Assert.AreEqual("microsoft.testplatform.testhost/18.6.0-dev", result.Path);
-        CollectionAssert.Contains(result.RuntimeAssemblyPaths, "lib/net8.0/testhost.dll");
+        CollectionAssert.Contains(result.RuntimeAssemblyPaths, "lib/net10.0/testhost.dll");
     }
 
     [TestMethod]
@@ -55,12 +55,12 @@ public class DepsJsonParserTests
     {
         var depsJson = @"
         {
-            ""runtimeTarget"": { ""name"": "".NETCoreApp,Version=v8.0"" },
+            ""runtimeTarget"": { ""name"": "".NETCoreApp,Version=v10.0"" },
             ""targets"": {
-                "".NETCoreApp,Version=v8.0"": {
+                "".NETCoreApp,Version=v10.0"": {
                     ""SomeOther.Package/1.0.0"": {
                         ""runtime"": {
-                            ""lib/net8.0/other.dll"": {}
+                            ""lib/net10.0/other.dll"": {}
                         }
                     }
                 }
@@ -84,14 +84,14 @@ public class DepsJsonParserTests
     {
         var depsJson = @"
         {
-            ""runtimeTarget"": { ""name"": "".NETCoreApp,Version=v8.0"" },
+            ""runtimeTarget"": { ""name"": "".NETCoreApp,Version=v10.0"" },
             ""targets"": {
-                "".NETCoreApp,Version=v8.0"": {
+                "".NETCoreApp,Version=v10.0"": {
                     ""Microsoft.TestPlatform.TestHost/18.6.0-dev"": {
                         ""runtime"": {
-                            ""lib/net8.0/testhost.dll"": {},
-                            ""lib/net8.0/testhost.deps.json"": {},
-                            ""lib/net8.0/Microsoft.TestPlatform.CommunicationUtilities.dll"": {}
+                            ""lib/net10.0/testhost.dll"": {},
+                            ""lib/net10.0/testhost.deps.json"": {},
+                            ""lib/net10.0/Microsoft.TestPlatform.CommunicationUtilities.dll"": {}
                         }
                     }
                 }
@@ -109,9 +109,9 @@ public class DepsJsonParserTests
 
         Assert.IsNotNull(result);
         Assert.HasCount(3, result.RuntimeAssemblyPaths);
-        CollectionAssert.Contains(result.RuntimeAssemblyPaths, "lib/net8.0/testhost.dll");
-        CollectionAssert.Contains(result.RuntimeAssemblyPaths, "lib/net8.0/testhost.deps.json");
-        CollectionAssert.Contains(result.RuntimeAssemblyPaths, "lib/net8.0/Microsoft.TestPlatform.CommunicationUtilities.dll");
+        CollectionAssert.Contains(result.RuntimeAssemblyPaths, "lib/net10.0/testhost.dll");
+        CollectionAssert.Contains(result.RuntimeAssemblyPaths, "lib/net10.0/testhost.deps.json");
+        CollectionAssert.Contains(result.RuntimeAssemblyPaths, "lib/net10.0/Microsoft.TestPlatform.CommunicationUtilities.dll");
     }
 
     [TestMethod]
@@ -119,12 +119,12 @@ public class DepsJsonParserTests
     {
         var depsJson = @"
         {
-            ""runtimeTarget"": { ""name"": "".NETCoreApp,Version=v8.0"" },
+            ""runtimeTarget"": { ""name"": "".NETCoreApp,Version=v10.0"" },
             ""targets"": {
-                "".NETCoreApp,Version=v8.0"": {
+                "".NETCoreApp,Version=v10.0"": {
                     ""Microsoft.TestPlatform.TestHost/18.6.0-dev"": {
                         ""runtime"": {
-                            ""lib/net8.0/testhost.dll"": {}
+                            ""lib/net10.0/testhost.dll"": {}
                         }
                     }
                 }
@@ -143,7 +143,7 @@ public class DepsJsonParserTests
         Assert.AreEqual("Microsoft.TestPlatform.TestHost", result.Name);
         Assert.AreEqual("18.6.0-dev", result.Version);
         Assert.IsNull(result.Path);
-        CollectionAssert.Contains(result.RuntimeAssemblyPaths, "lib/net8.0/testhost.dll");
+        CollectionAssert.Contains(result.RuntimeAssemblyPaths, "lib/net10.0/testhost.dll");
     }
 
     [TestMethod]
@@ -151,9 +151,9 @@ public class DepsJsonParserTests
     {
         var depsJson = @"
         {
-            ""runtimeTarget"": { ""name"": "".NETCoreApp,Version=v8.0"" },
+            ""runtimeTarget"": { ""name"": "".NETCoreApp,Version=v10.0"" },
             ""targets"": {
-                "".NETCoreApp,Version=v8.0"": {}
+                "".NETCoreApp,Version=v10.0"": {}
             },
             ""libraries"": {}
         }";
@@ -169,12 +169,12 @@ public class DepsJsonParserTests
     {
         var depsJson = @"
         {
-            ""runtimeTarget"": { ""name"": "".NETCoreApp,Version=v8.0"" },
+            ""runtimeTarget"": { ""name"": "".NETCoreApp,Version=v10.0"" },
             ""targets"": {
-                "".NETCoreApp,Version=v8.0"": {
+                "".NETCoreApp,Version=v10.0"": {
                     ""microsoft.testplatform.testhost/18.6.0-dev"": {
                         ""runtime"": {
-                            ""lib/net8.0/testhost.dll"": {}
+                            ""lib/net10.0/testhost.dll"": {}
                         }
                     }
                 }
@@ -200,9 +200,9 @@ public class DepsJsonParserTests
     {
         var depsJson = @"
         {
-            ""runtimeTarget"": { ""name"": "".NETCoreApp,Version=v8.0"" },
+            ""runtimeTarget"": { ""name"": "".NETCoreApp,Version=v10.0"" },
             ""targets"": {
-                "".NETCoreApp,Version=v8.0"": {
+                "".NETCoreApp,Version=v10.0"": {
                     ""Microsoft.TestPlatform.TestHost/18.6.0-dev"": {
                         ""dependencies"": {
                             ""SomePackage"": ""1.0.0""
@@ -243,7 +243,7 @@ public class DepsJsonParserTests
         var depsJson = @"
         {
             ""targets"": {
-                "".NETCoreApp,Version=v8.0"": {}
+                "".NETCoreApp,Version=v10.0"": {}
             },
             ""libraries"": {}
         }";
@@ -290,7 +290,7 @@ public class RuntimeConfigDevJsonParsingTests
         var json = @"
         {
             ""runtimeOptions"": {
-                ""tfm"": ""net8.0""
+                ""tfm"": ""net10.0""
             }
         }";
 
