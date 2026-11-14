@@ -1022,6 +1022,8 @@ msbuild Project.UnitTests.csproj /t:Test /p:TestTargetFrameworks=net472 /p:TestR
 
 Additional command line arguments passed to the test runner (e.g. `xunit.console.exe`).
 
+The Microsoft.Testing.Platform runner uses `--progress off` and requires Microsoft.Testing.Platform 2.3.0 or later. When overriding `MSTestVersion`, use an MSTest release with a compatible platform dependency.
+
 ### `TestRuntimeAdditionalArguments` (string)
 
 Additional command line arguments passed to the test runtime (i.e. `dotnet` or `mono`). Applicable only when `TestRuntime` is `Core` or `Mono`. 
