@@ -76,17 +76,8 @@
     <ArchiveName Condition="'$(ArchiveName)' == ''">$([System.IO.Path]::GetFileNameWithoutExtension($(MSBuildProjectFile)))</ArchiveName>
     <SymbolsArchiveName Condition="'$(SymbolsArchiveName)' == ''">$(ArchiveName)-symbols</SymbolsArchiveName>
     <_TarOwnershipArguments Condition="'$(DotNetBuildSourceOnly)' == 'true'">--numeric-owner --owner=2001 --group=2001</_TarOwnershipArguments>
+    <TarDirectoryDeterministicTimestamp Condition="'$(DeterministicTimestamp)' != 'true' and '$(DeterministicTimestamp)' != 'false'">$(DeterministicTimestamp)</TarDirectoryDeterministicTimestamp>
   </PropertyGroup>
-
-  <Target Name="_CheckPigzAvailability" Condition="'$(_PigzFoundExitCode)' == ''">
-    <PropertyGroup>
-      <_CommandProbe>command -v</_CommandProbe>
-      <_CommandProbe Condition="'$(OS)' == 'Windows_NT'">where</_CommandProbe>
-    </PropertyGroup>
-    <Exec Command="$(_CommandProbe) pigz" IgnoreExitCode="true" StandardOutputImportance="Low">
-      <Output TaskParameter="ExitCode" PropertyName="_PigzFoundExitCode" />
-    </Exec>
-  </Target>
 
   <Target Name="_CreateArchives"
           Condition="'$(SkipArchivesBuild)' != 'true'">
@@ -113,8 +104,7 @@
              Targets="_CreateSingleArchive" />
   </Target>
 
-  <Target Name="_CreateSingleArchive"
-          DependsOnTargets="_CheckPigzAvailability">
+  <Target Name="_CreateSingleArchive">
     <PropertyGroup>
       <_ArchiveFileName>$(ArchiveName)-$(Version)</_ArchiveFileName>
       <_ArchiveFileName Condition="'$(RuntimeIdentifier)' != ''">$(ArchiveName)-$(Version)-$(RuntimeIdentifier)</_ArchiveFileName>
@@ -126,14 +116,14 @@
                   Overwrite="true"
                   DestinationFile="$(_DestinationFileName)"
                   Condition="'$(_CurrentArchiveFormat)' == 'zip'"/>
-    <!-- use parallel gzip implementation when available -->
-    <Exec Command="tar $(_TarOwnershipArguments) -cf - . | pigz &gt; &quot;$(_DestinationFileName)&quot;"
-          WorkingDirectory="$(_OutputPathRoot)"
-          Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' == '0'"/>
-    <!-- otherwise, use built-in gzip feature (-z) -->
-    <Exec Command="tar $(_TarOwnershipArguments) -czf &quot;$(_DestinationFileName)&quot; ."
-          WorkingDirectory="$(_OutputPathRoot)"
-          Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' != '0'"/>
+
+    <TarDirectory SourceDirectory="$(_OutputPathRoot)"
+                  DestinationFile="$(_DestinationFileName)"
+                  Compression="GZip"
+                  Format="Gnu"
+                  Overwrite="true"
+                  DeterministicTimestamp="$(TarDirectoryDeterministicTimestamp)"
+                  Condition="'$(_CurrentArchiveFormat)' == 'tar.gz'" />
 
     <Message Text="Successfully created archive -> '$(_DestinationFileName)' from '$(_OutputPathRoot)'" Importance="high" />
   </Target>
@@ -163,8 +153,7 @@
              Targets="_CreateSingleSymbolsArchive" />
   </Target>
 
-  <Target Name="_CreateSingleSymbolsArchive"
-          DependsOnTargets="_CheckPigzAvailability">
+  <Target Name="_CreateSingleSymbolsArchive">
     <PropertyGroup>
       <_ArchiveFileName>$(SymbolsArchiveName)-$(Version)</_ArchiveFileName>
       <_ArchiveFileName Condition="'$(RuntimeIdentifier)' != ''">$(SymbolsArchiveName)-$(RuntimeIdentifier)-$(Version)</_ArchiveFileName>
@@ -176,14 +165,13 @@
                   Overwrite="true"
                   DestinationFile="$(_DestinationFileName)"
                   Condition="'$(_CurrentArchiveFormat)' == 'zip'"/>
-    <!-- use parallel gzip implementation when available -->
-    <Exec Command="tar $(_TarOwnershipArguments) -cf - . | pigz &gt; &quot;$(_DestinationFileName)&quot;"
-          WorkingDirectory="$(_SymbolsOutputPathRoot)"
-          Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' == '0'"/>
-    <!-- otherwise, use built-in gzip feature (-z) -->
-    <Exec Command="tar $(_TarOwnershipArguments) -czf &quot;$(_DestinationFileName)&quot; ."
-          WorkingDirectory="$(_SymbolsOutputPathRoot)"
-          Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' != '0'"/>
+    <TarDirectory SourceDirectory="$(_SymbolsOutputPathRoot)"
+                  DestinationFile="$(_DestinationFileName)"
+                  Compression="GZip"
+                  Format="Gnu"
+                  Overwrite="true"
+                  DeterministicTimestamp="$(TarDirectoryDeterministicTimestamp)"
+                  Condition="'$(_CurrentArchiveFormat)' == 'tar.gz'" />
 
     <Message Text="Successfully created archive -> '$(_DestinationFileName)' from '$(_SymbolsOutputPathRoot)'" Importance="high" />
   </Target>
