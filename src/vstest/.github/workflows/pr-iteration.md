@@ -19,6 +19,11 @@ permissions:
   issues: read
   copilot-requests: write
 
+# Scheduled runs have no triggering PR. Fetch all same-repository branch refs
+# before credentials are removed so the agent can switch PRs and merge locally.
+checkout:
+  fetch-depth: 0
+
 network:
   allowed:
     - defaults
@@ -74,12 +79,9 @@ You are the PR Iteration agent for `${{ github.repository }}`. Your job is to **
 
 ### `/iterate`
 
-When a maintainer comments `/iterate` on a PR, **adopt the PR immediately** — regardless of whether it has the `[fix]` prefix or is in cache-memory. This is an explicit request to drive the PR to green.
+When a maintainer comments `/iterate` on a PR, register it in cache-memory key `auto-fix-prs` and check its CI and review feedback.
 
-1. Register the PR in cache-memory key `auto-fix-prs`.
-2. Proceed with the normal iteration process (check CI, address reviews, fix issues).
-
-The PR does NOT need the `[fix]` prefix — cache-memory registration is sufficient for ownership.
+Branch updates still require the `[fix] ` title prefix and a head branch in this repository, as enforced by the safe-output policy. Registration or `/iterate` does not bypass that policy. For other PRs, report the limitation without editing or attempting a push.
 
 ## Ownership Check
 
@@ -110,10 +112,10 @@ This workflow does not assess, discuss, or make recommendations about potential 
 3. If the review requests changes:
    a. Read AGENTS.md for repo conventions
    b. Understand what the reviewer is asking for
-   c. Check out the PR branch
+   c. Prepare the PR branch using the local checkout procedure below
    d. Make the requested changes
    e. Build and run tests to verify
-   f. Push the fix
+   f. Publish the fix through `push_to_pull_request_branch`, specifying this PR's number
    g. Verify the PR description accurately describes the code changes. If it's a template placeholder or doesn't match the diff, flag it in a review comment with a suggested replacement description.
    h. Reply briefly to the review comment confirming what you changed
 4. If the comment is just a question or discussion, reply if you can add useful context. Otherwise noop.
@@ -126,19 +128,33 @@ This workflow does not assess, discuss, or make recommendations about potential 
    b. Check CI status. If CI is failing:
       - Read the failure logs
       - Determine if it's a code issue (fix it) or infrastructure flake (comment and skip)
-      - Push a fix if possible
+      - Prepare the PR branch using the local checkout procedure below, then publish a fix through `push_to_pull_request_branch` with this PR's number if possible
    c. Check for unaddressed review comments. If any, address them.
    d. Check that the PR description accurately describes the code changes. If it's a template placeholder or doesn't match the diff, flag it in a comment with a suggested replacement description.
-   e. Check for merge conflicts. If conflicted, merge main and push.
+   e. Check for merge conflicts. If conflicted, prepare the PR branch, merge its locally fetched base branch, and publish through `push_to_pull_request_branch`.
 3. Update cache-memory with the cleaned-up list (remove merged/closed PRs).
+
+### Preparing a PR branch locally
+
+The authenticated checkout fetches all branch refs and their history before the agent starts. Git credentials are then removed. A scheduled run initially has only the default branch checked out; this does **not** mean the PR branches are unavailable.
+
+For each PR that needs code changes:
+
+1. Read its current details. Only edit an open PR whose title starts with `[fix] ` and whose `head.repo.full_name` matches `${{ github.repository }}`. Do not fetch a contributor fork or bypass the safe-output restrictions.
+2. Locate `refs/remotes/origin/<head.ref>` and `refs/remotes/origin/<base.ref>` with local Git commands. Verify that the head ref resolves to the PR's current `head.sha`. If either ref is missing or the head moved after checkout, report the specific limitation and continue inspecting the remaining PRs; do not attempt a network fetch.
+3. Ensure the working tree is clean. If the triggering PR's branch is already checked out, use it; otherwise switch to its existing local branch or create a tracking branch with `git switch --track "origin/<head.ref>"`. Verify `HEAD` matches the PR's `head.sha` before editing. Use the actual ref values from PR metadata as quoted arguments, never as shell source. Never make a PR's fixes on `main` or on another PR's branch.
+4. Make and validate the changes. If updating from the base branch, merge `refs/remotes/origin/<base.ref>`; do not assume every PR targets `main`.
+5. Commit the changes and call `push_to_pull_request_branch` with the explicit `pull_request_number` before switching to another PR. Check the tool result; a queued safe output is not proof that the later publication job succeeded.
+
+Keep Git network operations and all writes to GitHub out of the agent shell. Use only the configured safe-output tools for publication. Missing credentials alone are not a blocker for these local Git operations, nor for reading CI and review state through the GitHub tools.
 
 ### Deciding what to fix
 
 - **Review feedback**: Always address. The reviewer (PR Expert Reviewer) catches real issues.
 - **CI failures from code**: Fix the code, rebuild, push.
 - **CI failures from infrastructure** (timeouts, flaky tests, Azure DevOps issues): Comment noting it's infra, don't touch the code.
-- **Merge conflicts**: Rebase on main. If conflicts are non-trivial, comment and leave for human.
-- **Build failures from dependency changes**: If main moved under you, rebase and rebuild.
+- **Merge conflicts**: Merge the locally fetched PR base branch. If conflicts are non-trivial, comment and leave for human.
+- **Build failures from dependency changes**: Merge the locally fetched PR base branch and rebuild. If newer refs are required, report that another run is needed rather than fetching or rebasing.
 
 ### When to give up
 
@@ -153,6 +169,6 @@ If after 3 push iterations a PR still isn't green:
 - You are the **author** of these PRs. Act like a diligent contributor responding to review.
 - Read the full review comment carefully — don't just pattern-match on keywords.
 - Always build and test before pushing.
-- Keep commits clean — squash fixups when possible.
+- Keep follow-up commits small; never squash or rewrite existing PR commits.
 - If a reviewer says "don't do X", respect it. Don't argue.
 - Never modify files outside the scope of the original fix without good reason.

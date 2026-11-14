@@ -64,6 +64,7 @@ safe-outputs:
     protected-files: fallback-to-issue
     if-no-changes: "warn"
   noop:
+    report-as-issue: false
 ---
 
 # HTTP Link Checker & Fixer

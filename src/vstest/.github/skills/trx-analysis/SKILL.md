@@ -99,7 +99,7 @@ $summary = $trx.TestRun.ResultSummary.Counters
 
 ## Cross-File Duplicate Analysis
 
-Compare two TRX files to find tests that appear in both and ran (were not skipped) in both. Useful for identifying redundant CI work across different configurations (e.g., net9.0 x64 vs net48 x86).
+Compare two TRX files to find tests that appear in both and ran (were not skipped) in both. Useful for identifying redundant CI work across different configurations (e.g., net10.0 x64 vs net48 x86).
 
 ### Load and find duplicates that ran in both files
 

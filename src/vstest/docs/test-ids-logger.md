@@ -44,9 +44,9 @@ dotnet test --logger:testids
 
 By default the report is written to `TestIds.csv` in the test results directory, qualified by the
 target framework when the platform reports one - a multi targeted project is run once per framework
-into the same directory, so its reports are written as `TestIds_net8.0.csv`, `TestIds_net48.csv` and
+into the same directory, so its reports are written as `TestIds_net10.0.csv`, `TestIds_net48.csv` and
 so on rather than overwriting each other. An existing report is not overwritten under the default
-name: the next free `TestIds_net8.0(1).csv`, `TestIds_net8.0(2).csv` is claimed instead, because every
+name: the next free `TestIds_net10.0(1).csv`, `TestIds_net10.0(2).csv` is claimed instead, because every
 project of a solution run into a shared results directory picks the same default name, and a mapping
 quietly replaced by another project's is a mapping lost. **The path actually written is printed at the
 end of the run - read it rather than assuming the plain name**, because on any rerun into the same
@@ -151,8 +151,8 @@ Running a suite that mixes an adapter using platform computed ids with an MSTest
 vstest.console.exe Sample.Tests.dll /logger:testids
 ```
 
-produces `TestResults\TestIds_net8.0.csv` - the name of the *first* run into that directory; a later
-run claims `TestIds_net8.0(1).csv` and prints that instead:
+produces `TestResults\TestIds_net10.0.csv` - the name of the *first* run into that directory; a later
+run claims `TestIds_net10.0(1).csv` and prints that instead:
 
 ```csv
 Source,ExecutorUri,FullyQualifiedName,DisplayName,Id,Sha1Id,XxHash128Id,IdSource
@@ -197,7 +197,7 @@ Every row that the platform computed carries both candidates, so the mapping is 
 `XxHash128Id` regardless of which algorithm the reporting run happened to use.
 
 Load **the report the run actually printed**. Under the default name a rerun into the same results
-directory writes `TestIds_net8.0(1).csv` and leaves the older file in place, so reading the plain name
+directory writes `TestIds_net10.0(1).csv` and leaves the older file in place, so reading the plain name
 out of habit builds the mapping from a stale run. Either pass `LogFileName` so the path is yours and
 fixed:
 
@@ -208,7 +208,7 @@ vstest.console.exe Tests.dll /logger:"testids;LogFileName=ids\mapping.csv"
 or take the most recent matching report:
 
 ```powershell
-$report = Get-ChildItem TestResults\TestIds_net8.0*.csv | Sort-Object LastWriteTime | Select-Object -Last 1
+$report = Get-ChildItem TestResults\TestIds_net10.0*.csv | Sort-Object LastWriteTime | Select-Object -Last 1
 ```
 
 Then select the rows to rewrite:

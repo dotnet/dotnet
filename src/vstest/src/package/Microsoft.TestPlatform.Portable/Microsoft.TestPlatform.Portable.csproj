@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <!--  $(NetPortableTargetFrameworks); should be added here, but it makes net8.0 duplicate and nuget restore fails.  -->
+    <!--  $(NetPortableTargetFrameworks); should be added here, but it makes net10.0 duplicate and NuGet restore fails.  -->
     <TargetFrameworks>$(TestHostAllTargetFrameworks);netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
@@ -128,30 +128,30 @@
     <None Include="$(OutputPath)net48\System.Numerics.Vectors.dll" Pack="true" PackagePath="tools\net462\System.Numerics.Vectors.dll" />
     <None Include="$(OutputPath)net48\System.Buffers.dll" Pack="true" PackagePath="tools\net462\System.Buffers.dll" />
     <None Include="$(OutputPath)net462\System.Runtime.InteropServices.RuntimeInformation.dll" Pack="true" PackagePath="tools\net462\System.Runtime.InteropServices.RuntimeInformation.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.Extensions.DependencyModel.dll" Pack="true" PackagePath="tools\net8.0\Microsoft.Extensions.DependencyModel.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.Extensions.FileSystemGlobbing.dll" Pack="true" PackagePath="tools\net8.0\Microsoft.Extensions.FileSystemGlobbing.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\Microsoft.CodeCoverage.IO.dll" Pack="true" PackagePath="tools\net8.0\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\cs\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\cs\Microsoft.CodeCoverage.IO.resources.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\de\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\de\Microsoft.CodeCoverage.IO.resources.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\es\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\es\Microsoft.CodeCoverage.IO.resources.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\fr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\fr\Microsoft.CodeCoverage.IO.resources.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\it\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\it\Microsoft.CodeCoverage.IO.resources.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\ja\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\ja\Microsoft.CodeCoverage.IO.resources.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\ko\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\ko\Microsoft.CodeCoverage.IO.resources.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\pl\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\pl\Microsoft.CodeCoverage.IO.resources.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\ru\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\ru\Microsoft.CodeCoverage.IO.resources.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\tr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\tr\Microsoft.CodeCoverage.IO.resources.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" />
-    <None Include="$(OutputPath)netstandard2.0\System.Collections.Immutable.dll" Pack="true" PackagePath="tools\net8.0\TestHostNetFramework\System.Collections.Immutable.dll" />
-    <None Include="$(OutputPath)netstandard2.0\System.Reflection.Metadata.dll" Pack="true" PackagePath="tools\net8.0\TestHostNetFramework\System.Reflection.Metadata.dll" />
-    <None Include="$(OutputPath)net8.0\Microsoft.Internal.Dia\x64\msdia140.dll" Pack="true" PackagePath="tools\net8.0\TestHostNetFramework\x64\msdia140.dll" />
-    <None Include="$(OutputPath)net8.0\Microsoft.Internal.Dia\x64\msdia140.dll.manifest" Pack="true" PackagePath="tools\net8.0\TestHostNetFramework\x64\msdia140.dll.manifest" />
-    <None Include="$(OutputPath)net8.0\Microsoft.Internal.Dia\x86\msdia140.dll" Pack="true" PackagePath="tools\net8.0\TestHostNetFramework\x86\msdia140.dll" />
-    <None Include="$(OutputPath)net8.0\Microsoft.Internal.Dia\x86\msdia140.dll.manifest" Pack="true" PackagePath="tools\net8.0\TestHostNetFramework\x86\msdia140.dll.manifest" />
-    <None Include="$(OutputPath)net8.0\Microsoft.Internal.Dia\arm64\msdia140.dll" Pack="true" PackagePath="tools\net8.0\TestHostNetFramework\arm64\msdia140.dll" />
-    <None Include="$(OutputPath)net8.0\Microsoft.Internal.Dia\arm64\msdia140.dll.manifest" Pack="true" PackagePath="tools\net8.0\TestHostNetFramework\arm64\msdia140.dll.manifest" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.Extensions.DependencyModel.dll" Pack="true" PackagePath="tools\net10.0\Microsoft.Extensions.DependencyModel.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.Extensions.FileSystemGlobbing.dll" Pack="true" PackagePath="tools\net10.0\Microsoft.Extensions.FileSystemGlobbing.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\Microsoft.CodeCoverage.IO.dll" Pack="true" PackagePath="tools\net10.0\Microsoft.CodeCoverage.IO.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\cs\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net10.0\cs\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\de\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net10.0\de\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\es\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net10.0\es\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\fr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net10.0\fr\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\it\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net10.0\it\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\ja\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net10.0\ja\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\ko\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net10.0\ko\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\pl\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net10.0\pl\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net10.0\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\ru\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net10.0\ru\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\tr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net10.0\tr\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net10.0\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net10.0\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\System.Collections.Immutable.dll" Pack="true" PackagePath="tools\net10.0\TestHostNetFramework\System.Collections.Immutable.dll" />
+    <None Include="$(OutputPath)netstandard2.0\System.Reflection.Metadata.dll" Pack="true" PackagePath="tools\net10.0\TestHostNetFramework\System.Reflection.Metadata.dll" />
+    <None Include="$(OutputPath)net10.0\Microsoft.Internal.Dia\x64\msdia140.dll" Pack="true" PackagePath="tools\net10.0\TestHostNetFramework\x64\msdia140.dll" />
+    <None Include="$(OutputPath)net10.0\Microsoft.Internal.Dia\x64\msdia140.dll.manifest" Pack="true" PackagePath="tools\net10.0\TestHostNetFramework\x64\msdia140.dll.manifest" />
+    <None Include="$(OutputPath)net10.0\Microsoft.Internal.Dia\x86\msdia140.dll" Pack="true" PackagePath="tools\net10.0\TestHostNetFramework\x86\msdia140.dll" />
+    <None Include="$(OutputPath)net10.0\Microsoft.Internal.Dia\x86\msdia140.dll.manifest" Pack="true" PackagePath="tools\net10.0\TestHostNetFramework\x86\msdia140.dll.manifest" />
+    <None Include="$(OutputPath)net10.0\Microsoft.Internal.Dia\arm64\msdia140.dll" Pack="true" PackagePath="tools\net10.0\TestHostNetFramework\arm64\msdia140.dll" />
+    <None Include="$(OutputPath)net10.0\Microsoft.Internal.Dia\arm64\msdia140.dll.manifest" Pack="true" PackagePath="tools\net10.0\TestHostNetFramework\arm64\msdia140.dll.manifest" />
   </ItemGroup>
 
   <!-- ============================================================================================
@@ -165,8 +165,8 @@
        Externals (raked into $(OutputPath) by the CopyFiles target above), the .NET Framework System.*
        facade assemblies, and msdia have no product producer and stay hand-listed in the ItemGroup above.
 
-       The net462-tree targets are gated to the .NET Framework runner TFM (net48) and the net8.0-tree
-       targets to the .NET runner TFM (net8.0). Both are inner TargetFrameworks of this project, so each
+       The net462-tree targets are gated to the .NET Framework runner TFM (net48) and the net10.0-tree
+       targets to the .NET runner TFM (net10.0). Both are inner TargetFrameworks of this project, so each
        target contributes to the package exactly once. -->
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <IsPackable>false</IsPackable>
@@ -274,7 +274,7 @@
     </ItemGroup>
   </Target>
 
-  <!-- net8.0 tree: the .NET (net8.0) runner publish closure - vstest.console.{dll,dll.config,deps.json,
+  <!-- net10.0 tree: the .NET (net10.0) runner publish closure - vstest.console.{dll,dll.config,deps.json,
        runtimeconfig.json}, the shared Test Platform DLLs and their satellites - taken wholesale from the
        runner's own publish. XML docs are excluded (only TranslationLayer.xml ships, re-added below); the
        external FileSystemGlobbing/DependencyModel/CodeCoverage.IO stay hand-listed above. -->
@@ -290,28 +290,28 @@
       <_PortableNetRunnerPublishedFile Include="$(_PortableNetRunnerPublishDir)**\*"
                                        Exclude="$(_PortableNetRunnerPublishDir)**\*.xml;$(_PortableNetRunnerPublishDir)System.*.dll;$(_PortableNetRunnerPublishDir)vstest.console.exe;$(_PortableNetRunnerPublishDir)Microsoft.Extensions.FileSystemGlobbing.dll" />
       <TfmSpecificPackageFile Include="@(_PortableNetRunnerPublishedFile)">
-        <PackagePath>tools\net8.0\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+        <PackagePath>tools\net10.0\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </TfmSpecificPackageFile>
       <!-- Re-add the single shipped doc XML that the blanket *.xml exclude above removed. -->
       <TfmSpecificPackageFile Include="$(_PortableNetRunnerPublishDir)Microsoft.TestPlatform.VsTestConsole.TranslationLayer.xml">
-        <PackagePath>tools\net8.0\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.xml</PackagePath>
+        <PackagePath>tools\net10.0\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.xml</PackagePath>
       </TfmSpecificPackageFile>
     </ItemGroup>
   </Target>
 
-  <!-- net8.0 tree: the .NET datacollector from the datacollector project's own net8.0 output. -->
+  <!-- net10.0 tree: the .NET datacollector from the datacollector project's own net10.0 output. -->
   <Target Name="_IncludePortableNetDataCollectorContent"
           Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT' and '$(TargetFramework)' == '$(NetCoreAppMinimum)'"
           Returns="@(TfmSpecificPackageFile)">
     <ItemGroup>
       <_PortableNetDataCollector Include="$(ArtifactsBinDir)datacollector\$(Configuration)\$(NetCoreAppMinimum)\datacollector.dll;$(ArtifactsBinDir)datacollector\$(Configuration)\$(NetCoreAppMinimum)\datacollector.dll.config;$(ArtifactsBinDir)datacollector\$(Configuration)\$(NetCoreAppMinimum)\datacollector.deps.json;$(ArtifactsBinDir)datacollector\$(Configuration)\$(NetCoreAppMinimum)\datacollector.runtimeconfig.json">
-        <PackagePath>tools\net8.0\%(Filename)%(Extension)</PackagePath>
+        <PackagePath>tools\net10.0\%(Filename)%(Extension)</PackagePath>
       </_PortableNetDataCollector>
       <TfmSpecificPackageFile Include="@(_PortableNetDataCollector)" />
     </ItemGroup>
   </Target>
 
-  <!-- net8.0 tree: loggers / collectors under Extensions\, each taken from its OWN producing project's
+  <!-- net10.0 tree: loggers / collectors under Extensions\, each taken from its OWN producing project's
        netstandard2.0 build output. BlameDataCollector ships its primary DLL only (no satellites in this
        tree); the others ship primary + localized satellites. Distinct item names avoid self-referential
        batching. -->
@@ -320,28 +320,28 @@
           Returns="@(TfmSpecificPackageFile)">
     <ItemGroup>
       <_PortableNetBlame Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.BlameDataCollector\$(Configuration)\netstandard2.0\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll">
-        <PackagePath>tools\net8.0\Extensions\%(Filename)%(Extension)</PackagePath>
+        <PackagePath>tools\net10.0\Extensions\%(Filename)%(Extension)</PackagePath>
       </_PortableNetBlame>
       <_PortableNetNetCoreClient Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.BlameDataCollector\$(Configuration)\netstandard2.0\Microsoft.Diagnostics.NETCore.Client.dll">
-        <PackagePath>tools\net8.0\Extensions\%(Filename)%(Extension)</PackagePath>
+        <PackagePath>tools\net10.0\Extensions\%(Filename)%(Extension)</PackagePath>
       </_PortableNetNetCoreClient>
       <_PortableNetHtml Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.HtmlLogger\$(Configuration)\netstandard2.0\**\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger*.dll">
-        <PackagePath>tools\net8.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+        <PackagePath>tools\net10.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </_PortableNetHtml>
       <_PortableNetTestIds Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.TestIdsLogger\$(Configuration)\netstandard2.0\**\Microsoft.VisualStudio.TestPlatform.Extensions.TestIds.TestLogger*.dll">
-        <PackagePath>tools\net8.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+        <PackagePath>tools\net10.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </_PortableNetTestIds>
       <_PortableNetTrx Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.TrxLogger\$(Configuration)\netstandard2.0\**\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger*.dll">
-        <PackagePath>tools\net8.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+        <PackagePath>tools\net10.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </_PortableNetTrx>
       <_PortableNetTestHostProvider Include="$(ArtifactsBinDir)Microsoft.TestPlatform.TestHostProvider\$(Configuration)\netstandard2.0\**\Microsoft.TestPlatform.TestHostRuntimeProvider*.dll">
-        <PackagePath>tools\net8.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+        <PackagePath>tools\net10.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </_PortableNetTestHostProvider>
       <TfmSpecificPackageFile Include="@(_PortableNetBlame);@(_PortableNetNetCoreClient);@(_PortableNetHtml);@(_PortableNetTestIds);@(_PortableNetTrx);@(_PortableNetTestHostProvider)" />
     </ItemGroup>
   </Target>
 
-  <!-- net8.0 tree: DumpMinitool (net462) for each architecture, under Extensions\dump\. NOTE: the arm64
+  <!-- net10.0 tree: DumpMinitool (net462) for each architecture, under Extensions\dump\. NOTE: the arm64
        config is packed under an extra 'dump\' path segment to reproduce a long-standing typo in the
        previous hand-listed payload, so the produced package file set stays byte-for-byte identical to the
        prior release. -->
@@ -350,16 +350,16 @@
           Returns="@(TfmSpecificPackageFile)">
     <ItemGroup>
       <_PortableNetDump Include="$(ArtifactsBinDir)DumpMinitool\$(Configuration)\$(NetFrameworkMinimum)\win7-x64\DumpMinitool.exe;$(ArtifactsBinDir)DumpMinitool\$(Configuration)\$(NetFrameworkMinimum)\win7-x64\DumpMinitool.exe.config;$(ArtifactsBinDir)DumpMinitool.x86\$(Configuration)\$(NetFrameworkMinimum)\win-x86\DumpMinitool.x86.exe;$(ArtifactsBinDir)DumpMinitool.x86\$(Configuration)\$(NetFrameworkMinimum)\win-x86\DumpMinitool.x86.exe.config;$(ArtifactsBinDir)DumpMinitool.arm64\$(Configuration)\$(NetFrameworkMinimum)\win10-arm64\DumpMinitool.arm64.exe">
-        <PackagePath>tools\net8.0\Extensions\dump\%(Filename)%(Extension)</PackagePath>
+        <PackagePath>tools\net10.0\Extensions\dump\%(Filename)%(Extension)</PackagePath>
       </_PortableNetDump>
       <_PortableNetDumpArm64Config Include="$(ArtifactsBinDir)DumpMinitool.arm64\$(Configuration)\$(NetFrameworkMinimum)\win10-arm64\DumpMinitool.arm64.exe.config">
-        <PackagePath>tools\net8.0\dump\Extensions\dump\DumpMinitool.arm64.exe.config</PackagePath>
+        <PackagePath>tools\net10.0\dump\Extensions\dump\DumpMinitool.arm64.exe.config</PackagePath>
       </_PortableNetDumpArm64Config>
       <TfmSpecificPackageFile Include="@(_PortableNetDump);@(_PortableNetDumpArm64Config)" />
     </ItemGroup>
   </Target>
 
-  <!-- net8.0 tree: the .NET Framework testhost default-architecture (net462) closure - testhost.exe +
+  <!-- net10.0 tree: the .NET Framework testhost default-architecture (net462) closure - testhost.exe +
        .config, the shared Test Platform DLLs and their satellites - taken wholesale from the testhost
        project's own net462 publish, under TestHostNetFramework\. XML docs and the System.* facades are
        excluded (System.Collections.Immutable / System.Reflection.Metadata stay hand-listed above); the
@@ -376,12 +376,12 @@
       <_PortableNetFrameworkTestHostPublishedFile Include="$(_PortableNetFrameworkTestHostPublishDir)**\*"
                                                   Exclude="$(_PortableNetFrameworkTestHostPublishDir)**\*.xml;$(_PortableNetFrameworkTestHostPublishDir)System.*.dll" />
       <TfmSpecificPackageFile Include="@(_PortableNetFrameworkTestHostPublishedFile)">
-        <PackagePath>tools\net8.0\TestHostNetFramework\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+        <PackagePath>tools\net10.0\TestHostNetFramework\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </TfmSpecificPackageFile>
     </ItemGroup>
   </Target>
 
-  <!-- net8.0 tree: the .NET Framework testhost executables for the non-published cases (default
+  <!-- net10.0 tree: the .NET Framework testhost executables for the non-published cases (default
        net47..net481; every net462..net481 for x86 and arm64) and the .NET Framework datacollector,
        each from its own project's RID-specific build output, under TestHostNetFramework\. Paths are
        enumerated explicitly; distinct item names avoid self-referential batching. -->
@@ -390,16 +390,16 @@
           Returns="@(TfmSpecificPackageFile)">
     <ItemGroup>
       <_PortableThnfTestHostDefault Include="$(ArtifactsBinDir)testhost\$(Configuration)\net47\win7-x64\testhost.net47.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net47\win7-x64\testhost.net47.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net471\win7-x64\testhost.net471.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net471\win7-x64\testhost.net471.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net472\win7-x64\testhost.net472.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net472\win7-x64\testhost.net472.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net48\win7-x64\testhost.net48.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net48\win7-x64\testhost.net48.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net481\win7-x64\testhost.net481.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net481\win7-x64\testhost.net481.exe.config">
-        <PackagePath>tools\net8.0\TestHostNetFramework\%(Filename)%(Extension)</PackagePath>
+        <PackagePath>tools\net10.0\TestHostNetFramework\%(Filename)%(Extension)</PackagePath>
       </_PortableThnfTestHostDefault>
       <_PortableThnfTestHostX86 Include="$(ArtifactsBinDir)testhost.x86\$(Configuration)\net462\win-x86\testhost.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net462\win-x86\testhost.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net47\win-x86\testhost.net47.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net47\win-x86\testhost.net47.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net471\win-x86\testhost.net471.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net471\win-x86\testhost.net471.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net472\win-x86\testhost.net472.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net472\win-x86\testhost.net472.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net48\win-x86\testhost.net48.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net48\win-x86\testhost.net48.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net481\win-x86\testhost.net481.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net481\win-x86\testhost.net481.x86.exe.config">
-        <PackagePath>tools\net8.0\TestHostNetFramework\%(Filename)%(Extension)</PackagePath>
+        <PackagePath>tools\net10.0\TestHostNetFramework\%(Filename)%(Extension)</PackagePath>
       </_PortableThnfTestHostX86>
       <_PortableThnfTestHostArm64 Include="$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net462\win10-arm64\testhost.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net462\win10-arm64\testhost.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net47\win10-arm64\testhost.net47.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net47\win10-arm64\testhost.net47.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net471\win10-arm64\testhost.net471.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net471\win10-arm64\testhost.net471.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net472\win10-arm64\testhost.net472.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net472\win10-arm64\testhost.net472.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net48\win10-arm64\testhost.net48.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net48\win10-arm64\testhost.net48.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net481\win10-arm64\testhost.net481.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net481\win10-arm64\testhost.net481.arm64.exe.config">
-        <PackagePath>tools\net8.0\TestHostNetFramework\%(Filename)%(Extension)</PackagePath>
+        <PackagePath>tools\net10.0\TestHostNetFramework\%(Filename)%(Extension)</PackagePath>
       </_PortableThnfTestHostArm64>
       <_PortableThnfDataCollector Include="$(ArtifactsBinDir)datacollector\$(Configuration)\net48\win7-x64\datacollector.exe;$(ArtifactsBinDir)datacollector\$(Configuration)\net48\win7-x64\datacollector.exe.config">
-        <PackagePath>tools\net8.0\TestHostNetFramework\%(Filename)%(Extension)</PackagePath>
+        <PackagePath>tools\net10.0\TestHostNetFramework\%(Filename)%(Extension)</PackagePath>
       </_PortableThnfDataCollector>
       <TfmSpecificPackageFile Include="@(_PortableThnfTestHostDefault);@(_PortableThnfTestHostX86);@(_PortableThnfTestHostArm64);@(_PortableThnfDataCollector)" />
     </ItemGroup>

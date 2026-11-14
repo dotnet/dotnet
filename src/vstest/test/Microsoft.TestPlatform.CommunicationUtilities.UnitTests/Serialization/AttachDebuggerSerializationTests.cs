@@ -24,7 +24,7 @@ public class AttachDebuggerSerializationTests
     // ── Example payload ──────────────────────────────────────────────────
     private static readonly TestProcessAttachDebuggerPayload Payload = new(98765)
     {
-        TargetFramework = ".NETCoreApp,Version=v8.0"
+        TargetFramework = ".NETCoreApp,Version=v10.0"
     };
 
     // ── V1 wire format ───────────────────────────────────────────────────
@@ -34,7 +34,7 @@ public class AttachDebuggerSerializationTests
           "MessageType": "TestExecution.AttachDebugger",
           "Payload": {
             "ProcessID": 98765,
-            "TargetFramework": ".NETCoreApp,Version=v8.0"
+            "TargetFramework": ".NETCoreApp,Version=v10.0"
           }
         }
         """;
@@ -47,7 +47,7 @@ public class AttachDebuggerSerializationTests
           "MessageType": "TestExecution.AttachDebugger",
           "Payload": {
             "ProcessID": 98765,
-            "TargetFramework": ".NETCoreApp,Version=v8.0"
+            "TargetFramework": ".NETCoreApp,Version=v10.0"
           }
         }
         """;
@@ -82,7 +82,7 @@ public class AttachDebuggerSerializationTests
 
         Assert.IsNotNull(result);
         Assert.AreEqual(98765, result.ProcessID);
-        Assert.AreEqual(".NETCoreApp,Version=v8.0", result.TargetFramework);
+        Assert.AreEqual(".NETCoreApp,Version=v10.0", result.TargetFramework);
     }
 
     [TestMethod]
@@ -93,7 +93,7 @@ public class AttachDebuggerSerializationTests
 
         Assert.IsNotNull(result);
         Assert.AreEqual(98765, result.ProcessID);
-        Assert.AreEqual(".NETCoreApp,Version=v8.0", result.TargetFramework);
+        Assert.AreEqual(".NETCoreApp,Version=v10.0", result.TargetFramework);
     }
 
     // ── Round-trip ───────────────────────────────────────────────────────

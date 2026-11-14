@@ -43,7 +43,7 @@ internal static class Constants
     /// <remarks>
     /// A fixed stem rather than a timestamp, so that the name is recognisable and the first run into
     /// a clean results directory produces exactly it. It is qualified by the target framework, and
-    /// an already claimed name iterates to <c>TestIds_net8.0(1).csv</c> rather than overwriting,
+    /// an already claimed name iterates to <c>TestIds_net10.0(1).csv</c> rather than overwriting,
     /// because the projects of one solution share a results directory and a mapping replaced by
     /// another project's is a mapping lost. The path actually written is printed at the end of the
     /// run, and <see cref="LogFileNameKey"/> is there for a script that needs to know the path up

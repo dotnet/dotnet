@@ -30,7 +30,7 @@ public class CustomTestHostLaunchSerializationTests
     {
         FileName = @"C:\Program Files\dotnet\dotnet.exe",
         Arguments = "exec --runtimeconfig testhost.runtimeconfig.json testhost.dll --port 12345",
-        WorkingDirectory = @"C:\src\Contoso.Math.Tests\bin\Debug\net8.0",
+        WorkingDirectory = @"C:\src\Contoso.Math.Tests\bin\Debug\net10.0",
         EnvironmentVariables = new Dictionary<string, string?>
         {
             ["DOTNET_ROOT"] = @"C:\Program Files\dotnet",
@@ -50,7 +50,7 @@ public class CustomTestHostLaunchSerializationTests
           "Payload": {
             "FileName": "C:\\Program Files\\dotnet\\dotnet.exe",
             "Arguments": "exec --runtimeconfig testhost.runtimeconfig.json testhost.dll --port 12345",
-            "WorkingDirectory": "C:\\src\\Contoso.Math.Tests\\bin\\Debug\\net8.0",
+            "WorkingDirectory": "C:\\src\\Contoso.Math.Tests\\bin\\Debug\\net10.0",
             "EnvironmentVariables": {
               "DOTNET_ROOT": "C:\\Program Files\\dotnet",
               "VSTEST_CONNECTION_TIMEOUT": "90"
@@ -71,7 +71,7 @@ public class CustomTestHostLaunchSerializationTests
           "Payload": {
             "FileName": "C:\\Program Files\\dotnet\\dotnet.exe",
             "Arguments": "exec --runtimeconfig testhost.runtimeconfig.json testhost.dll --port 12345",
-            "WorkingDirectory": "C:\\src\\Contoso.Math.Tests\\bin\\Debug\\net8.0",
+            "WorkingDirectory": "C:\\src\\Contoso.Math.Tests\\bin\\Debug\\net10.0",
             "EnvironmentVariables": {
               "DOTNET_ROOT": "C:\\Program Files\\dotnet",
               "VSTEST_CONNECTION_TIMEOUT": "90"
@@ -114,7 +114,7 @@ public class CustomTestHostLaunchSerializationTests
         Assert.IsNotNull(result);
         Assert.AreEqual(@"C:\Program Files\dotnet\dotnet.exe", result.FileName);
         Assert.AreEqual("exec --runtimeconfig testhost.runtimeconfig.json testhost.dll --port 12345", result.Arguments);
-        Assert.AreEqual(@"C:\src\Contoso.Math.Tests\bin\Debug\net8.0", result.WorkingDirectory);
+        Assert.AreEqual(@"C:\src\Contoso.Math.Tests\bin\Debug\net10.0", result.WorkingDirectory);
         Assert.IsNotNull(result.EnvironmentVariables);
         Assert.AreEqual(@"C:\Program Files\dotnet", result.EnvironmentVariables["DOTNET_ROOT"]);
         Assert.AreEqual("90", result.EnvironmentVariables["VSTEST_CONNECTION_TIMEOUT"]);
@@ -131,7 +131,7 @@ public class CustomTestHostLaunchSerializationTests
         Assert.IsNotNull(result);
         Assert.AreEqual(@"C:\Program Files\dotnet\dotnet.exe", result.FileName);
         Assert.AreEqual("exec --runtimeconfig testhost.runtimeconfig.json testhost.dll --port 12345", result.Arguments);
-        Assert.AreEqual(@"C:\src\Contoso.Math.Tests\bin\Debug\net8.0", result.WorkingDirectory);
+        Assert.AreEqual(@"C:\src\Contoso.Math.Tests\bin\Debug\net10.0", result.WorkingDirectory);
         Assert.IsNotNull(result.EnvironmentVariables);
         Assert.AreEqual(@"C:\Program Files\dotnet", result.EnvironmentVariables["DOTNET_ROOT"]);
         Assert.AreEqual("90", result.EnvironmentVariables["VSTEST_CONNECTION_TIMEOUT"]);

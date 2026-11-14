@@ -9,12 +9,12 @@
          compiles its own down-level polyfills (System.Diagnostics.CodeAnalysis) on
          net462/netstandard2.0. CrossPlatEngine already imports the identical attributes from
          CoreUtilities and ObjectModel (InternalsVisibleTo), so let the package defer to those to
-         avoid CS0436 duplicate-type conflicts. On net8.0 the attributes are in-box and the package
+         avoid CS0436 duplicate-type conflicts. On the supported .NET target the attributes are in-box and the package
          only forwards to them, so dropping its copy changes nothing there; in source-only builds
          the package is not restored at all (see below). Borrowing ObjectModel's copy is safe here,
          unlike in the test ids logger, because CrossPlatEngine never ships a netstandard2.0 asset -
          see eng/expected-dll-frameworks.json - so it is never the assembly that gets loaded beside
-         ObjectModel's net8.0 build, which compiles the polyfill out. -->
+         ObjectModel's .NET build, which compiles the polyfill out. -->
     <DefineConstants Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(DefineConstants);MTP_CLIENT_EXCLUDE_NULLABLE_ATTRIBUTES;MTP_CLIENT_EXCLUDE_EXPERIMENTAL_ATTRIBUTE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>

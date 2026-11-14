@@ -2,7 +2,7 @@
   "Microsoft.CodeCoverage": 81,
   "Microsoft.NET.Test.Sdk": 26,
   "Microsoft.TestPlatform": 555,
-  "Microsoft.TestPlatform.AdapterUtilities": 66,
+  "Microsoft.TestPlatform.AdapterUtilities": 51,
   "Microsoft.TestPlatform.Build": 22,
   "Microsoft.TestPlatform.CLI": 484,
   "Microsoft.TestPlatform.Extensions.TrxLogger": 37,
