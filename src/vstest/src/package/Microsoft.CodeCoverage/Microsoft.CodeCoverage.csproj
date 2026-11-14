@@ -73,9 +73,14 @@
        preserves the folder structure. -->
   <Target Name="IncludeInternalCodeCoverageContent" Condition="'$(TargetFramework)' == 'net462'" Returns="@(TfmSpecificPackageFile)">
     <ItemGroup>
-      <TfmSpecificPackageFile Include="$(PkgMicrosoft_Internal_CodeCoverage)\contentFiles\Microsoft.CodeCoverage\**\*">
+      <TfmSpecificPackageFile Include="$(PkgMicrosoft_Internal_CodeCoverage)\contentFiles\Microsoft.CodeCoverage\**\*"
+                              Exclude="$(PkgMicrosoft_Internal_CodeCoverage)\contentFiles\Microsoft.CodeCoverage\lib\net8.0\**\*">
         <PackagePath>%(RecursiveDir)</PackagePath>
       </TfmSpecificPackageFile>
+      <_Net10CodeCoverageShim Include="$(PkgMicrosoft_Internal_CodeCoverage)\contentFiles\Microsoft.CodeCoverage\lib\net8.0\Microsoft.VisualStudio.CodeCoverage.Shim.dll">
+        <PackagePath>lib\net10.0\%(Filename)%(Extension)</PackagePath>
+      </_Net10CodeCoverageShim>
+      <TfmSpecificPackageFile Include="@(_Net10CodeCoverageShim)" />
     </ItemGroup>
   </Target>
 </Project>

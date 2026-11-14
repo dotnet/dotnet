@@ -5,9 +5,9 @@
       This library is consumed by test frameworks and will run in testhosts, ship as that, and netstandard so everyone can use it.
 
       Adding newer tfms for .NET here is okay if we need to use features that are specific to them.
-      17.11.0 started supporting net9 and net8 explicitly so we can condition serialization attributes.
+      18.13.0 uses net10 as the minimum supported .NET target framework.
     -->
-    <TargetFrameworks>$(TestHostMinimumTargetFrameworks);$(ExtensionTargetFrameworks);net9.0</TargetFrameworks>
+    <TargetFrameworks>$(TestHostMinimumTargetFrameworks);$(ExtensionTargetFrameworks)</TargetFrameworks>
     <AssemblyName>Microsoft.TestPlatform.AdapterUtilities</AssemblyName>
     <RootNamespace>Microsoft.TestPlatform.AdapterUtilities</RootNamespace>
   </PropertyGroup>
