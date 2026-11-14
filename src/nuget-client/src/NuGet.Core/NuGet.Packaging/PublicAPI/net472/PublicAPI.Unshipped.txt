@@ -1,3 +1,4 @@
 #nullable enable
 *REMOVED*NuGet.Packaging.Licenses.NuGetLicenseExpressionParsingException.NuGetLicenseExpressionParsingException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
 NuGet.Packaging.PackageArchiveReader.ExtractFile(string! packageFile, string! destination, string! targetFilePath, NuGet.Common.ILogger? logger) -> string!
+static NuGet.Packaging.PackageIdValidator.ValidatePackageId(string! packageId, bool useRestrictedSet) -> void

@@ -10,14 +10,16 @@ namespace NuGet.Packaging.Test
 {
     public class PackageIdValidatorTest
     {
-        [Fact]
-        public void ValidatePackageIdInvalidIdThrows()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void ValidatePackageIdInvalidIdThrows(bool useRestrictedSet)
         {
             // Arrange
             string packageId = "  Invalid  . Woo   .";
 
             // Act & Assert
-            ExceptionAssert.ThrowsArgumentException(() => PackageIdValidator.ValidatePackageId(packageId), "The package ID '  Invalid  . Woo   .' contains invalid characters. Examples of valid package IDs include 'MyPackage' and 'MyPackage.Sample'.");
+            ExceptionAssert.ThrowsArgumentException(() => PackageIdValidator.ValidatePackageId(packageId, useRestrictedSet), "The package ID '  Invalid  . Woo   .' contains invalid characters. Examples of valid package IDs include 'MyPackage' and 'MyPackage.Sample'.");
         }
 
         [Fact]
@@ -49,7 +51,8 @@ namespace NuGet.Packaging.Test
             Assert.False(PackageIdValidator.IsValidPackageId(packageId));
             Assert.False(PackageIdValidator.IsValidPackageId(packageId, useRestrictedCharacterSet: false));
             Assert.False(PackageIdValidator.IsValidPackageId(packageId, useRestrictedCharacterSet: true));
-            Assert.Throws<ArgumentException>(() => PackageIdValidator.ValidatePackageId(packageId));
+            Assert.Throws<ArgumentException>(() => PackageIdValidator.ValidatePackageId(packageId, useRestrictedSet: false));
+            Assert.Throws<ArgumentException>(() => PackageIdValidator.ValidatePackageId(packageId, useRestrictedSet: true));
         }
 
         [Fact]
@@ -61,6 +64,16 @@ namespace NuGet.Packaging.Test
             // Act & Assert
             Assert.Throws<ArgumentNullException>(paramName: "packageId",
                 testCode: () => PackageIdValidator.IsValidPackageId(packageId));
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void ValidatePackageId_Null_ThrowsArgumentNullException(bool useRestrictedSet)
+        {
+            Assert.Throws<ArgumentNullException>(
+                paramName: "packageId",
+                testCode: () => PackageIdValidator.ValidatePackageId(null, useRestrictedSet));
         }
 
         [Fact]
@@ -210,15 +223,86 @@ namespace NuGet.Packaging.Test
         [InlineData(101)]
         [InlineData(102)]
         [InlineData(200)]
-        public void IdExceedingMaxLengthThrows(int idTestLength)
+        public void ValidatePackageId_Unrestricted_AllowsLongIds(int idTestLength)
         {
             // Arrange
             string packageId = new string('d', idTestLength);
 
             // Act && Assert
+            PackageIdValidator.ValidatePackageId(packageId, useRestrictedSet: false);
+            Assert.True(PackageIdValidator.IsValidPackageId(packageId));
+            Assert.True(PackageIdValidator.IsValidPackageId(packageId, useRestrictedCharacterSet: false));
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void ValidatePackageId_ExactMaxLength_DoesNotThrow(bool useRestrictedSet)
+        {
+            string packageId = new string('d', 100);
+
+            PackageIdValidator.ValidatePackageId(packageId, useRestrictedSet);
+        }
+
+        [Theory]
+        [InlineData(101)]
+        [InlineData(200)]
+        public void ValidatePackageId_Restricted_ExceedingMaxLengthThrows(int idTestLength)
+        {
+            string packageId = new string('d', idTestLength);
+
+            ExceptionAssert.ThrowsArgumentException(
+                () => PackageIdValidator.ValidatePackageId(packageId, useRestrictedSet: true),
+                "Id must not exceed 100 characters.");
+        }
+
+        [Fact]
+        public void ValidatePackageId_Restricted_RejectsNonAsciiCharacters()
+        {
+            string packageId = "Cont\u00F6so";
+
+            PackageIdValidator.ValidatePackageId(packageId, useRestrictedSet: false);
+            Assert.Throws<ArgumentException>(() => PackageIdValidator.ValidatePackageId(packageId, useRestrictedSet: true));
+        }
+
+        [Theory]
+        [InlineData(101)]
+        [InlineData(200)]
+        public void ValidatePackageId_Obsolete_ExceedingMaxLengthThrows(int idTestLength)
+        {
+            string packageId = new string('d', idTestLength);
+
+#pragma warning disable CS0618 // Verify compatibility of the obsolete overload.
             ExceptionAssert.ThrowsArgumentException(
                 () => PackageIdValidator.ValidatePackageId(packageId),
                 "Id must not exceed 100 characters.");
+#pragma warning restore CS0618
+        }
+
+        [Fact]
+        public void ValidatePackageId_Obsolete_AllowsNonAsciiCharacters()
+        {
+#pragma warning disable CS0618 // Verify compatibility of the obsolete overload.
+            PackageIdValidator.ValidatePackageId("Cont\u00F6so");
+#pragma warning restore CS0618
+        }
+
+        [Fact]
+        public void ValidatePackageId_Obsolete_InvalidIdThrows()
+        {
+#pragma warning disable CS0618 // Verify compatibility of the obsolete overload.
+            ExceptionAssert.ThrowsArgumentException(
+                () => PackageIdValidator.ValidatePackageId("Invalid ID"),
+                "The package ID 'Invalid ID' contains invalid characters. Examples of valid package IDs include 'MyPackage' and 'MyPackage.Sample'.");
+#pragma warning restore CS0618
+        }
+
+        [Fact]
+        public void ValidatePackageId_Obsolete_NullThrowsNullReferenceException()
+        {
+#pragma warning disable CS0618 // Verify compatibility of the obsolete overload.
+            Assert.Throws<NullReferenceException>(() => PackageIdValidator.ValidatePackageId(null));
+#pragma warning restore CS0618
         }
 
         [Theory]
