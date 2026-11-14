@@ -65,8 +65,8 @@ index ------------
 +./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/banana-rid/dotnet-user-secrets
 +./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/banana-rid/libaspnetcoretools.so
  ./sdk/x.y.z/es/
- ./sdk/x.y.z/es/cs/
- ./sdk/x.y.z/es/cs/Microsoft.VisualStudio.TestPlatform.Client.resources.dll
+ ./sdk/x.y.z/es/dotnet.resources.dll
+ ./sdk/x.y.z/es/Microsoft.Build.Framework.resources.dll
 @@ ------------ @@
  ./sdk/x.y.z/FSharp/ko/FSharp.DependencyManager.Nuget.resources.dll
  ./sdk/x.y.z/FSharp/library-packs/
@@ -102,3 +102,22 @@ index ------------
  ./sdk/x.y.z/FSharp/System.CodeDom.dll
  ./sdk/x.y.z/FSharp/System.Configuration.ConfigurationManager.dll
  ./sdk/x.y.z/FSharp/System.Diagnostics.EventLog.dll
+@@ ------------ @@
+ ./sdk/x.y.z/Microsoft.Extensions.Logging.Console.dll
+ ./sdk/x.y.z/Microsoft.Extensions.Logging.dll
+ ./sdk/x.y.z/Microsoft.Extensions.Options.ConfigurationExtensions.dll
+-./sdk/x.y.z/Microsoft.Identity.Client.dll
+-./sdk/x.y.z/Microsoft.Identity.Client.Extensions.Msal.dll
+-./sdk/x.y.z/Microsoft.IdentityModel.Abstractions.dll
+ ./sdk/x.y.z/Microsoft.Managed.After.targets
+ ./sdk/x.y.z/Microsoft.Managed.Before.targets
+ ./sdk/x.y.z/Microsoft.Managed.targets
+@@ ------------ @@
+ ./sdk/x.y.z/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll
+ ./sdk/x.y.z/OpenTelemetry.Instrumentation.Http.dll
+ ./sdk/x.y.z/OpenTelemetry.Instrumentation.Runtime.dll
+-./sdk/x.y.z/OpenTelemetry.PersistentStorage.Abstractions.dll
+-./sdk/x.y.z/OpenTelemetry.PersistentStorage.FileSystem.dll
+ ./sdk/x.y.z/pl/
+ ./sdk/x.y.z/pl/dotnet.resources.dll
+ ./sdk/x.y.z/pl/Microsoft.Build.Framework.resources.dll
