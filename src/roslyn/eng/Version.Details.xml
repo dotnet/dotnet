@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="roslyn" Sha="8bfd913db760936327061de1c670aee9efba1770" BarId="341096" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="roslyn" Sha="b3fa857eaa70b29207e99910541a32bdca5e9e53" BarId="341366" />
   <ProductDependencies>
-    <Dependency Name="NuGet.Versioning" Version="8.2.0-rc.6218">
+    <Dependency Name="NuGet.Versioning" Version="8.2.0-rc.6406">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>8bfd913db760936327061de1c670aee9efba1770</Sha>
+      <Sha>b3fa857eaa70b29207e99910541a32bdca5e9e53</Sha>
     </Dependency>
     <!-- RoslynAnalyzers reference older builds of Roslyn and this is necessary for SourceBuild. -->
     <Dependency Name="Microsoft.CodeAnalysis" Version="5.14.0-1.26557.1">
