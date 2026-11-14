@@ -575,6 +575,25 @@ namespace NuGet.Packaging.Test
             Assert.Equal("packageA", id);
         }
 
+        [Theory]
+        [InlineData(101)]
+        [InlineData(200)]
+        public void NuspecReaderTests_IdExceedingMaxLength(int length)
+        {
+            string id = new string('a', length);
+            var reader = GetReader(BasicNuspec.Replace("<id>packageA</id>", $"<id>{id}</id>"));
+
+            Assert.Equal(id, reader.GetId());
+        }
+
+        [Fact]
+        public void NuspecReaderTests_InvalidIdThrows()
+        {
+            var reader = GetReader(BasicNuspec.Replace("<id>packageA</id>", "<id>Invalid ID</id>"));
+
+            Assert.Throws<ArgumentException>(() => reader.GetId());
+        }
+
         [Fact]
         public void NuspecReaderTests_EmptyGroups()
         {
