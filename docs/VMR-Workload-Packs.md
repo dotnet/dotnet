@@ -15,10 +15,9 @@ explicitly registered in the build configuration.
 The MSI wrapping process is driven by `src/sdk/src/Workloads/VSInsertion/workloads.csproj`. The
 high-level flow is:
 
-1. **Pack registration** — Packs that need MSI wrappers are listed in one of three item groups:
-   - `RuntimeWorkloadPacksToDownload` — Runtime packs (e.g., `Microsoft.NETCore.App.Runtime.Mono.browser-wasm`)
-   - `HostWorkloadPacksToDownload` — Hosting packs (e.g., `Microsoft.NETCore.App.Runtime.AOT.win-x64.Cross.browser-wasm`)
-   - `TemplateWorkloadPacksToDownload` — Template packs
+1. **Pack registration** — Runtime packs, shared SDKs and templates are listed in
+   `RuntimeWorkloadPacksToDownload` (for example, `Microsoft.NETCore.App.Runtime.browser-wasm`).
+   Emscripten toolchain packages are listed in `EmsdkWorkloadPacksToDownload`.
 
 2. **Pack acquisition** — During the workloads build pass, registered packs are resolved from the
    build's package artifacts (either downloaded or found in previously-built artifacts).
@@ -40,7 +39,7 @@ other build jobs (short-stack builds, full SDK builds) via the `reuseBuildArtifa
 The `Windows_Workloads` job (build pass 2) declares which prior jobs' artifacts it needs:
 - `Windows_x64`, `Windows_x86`, `Windows_arm64` — Full SDK build outputs
 - Various short-stack jobs — Mobile and WASM runtime builds (e.g., `Browser_Shortstack_wasm`,
-  `Android_Shortstack_arm64`, `iOS_Shortstack_arm64`, `Browser_CoreCLR_Shortstack`)
+  `Android_Shortstack_arm64`, `iOS_Shortstack_arm64`)
 
 The `reuseBuildArtifactsFrom` list makes packages from those jobs available as if they were
 built locally, so `workloads.csproj` can find and wrap them.
@@ -53,9 +52,8 @@ dependencies for a specific target. Key examples:
 
 | Job Name | What It Builds |
 |----------|---------------|
-| `Browser_Shortstack_wasm` | Mono-based browser-wasm runtime |
-| `Browser_Multithreaded_Shortstack_wasm` | Multithreaded Mono browser-wasm runtime |
-| `Browser_CoreCLR_Shortstack` | CoreCLR-based browser-wasm runtime |
+| `Browser_Shortstack_wasm` | Browser WebAssembly runtime, SDKs and templates |
+| `Wasi_Shortstack_wasm` | WASI runtime and SDK |
 | `Android_Shortstack_arm64` | Android ARM64 runtime |
 | `iOS_Shortstack_arm64` | iOS ARM64 runtime |
 
@@ -74,10 +72,8 @@ Add the pack to the appropriate `*WorkloadPacksToDownload` item group:
 <RuntimeWorkloadPacksToDownload Include="Microsoft.NETCore.App.Runtime.browser-wasm" />
 ```
 
-Choose the correct item group:
-- `RuntimeWorkloadPacksToDownload` — For runtime packs (`Microsoft.NETCore.App.Runtime.*`)
-- `HostWorkloadPacksToDownload` — For AOT cross-compilation and hosting tools
-- `TemplateWorkloadPacksToDownload` — For workload template packs
+Use `RuntimeWorkloadPacksToDownload` for runtime packs and runtime-produced SDKs/templates,
+or `EmsdkWorkloadPacksToDownload` for the Emscripten toolchain.
 
 If the pack should NOT get an MSI wrapper (e.g., it targets the same OS the SDK runs on),
 add `ExcludeAsMsi="true"`.
@@ -98,9 +94,8 @@ reuseBuildArtifactsFrom:
 - Windows_x86
 - Windows_arm64
 - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
-  - Browser_CoreCLR_Shortstack        # <-- Add new short-stack jobs here
   - Browser_Shortstack_wasm
-  - Browser_Multithreaded_Shortstack_wasm
+  - Wasi_Shortstack_wasm
   # ... other short-stack jobs
 ```
 
@@ -109,8 +104,8 @@ reuseBuildArtifactsFrom:
 
 ### 3. Verify the workload manifest includes the pack
 
-The workload manifest (typically in the owning repo, e.g.,
-`src/runtime/src/mono/nuget/Microsoft.NET.Workload.Mono.Toolchain.Current.Manifest/WorkloadManifest.json.in`)
+The current workload manifest
+(`src/sdk/src/Workloads/Manifests/Microsoft.NET.Workload.Mono.Toolchain.Current.Manifest/WorkloadManifest.json.in`)
 must define the pack with appropriate alias mappings. This is usually done by the team adding
 the workload in their upstream repo.
 

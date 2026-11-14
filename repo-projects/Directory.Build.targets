@@ -608,7 +608,6 @@
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
-      <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
     </PropertyGroup>
 

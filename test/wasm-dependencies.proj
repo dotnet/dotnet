@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageDownload Include="Microsoft.NET.Runtime.WebAssembly.Sdk" Version="[$(_RuntimeVersion1xx)]" />
-    <PackageDownload Include="Microsoft.NET.Runtime.wasm.Sample.Mono" Version="[$(_RuntimeVersion1xx)]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.browser-wasm" Version="[$(_RuntimeVersion1xx)]" />
     <PackageDownload Include="Microsoft.NET.Sdk.WebAssembly.Pack" Version="[$(_RuntimeVersion1xx)]" />
   </ItemGroup>
 
