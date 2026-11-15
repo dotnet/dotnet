@@ -320,7 +320,7 @@
   <!--
     Publish the .NET (NetCoreAppMinimum) testhost and pack its output into the TestHostNet folder.
 
-    Previously the TestHostNet payload was hand-listed: testhost.dll came from the net8.0 build output
+    Previously the TestHostNet payload was hand-listed: testhost.dll came from the minimum .NET build output
     but the Test Platform dependency assemblies (Microsoft.TestPlatform.CoreUtilities.dll, ObjectModel,
     CrossPlatEngine, ...) and their satellite resources were copied from the *net48* build output
     ($(OutputPath)net48\...). That shipped .NET Framework-built assemblies - and a testhost.dll.config
@@ -347,7 +347,7 @@
     <ItemGroup>
       <!-- The managed testhost payload comes wholesale from the publish (testhost.dll + its
            .config + deps.json + the shared TestPlatform DLLs and their satellites), guaranteeing
-           the DLLs and their configs are all net8.0 and mutually consistent. The generated apphost
+           the DLLs and their configs use the minimum .NET target and are mutually consistent. The generated apphost
            (testhost.exe), doc XML, and the single generated runtimeconfig are excluded: the package
            ships templated testhost-<ver>.runtimeconfig.json files (added as extras below) instead. -->
       <_NetTestHostPublishedFile Include="$(_NetTestHostPublishDir)**\*" Exclude="$(_NetTestHostPublishDir)**\*.xml;$(_NetTestHostPublishDir)testhost.exe;$(_NetTestHostPublishDir)testhost.runtimeconfig.json" />
@@ -463,7 +463,7 @@
     Pack the .NET Framework testhost executables (and their .config files) for every supported netfx
     TFM (net462..net481) and architecture (default/x86/arm64) from each testhost project's own
     RID-specific build output. The paths are enumerated explicitly rather than globbed: a wildcard
-    over the TFM folder would both over-capture the netcore testhost's RID subfolder (net8.0, handled
+    over the TFM folder would both over-capture the netcore testhost's RID subfolder (handled
     separately by _PublishNetTestHostContent) and, via %(RecursiveDir), preserve the TFM\RID path
     instead of flattening. Each executable has a unique file name, so explicit paths flatten into the
     runner root by file name. Each architecture uses a distinct item name because reusing one item

@@ -517,13 +517,13 @@ public class TestIdsLoggerTests
         var parameters = new Dictionary<string, string?>
         {
             [DefaultLoggerParameterNames.TestRunDirectory] = _testRunDirectory,
-            [DefaultLoggerParameterNames.TargetFramework] = ".NETCoreApp,Version=v8.0",
+            [DefaultLoggerParameterNames.TargetFramework] = ".NETCoreApp,Version=v10.0",
         };
         _logger.Initialize(_events.Object, parameters);
 
         _logger.TestRunCompleteHandler(this, CompletedRun());
 
-        Assert.AreEqual(Path.Combine(_testRunDirectory, "TestIds_net8.0.csv"), _logger.ReportFilePath);
+        Assert.AreEqual(Path.Combine(_testRunDirectory, "TestIds_net10.0.csv"), _logger.ReportFilePath);
         Assert.IsTrue(File.Exists(_logger.ReportFilePath));
     }
 
@@ -535,7 +535,7 @@ public class TestIdsLoggerTests
         var parameters = new Dictionary<string, string?>
         {
             [DefaultLoggerParameterNames.TestRunDirectory] = _testRunDirectory,
-            [DefaultLoggerParameterNames.TargetFramework] = ".NETCoreApp,Version=v8.0",
+            [DefaultLoggerParameterNames.TargetFramework] = ".NETCoreApp,Version=v10.0",
             [TestIdsLoggerConstants.LogFileNameKey] = "mapping.csv",
         };
         _logger.Initialize(_events.Object, parameters);
@@ -570,7 +570,7 @@ public class TestIdsLoggerTests
         var parameters = new Dictionary<string, string?>
         {
             [DefaultLoggerParameterNames.TestRunDirectory] = _testRunDirectory,
-            [DefaultLoggerParameterNames.TargetFramework] = ".NETCoreApp,Version=v8.0",
+            [DefaultLoggerParameterNames.TargetFramework] = ".NETCoreApp,Version=v10.0",
         };
         _logger.Initialize(_events.Object, parameters);
         _logger.TestResultHandler(this, Result(new TestCase("First.Test", new Uri(ExecutorUri), Source)));
@@ -581,8 +581,8 @@ public class TestIdsLoggerTests
         second.TestResultHandler(this, Result(new TestCase("Second.Test", new Uri(ExecutorUri), Source)));
         second.TestRunCompleteHandler(this, CompletedRun());
 
-        Assert.AreEqual(Path.Combine(_testRunDirectory, "TestIds_net8.0.csv"), _logger.ReportFilePath);
-        Assert.AreEqual(Path.Combine(_testRunDirectory, "TestIds_net8.0(1).csv"), second.ReportFilePath);
+        Assert.AreEqual(Path.Combine(_testRunDirectory, "TestIds_net10.0.csv"), _logger.ReportFilePath);
+        Assert.AreEqual(Path.Combine(_testRunDirectory, "TestIds_net10.0(1).csv"), second.ReportFilePath);
         Assert.Contains("First.Test", File.ReadAllText(_logger.ReportFilePath!));
         Assert.Contains("Second.Test", File.ReadAllText(second.ReportFilePath!));
     }

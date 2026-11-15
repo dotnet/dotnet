@@ -378,7 +378,7 @@
   </Target>
 
   <!-- .NET testhost process assembly + its deps.json from the testhost project's own
-       $(NetCoreAppMinimum) (net8.0) build output. -->
+       $(NetCoreAppMinimum) (net10.0) build output. -->
   <Target Name="_IncludeCliNetTestHostContent"
           Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT' and '$(TargetFramework)' == '$(_CliContentTfm)'"
           Returns="@(TfmSpecificPackageFile)">

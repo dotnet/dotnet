@@ -62,9 +62,6 @@
     <ItemGroup>
       <_SOSPayloadFile Include="$(_SOSHelixLauncherPath)"
                        DestinationRelative="runtests$([System.IO.Path]::GetExtension('$(_SOSHelixLauncherPath)'))" />
-      <_SOSPayloadFile Include="$(RepoRoot)eng/DisableSignatureCheck.ps1"
-                       DestinationRelative="eng/DisableSignatureCheck.ps1"
-                       Condition="'$(TargetOS)' == 'Windows_NT'" />
       <_SOSPayloadFile Include="$(MSBuildThisFileDirectory)Helix/debuggee-entitlements.plist"
                        DestinationRelative="eng/helix/sos/debuggee-entitlements.plist"
                        Condition="'$(TargetOS)' == 'osx'" />
@@ -203,6 +200,11 @@
         <Timeout>$(WorkItemTimeout)</Timeout>
         <RequiredRuntimeVersions>$(TestHostRuntimeVersion);%(HelixWorkItem.RuntimeDownload)</RequiredRuntimeVersions>
         <RequiredRuntimeVersions Condition="'$(SOSTestToolLayout)' == 'Packaged'">$(TestHostRuntimeVersion);%(HelixWorkItem.RuntimeDownload);$(_SOSInstalledToolRuntimeVersion)</RequiredRuntimeVersions>
+      </HelixWorkItem>
+      <!-- The macOS launcher and SOS managed-extension host require the .NET 11 CoreCLR
+           hosting fix even when private or servicing testing excludes .NET 11 debuggees. -->
+      <HelixWorkItem Condition="'$(TargetOS)' == 'osx'">
+        <RequiredRuntimeVersions>%(HelixWorkItem.RequiredRuntimeVersions);$(MicrosoftNETCoreApp110Version)</RequiredRuntimeVersions>
       </HelixWorkItem>
     </ItemGroup>
     <!-- The SDK's PayloadDirectory path creates its ZIP in memory. Keep the large SOS archive on disk. -->

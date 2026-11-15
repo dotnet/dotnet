@@ -11,7 +11,7 @@ Param(
     [System.String] $TargetRuntime = "win7-x64",
 
     [Parameter(Mandatory=$false)]
-    [ValidateSet("net9.0", "net462")]
+    [ValidateSet("net11.0", "net462")]
     [Alias("f")]
     [System.String] $TargetFramework,
 
@@ -40,11 +40,12 @@ $env:TP_OUT_DIR = Join-Path $env:TP_ROOT_DIR "artifacts"
 # Test configuration
 #
 $TPT_TargetFrameworkFullCLR = "net462"
-$TPT_TargetFramework6Core = "net6.0"
+$TPT_TargetFrameworkNet = "net11.0"
+$TPT_RunnerTargetFrameworkNet = "net10.0"
 Write-Verbose "Setup build configuration."
 $Script:TPT_Configuration = $Configuration
 $Script:TPT_SourceFolders =  @(Join-Path $env:TP_ROOT_DIR "test\TestAssets")
-$Script:TPT_TargetFrameworks =@($TPT_TargetFramework6Core, $TPT_TargetFrameworkFullCLR)
+$Script:TPT_TargetFrameworks =@($TPT_TargetFrameworkNet, $TPT_TargetFrameworkFullCLR)
 $Script:TPT_TargetFramework = $TargetFramework
 $Script:TPT_TargetRuntime = $TargetRuntime
 $Script:TPT_Pattern = $Pattern
@@ -151,11 +152,11 @@ function Get-ConsoleRunnerPath($runner, $targetFrameWork)
 {
     if($runner -eq "vstest.console")
     {
-        if($targetFrameWork -eq $TPT_TargetFramework6Core)
+        if($targetFrameWork -eq $TPT_TargetFrameworkNet)
         {
             $vstestConsoleFileName = "vstest.console.dll"
             $targetRunTime = ""
-            $vstestConsolePath = Join-Path (Get-PackageDirectory $TPT_TargetFramework6Core $targetRuntime) $vstestConsoleFileName
+            $vstestConsolePath = Join-Path (Get-PackageDirectory $TPT_RunnerTargetFrameworkNet $targetRuntime) $vstestConsoleFileName
         } else {
             $vstestConsoleFileName = "vstest.console.exe"
             $targetRunTime = $Script:TPT_TargetRuntime

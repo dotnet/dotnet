@@ -21,7 +21,7 @@ This assembly is shipped via NuGet and consumed by all test adapters. Every publ
 
 ## Cross-TFM Considerations
 
-- Ensure APIs work on all targeted TFMs (net462, net8.0+).
+- Ensure APIs work on all targeted TFMs (net462, net10.0+).
 - Use `#if` guards or polyfills for APIs unavailable on older frameworks.
 - netstandard2.0 dependencies must not pull in assemblies absent from net462 hosts.
 

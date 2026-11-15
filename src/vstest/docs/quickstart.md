@@ -26,7 +26,7 @@ Studio). Which package depends on the runtime you need:
   Framework.
 - **Cross-platform .NET runner** — the
   [`Microsoft.TestPlatform.Portable`](https://www.nuget.org/packages/Microsoft.TestPlatform.Portable)
-  package. It ships `vstest.console.dll` under `tools/net8.0/`, launched with
+  package. It ships `vstest.console.dll` under `tools/net10.0/`, launched with
   `dotnet path/to/vstest.console.dll`, and requires a compatible .NET runtime.
 
 When you use `dotnet test`, the runner and a matching runtime are already provided by the .NET
@@ -35,11 +35,11 @@ SDK (pinned by your `global.json`), so there is nothing extra to install.
 ## Your first run
 
 1. Build a test project (for example an MSTest, xUnit, or NUnit project) so you have a test
-   assembly such as `bin\Debug\net8.0\MyProject.Tests.dll`.
+   assembly such as `bin\Debug\net10.0\MyProject.Tests.dll`.
 2. Run the tests:
 
    ```shell
-   vstest.console.exe bin\Debug\net8.0\MyProject.Tests.dll
+   vstest.console.exe bin\Debug\net10.0\MyProject.Tests.dll
    ```
 
    Or, to build and run in one step with the SDK:
