@@ -87,7 +87,7 @@ public class DotnetTestHostManagerFilesystemIntegrationTests
         // Arrange — create real deps.json and runtimeconfig.dev.json files and a fake testhost.dll.
         string packagesDir = Path.Combine(_tempDir, "packages");
         string packageRelativePath = Path.Combine("microsoft.testplatform.testhost", "18.0.0-dev");
-        string testhostFullPath = Path.Combine(packagesDir, packageRelativePath, "lib", "net8.0", "testhost.dll");
+        string testhostFullPath = Path.Combine(packagesDir, packageRelativePath, "lib", "net10.0", "testhost.dll");
 
         Directory.CreateDirectory(Path.GetDirectoryName(testhostFullPath)!);
         File.WriteAllText(testhostFullPath, "fake testhost");
@@ -95,16 +95,16 @@ public class DotnetTestHostManagerFilesystemIntegrationTests
         string depsJson = $$"""
             {
                 "runtimeTarget": {
-                    "name": ".NETCoreApp,Version=v8.0",
+                    "name": ".NETCoreApp,Version=v10.0",
                     "signature": "abc123"
                 },
                 "compilationOptions": {},
                 "targets": {
-                    ".NETCoreApp,Version=v8.0": {
+                    ".NETCoreApp,Version=v10.0": {
                         "microsoft.testplatform.testhost/18.0.0-dev": {
                             "dependencies": {},
                             "runtime": {
-                                "lib/net8.0/testhost.dll": {}
+                                "lib/net10.0/testhost.dll": {}
                             }
                         }
                     }
@@ -137,7 +137,7 @@ public class DotnetTestHostManagerFilesystemIntegrationTests
         File.WriteAllText(Path.Combine(_tempDir, "TestProject.runtimeconfig.dev.json"), runtimeConfigDevJson);
 
         var manager = CreateManager(new FileHelper());
-        manager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetFrameworkVersion>.NETCoreApp,Version=v8.0</TargetFrameworkVersion></RunConfiguration></RunSettings>");
+        manager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetFrameworkVersion>.NETCoreApp,Version=v10.0</TargetFrameworkVersion></RunConfiguration></RunSettings>");
 
         // Act
         var startInfo = manager.GetTestHostProcessStartInfo(new[] { sourceDll }, null, _connectionInfo);
@@ -165,9 +165,9 @@ public class DotnetTestHostManagerFilesystemIntegrationTests
         // Minimal deps.json — testhost not in it, so resolution falls through to the source directory.
         string depsJson = """
             {
-                "runtimeTarget": { "name": ".NETCoreApp,Version=v8.0" },
+                "runtimeTarget": { "name": ".NETCoreApp,Version=v10.0" },
                 "compilationOptions": {},
-                "targets": { ".NETCoreApp,Version=v8.0": {} },
+                "targets": { ".NETCoreApp,Version=v10.0": {} },
                 "libraries": {}
             }
             """;
@@ -191,7 +191,7 @@ public class DotnetTestHostManagerFilesystemIntegrationTests
         File.WriteAllText(testhostNextToSource, "fake testhost");
 
         var manager = CreateManager(new FileHelper());
-        manager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetFrameworkVersion>.NETCoreApp,Version=v8.0</TargetFrameworkVersion></RunConfiguration></RunSettings>");
+        manager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetFrameworkVersion>.NETCoreApp,Version=v10.0</TargetFrameworkVersion></RunConfiguration></RunSettings>");
 
         // Act — this previously threw KeyNotFoundException when additionalProbingPaths was missing.
         var startInfo = manager.GetTestHostProcessStartInfo(new[] { sourceDll }, null, _connectionInfo);
@@ -213,9 +213,9 @@ public class DotnetTestHostManagerFilesystemIntegrationTests
         // Minimal deps.json — testhost not in it, so it will fall through to other fallbacks.
         string depsJson = """
             {
-                "runtimeTarget": { "name": ".NETCoreApp,Version=v8.0" },
+                "runtimeTarget": { "name": ".NETCoreApp,Version=v10.0" },
                 "compilationOptions": {},
-                "targets": { ".NETCoreApp,Version=v8.0": {} },
+                "targets": { ".NETCoreApp,Version=v10.0": {} },
                 "libraries": {}
             }
             """;
@@ -226,7 +226,7 @@ public class DotnetTestHostManagerFilesystemIntegrationTests
         File.WriteAllText(testhostNextToSource, "fake testhost");
 
         var manager = CreateManager(new FileHelper());
-        manager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetFrameworkVersion>.NETCoreApp,Version=v8.0</TargetFrameworkVersion></RunConfiguration></RunSettings>");
+        manager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetFrameworkVersion>.NETCoreApp,Version=v10.0</TargetFrameworkVersion></RunConfiguration></RunSettings>");
 
         // Act
         var startInfo = manager.GetTestHostProcessStartInfo(new[] { sourceDll }, null, _connectionInfo);
@@ -245,14 +245,14 @@ public class DotnetTestHostManagerFilesystemIntegrationTests
         string runtimeConfigPath = Path.Combine(_tempDir, "TestProject.runtimeconfig.json");
 
         File.WriteAllText(sourceDll, "fake test dll");
-        File.WriteAllText(runtimeConfigPath, """{"runtimeOptions":{"tfm":"net8.0"}}""");
+        File.WriteAllText(runtimeConfigPath, """{"runtimeOptions":{"tfm":"net10.0"}}""");
 
         // Place testhost.dll next to source so the manager doesn't throw.
         string testhostNextToSource = Path.Combine(_tempDir, "testhost.dll");
         File.WriteAllText(testhostNextToSource, "fake testhost");
 
         var manager = CreateManager(new FileHelper());
-        manager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetFrameworkVersion>.NETCoreApp,Version=v8.0</TargetFrameworkVersion></RunConfiguration></RunSettings>");
+        manager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetFrameworkVersion>.NETCoreApp,Version=v10.0</TargetFrameworkVersion></RunConfiguration></RunSettings>");
 
         // Act
         var startInfo = manager.GetTestHostProcessStartInfo(new[] { sourceDll }, null, _connectionInfo);
@@ -274,7 +274,7 @@ public class DotnetTestHostManagerFilesystemIntegrationTests
         File.WriteAllText(testhostNextToSource, "fake testhost");
 
         var manager = CreateManager(new FileHelper());
-        manager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetFrameworkVersion>.NETCoreApp,Version=v8.0</TargetFrameworkVersion></RunConfiguration></RunSettings>");
+        manager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetFrameworkVersion>.NETCoreApp,Version=v10.0</TargetFrameworkVersion></RunConfiguration></RunSettings>");
 
         // Act
         var startInfo = manager.GetTestHostProcessStartInfo(new[] { sourceDll }, null, _connectionInfo);

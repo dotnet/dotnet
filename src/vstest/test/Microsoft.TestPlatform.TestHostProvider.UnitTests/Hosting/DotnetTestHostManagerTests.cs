@@ -305,7 +305,7 @@ public class DotnetTestHostManagerTests
         var testhostExePath = "testhost.exe";
         _dotnetHostManager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetPlatform>x64</TargetPlatform></RunConfiguration></RunSettings>");
         _mockFileHelper.Setup(ph => ph.Exists(testhostExePath)).Returns(false);
-        _mockFileHelper.Setup(ph => ph.Exists("C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\net8.0\\x64\\testhost.exe")).Returns(true);
+        _mockFileHelper.Setup(ph => ph.Exists("C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\net10.0\\x64\\testhost.exe")).Returns(true);
         _mockEnvironment.Setup(ev => ev.OperatingSystem).Returns(PlatformOperatingSystem.Windows);
         var sourcePath = Path.Combine(_temp, "test.dll");
 
@@ -368,7 +368,7 @@ public class DotnetTestHostManagerTests
 
         // If this starts failing after updating TFMs of packakges, the GetTestHostProcessStartInfo defines the default version
         // to use in GetTestHostProcessStartInfo, change that to the lowest supported netcore version, and pass this test.
-        Assert.Contains("C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\net8.0\\x64\\testhost.exe", startInfo.FileName!);
+        Assert.Contains("C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\net10.0\\x64\\testhost.exe", startInfo.FileName!);
     }
 
     [TestMethod]
@@ -378,7 +378,7 @@ public class DotnetTestHostManagerTests
         var testhostExePath = "testhost.x86.exe";
         _dotnetHostManager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetPlatform>x86</TargetPlatform></RunConfiguration></RunSettings>");
         _mockFileHelper.Setup(ph => ph.Exists(testhostExePath)).Returns(false);
-        _mockFileHelper.Setup(ph => ph.Exists($"C:\\packages{Path.DirectorySeparatorChar}microsoft.testplatform.testhost\\15.0.0-Dev{Path.DirectorySeparatorChar}build\\net8.0\\x86\\testhost.x86.exe")).Returns(true);
+        _mockFileHelper.Setup(ph => ph.Exists($"C:\\packages{Path.DirectorySeparatorChar}microsoft.testplatform.testhost\\15.0.0-Dev{Path.DirectorySeparatorChar}build\\net10.0\\x86\\testhost.x86.exe")).Returns(true);
         _mockEnvironment.Setup(ev => ev.OperatingSystem).Returns(PlatformOperatingSystem.Windows);
         var sourcePath = Path.Combine(_temp, "test.dll");
 
@@ -440,7 +440,7 @@ public class DotnetTestHostManagerTests
 
         // If this starts failing after updating TFMs of packakges, the GetTestHostProcessStartInfo defines the default version
         // to use in GetTestHostProcessStartInfo, change that to the lowest supported netcore version, and pass this test.
-        Assert.Contains("C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\net8.0\\x86\\testhost.x86.exe", startInfo.FileName!);
+        Assert.Contains("C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\net10.0\\x86\\testhost.x86.exe", startInfo.FileName!);
     }
 
     [TestMethod]
@@ -735,7 +735,7 @@ public class DotnetTestHostManagerTests
         Assert.Contains(expectedTestHostPath, startInfo.Arguments!);
     }
 
-    // TODO: This assembly was previously compiled as net472 and so it was skipped and only ran as net8.0. This fails in test, but works in code that is not isolated in appdomain. Might be worth fixing because we get one null here, and another in DotnetTestHostManager.
+    // TODO: This assembly was previously compiled as net472 and so it was skipped and only ran on .NET. This fails in test, but works in code that is not isolated in appdomain. Might be worth fixing because we get one null here, and another in DotnetTestHostManager.
     // Assembly.GetEntryAssembly().Location is null because of running in app domain.
 #if NET
     [TestMethod]
@@ -767,7 +767,7 @@ public class DotnetTestHostManagerTests
 
 #endif
 
-    // TODO: This assembly was previously compiled as net472 and so it was skipped and only ran as net8.0. This fails in test, but works in code that is not isolated in appdomain. Might be worth fixing because we get one null here, and another in DotnetTestHostManager.
+    // TODO: This assembly was previously compiled as net472 and so it was skipped and only ran on .NET. This fails in test, but works in code that is not isolated in appdomain. Might be worth fixing because we get one null here, and another in DotnetTestHostManager.
     // Assembly.GetEntryAssembly().Location is null because of running in app domain.
 #if NET
 
@@ -777,8 +777,8 @@ public class DotnetTestHostManagerTests
     // the run settings (e.g. because vstest.console unified incompatible assemblies to a default framework, or
     // the user set one), the built-in testhost fallback always rolls forward to the latest installed runtime via
     // testhost-latest.runtimeconfig.json. We no longer ship version-specific testhost-<ver>.runtimeconfig.json files.
-    [DataRow("net8.0")]
-    [DataRow("net9.0")]
+    [DataRow("net10.0")]
+    [DataRow("net11.0")]
     public void GetTestHostProcessStartInfoNativeFallbackAlwaysUsesLatestRuntimeConfigRegardlessOfTfm(string tfm)
     {
         // Absolute path to the source directory
