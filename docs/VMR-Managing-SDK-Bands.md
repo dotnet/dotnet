@@ -52,6 +52,8 @@ The VMR uses SDK branches to manage different bands, similar to how individual r
 - Shared components (runtime, arcade) exist as sources only in the 1xx branch
 - Non-1xx branches reference shared components as build output packages from the 1xx branch
 
+When initializing a non-1xx branch, use `darc add-dependency` to add `Microsoft.NET.Sdk` and `Microsoft.NETCore.App.Ref` toolset dependencies in the root `eng/Version.Details.xml`, using the versions and source commit of the chosen 1xx build. Darc also generates the matching `MicrosoftNETSdk*Version` and `MicrosoftNETCoreAppRef*Version` properties in `eng/Version.Details.props`. Source-build prep and CI use the SDK dependency to select the 1xx shared-components archive, and the workload build uses both versions to download the matching 1xx workload manifests and runtime packs. Changing `VersionSDKMinor` and removing the shared source trees alone is not sufficient.
+
 ### Shared vs band-specific components
 
 A shared component is a component that is shared between multiple SDK bands. For instance, the .NET runtime is a good example of a shared component while the Roslyn compiler would typically differ between bands.
