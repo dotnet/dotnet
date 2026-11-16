@@ -15,7 +15,7 @@ public static class Features
     public static IImmutableDictionary<string, Feature> TestPlatformFeatures { get; } = new Dictionary<string, Feature>
     {
         [ATTACH_DEBUGGER_FLOW] = new(version: "v16.7.0-preview-20200519-01", issue: "https://github.com/microsoft/vstest/pull/2325"),
-        [MULTI_TFM] = new(version: "v17.3.0", issue: "https://github.com/microsoft/vstest/pull/3412")
+        [MULTI_TFM] = new(version: "v17.3.0", issue: "https://github.com/microsoft/vstest/pull/3412"),
     }.ToImmutableDictionary();
 
     public static IImmutableDictionary<string, Feature> AdapterFeatures { get; internal set; } = new Dictionary<string, Feature>

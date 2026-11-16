@@ -137,7 +137,14 @@ internal sealed class VsTestConsoleProcessManager : IProcessManager, IDisposable
                     // Not printing the value on purpose, env variables can contain secrets and we don't need to know the values
                     // most of the time.
                     EqtTrace.Verbose("VsTestCommandLineWrapper.StartProcess: Setting environment variable: {0}", envVariable.Key);
-                    info.EnvironmentVariables[envVariable.Key] = envVariable.Value?.ToString();
+                    if (envVariable.Value is null)
+                    {
+                        info.EnvironmentVariables.Remove(envVariable.Key);
+                    }
+                    else
+                    {
+                        info.EnvironmentVariables[envVariable.Key] = envVariable.Value.ToString();
+                    }
                 }
             }
         }

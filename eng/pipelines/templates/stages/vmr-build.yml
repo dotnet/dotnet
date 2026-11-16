@@ -14,6 +14,10 @@ parameters:
   type: string
   default: ''
 
+- name: enablePgo
+  type: boolean
+  default: true
+
 # Scope of jobs which are executed
 - name: scope
   type: string
@@ -110,6 +114,7 @@ stages:
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       scope: ${{ parameters.scope }}
       verifications: ${{ parameters.verifications }}
+      enablePgo: ${{ parameters.enablePgo }}
       excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
 
 - ${{ if and(parameters.isBuiltFromVmr, eq(parameters.isOfficialBuild, true)) }}:

@@ -4,24 +4,68 @@
     <TargetFramework>$(NetCurrent)</TargetFramework>
   </PropertyGroup>
 
+  <Target Name="CheckSdkArchive" DependsOnTargets="DetermineSourceBuiltSdkVersion">
+    <Error Text="SDK archive not found at '$(SdkTarballPath)'." Condition="!Exists('$(SdkTarballPath)')" />
+    <Error Text="Unsupported SDK archive extension '$(ArchiveExtension)'."
+           Condition="'$(ArchiveExtension)' != '.tar.gz' and '$(ArchiveExtension)' != '.zip'" />
+
+    <GetFileHash Files="$(SdkTarballPath)">
+      <Output TaskParameter="Hash" PropertyName="_SdkArchiveHash" />
+    </GetFileHash>
+
+    <PropertyGroup>
+      <_SdkExtractDir>$([MSBuild]::NormalizeDirectory('$(DotNetSdkExtractDir)'))</_SdkExtractDir>
+      <_SdkArchiveIdentity>$(SdkTarballPath)|$(_SdkExtractDir)|$(_SdkArchiveHash)</_SdkArchiveIdentity>
+      <_SdkHostPath>$(_SdkExtractDir)dotnet</_SdkHostPath>
+      <_SdkHostPath Condition="'$(ArchiveExtension)' == '.zip'">$(_SdkHostPath).exe</_SdkHostPath>
+    </PropertyGroup>
+
+    <ReadLinesFromFile File="$(BaseIntermediateOutputPath)ExtractSdkArchive.complete"
+                       Condition="Exists('$(BaseIntermediateOutputPath)ExtractSdkArchive.complete')">
+      <Output TaskParameter="Lines" ItemName="_ExtractedSdkArchiveIdentity" />
+    </ReadLinesFromFile>
+
+    <PropertyGroup>
+      <_SdkArchiveReady Condition="'@(_ExtractedSdkArchiveIdentity)' == '$(_SdkArchiveIdentity)' and Exists('$(_SdkHostPath)') and Exists('$(_SdkExtractDir)sdk')">true</_SdkArchiveReady>
+    </PropertyGroup>
+
+    <!-- Test projects also reference this extraction project while running under the extracted SDK. -->
+    <Error Text="Cannot replace the SDK executing MSBuild at '$(_SdkExtractDir)'. Prepare the SDK archive before selecting it with --with-sdk."
+           Condition="'$(_SdkArchiveReady)' != 'true' and $([MSBuild]::NormalizeDirectory('$(MSBuildBinPath)').StartsWith('$(_SdkExtractDir)'))" />
+  </Target>
+
+  <!-- Target conditions precede dependencies, so check readiness before evaluating the extraction condition. -->
   <Target Name="ExtractSdkArchive"
           BeforeTargets="Build"
-          DependsOnTargets="DetermineSourceBuiltSdkVersion"
-          Inputs="$(SdkTarballPath)"
-          Outputs="$(BaseIntermediateOutputPath)ExtractSdkArchive.complete">
-    <MakeDir Directories="$(DotNetSdkExtractDir)" />
+          DependsOnTargets="CheckSdkArchive;_ExtractSdkArchive" />
+
+  <Target Name="_ExtractSdkArchive" Condition="'$(_SdkArchiveReady)' != 'true'">
+    <PropertyGroup>
+      <_SdkArtifactsObjDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)'))</_SdkArtifactsObjDir>
+    </PropertyGroup>
+    <Error Text="SDK extraction directory '$(_SdkExtractDir)' must be a dedicated directory under '$(_SdkArtifactsObjDir)'."
+           Condition="'$(_SdkExtractDir)' == '$(_SdkArtifactsObjDir)' or !$(_SdkExtractDir.StartsWith('$(_SdkArtifactsObjDir)'))" />
+
+    <Delete Files="$(BaseIntermediateOutputPath)ExtractSdkArchive.complete" />
+    <RemoveDir Directories="$(_SdkExtractDir)" />
+    <MakeDir Directories="$(_SdkExtractDir);$(BaseIntermediateOutputPath)" />
 
     <Exec Condition="'$(ArchiveExtension)' == '.tar.gz'"
-          Command="tar -xzf $(SdkTarballPath) -C $(DotNetSdkExtractDir)" />
+          Command="tar -xzf &quot;$(SdkTarballPath)&quot; -C &quot;$(_SdkExtractDir)&quot;" />
     <Unzip Condition="'$(ArchiveExtension)' == '.zip'"
            SourceFiles="$(SdkTarballPath)"
-           DestinationFolder="$(DotNetSdkExtractDir)" />
+           DestinationFolder="$(_SdkExtractDir)" />
+
+    <Error Text="SDK archive '$(SdkTarballPath)' did not contain a .NET host and SDK."
+           Condition="!Exists('$(_SdkHostPath)') or !Exists('$(_SdkExtractDir)sdk')" />
 
     <Message Text="Extracted SDK archive file '$(SdkTarballPath)' to '$(DotNetSdkExtractDir)'." Importance="high" />
 
-    <Touch Files="$(BaseIntermediateOutputPath)ExtractSdkArchive.complete" AlwaysCreate="true">
-      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
-    </Touch>
+    <WriteLinesToFile File="$(BaseIntermediateOutputPath)ExtractSdkArchive.complete"
+                      Lines="$(_SdkArchiveIdentity)" Overwrite="true" />
+    <ItemGroup>
+      <FileWrites Include="$(BaseIntermediateOutputPath)ExtractSdkArchive.complete" />
+    </ItemGroup>
   </Target>
 
 </Project>

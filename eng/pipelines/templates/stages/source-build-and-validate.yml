@@ -121,7 +121,7 @@ stages:
         ${{ else }}:
           pool: ${{ parameters.pool_Linux }}
         buildSourceOnly: true
-        ${{ if eq(parameters.useMicrosoftBuildAssetsForTests, true) }}:
+        ${{ if or(eq(parameters.useMicrosoftBuildAssetsForTests, true), and(eq(variables['System.TeamProject'], 'internal'), eq(leg.useBuiltSdkForTests, true))) }}:
           runTests: false
         enablePoison: ${{ leg.enablePoison }}
         buildFromArchive: ${{ leg.buildFromArchive }}
@@ -210,6 +210,7 @@ stages:
           buildSourceOnly: true
           runOnline: ${{ leg.runOnline }}
           runTests: true
+          useBuiltSdkForTests: ${{ and(eq(variables['System.TeamProject'], 'internal'), eq(leg.useBuiltSdkForTests, true)) }}
           enablePoison: ${{ leg.enablePoison }}
           skipBuild: true
           extraProperties: >

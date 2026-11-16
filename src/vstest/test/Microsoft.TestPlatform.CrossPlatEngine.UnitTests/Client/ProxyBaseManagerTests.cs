@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Threading;
@@ -61,7 +62,13 @@ public class ProxyBaseManagerTests
             .Returns(new TestProcessStartInfo());
         _mockTestHostManager.Setup(tmh => tmh.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>()))
             .Callback(
-                () => _mockTestHostManager.Raise(thm => thm.HostLaunched += null, new HostProviderEventArgs(string.Empty)))
+                () =>
+                {
+                    using var process = Process.GetCurrentProcess();
+                    _mockTestHostManager.Raise(
+                        thm => thm.HostLaunched += null,
+                        new HostProviderEventArgs(string.Empty, 0, process.Id));
+                })
             .Returns(Task.FromResult(true));
     }
 

@@ -13,7 +13,234 @@ using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using Moq;
+
 namespace Microsoft.TestPlatform.CommunicationUtilities.PlatformTests;
+
+[TestClass]
+public class SocketServerLifecycleTests
+{
+    private const int Timeout = 5000;
+    private static readonly string DefaultConnection = IPAddress.Loopback + ":0";
+
+    [TestMethod]
+    public async Task SocketServerStopBeforeAcceptShouldCloseListener()
+    {
+        var socketServer = new SocketServer();
+        var connected = false;
+        socketServer.Connected += (_, _) => connected = true;
+        try
+        {
+            var endpoint = socketServer.Start(DefaultConnection).GetIpEndPoint();
+
+            socketServer.Stop();
+            socketServer.Stop();
+
+            await AssertListenerClosed(endpoint);
+            Assert.IsFalse(connected);
+        }
+        finally
+        {
+            socketServer.Stop();
+        }
+    }
+
+    [TestMethod]
+    public void SocketServerStartShouldThrowAfterStop()
+    {
+        var socketServer = new SocketServer();
+        socketServer.Stop();
+
+        Assert.ThrowsExactly<ObjectDisposedException>(() => socketServer.Start(DefaultConnection));
+    }
+
+    [TestMethod]
+    public async Task SocketServerShouldCloseClientDeliveredAfterStop()
+    {
+        var connectedClients = await CreateConnectedTcpClients();
+        using var client = connectedClients.Client;
+        using var acceptedClient = connectedClients.AcceptedClient;
+        var accept = new TaskCompletionSource<TcpClient>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var channel = new Mock<ICommunicationChannel>();
+        var channelCreated = 0;
+        var connected = 0;
+        var socketServer = new SocketServer(
+            _ =>
+            {
+                Interlocked.Increment(ref channelCreated);
+                return channel.Object;
+            },
+            _ => accept.Task);
+        socketServer.Connected += (_, _) => Interlocked.Increment(ref connected);
+        try
+        {
+            var endpoint = socketServer.Start(DefaultConnection).GetIpEndPoint();
+
+            socketServer.Stop();
+            accept.SetResult(acceptedClient);
+
+            Assert.IsTrue(client.Client.Poll(Timeout * 1000, SelectMode.SelectRead));
+            Assert.AreEqual(0, client.Client.Available);
+            await AssertListenerClosed(endpoint);
+            Assert.AreEqual(0, channelCreated);
+            Assert.AreEqual(0, connected);
+            channel.Verify(c => c.Dispose(), Times.Never);
+        }
+        finally
+        {
+            socketServer.Stop();
+            accept.TrySetResult(acceptedClient);
+        }
+    }
+
+    [TestMethod]
+    public async Task SocketServerStopShouldNotWaitForConnectedHandler()
+    {
+        var channel = new Mock<ICommunicationChannel>();
+        var connectedClients = await CreateConnectedTcpClients();
+        using var client = connectedClients.Client;
+        using var acceptedClient = connectedClients.AcceptedClient;
+        using var handlerEntered = new ManualResetEventSlim(false);
+        using var releaseHandler = new ManualResetEventSlim(false);
+        using var disconnected = new ManualResetEventSlim(false);
+        var socketServer = new SocketServer(_ => channel.Object, _ => Task.FromResult(acceptedClient));
+        socketServer.Connected += (_, _) =>
+        {
+            handlerEntered.Set();
+            Assert.IsTrue(releaseHandler.Wait(Timeout * 2));
+        };
+        socketServer.Disconnected += (_, _) => disconnected.Set();
+        Task<string?>? startTask = null;
+        try
+        {
+            startTask = Task.Run(() => socketServer.Start(DefaultConnection));
+            Assert.IsTrue(handlerEntered.Wait(Timeout));
+
+            var stopTask = Task.Run(socketServer.Stop);
+            Assert.IsTrue(stopTask.Wait(Timeout));
+            releaseHandler.Set();
+
+            Assert.IsTrue(startTask.Wait(Timeout));
+            Assert.IsTrue(disconnected.Wait(Timeout));
+            Assert.IsTrue(client.Client.Poll(Timeout * 1000, SelectMode.SelectRead));
+            Assert.AreEqual(0, client.Client.Available);
+            await AssertListenerClosed((await startTask).GetIpEndPoint());
+            channel.Verify(c => c.Dispose(), Times.Once);
+        }
+        finally
+        {
+            releaseHandler.Set();
+            socketServer.Stop();
+            if (startTask is not null)
+            {
+                Assert.IsTrue(startTask.Wait(Timeout));
+            }
+        }
+    }
+
+    [TestMethod]
+    public async Task SocketServerShouldCloseAcceptedClientWhenChannelFactoryThrowsDuringStop()
+    {
+        var connectedClients = await CreateConnectedTcpClients();
+        using var client = connectedClients.Client;
+        using var acceptedClient = connectedClients.AcceptedClient;
+        using var factoryCalled = new ManualResetEventSlim(false);
+        var connected = false;
+        SocketServer? socketServer = null;
+        socketServer = new SocketServer(
+            _ =>
+            {
+                socketServer!.Stop();
+                factoryCalled.Set();
+                throw new InvalidOperationException();
+            },
+            _ => Task.FromResult(acceptedClient));
+        socketServer.Connected += (_, _) => connected = true;
+        try
+        {
+            var endpoint = socketServer.Start(DefaultConnection).GetIpEndPoint();
+
+            Assert.IsTrue(factoryCalled.Wait(Timeout));
+            Assert.IsTrue(client.Client.Poll(Timeout * 1000, SelectMode.SelectRead));
+            Assert.AreEqual(0, client.Client.Available);
+            await AssertListenerClosed(endpoint);
+            Assert.IsFalse(connected);
+        }
+        finally
+        {
+            socketServer.Stop();
+        }
+    }
+
+    [TestMethod]
+    public async Task SocketServerShouldNotPublishChannelWhenStoppedDuringChannelCreation()
+    {
+        var connectedClients = await CreateConnectedTcpClients();
+        using var client = connectedClients.Client;
+        using var acceptedClient = connectedClients.AcceptedClient;
+        using var factoryEntered = new ManualResetEventSlim(false);
+        using var releaseFactory = new ManualResetEventSlim(false);
+        var channel = new Mock<ICommunicationChannel>();
+        var connected = 0;
+        var socketServer = new SocketServer(
+            _ =>
+            {
+                factoryEntered.Set();
+                Assert.IsTrue(releaseFactory.Wait(Timeout * 2));
+                return channel.Object;
+            },
+            _ => Task.FromResult(acceptedClient));
+        socketServer.Connected += (_, _) => Interlocked.Increment(ref connected);
+        var startTask = Task.Run(() => socketServer.Start(DefaultConnection));
+        try
+        {
+            Assert.IsTrue(factoryEntered.Wait(Timeout));
+            socketServer.Stop();
+            releaseFactory.Set();
+
+            var endpoint = (await startTask).GetIpEndPoint();
+            Assert.IsTrue(client.Client.Poll(Timeout * 1000, SelectMode.SelectRead));
+            Assert.AreEqual(0, client.Client.Available);
+            await AssertListenerClosed(endpoint);
+            Assert.AreEqual(0, connected);
+            channel.Verify(c => c.Dispose(), Times.Once);
+        }
+        finally
+        {
+            releaseFactory.Set();
+            socketServer.Stop();
+            await startTask;
+        }
+    }
+
+    private static async Task AssertListenerClosed(IPEndPoint endpoint)
+    {
+        using var secondClient = new TcpClient();
+        await Assert.ThrowsExactlyAsync<SocketException>(() => secondClient.ConnectAsync(endpoint.Address, endpoint.Port));
+    }
+
+    private static async Task<(TcpClient Client, TcpClient AcceptedClient)> CreateConnectedTcpClients()
+    {
+        var client = new TcpClient();
+        var listener = new TcpListener(IPAddress.Loopback, 0);
+        listener.Start();
+        try
+        {
+            var accept = listener.AcceptTcpClientAsync();
+            await client.ConnectAsync(IPAddress.Loopback, ((IPEndPoint)listener.LocalEndpoint).Port);
+            return (client, await accept);
+        }
+        catch
+        {
+            client.Close();
+            throw;
+        }
+        finally
+        {
+            listener.Stop();
+        }
+    }
+}
 
 [TestClass]
 [Ignore("Flaky")]
