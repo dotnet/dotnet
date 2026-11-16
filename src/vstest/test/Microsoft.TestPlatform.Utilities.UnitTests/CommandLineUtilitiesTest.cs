@@ -31,7 +31,7 @@ public class CommandLineUtilitiesTest
     {
         CommandLineUtilities.SplitCommandLineIntoArguments(input, out var actual);
 
-        CollectionAssert.AreEqual(expected, actual);
+        Assert.AreSequenceEqual(expected, actual);
     }
 
 }

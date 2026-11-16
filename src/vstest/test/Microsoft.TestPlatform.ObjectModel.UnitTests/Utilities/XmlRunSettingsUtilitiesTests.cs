@@ -1197,7 +1197,7 @@ public class XmlRunSettingsUtilitiesTests
         var friendlyNameList = XmlRunSettingsUtilities.GetDataCollectorsFriendlyName(settingsXml).ToList();
 
         Assert.HasCount(2, friendlyNameList);
-        CollectionAssert.AreEqual(friendlyNameList, new List<string> { "DummyDataCollector1", "DummyDataCollector2" });
+        Assert.AreSequenceEqual(friendlyNameList, new List<string> { "DummyDataCollector1", "DummyDataCollector2" });
     }
 
     private static string ConvertOutOfProcDataCollectionSettingsToInProcDataCollectionSettings(string settings)

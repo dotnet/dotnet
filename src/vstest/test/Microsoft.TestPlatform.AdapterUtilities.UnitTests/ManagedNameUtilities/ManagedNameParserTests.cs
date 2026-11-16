@@ -39,7 +39,7 @@ public class ManagedNameParserTests
             var (method, arity, parameters) = Parse(expression);
             Assert.AreEqual(expectedMethod, method);
             Assert.AreEqual(expectedArity, arity);
-            CollectionAssert.AreEqual(expectedParams, parameters, "parameter comparison");
+            Assert.AreSequenceEqual(expectedParams, parameters, "parameter comparison");
         }
 
         Assert.AreEqual(("Method", 0, null), Parse("Method"));

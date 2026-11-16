@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="TestIdsReportIncomplete">
         <source>The test run did not complete, so the test id report '{0}' covers only the tests that were reported before it stopped. Do not use an incomplete report to migrate stored test ids.</source>
-        <target state="translated">Тестовый запуск не был завершен, поэтому отчет об идентификаторах тестов «{0}» охватывает только те тесты, о которых было сообщено до его остановки. Не используйте неполный отчет для переноса сохраненных идентификаторов тестов.</target>
+        <target state="translated">Тестовый запуск не выполнен, поэтому отчет с идентификатором теста "{0}" охватывает только те тесты, о которых было сообщено до его остановки. Не используйте невыполненный отчет для переноса сохраненных идентификаторов тестов.</target>
         <note />
       </trans-unit>
     </body>

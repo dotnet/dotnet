@@ -104,7 +104,7 @@ public class EventLogDataCollectorTests
         _eventLogDataCollector.Initialize(null, _mockDataCollectionEvents.Object, _mockDataCollectionSink, _mockDataCollectionLogger.Object, _dataCollectionEnvironmentContext);
 
         Assert.IsNotNull(_eventLogDataCollector.EventLogNames);
-        CollectionAssert.AreEqual(eventLogNames, _eventLogDataCollector.EventLogNames.ToList());
+        Assert.AreSequenceEqual(eventLogNames, _eventLogDataCollector.EventLogNames.ToList());
     }
 
     [TestMethod]
@@ -125,7 +125,7 @@ public class EventLogDataCollectorTests
         _eventLogDataCollector.Initialize(expectedXmlDoc.DocumentElement, _mockDataCollectionEvents.Object, _mockDataCollectionSink, _mockDataCollectionLogger.Object, _dataCollectionEnvironmentContext);
 
         Assert.IsNotNull(_eventLogDataCollector.EventLogNames);
-        CollectionAssert.AreEqual(eventLogNames, _eventLogDataCollector.EventLogNames.ToList());
+        Assert.AreSequenceEqual(eventLogNames, _eventLogDataCollector.EventLogNames.ToList());
     }
 
     [TestMethod]
@@ -141,7 +141,7 @@ public class EventLogDataCollectorTests
         _eventLogDataCollector.Initialize(null, _mockDataCollectionEvents.Object, _mockDataCollectionSink, _mockDataCollectionLogger.Object, _dataCollectionEnvironmentContext);
 
         Assert.IsNotNull(_eventLogDataCollector.EntryTypes);
-        CollectionAssert.AreEqual(entryTypes, _eventLogDataCollector.EntryTypes.ToList());
+        Assert.AreSequenceEqual(entryTypes, _eventLogDataCollector.EntryTypes.ToList());
     }
 
     [TestMethod]
@@ -157,7 +157,7 @@ public class EventLogDataCollectorTests
         _eventLogDataCollector.Initialize(expectedXmlDoc.DocumentElement, _mockDataCollectionEvents.Object, _mockDataCollectionSink, _mockDataCollectionLogger.Object, _dataCollectionEnvironmentContext);
 
         Assert.IsNotNull(_eventLogDataCollector.EntryTypes);
-        CollectionAssert.AreEqual(entryTypes, _eventLogDataCollector.EntryTypes.ToList());
+        Assert.AreSequenceEqual(entryTypes, _eventLogDataCollector.EntryTypes.ToList());
     }
 
     [TestMethod]
@@ -173,7 +173,7 @@ public class EventLogDataCollectorTests
         _eventLogDataCollector.Initialize(expectedXmlDoc.DocumentElement, _mockDataCollectionEvents.Object, _mockDataCollectionSink, _mockDataCollectionLogger.Object, _dataCollectionEnvironmentContext);
 
         Assert.IsNotNull(_eventLogDataCollector.EventSources);
-        CollectionAssert.AreEqual(eventSources, _eventLogDataCollector.EventSources.ToList());
+        Assert.AreSequenceEqual(eventSources, _eventLogDataCollector.EventSources.ToList());
     }
 
     [TestMethod]

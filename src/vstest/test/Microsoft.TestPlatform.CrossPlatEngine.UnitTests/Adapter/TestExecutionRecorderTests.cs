@@ -78,7 +78,7 @@ public class TestExecutionRecorderTests
         var attachments = _testRecorder.Attachments;
 
         Assert.IsNotNull(attachments);
-        CollectionAssert.AreEqual(attachmentSet, attachments);
+        Assert.AreSequenceEqual(attachmentSet, attachments);
     }
 
     [TestMethod]
@@ -95,7 +95,7 @@ public class TestExecutionRecorderTests
         var attachments = _testRecorder.Attachments;
 
         Assert.IsNotNull(attachments);
-        CollectionAssert.AreEqual(attachmentSet, attachments);
+        Assert.AreSequenceEqual(attachmentSet, attachments);
 
         var newAttachmentSet = new AttachmentSet(new Uri("attachment://median"), "mid");
         attachmentSet.Add(newAttachmentSet);
@@ -105,7 +105,7 @@ public class TestExecutionRecorderTests
         attachments = _testRecorder.Attachments;
 
         Assert.IsNotNull(attachments);
-        CollectionAssert.AreEqual(attachmentSet, attachments);
+        Assert.AreSequenceEqual(attachmentSet, attachments);
     }
 
     #region TestCaseResult caching tests.

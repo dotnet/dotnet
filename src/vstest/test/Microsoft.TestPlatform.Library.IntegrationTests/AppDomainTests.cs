@@ -20,7 +20,6 @@ namespace Microsoft.TestPlatform.Library.IntegrationTests;
 public class AppDomainTests : AcceptanceTestBase
 {
     [TestMethod]
-    [TestCategory("Windows-Review")]
     // AppDomains are .NET Framework only, run in .NET Framework runner and .NET runner
     [TestMatrix(testHost: NetFx)]
     public void RunTestExecutionWithDisableAppDomain(RunnerInfo runnerInfo)

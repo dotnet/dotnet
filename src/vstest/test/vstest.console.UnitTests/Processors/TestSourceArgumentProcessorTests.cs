@@ -96,7 +96,7 @@ public class TestSourceArgumentProcessorTests
         executor.Initialize(testFilePath);
 
         // Check if the testsource is present in the TestSources
-        Assert.IsTrue(options.Sources.Contains(testFilePath));
+        Assert.Contains(testFilePath, options.Sources);
     }
 
     [TestMethod]

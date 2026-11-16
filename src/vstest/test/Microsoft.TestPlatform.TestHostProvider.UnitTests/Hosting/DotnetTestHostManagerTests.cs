@@ -233,7 +233,7 @@ public class DotnetTestHostManagerTests
 
         var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(_testSource, environmentVariables, _defaultConnectionInfo);
 
-        Assert.AreEqual(environmentVariables, startInfo.EnvironmentVariables);
+        Assert.AreSame(environmentVariables, startInfo.EnvironmentVariables);
     }
 
     [TestMethod]
@@ -653,7 +653,7 @@ public class DotnetTestHostManagerTests
         _mockFileHelper.Setup(fh => fh.DirectoryExists(It.IsAny<string>())).Returns(false);
         var extensions = _dotnetHostManager.GetTestPlatformExtensions(new[] { $".{Path.DirectorySeparatorChar}foo.dll" }, []);
 
-        Assert.AreEqual(0, extensions.Count());
+        Assert.IsEmpty(extensions);
     }
 
     [TestMethod]
@@ -663,7 +663,7 @@ public class DotnetTestHostManagerTests
         _mockFileHelper.Setup(fh => fh.EnumerateFiles(It.IsAny<string>(), SearchOption.TopDirectoryOnly, It.IsAny<string[]>())).Returns(new[] { "foo.TestAdapter.dll" });
         var extensions = _dotnetHostManager.GetTestPlatformExtensions(new[] { $".{Path.DirectorySeparatorChar}foo.dll" }, []);
 
-        CollectionAssert.AreEqual(new[] { "foo.TestAdapter.dll" }, extensions.ToArray());
+        Assert.AreSequenceEqual(new[] { "foo.TestAdapter.dll" }, extensions.ToArray());
     }
 
     [TestMethod]
@@ -674,7 +674,7 @@ public class DotnetTestHostManagerTests
         _mockFileHelper.Setup(fh => fh.EnumerateFiles(It.IsAny<string>(), SearchOption.TopDirectoryOnly, It.IsAny<string[]>())).Returns(new[] { "foo.dll" });
         var extensions = _dotnetHostManager.GetTestPlatformExtensions(_testSource, []);
 
-        Assert.AreEqual(0, extensions.Count());
+        Assert.IsEmpty(extensions);
     }
 
     [TestMethod]
@@ -684,7 +684,7 @@ public class DotnetTestHostManagerTests
         _mockFileHelper.Setup(fh => fh.EnumerateFiles(It.IsAny<string>(), SearchOption.TopDirectoryOnly, It.IsAny<string[]>())).Returns(new[] { "foo.dll" });
         var extensions = _dotnetHostManager.GetTestPlatformExtensions(_testSource, ["abc.dataollector.dll"]);
 
-        Assert.AreEqual(0, extensions.Count());
+        Assert.IsEmpty(extensions);
     }
 
     [TestMethod]

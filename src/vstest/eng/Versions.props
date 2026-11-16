@@ -83,7 +83,7 @@
   <PropertyGroup Label="VSTest test settings">
     <!-- Name of the elements must be in sync with test\Microsoft.TestPlatform.TestUtilities\IntegrationTestBase.cs -->
     <AwesomeAssertionsVersion>8.1.0</AwesomeAssertionsVersion>
-    <MicrosoftTestingPlatformVersion>2.1.0</MicrosoftTestingPlatformVersion>
+    <MicrosoftTestingPlatformVersion>2.5.3</MicrosoftTestingPlatformVersion>
     <!-- Source-only MTP server-mode client (compiled into CrossPlatEngine), shipped by microsoft/testfx#10085. Restored from the dotnet-tools feed already configured in NuGet.config. -->
     <MicrosoftTestingPlatformServerModeClientSourcesVersion>2.4.0-preview.26410.1</MicrosoftTestingPlatformServerModeClientSourcesVersion>
     <MoqVersion>4.16.1</MoqVersion>
@@ -91,8 +91,8 @@
     <MicrosoftCodeCoverageVersion>18.3.0</MicrosoftCodeCoverageVersion>
     <!-- These versions are used for running unit tests, and running acceptance tests. They are also used as the default version for projects
     in TestAssets.slnx to allow running and debugging tests in that solution directly in VS without having to run them via AcceptanceTests. -->
-    <MSTestTestFrameworkVersion>4.1.0</MSTestTestFrameworkVersion>
-    <MSTestTestAdapterVersion>4.1.0</MSTestTestAdapterVersion>
+    <MSTestTestFrameworkVersion>4.5.3</MSTestTestFrameworkVersion>
+    <MSTestTestAdapterVersion>4.5.3</MSTestTestAdapterVersion>
     <XUnitFrameworkVersion>2.4.2</XUnitFrameworkVersion>
     <XUnitAdapterVersion>2.4.5</XUnitAdapterVersion>
     <XUnitConsoleRunnerVersion>2.4.2</XUnitConsoleRunnerVersion>
@@ -105,9 +105,9 @@
       These versions need to be "statically" readable because we read this file as xml in our build and tests.
     -->
     <!-- <MSTestFrameworkLatestVersion></MSTestFrameworkLatestVersion> is not here, because we don't build MSTest locally, so we don't have access to the latest version. -->
-    <MSTestFrameworkLatestPreviewVersion>[4.1.0]</MSTestFrameworkLatestPreviewVersion>
-    <MSTestFrameworkLatestStableVersion>[4.1.0]</MSTestFrameworkLatestStableVersion>
-    <MSTestFrameworkRecentStableVersion>[4.0.2]</MSTestFrameworkRecentStableVersion>
+    <MSTestFrameworkLatestPreviewVersion>[4.5.3]</MSTestFrameworkLatestPreviewVersion>
+    <MSTestFrameworkLatestStableVersion>[4.5.3]</MSTestFrameworkLatestStableVersion>
+    <MSTestFrameworkRecentStableVersion>[4.4.1]</MSTestFrameworkRecentStableVersion>
     <MSTestFrameworkMostDownloadedVersion>[2.2.10]</MSTestFrameworkMostDownloadedVersion>
     <MSTestFrameworkPreviousStableVersion>[3.11.1]</MSTestFrameworkPreviousStableVersion>
     <MSTestFrameworkLegacyStableVersion>[1.4.0]</MSTestFrameworkLegacyStableVersion>

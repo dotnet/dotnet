@@ -121,7 +121,7 @@ public class RunTestsWithSourcesTests
         var executorUris = _runTestsInstance.CallGetExecutorUriExtensionMap(new Mock<IFrameworkHandle>().Object, new RunContext());
 
         Assert.IsNotNull(executorUris);
-        Assert.AreEqual(0, executorUris.Count());
+        Assert.IsEmpty(executorUris);
     }
 
     [TestMethod]
@@ -147,8 +147,9 @@ public class RunTestsWithSourcesTests
             new Mock<IFrameworkHandle>().Object, new RunContext());
 
         Assert.IsNotNull(executorUris);
-        CollectionAssert.Contains(executorUris.ToArray(),
-            new Tuple<Uri, string>(new Uri("executor://RunTestWithSourcesDiscoverer"), assemblyLocation));
+        Assert.Contains(
+            new Tuple<Uri, string>(new Uri("executor://RunTestWithSourcesDiscoverer"), assemblyLocation),
+            executorUris);
     }
 
     [TestMethod]
@@ -181,7 +182,7 @@ public class RunTestsWithSourcesTests
         _runTestsInstance.CallInvokeExecutor(extension, executorUriExtensionTuple, null, null);
 
         Assert.IsNotNull(receivedSources);
-        CollectionAssert.AreEqual(new List<string> { "s1.dll " }, receivedSources.ToList());
+        Assert.AreSequenceEqual(new List<string> { "s1.dll " }, receivedSources.ToList());
     }
 
     [TestMethod]

@@ -91,7 +91,7 @@ public class XxHash128CompatibilityTests
         _ = idProvider.GetId();
         byte[] after = idProvider.GetHash();
 
-        CollectionAssert.AreEqual(before, after, "GetId() modified the hash returned by GetHash().");
+        Assert.AreSequenceEqual(before, after, "GetId() modified the hash returned by GetHash().");
     }
 
     [TestMethod]
