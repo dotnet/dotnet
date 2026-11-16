@@ -12,6 +12,18 @@ on:
   schedule: daily
   workflow_dispatch:
 
+# Fork pull-request review events have a read-only token and cannot run Copilot.
+if: >
+  github.event_name != 'pull_request_review'
+  || github.event.pull_request.head.repo.full_name == github.repository
+
+# The generated group is keyed by PR number with cancel-in-progress, so a skipped
+# fork review would still cancel an active /iterate run for the same PR. Give those
+# events (and bot-triggered runs, as in the generated group) a run-specific group.
+concurrency:
+  group: "gh-aw-${{ github.workflow }}-${{ contains(github.actor, '[bot]') && github.run_id || (github.event_name == 'pull_request_review' && github.event.pull_request.head.repo.full_name != github.repository) && github.run_id || github.event.issue.number || github.event.pull_request.number || github.run_id }}"
+  cancel-in-progress: true
+
 permissions:
   contents: read
   models: read
@@ -41,7 +53,7 @@ safe-outputs:
   # Prefer an org-owned GitHub App: it mints a short-lived, auto-revoked token
   # scoped to this job and (unlike GITHUB_TOKEN) triggers CI on pushed commits.
   # ignore-if-missing lets the workflow fall back to GITHUB_TOKEN when the App
-  # secrets are absent, so it still runs without org-admin setup and on forks.
+  # secrets are absent, so it still runs without org-admin setup.
   github-app:
     client-id: ${{ vars.APP_ID }}
     private-key: ${{ secrets.APP_PRIVATE_KEY }}
