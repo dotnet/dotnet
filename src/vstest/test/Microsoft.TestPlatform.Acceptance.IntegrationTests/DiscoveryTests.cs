@@ -111,7 +111,7 @@ public class DiscoveryTests : AcceptanceTestBase
             var expected = extensionsToVerify[extension];
             var actual = TypesToLoadUtilities.GetTypesToLoad(assembly).Select(i => i.FullName).ToArray();
 
-            CollectionAssert.AreEquivalent(expected, actual, $"Specified types using TypesToLoadAttribute in \"{extension}\" assembly doesn't match the expected.");
+            Assert.AreSequenceEqual(expected, actual, SequenceOrder.InAnyOrder, $"Specified types using TypesToLoadAttribute in \"{extension}\" assembly doesn't match the expected.");
         }
     }
 

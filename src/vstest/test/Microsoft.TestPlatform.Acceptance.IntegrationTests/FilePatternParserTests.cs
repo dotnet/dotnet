@@ -57,6 +57,7 @@ public class FilePatternParserTests : AcceptanceTestBase
 
     [TestMethod]
     [TestMatrix(testHost: Net)]
+    [ResourceLock(WellKnownResources.CurrentDirectory)]
     public void WildCardPatternShouldCorrectlyWorkForRelativeAssemblyPath(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

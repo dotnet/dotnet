@@ -60,7 +60,7 @@ public class SocketClientTests : SocketTestsBase, IDisposable
     }
 
     [TestMethod]
-    [Ignore]
+    [Ignore("Disabled long ago; original reason was not recorded.")]
     public void SocketClientStartShouldThrowIfServerIsNotListening()
     {
         var dummyConnectionInfo = "5345";

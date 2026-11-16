@@ -11,13 +11,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.TestPlatform.CommunicationUtilities.PlatformTests;
 
-[TestClass]
 public abstract class SocketTestsBase
 {
     protected const string Dummydata = "Dummy Data";
     protected const int Timeout = 10 * 1000;
 
-    public TestContext TestContext { get; set; }
+    public TestContext TestContext { get; set; } = null!;
 
     protected abstract TcpClient? Client { get; }
 

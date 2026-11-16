@@ -28,7 +28,7 @@ public class CustomStringArrayConverterTests
 
         Assert.IsNotNull(data);
         Assert.HasCount(2, data);
-        CollectionAssert.AreEqual(new[] { "val2", "val1" }, data);
+        Assert.AreSequenceEqual(new[] { "val2", "val1" }, data);
     }
 
     [TestMethod]

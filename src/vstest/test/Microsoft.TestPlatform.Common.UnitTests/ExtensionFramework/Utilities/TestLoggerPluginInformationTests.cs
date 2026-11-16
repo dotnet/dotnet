@@ -52,7 +52,7 @@ public class TestLoggerPluginInformationTests
     {
         _testPluginInformation = new TestLoggerPluginInformation(typeof(DummyTestExtensionWithFriendlyName));
 
-        CollectionAssert.AreEqual(new object[] { DefaultExtensionUri, DefaultFriendlyName }, _testPluginInformation.Metadata.ToArray());
+        Assert.AreSequenceEqual(new object[] { DefaultExtensionUri, DefaultFriendlyName }, _testPluginInformation.Metadata.ToArray());
     }
 
     #region Implementation

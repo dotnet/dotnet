@@ -140,7 +140,7 @@ public class ListTestsArgumentProcessorTests
 
         executor.Initialize(_dummyTestFilePath);
 
-        Assert.IsTrue(Enumerable.Contains(_commandLineOptions.Sources, _dummyTestFilePath));
+        Assert.Contains(_dummyTestFilePath, _commandLineOptions.Sources);
     }
 
     [TestMethod]

@@ -41,6 +41,7 @@ public class SerializationCompatibilityTests : AcceptanceTestBase
     // Compatibility matrix includes the .NET Framework runner/testhost, which is not available on Linux/macOS.
     [TestCategory("Windows-Review")]
     [CompatibilityMatrix(CompatScenario.VSTestConsole)]
+    [ResourceLock(WellKnownResources.EnvironmentVariables)]
     public void DiscoverTests_LatestRunner_WithOlderTesthosts(RunnerInfo runnerInfo)
     {
 #pragma warning disable RS0030 // Do not use banned APIs

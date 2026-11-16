@@ -1021,7 +1021,7 @@ public class ConsoleLoggerTests
         injectedOptions.AddSource(testFilePath);
 
         // The separate instance carries no sources, so a discovered count of 1 can only come from the injected instance.
-        Assert.AreEqual(0, _commandLineOptions.Sources.Count());
+        Assert.IsEmpty(_commandLineOptions.Sources);
 
         var consoleLogger = new ConsoleLogger(_mockOutput.Object, _mockProgressIndicator.Object, _mockFeatureFlag.Object, injectedOptions);
 

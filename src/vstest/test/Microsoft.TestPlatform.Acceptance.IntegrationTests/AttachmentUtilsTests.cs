@@ -58,9 +58,10 @@ public class AttachmentUtilsTests
 
         var copies = AttachmentUtils.CopyAttachments(new[] { logs }, destination, _log.Add);
 
-        CollectionAssert.AreEquivalent(
+        Assert.AreSequenceEqual(
             new[] { Path.Combine(destination, "log.txt"), Path.Combine(destination, "nested", "log.host.txt") },
             copies,
+            SequenceOrder.InAnyOrder,
             Logged());
         Assert.AreEqual("runner", File.ReadAllText(Path.Combine(destination, "log.txt")));
         Assert.AreEqual("host", File.ReadAllText(Path.Combine(destination, "nested", "log.host.txt")));
@@ -120,7 +121,7 @@ public class AttachmentUtilsTests
         var copies = AttachmentUtils.CopyAttachments(new[] { first, second }, destination, _log.Add);
 
         Assert.HasCount(2, copies, Logged());
-        CollectionAssert.AreEquivalent(new[] { "first", "second" }, copies.Select(File.ReadAllText).ToList());
+        Assert.AreSequenceEqual(new[] { "first", "second" }, copies.Select(File.ReadAllText).ToList(), SequenceOrder.InAnyOrder);
     }
 
     private string Logged() => string.Join(Environment.NewLine, _log);

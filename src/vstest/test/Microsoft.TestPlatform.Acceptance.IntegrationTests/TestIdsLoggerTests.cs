@@ -105,7 +105,7 @@ public class TestIdsLoggerTests : AcceptanceTestBase
             .OrderBy(m => m, StringComparer.Ordinal)
             .ToList();
 
-        CollectionAssert.AreEqual(
+        Assert.AreSequenceEqual(
             mappingBefore,
             mappingAfter,
             "The old to new mapping must not depend on which algorithm the reporting run used.");
@@ -159,14 +159,15 @@ public class TestIdsLoggerTests : AcceptanceTestBase
         // suite they only want the ids of is a needless cost.
         var rows = ReadReport(reports[0]);
         Assert.HasCount(ExpectedTestCount, rows, "Discovery alone should report every test.");
-        CollectionAssert.AreEquivalent(
+        Assert.AreSequenceEqual(
             new[]
             {
                 "SimpleTestProject4.UnitTest1.PassingTest",
                 "SimpleTestProject4.UnitTest1.FailingTest",
                 "SimpleTestProject4.UnitTest1.AnotherPassingTest",
             },
-            rows.Select(r => r.FullyQualifiedName).ToList());
+            rows.Select(r => r.FullyQualifiedName).ToList(),
+            SequenceOrder.InAnyOrder);
 
         // The whole row, not just its identity: what makes discovery worth documenting is that it
         // produces the mapping itself, and a report of well formed rows with empty ids would satisfy
@@ -209,9 +210,10 @@ public class TestIdsLoggerTests : AcceptanceTestBase
         // told apart only by display name, which is the case a two run join cannot disambiguate and
         // the reason each one has to survive deduplication as a row of its own.
         const string parameterized = "DataDrivenTestProject.DataDrivenTests.ParameterizedTest";
-        CollectionAssert.AreEquivalent(
+        Assert.AreSequenceEqual(
             new[] { parameterized, parameterized, parameterized, "DataDrivenTestProject.DataDrivenTests.SimpleTest" },
             rows.Select(r => r.FullyQualifiedName).ToList(),
+            SequenceOrder.InAnyOrder,
             "Expected three rows under the shared data driven name and one for the plain test.");
 
         Assert.HasCount(

@@ -53,7 +53,7 @@ public class DataCollectorInformationTests
         _dataCollectorInfo.InitializeDataCollector(_telemetryReporter.Object);
         _dataCollectorInfo.SetTestExecutionEnvironmentVariables();
 
-        CollectionAssert.AreEqual(_envVarList, _dataCollectorInfo.TestExecutionEnvironmentVariables!.ToList());
+        Assert.AreSequenceEqual(_envVarList, _dataCollectorInfo.TestExecutionEnvironmentVariables!.ToList());
     }
 
     [TestMethod]

@@ -88,7 +88,7 @@ public class AppDomainEngineInvokerTests
 
         var startupElements = doc.Descendants("startup");
 
-        Assert.AreEqual(1, startupElements.Count(), "Merged config must have only one 'startup' element");
+        Assert.HasCount(1, startupElements, "Merged config must have only one 'startup' element");
 
         var supportedRuntimeXml = startupElements.First().Descendants("supportedRuntime").FirstOrDefault()?.ToString();
         Assert.AreEqual(@"<supportedRuntime version=""v4.0"" sku="".NETFramework,Version=v4.0"" />", supportedRuntimeXml,
@@ -106,11 +106,11 @@ public class AppDomainEngineInvokerTests
 
         var assemblyBindingXName = XName.Get("assemblyBinding", XmlNamespace);
         var mergedDocAssemblyBindingNodes = runtimeEle.Descendants(assemblyBindingXName);
-        Assert.AreEqual(1, mergedDocAssemblyBindingNodes.Count(), "AssemblyRedirect of TestHost must be present.");
+        Assert.HasCount(1, mergedDocAssemblyBindingNodes, "AssemblyRedirect of TestHost must be present.");
 
         var dependentAssemblyXName = XName.Get("dependentAssembly", XmlNamespace);
         var dependentAssemblyNodes = mergedDocAssemblyBindingNodes.First().Descendants(dependentAssemblyXName);
-        Assert.AreEqual(1, dependentAssemblyNodes.Count(), "AssemblyRedirect of TestHost must be present.");
+        Assert.HasCount(1, dependentAssemblyNodes, "AssemblyRedirect of TestHost must be present.");
         Assert.Contains("Microsoft.VisualStudio.TestPlatform.ObjectModel", dependentAssemblyNodes.First().ToString(), "Correct AssemblyRedirect must be present.");
 
         var diagEle = doc.Descendants("system.diagnostics").FirstOrDefault();
@@ -140,20 +140,20 @@ public class AppDomainEngineInvokerTests
 
         var runtimeEle = doc.Descendants("runtime").FirstOrDefault();
 
-        Assert.AreEqual(0, runtimeEle.Descendants("legacyUnhandledExceptionPolicy").Count(), "legacyUnhandledExceptionPolicy element must NOT be present.");
+        Assert.IsEmpty(runtimeEle.Descendants("legacyUnhandledExceptionPolicy"), "legacyUnhandledExceptionPolicy element must NOT be present.");
 
         var probingXName = XName.Get("probing", XmlNamespace);
         var probingEleNodes = runtimeEle.Descendants(probingXName);
-        Assert.AreEqual(1, probingEleNodes.Count(), "Only one Probing element of UserConfig must be present.");
+        Assert.HasCount(1, probingEleNodes, "Only one Probing element of UserConfig must be present.");
         Assert.AreEqual(@"<probing privatePath=""TestProbing"" xmlns=""urn:schemas-microsoft-com:asm.v1"" />", probingEleNodes.First().ToString(), "Probing element must be correct.");
 
         var assemblyBindingXName = XName.Get("assemblyBinding", XmlNamespace);
         var mergedDocAssemblyBindingNodes = runtimeEle.Descendants(assemblyBindingXName);
-        Assert.AreEqual(1, mergedDocAssemblyBindingNodes.Count(), "AssemblyBinding Ele must be present.");
+        Assert.HasCount(1, mergedDocAssemblyBindingNodes, "AssemblyBinding Ele must be present.");
 
         var dependentAssemblyXName = XName.Get("dependentAssembly", XmlNamespace);
         var dependentAssemblyNodes = mergedDocAssemblyBindingNodes.First().Descendants(dependentAssemblyXName);
-        Assert.AreEqual(2, dependentAssemblyNodes.Count(), "AssemblyBinding of TestHost must be present.");
+        Assert.HasCount(2, dependentAssemblyNodes, "AssemblyBinding of TestHost must be present.");
 
         Assert.Contains("Microsoft.VisualStudio.UnitTests", dependentAssemblyNodes.ElementAt(0).ToString(), "First AssemblyRedirect must be of UserConfig.");
         Assert.Contains("Microsoft.VisualStudio.TestPlatform.ObjectModel", dependentAssemblyNodes.ElementAt(1).ToString(), "Second AssemblyRedirect must be from TestHost Node.");
@@ -189,12 +189,12 @@ public class AppDomainEngineInvokerTests
         Assert.IsNotNull(appSettingsEle, "AppSettings element must be retained from user config.");
 
         var diagAddNodes = diagEle.Descendants("add");
-        Assert.AreEqual(1, diagAddNodes.Count(), "Only switches from user config should be present.");
+        Assert.HasCount(1, diagAddNodes, "Only switches from user config should be present.");
         Assert.AreEqual(@"<add name=""SampleSwitch"" value=""1"" />", diagAddNodes.First().ToString(),
             "Correct Switch must be merged.");
 
         var appSettingsAddNodes = appSettingsEle.Descendants("add");
-        Assert.AreEqual(1, appSettingsAddNodes.Count(), "Only switches from user config should be present.");
+        Assert.HasCount(1, appSettingsAddNodes, "Only switches from user config should be present.");
         Assert.AreEqual(@"<add key=""SampleKey"" value=""SampleValue"" />", appSettingsAddNodes.First().ToString(),
             "Correct Switch must be merged.");
     }

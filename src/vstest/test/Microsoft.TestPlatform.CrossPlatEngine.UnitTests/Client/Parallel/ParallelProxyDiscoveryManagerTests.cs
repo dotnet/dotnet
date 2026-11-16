@@ -327,7 +327,7 @@ public class ParallelProxyDiscoveryManagerTests
 
         Assert.IsTrue(_discoveryCompleted.Wait(Timeout10Seconds), "Test discovery not completed.");
         Assert.HasCount(_sources.Count, _processedSources, "All Sources must be processed.");
-        CollectionAssert.AreEquivalent(_sources, _dataAggregator.GetSourcesWithStatus(DiscoveryStatus.FullyDiscovered));
+        Assert.AreSequenceEqual(_sources, _dataAggregator.GetSourcesWithStatus(DiscoveryStatus.FullyDiscovered), SequenceOrder.InAnyOrder);
         Assert.IsEmpty(_dataAggregator.GetSourcesWithStatus(DiscoveryStatus.PartiallyDiscovered));
         Assert.IsEmpty(_dataAggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered));
     }

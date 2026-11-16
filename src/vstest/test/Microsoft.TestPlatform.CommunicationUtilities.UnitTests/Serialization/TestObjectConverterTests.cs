@@ -142,7 +142,7 @@ public class TestObjectConverterTests
         Assert.IsNotNull(test);
         var prop15 = TestProperty.Find("15");
         Assert.IsNotNull(prop15);
-        CollectionAssert.AreEqual(new[] { "val1", "val2" }, (string[])test.GetPropertyValue(prop15)!);
+        Assert.AreSequenceEqual(new[] { "val1", "val2" }, (string[])test.GetPropertyValue(prop15)!);
     }
 
     [TestMethod]

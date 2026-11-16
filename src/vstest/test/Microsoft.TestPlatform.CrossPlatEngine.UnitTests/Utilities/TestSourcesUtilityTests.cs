@@ -28,7 +28,7 @@ public class TestSourcesUtilityTests
         };
 
         var sources = TestSourcesUtility.GetSources(adapterSourceMap)!;
-        Assert.AreEqual(5, sources.Count());
+        Assert.HasCount(5, sources);
         Assert.Contains("source1.dll", sources);
         Assert.Contains("source2.dll", sources);
         Assert.Contains("source3.dll", sources);
@@ -43,7 +43,7 @@ public class TestSourcesUtilityTests
             new("test3", new Uri(path), "source1.dll")};
 
         var sources = TestSourcesUtility.GetSources(tests);
-        Assert.AreEqual(2, sources.Count());
+        Assert.HasCount(2, sources);
         Assert.Contains("source1.dll", sources);
         Assert.Contains("source2.dll", sources);
     }

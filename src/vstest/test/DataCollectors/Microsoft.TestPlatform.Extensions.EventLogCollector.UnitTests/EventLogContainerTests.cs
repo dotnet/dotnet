@@ -13,7 +13,7 @@ using Moq;
 namespace Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests;
 
 [TestClass]
-[Ignore] // "TODO: Gets stuck when running with other tests."
+[Ignore("Gets stuck when running with other tests.")]
 public class EventLogContainerTests
 {
     private readonly HashSet<string> _eventSources;
@@ -53,7 +53,7 @@ public class EventLogContainerTests
     }
 
     [TestMethod]
-    [Ignore]
+    [Ignore("Gets stuck.")]
     public void OnEventLogEntryWrittenShouldAddLogs()
     {
         EventLog.WriteEntry("Application", "Application", EventLogEntryType.Error, 234);
@@ -73,7 +73,7 @@ public class EventLogContainerTests
     }
 
     [TestMethod]
-    [Ignore] // "TODO: gets stuck"
+    [Ignore("Gets stuck.")]
     public void OnEventLogEntryWrittenShouldFilterLogsBasedOnEventTypeAndEventSource()
     {
         _entryTypes.Add(EventLogEntryType.Warning);
