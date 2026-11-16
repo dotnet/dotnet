@@ -77,11 +77,25 @@ public class QuerySqlGenerator(QuerySqlGeneratorDependencies dependencies) : Exp
                 VisitDelete(deleteExpression);
                 break;
 
+            case MergeExpression mergeExpression:
+                GenerateTagsHeaderComment(mergeExpression.Tags);
+                VisitMerge(mergeExpression);
+                break;
+
             default:
                 base.Visit(queryExpression);
                 break;
         }
     }
+
+    /// <summary>
+    ///     Generates SQL for a <see cref="MergeExpression" /> (an upsert). The base implementation throws; providers that support merge
+    ///     override this to emit provider-specific SQL.
+    /// </summary>
+    /// <param name="mergeExpression">The merge expression to generate SQL for.</param>
+    [Experimental(EFDiagnostics.ExecuteMergeExperimental)]
+    protected virtual void VisitMerge(MergeExpression mergeExpression)
+        => throw new InvalidOperationException(RelationalStrings.ExecuteMergeNotSupportedByProvider);
 
     /// <summary>
     ///     The default alias separator.
@@ -120,6 +134,7 @@ public class QuerySqlGenerator(QuerySqlGeneratorDependencies dependencies) : Exp
             AggregateFunctionExpression e => VisitAggregateFunction(e),
             AtTimeZoneExpression e => VisitAtTimeZone(e),
             CaseExpression e => VisitCase(e),
+            ClrTypeChangeExpression e => VisitClrTypeChange(e),
             CollateExpression e => VisitCollate(e),
             ColumnExpression e => VisitColumn(e),
             CrossApplyExpression e => VisitCrossApply(e),
@@ -163,6 +178,18 @@ public class QuerySqlGenerator(QuerySqlGeneratorDependencies dependencies) : Exp
             _ => throw new InvalidOperationException(
                 RelationalStrings.UnhandledExpressionInVisitor(expression, expression.GetType(), nameof(QuerySqlGenerator))),
         };
+
+    /// <summary>
+    ///     Generates SQL for a CLR type change expression. The type change has no SQL representation,
+    ///     so only the operand is generated.
+    /// </summary>
+    /// <param name="clrTypeChangeExpression">The expression for which to generate SQL.</param>
+    protected virtual Expression VisitClrTypeChange(ClrTypeChangeExpression clrTypeChangeExpression)
+    {
+        Visit(clrTypeChangeExpression.Operand);
+
+        return clrTypeChangeExpression;
+    }
 
     /// <summary>
     ///     Generates SQL for an arbitrary fragment.
@@ -362,8 +389,15 @@ public class QuerySqlGenerator(QuerySqlGeneratorDependencies dependencies) : Exp
     {
         Visit(projectionExpression.Expression);
 
+        // ClrTypeChangeExpression doesn't affect the generated SQL, so look through it when checking whether the alias is redundant
+        var projectedExpression = projectionExpression.Expression;
+        while (projectedExpression is ClrTypeChangeExpression clrTypeChangeExpression)
+        {
+            projectedExpression = clrTypeChangeExpression.Operand;
+        }
+
         if (projectionExpression.Alias != string.Empty
-            && !(projectionExpression.Expression is ColumnExpression column && column.Name == projectionExpression.Alias))
+            && !(projectedExpression is ColumnExpression column && column.Name == projectionExpression.Alias))
         {
             _relationalCommandBuilder
                 .Append(AliasSeparator)
@@ -1768,6 +1802,11 @@ public class QuerySqlGenerator(QuerySqlGeneratorDependencies dependencies) : Exp
     /// <returns>A bool value indicating that parenthesis is required or not. </returns>
     protected virtual bool RequiresParentheses(SqlExpression outerExpression, SqlExpression innerExpression)
     {
+        while (innerExpression is ClrTypeChangeExpression clrTypeChangeExpression)
+        {
+            innerExpression = clrTypeChangeExpression.Operand;
+        }
+
         int outerPrecedence, innerPrecedence;
 
         // Convert is rendered as a function (CAST()) and not as an operator, so we never need to add parentheses around the inner

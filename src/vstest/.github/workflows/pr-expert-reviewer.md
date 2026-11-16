@@ -212,7 +212,7 @@ The VSTest test platform has unique architectural concerns:
 
 ### Multi-TFM Correctness
 
-- vstest targets `net462`, `netstandard2.0`, `net8.0`, and later
+- vstest targets `net462`, `netstandard2.0`, `net10.0`, and later
 - `Assert.Contains(expected, actual)` — first param is the needle (substring), second is the haystack. This is opposite of old `StringAssert.Contains`.
 - Test behavior can differ between TFMs — especially around assembly loading and binding redirects
 

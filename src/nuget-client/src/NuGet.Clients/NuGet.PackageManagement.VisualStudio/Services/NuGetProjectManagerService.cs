@@ -262,7 +262,11 @@ namespace NuGet.PackageManagement.VisualStudio
 
                         IEnumerable<NuGetFramework>? frameworks = packageSpecs
                             .SelectMany(spec => spec.TargetFrameworks)
-                            .Select(f => f.FrameworkName);
+                            .Select(f =>
+                            {
+                                Assumes.NotNull(f.FrameworkName);
+                                return f.FrameworkName;
+                            });
 
                         if (!(frameworks is null))
                         {

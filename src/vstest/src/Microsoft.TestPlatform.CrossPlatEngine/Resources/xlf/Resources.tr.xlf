@@ -184,7 +184,7 @@
       </trans-unit>
       <trans-unit id="MtpTestCaseMissingNodeUid">
         <source>Cannot run test '{0}' because it does not carry a Microsoft.Testing.Platform node identifier. The test case was not produced by a Microsoft.Testing.Platform discovery, or the identifier was lost in transit. Re-run discovery for this project, or run without a test selection.</source>
-        <target state="new">Cannot run test '{0}' because it does not carry a Microsoft.Testing.Platform node identifier. The test case was not produced by a Microsoft.Testing.Platform discovery, or the identifier was lost in transit. Re-run discovery for this project, or run without a test selection.</target>
+        <target state="translated">Microsoft.Testing.Platform düğüm tanımlayıcısı içermediğinden '{0}' testi çalıştırılamıyor. Test çalışması bir Microsoft.Testing.Platform keşfi tarafından oluşturulmadı veya tanımlayıcı aktarım sırasında kayboldu. Bu proje için keşfi yeniden çalıştırın veya test seçimi yapmadan çalıştırın.</target>
         <note />
       </trans-unit>
       <trans-unit id="SkippingSource">

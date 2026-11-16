@@ -933,7 +933,7 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.LogMessages.Should().HaveCount(1);
             result.LockFile.LogMessages[0].Level.Should().Be(LogLevel.Warning);
             result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1701);
-            // result.LockFile.LogMessages[0].TargetGraphs.Should().HaveCount(2); https://github.com/NuGet/Home/issues/14815
+            result.LockFile.LogMessages[0].TargetGraphs.Should().HaveCount(2);
         }
 
         [Theory]

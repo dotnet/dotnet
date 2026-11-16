@@ -106,13 +106,8 @@ namespace NuGet.Packaging.Signing
 
             var summary = base.Verify(timestamp, settings, fingerprintAlgorithm, certificateExtraStore);
 
-            return new SignatureVerificationSummary(
-                summary.SignatureType,
-                summary.Status,
-                summary.Flags,
-                summary.Timestamp,
-                summary.ExpirationTime,
-                issues.Concat(summary.Issues));
+            summary.Issues = issues.Concat(summary.Issues);
+            return summary;
         }
 
         internal bool IsRelated(PrimarySignature primarySignature)

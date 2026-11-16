@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="TestIdsReportFile">
         <source>Test id report file : {0}</source>
-        <target state="new">Test id report file : {0}</target>
+        <target state="translated">테스트 ID 보고서 파일: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestIdsLoggerWriteFailed">
         <source>Failed to write the test id report to '{0}'. {1}</source>
-        <target state="new">Failed to write the test id report to '{0}'. {1}</target>
+        <target state="translated">테스트 ID 보고서를 '{0}'에 저장하지 못했습니다. {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestIdsReportIncomplete">
         <source>The test run did not complete, so the test id report '{0}' covers only the tests that were reported before it stopped. Do not use an incomplete report to migrate stored test ids.</source>
-        <target state="new">The test run did not complete, so the test id report '{0}' covers only the tests that were reported before it stopped. Do not use an incomplete report to migrate stored test ids.</target>
+        <target state="translated">테스트 실행이 완료되지 않았으므로 테스트 ID 보고서 '{0}'에는 중지되기 전에 보고된 테스트만 포함됩니다. 저장된 테스트 ID를 마이그레이션할 때는 불완전한 보고서를 사용하지 마세요.</target>
         <note />
       </trans-unit>
     </body>

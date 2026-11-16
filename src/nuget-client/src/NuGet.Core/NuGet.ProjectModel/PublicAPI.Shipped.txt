@@ -30,16 +30,16 @@ NuGet.ProjectModel.BuildAction.Equals(NuGet.ProjectModel.BuildAction other) -> b
 NuGet.ProjectModel.BuildAction.IsKnown.get -> bool
 NuGet.ProjectModel.BuildAction.Value.get -> string?
 NuGet.ProjectModel.CacheFile
-~NuGet.ProjectModel.CacheFile.CacheFile(string dgSpecHash) -> void
-~NuGet.ProjectModel.CacheFile.DgSpecHash.get -> string
-~NuGet.ProjectModel.CacheFile.Equals(NuGet.ProjectModel.CacheFile other) -> bool
-~NuGet.ProjectModel.CacheFile.ExpectedPackageFilePaths.get -> System.Collections.Generic.IList<string>
-~NuGet.ProjectModel.CacheFile.ExpectedPackageFilePaths.set -> void
+NuGet.ProjectModel.CacheFile.CacheFile(string? dgSpecHash) -> void
+NuGet.ProjectModel.CacheFile.DgSpecHash.get -> string?
+NuGet.ProjectModel.CacheFile.Equals(NuGet.ProjectModel.CacheFile? other) -> bool
+NuGet.ProjectModel.CacheFile.ExpectedPackageFilePaths.get -> System.Collections.Generic.IList<string!>?
+NuGet.ProjectModel.CacheFile.ExpectedPackageFilePaths.set -> void
 NuGet.ProjectModel.CacheFile.IsValid.get -> bool
-~NuGet.ProjectModel.CacheFile.LogMessages.get -> System.Collections.Generic.IList<NuGet.ProjectModel.IAssetsLogMessage>
-~NuGet.ProjectModel.CacheFile.LogMessages.set -> void
-~NuGet.ProjectModel.CacheFile.ProjectFilePath.get -> string
-~NuGet.ProjectModel.CacheFile.ProjectFilePath.set -> void
+NuGet.ProjectModel.CacheFile.LogMessages.get -> System.Collections.Generic.IList<NuGet.ProjectModel.IAssetsLogMessage!>?
+NuGet.ProjectModel.CacheFile.LogMessages.set -> void
+NuGet.ProjectModel.CacheFile.ProjectFilePath.get -> string?
+NuGet.ProjectModel.CacheFile.ProjectFilePath.set -> void
 NuGet.ProjectModel.CacheFile.Success.get -> bool
 NuGet.ProjectModel.CacheFile.Success.set -> void
 NuGet.ProjectModel.CacheFile.Version.get -> int
@@ -70,17 +70,17 @@ NuGet.ProjectModel.DependencyGraphSpec.DependencyGraphSpec(bool isReadOnly) -> v
 ~NuGet.ProjectModel.DependencyGraphSpec.WithoutRestores() -> NuGet.ProjectModel.DependencyGraphSpec
 ~NuGet.ProjectModel.DependencyGraphSpec.WithoutTools() -> NuGet.ProjectModel.DependencyGraphSpec
 NuGet.ProjectModel.ExternalProjectReference
-~NuGet.ProjectModel.ExternalProjectReference.CompareTo(NuGet.ProjectModel.ExternalProjectReference other) -> int
-~NuGet.ProjectModel.ExternalProjectReference.Equals(NuGet.ProjectModel.ExternalProjectReference other) -> bool
-~NuGet.ProjectModel.ExternalProjectReference.ExternalProjectReference(string uniqueName, NuGet.ProjectModel.PackageSpec packageSpec, string msbuildProjectPath, System.Collections.Generic.IEnumerable<string> projectReferences) -> void
-~NuGet.ProjectModel.ExternalProjectReference.ExternalProjectReference(string uniqueName, string packageSpecProjectName, string packageSpecPath, string msbuildProjectPath, System.Collections.Generic.IEnumerable<string> projectReferences) -> void
-~NuGet.ProjectModel.ExternalProjectReference.ExternalProjectReferences.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.ProjectModel.ExternalProjectReference.MSBuildProjectPath.get -> string
-~NuGet.ProjectModel.ExternalProjectReference.PackageSpec.get -> NuGet.ProjectModel.PackageSpec
-~NuGet.ProjectModel.ExternalProjectReference.PackageSpecProjectName.get -> string
-~NuGet.ProjectModel.ExternalProjectReference.ProjectJsonPath.get -> string
-~NuGet.ProjectModel.ExternalProjectReference.ProjectName.get -> string
-~NuGet.ProjectModel.ExternalProjectReference.UniqueName.get -> string
+NuGet.ProjectModel.ExternalProjectReference.CompareTo(NuGet.ProjectModel.ExternalProjectReference? other) -> int
+NuGet.ProjectModel.ExternalProjectReference.Equals(NuGet.ProjectModel.ExternalProjectReference? other) -> bool
+NuGet.ProjectModel.ExternalProjectReference.ExternalProjectReference(string! uniqueName, NuGet.ProjectModel.PackageSpec? packageSpec, string! msbuildProjectPath, System.Collections.Generic.IEnumerable<string!>! projectReferences) -> void
+NuGet.ProjectModel.ExternalProjectReference.ExternalProjectReference(string! uniqueName, string? packageSpecProjectName, string? packageSpecPath, string? msbuildProjectPath, System.Collections.Generic.IEnumerable<string!>! projectReferences) -> void
+NuGet.ProjectModel.ExternalProjectReference.ExternalProjectReferences.get -> System.Collections.Generic.IReadOnlyList<string!>!
+NuGet.ProjectModel.ExternalProjectReference.MSBuildProjectPath.get -> string?
+NuGet.ProjectModel.ExternalProjectReference.PackageSpec.get -> NuGet.ProjectModel.PackageSpec?
+NuGet.ProjectModel.ExternalProjectReference.PackageSpecProjectName.get -> string?
+NuGet.ProjectModel.ExternalProjectReference.ProjectJsonPath.get -> string?
+NuGet.ProjectModel.ExternalProjectReference.ProjectName.get -> string!
+NuGet.ProjectModel.ExternalProjectReference.UniqueName.get -> string!
 NuGet.ProjectModel.FileFormatException
 NuGet.ProjectModel.FileFormatException.Column.get -> int
 NuGet.ProjectModel.FileFormatException.FileFormatException(string! message) -> void
@@ -442,16 +442,16 @@ NuGet.ProjectModel.ProjectRestoreMetadataFile.Equals(NuGet.ProjectModel.ProjectR
 NuGet.ProjectModel.ProjectRestoreMetadataFile.PackagePath.get -> string!
 NuGet.ProjectModel.ProjectRestoreMetadataFile.ProjectRestoreMetadataFile(string! packagePath, string! absolutePath) -> void
 NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo
-~NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.Clone() -> NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo
-~NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.Equals(NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo other) -> bool
-~NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.FrameworkName.get -> NuGet.Frameworks.NuGetFramework
-~NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.FrameworkName.set -> void
-~NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.ProjectReferences.get -> System.Collections.Generic.IList<NuGet.ProjectModel.ProjectRestoreReference>
-~NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.ProjectReferences.set -> void
+NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.Clone() -> NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo!
+NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.Equals(NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo? other) -> bool
+NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.FrameworkName.get -> NuGet.Frameworks.NuGetFramework?
+NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.FrameworkName.set -> void
+NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.ProjectReferences.get -> System.Collections.Generic.IList<NuGet.ProjectModel.ProjectRestoreReference!>!
+NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.ProjectReferences.set -> void
 NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.ProjectRestoreMetadataFrameworkInfo() -> void
-~NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.ProjectRestoreMetadataFrameworkInfo(NuGet.Frameworks.NuGetFramework frameworkName) -> void
-~NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.TargetAlias.get -> string
-~NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.TargetAlias.set -> void
+NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.ProjectRestoreMetadataFrameworkInfo(NuGet.Frameworks.NuGetFramework! frameworkName) -> void
+NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.TargetAlias.get -> string!
+NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.TargetAlias.set -> void
 NuGet.ProjectModel.ProjectRestoreReference
 ~NuGet.ProjectModel.ProjectRestoreReference.Clone() -> NuGet.ProjectModel.ProjectRestoreReference
 ~NuGet.ProjectModel.ProjectRestoreReference.Equals(NuGet.ProjectModel.ProjectRestoreReference other) -> bool
@@ -506,27 +506,27 @@ NuGet.ProjectModel.RestoreLockProperties.RestorePackagesWithLockFile.get -> stri
 NuGet.ProjectModel.TargetFrameworkInformation
 NuGet.ProjectModel.TargetFrameworkInformation.AssetTargetFallback.get -> bool
 NuGet.ProjectModel.TargetFrameworkInformation.AssetTargetFallback.init -> void
-~NuGet.ProjectModel.TargetFrameworkInformation.CentralPackageVersions.get -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.LibraryModel.CentralPackageVersion>
-~NuGet.ProjectModel.TargetFrameworkInformation.CentralPackageVersions.init -> void
-~NuGet.ProjectModel.TargetFrameworkInformation.Dependencies.get -> System.Collections.Immutable.ImmutableArray<NuGet.LibraryModel.LibraryDependency>
-~NuGet.ProjectModel.TargetFrameworkInformation.Dependencies.init -> void
-~NuGet.ProjectModel.TargetFrameworkInformation.DownloadDependencies.get -> System.Collections.Immutable.ImmutableArray<NuGet.LibraryModel.DownloadDependency>
-~NuGet.ProjectModel.TargetFrameworkInformation.DownloadDependencies.init -> void
-~NuGet.ProjectModel.TargetFrameworkInformation.Equals(NuGet.ProjectModel.TargetFrameworkInformation other) -> bool
-~NuGet.ProjectModel.TargetFrameworkInformation.FrameworkName.get -> NuGet.Frameworks.NuGetFramework
-~NuGet.ProjectModel.TargetFrameworkInformation.FrameworkName.init -> void
-~NuGet.ProjectModel.TargetFrameworkInformation.FrameworkReferences.get -> System.Collections.Generic.IReadOnlyCollection<NuGet.LibraryModel.FrameworkDependency>
-~NuGet.ProjectModel.TargetFrameworkInformation.FrameworkReferences.init -> void
-~NuGet.ProjectModel.TargetFrameworkInformation.Imports.get -> System.Collections.Immutable.ImmutableArray<NuGet.Frameworks.NuGetFramework>
-~NuGet.ProjectModel.TargetFrameworkInformation.Imports.init -> void
-~NuGet.ProjectModel.TargetFrameworkInformation.PackagesToPrune.get -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.LibraryModel.PrunePackageReference>
-~NuGet.ProjectModel.TargetFrameworkInformation.PackagesToPrune.init -> void
-~NuGet.ProjectModel.TargetFrameworkInformation.RuntimeIdentifierGraphPath.get -> string
-~NuGet.ProjectModel.TargetFrameworkInformation.RuntimeIdentifierGraphPath.init -> void
-~NuGet.ProjectModel.TargetFrameworkInformation.TargetAlias.get -> string
-~NuGet.ProjectModel.TargetFrameworkInformation.TargetAlias.init -> void
+NuGet.ProjectModel.TargetFrameworkInformation.CentralPackageVersions.get -> System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.LibraryModel.CentralPackageVersion!>!
+NuGet.ProjectModel.TargetFrameworkInformation.CentralPackageVersions.init -> void
+NuGet.ProjectModel.TargetFrameworkInformation.Dependencies.get -> System.Collections.Immutable.ImmutableArray<NuGet.LibraryModel.LibraryDependency!>
+NuGet.ProjectModel.TargetFrameworkInformation.Dependencies.init -> void
+NuGet.ProjectModel.TargetFrameworkInformation.DownloadDependencies.get -> System.Collections.Immutable.ImmutableArray<NuGet.LibraryModel.DownloadDependency!>
+NuGet.ProjectModel.TargetFrameworkInformation.DownloadDependencies.init -> void
+NuGet.ProjectModel.TargetFrameworkInformation.Equals(NuGet.ProjectModel.TargetFrameworkInformation? other) -> bool
+NuGet.ProjectModel.TargetFrameworkInformation.FrameworkName.get -> NuGet.Frameworks.NuGetFramework?
+NuGet.ProjectModel.TargetFrameworkInformation.FrameworkName.init -> void
+NuGet.ProjectModel.TargetFrameworkInformation.FrameworkReferences.get -> System.Collections.Generic.IReadOnlyCollection<NuGet.LibraryModel.FrameworkDependency!>!
+NuGet.ProjectModel.TargetFrameworkInformation.FrameworkReferences.init -> void
+NuGet.ProjectModel.TargetFrameworkInformation.Imports.get -> System.Collections.Immutable.ImmutableArray<NuGet.Frameworks.NuGetFramework!>
+NuGet.ProjectModel.TargetFrameworkInformation.Imports.init -> void
+NuGet.ProjectModel.TargetFrameworkInformation.PackagesToPrune.get -> System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.LibraryModel.PrunePackageReference!>!
+NuGet.ProjectModel.TargetFrameworkInformation.PackagesToPrune.init -> void
+NuGet.ProjectModel.TargetFrameworkInformation.RuntimeIdentifierGraphPath.get -> string?
+NuGet.ProjectModel.TargetFrameworkInformation.RuntimeIdentifierGraphPath.init -> void
+NuGet.ProjectModel.TargetFrameworkInformation.TargetAlias.get -> string!
+NuGet.ProjectModel.TargetFrameworkInformation.TargetAlias.init -> void
 NuGet.ProjectModel.TargetFrameworkInformation.TargetFrameworkInformation() -> void
-~NuGet.ProjectModel.TargetFrameworkInformation.TargetFrameworkInformation(NuGet.ProjectModel.TargetFrameworkInformation cloneFrom) -> void
+NuGet.ProjectModel.TargetFrameworkInformation.TargetFrameworkInformation(NuGet.ProjectModel.TargetFrameworkInformation! cloneFrom) -> void
 NuGet.ProjectModel.TargetFrameworkInformation.Warn.get -> bool
 NuGet.ProjectModel.TargetFrameworkInformation.Warn.init -> void
 NuGet.ProjectModel.ToolPathResolver
@@ -553,13 +553,13 @@ override NuGet.ProjectModel.AssetsLogMessage.GetHashCode() -> int
 override NuGet.ProjectModel.BuildAction.Equals(object? obj) -> bool
 override NuGet.ProjectModel.BuildAction.GetHashCode() -> int
 override NuGet.ProjectModel.BuildAction.ToString() -> string!
-~override NuGet.ProjectModel.CacheFile.Equals(object obj) -> bool
+override NuGet.ProjectModel.CacheFile.Equals(object? obj) -> bool
 override NuGet.ProjectModel.CacheFile.GetHashCode() -> int
 override NuGet.ProjectModel.CentralTransitiveDependencyGroup.Equals(object? obj) -> bool
 override NuGet.ProjectModel.CentralTransitiveDependencyGroup.GetHashCode() -> int
-~override NuGet.ProjectModel.ExternalProjectReference.Equals(object obj) -> bool
+override NuGet.ProjectModel.ExternalProjectReference.Equals(object? obj) -> bool
 override NuGet.ProjectModel.ExternalProjectReference.GetHashCode() -> int
-~override NuGet.ProjectModel.ExternalProjectReference.ToString() -> string
+override NuGet.ProjectModel.ExternalProjectReference.ToString() -> string!
 ~override NuGet.ProjectModel.LockFile.Equals(object obj) -> bool
 override NuGet.ProjectModel.LockFile.GetHashCode() -> int
 override NuGet.ProjectModel.LockFileDependency.Equals(object? obj) -> bool
@@ -588,9 +588,9 @@ override NuGet.ProjectModel.ProjectRestoreMetadata.GetHashCode() -> int
 override NuGet.ProjectModel.ProjectRestoreMetadataFile.Equals(object? obj) -> bool
 override NuGet.ProjectModel.ProjectRestoreMetadataFile.GetHashCode() -> int
 override NuGet.ProjectModel.ProjectRestoreMetadataFile.ToString() -> string!
-~override NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.Equals(object obj) -> bool
+override NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.Equals(object? obj) -> bool
 override NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.GetHashCode() -> int
-~override NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.ToString() -> string
+override NuGet.ProjectModel.ProjectRestoreMetadataFrameworkInfo.ToString() -> string!
 ~override NuGet.ProjectModel.ProjectRestoreReference.Equals(object obj) -> bool
 override NuGet.ProjectModel.ProjectRestoreReference.GetHashCode() -> int
 ~override NuGet.ProjectModel.ProjectRestoreReference.ToString() -> string
@@ -600,18 +600,18 @@ override NuGet.ProjectModel.RestoreAuditProperties.Equals(object? obj) -> bool
 override NuGet.ProjectModel.RestoreAuditProperties.GetHashCode() -> int
 override NuGet.ProjectModel.RestoreLockProperties.Equals(object? obj) -> bool
 override NuGet.ProjectModel.RestoreLockProperties.GetHashCode() -> int
-~override NuGet.ProjectModel.TargetFrameworkInformation.Equals(object obj) -> bool
+override NuGet.ProjectModel.TargetFrameworkInformation.Equals(object? obj) -> bool
 override NuGet.ProjectModel.TargetFrameworkInformation.GetHashCode() -> int
-~override NuGet.ProjectModel.TargetFrameworkInformation.ToString() -> string
+override NuGet.ProjectModel.TargetFrameworkInformation.ToString() -> string!
 override NuGet.ProjectModel.WarningProperties.Equals(object? obj) -> bool
 override NuGet.ProjectModel.WarningProperties.GetHashCode() -> int
 static NuGet.ProjectModel.AssetsLogMessage.Create(NuGet.Common.IRestoreLogMessage! logMessage) -> NuGet.ProjectModel.IAssetsLogMessage!
 static NuGet.ProjectModel.BuildAction.Parse(string! value) -> NuGet.ProjectModel.BuildAction
 static NuGet.ProjectModel.BuildAction.operator !=(NuGet.ProjectModel.BuildAction left, NuGet.ProjectModel.BuildAction right) -> bool
 static NuGet.ProjectModel.BuildAction.operator ==(NuGet.ProjectModel.BuildAction left, NuGet.ProjectModel.BuildAction right) -> bool
-~static NuGet.ProjectModel.CacheFileFormat.Read(System.IO.Stream stream, NuGet.Common.ILogger log, string path) -> NuGet.ProjectModel.CacheFile
-~static NuGet.ProjectModel.CacheFileFormat.Write(System.IO.Stream stream, NuGet.ProjectModel.CacheFile cacheFile) -> void
-~static NuGet.ProjectModel.CacheFileFormat.Write(string filePath, NuGet.ProjectModel.CacheFile lockFile) -> void
+static NuGet.ProjectModel.CacheFileFormat.Read(System.IO.Stream! stream, NuGet.Common.ILogger! log, string! path) -> NuGet.ProjectModel.CacheFile!
+static NuGet.ProjectModel.CacheFileFormat.Write(System.IO.Stream! stream, NuGet.ProjectModel.CacheFile! cacheFile) -> void
+static NuGet.ProjectModel.CacheFileFormat.Write(string! filePath, NuGet.ProjectModel.CacheFile! lockFile) -> void
 ~static NuGet.ProjectModel.DependencyGraphSpec.GetDGSpecFileName(string projectName) -> string
 ~static NuGet.ProjectModel.DependencyGraphSpec.Load(string path) -> NuGet.ProjectModel.DependencyGraphSpec
 ~static NuGet.ProjectModel.DependencyGraphSpec.SortPackagesByDependencyOrder(System.Collections.Generic.IEnumerable<NuGet.ProjectModel.PackageSpec> packages) -> System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.PackageSpec>

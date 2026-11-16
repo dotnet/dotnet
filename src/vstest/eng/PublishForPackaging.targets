@@ -9,7 +9,7 @@
     by hand-listing hundreds of files gathered from mixed per-TFM output folders. Because the
     files were re-gathered from a shared output folder, a shipped DLL and its binding-redirect
     .config could come from different target frameworks (e.g. a .NET Framework-built assembly
-    next to a net8.0-generated testhost.dll.config) -> FileLoadException at runtime.
+    next to a net10.0-generated testhost.dll.config) -> FileLoadException at runtime.
 
     Instead, every bundled product publishes ITSELF exactly once. A product's own build emits
     the DLLs together with the matching .config / binding redirects, so publishing it guarantees

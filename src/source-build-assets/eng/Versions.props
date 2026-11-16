@@ -19,6 +19,7 @@
     <NewtonsoftJsonBootstrapVersion>13.0.4</NewtonsoftJsonBootstrapVersion>
 
     <Antlr4Version>4.13.1</Antlr4Version>
+    <AntiSSRFReleaseVersion>1.0.0</AntiSSRFReleaseVersion>
     <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>8.19.2</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
     <IdentityModelMicrosoftBclCryptographyVersion>10.0.10</IdentityModelMicrosoftBclCryptographyVersion>
     <CssParserReleaseVersionSuffix>20230414.1</CssParserReleaseVersionSuffix>

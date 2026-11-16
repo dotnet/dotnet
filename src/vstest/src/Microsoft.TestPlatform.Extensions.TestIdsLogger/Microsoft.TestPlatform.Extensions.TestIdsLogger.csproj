@@ -18,7 +18,7 @@
          ObjectModel's copy would succeed, because this assembly's netstandard2.0 build compiles
          against ObjectModel's netstandard2.0 target, which declares it. It would then be wrong at
          runtime: a netstandard2.0 extension is loaded into whichever host runs it, and in a .NET
-         host that is ObjectModel's net8.0 assembly, which compiles the polyfill out. The attribute
+         host that is ObjectModel's .NET assembly, which compiles the polyfill out. The attribute
          type would not resolve, leaving the logger's own metadata dependent on an assembly that
          does not always carry it. Owning the copy keeps it resolvable in every host. CrossPlatEngine
          borrows ObjectModel's copy instead, which is safe there only because it never ships a

@@ -25,6 +25,11 @@
       <Visible>false</Visible>
       <Link>Microsoft.DiaSymReader.Native.amd64.dll</Link>
     </Content>
+    <Content Include="$(PkgMicrosoft_DiaSymReader_Native)\runtimes\win\native\Microsoft.DiaSymReader.Native.arm64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Visible>false</Visible>
+      <Link>Microsoft.DiaSymReader.Native.arm64.dll</Link>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

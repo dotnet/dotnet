@@ -839,7 +839,10 @@ public abstract class JsonQueryRelationalTestBase<TFixture>(TFixture fixture) : 
         var message = (await Assert.ThrowsAsync<InvalidOperationException>(() => base.Try_project_collection_but_JSON_is_entity())).Message;
 
         Assert.Equal(
-            CoreStrings.JsonReaderInvalidTokenType(nameof(JsonTokenType.StartObject)),
+            RelationalStrings.JsonEntityCollectionExpectedArray(
+                typeof(Context34960.JunkEntity).ShortDisplayName(),
+                nameof(Context34960.JunkEntity.Collection),
+                nameof(JsonTokenType.StartObject)),
             message);
     }
 
@@ -849,7 +852,9 @@ public abstract class JsonQueryRelationalTestBase<TFixture>(TFixture fixture) : 
             .Message;
 
         Assert.Equal(
-            CoreStrings.JsonReaderInvalidTokenType(nameof(JsonTokenType.StartArray)),
+            RelationalStrings.JsonStructuralTypeExpectedObject(
+                nameof(Context34960.JsonEntity),
+                nameof(JsonTokenType.StartArray)),
             message);
     }
 
@@ -1684,6 +1689,185 @@ public abstract class JsonQueryRelationalTestBase<TFixture>(TFixture fixture) : 
         public class ValueJson
         {
             public int Value { get; set; }
+        }
+    }
+
+    #endregion
+
+    #region 35863
+
+    [Fact]
+    public virtual async Task Materialize_json_collection_with_null_element_throws()
+    {
+        var contextFactory = await InitializeContext35863();
+        await using var context = contextFactory.CreateDbContext();
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => context.Set<Context35863.Item>().Where(x => x.Id == 1).ToListAsync());
+
+        Assert.Equal(
+            RelationalStrings.JsonEntityCollectionNullElement(
+                typeof(Context35863.ItemDetails).ShortDisplayName(),
+                nameof(Context35863.ItemDetails.SubItems)),
+            exception.Message);
+    }
+
+    [Fact]
+    public virtual async Task Materialize_json_collection_with_non_object_element_throws()
+    {
+        var contextFactory = await InitializeContext35863();
+        await using var context = contextFactory.CreateDbContext();
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => context.Set<Context35863.Item>().Where(x => x.Id == 2).ToListAsync());
+
+        Assert.Equal(
+            RelationalStrings.JsonEntityCollectionExpectedObject(
+                typeof(Context35863.ItemDetails).ShortDisplayName(),
+                nameof(Context35863.ItemDetails.SubItems)),
+            exception.Message);
+    }
+
+    private Task<ContextFactory<Context35863>> InitializeContext35863()
+        => InitializeNonSharedTest<Context35863>(
+            onConfiguring: b => b.ConfigureWarnings(ConfigureWarnings),
+            onModelCreating: m => m.Entity<Context35863.Item>(b =>
+            {
+                b.ToTable("Items");
+                b.Property(x => x.Id).ValueGeneratedNever();
+                b.OwnsOne(
+                    x => x.Details, d =>
+                    {
+                        d.ToJson();
+                        if (JsonColumnType != null)
+                        {
+                            d.HasColumnType(JsonColumnType);
+                        }
+
+                        d.OwnsMany(x => x.SubItems);
+                    });
+            }),
+            seed: async context =>
+            {
+                var sqlGenerationHelper = context.GetService<ISqlGenerationHelper>();
+
+                await context.Database.ExecuteSqlRawAsync(
+                    $$$"""INSERT INTO {{{Q("Items")}}} ({{{Q("Id")}}}, {{{Q("Details")}}}) VALUES (1, '{{"Description":"Item 1 details","SubItems":[null]}}')""");
+
+                await context.Database.ExecuteSqlRawAsync(
+                    $$$"""INSERT INTO {{{Q("Items")}}} ({{{Q("Id")}}}, {{{Q("Details")}}}) VALUES (2, '{{"Description":"Item 2 details","SubItems":[42]}}')""");
+
+                string Q(string name)
+                    => sqlGenerationHelper.DelimitIdentifier(name);
+            });
+
+    protected class Context35863(DbContextOptions options) : DbContext(options)
+    {
+        public class Item
+        {
+            public int Id { get; set; }
+            public ItemDetails Details { get; set; } = null!;
+        }
+
+        public class ItemDetails
+        {
+            public string Description { get; set; } = null!;
+            public List<SubItem> SubItems { get; set; } = [];
+        }
+
+        public class SubItem
+        {
+            public string Name { get; set; } = null!;
+        }
+    }
+
+    #endregion
+
+    #region 39486
+
+    [Fact]
+    public virtual Task Include_json_collection_with_null_element_throws()
+        => AssertQueryThrows39486(
+            1,
+            RelationalStrings.JsonEntityCollectionNullElement(
+                typeof(Context39486.Item).ShortDisplayName(),
+                nameof(Context39486.Item.SubItems)));
+
+    [Fact]
+    public virtual Task Include_json_collection_with_non_object_element_throws()
+        => AssertQueryThrows39486(
+            2,
+            RelationalStrings.JsonEntityCollectionExpectedObject(
+                typeof(Context39486.Item).ShortDisplayName(),
+                nameof(Context39486.Item.SubItems)));
+
+    [Fact]
+    public virtual Task Include_json_collection_but_JSON_is_entity_throws()
+        => AssertQueryThrows39486(
+            3,
+            RelationalStrings.JsonEntityCollectionExpectedArray(
+                typeof(Context39486.Item).ShortDisplayName(),
+                nameof(Context39486.Item.SubItems),
+                nameof(JsonTokenType.StartObject)));
+
+    [Fact]
+    public virtual Task Include_json_reference_but_JSON_is_collection_throws()
+        => AssertQueryThrows39486(
+            4,
+            RelationalStrings.JsonStructuralTypeExpectedObject(
+                nameof(Context39486.ItemDetails),
+                nameof(JsonTokenType.StartArray)));
+
+    private async Task AssertQueryThrows39486(int id, string expectedMessage)
+    {
+        var contextFactory = await InitializeNonSharedTest<Context39486>(
+            onConfiguring: b => b.ConfigureWarnings(ConfigureWarnings),
+            onModelCreating: m => m.Entity<Context39486.Item>(b =>
+            {
+                b.ToTable("Items");
+                b.Property(x => x.Id).ValueGeneratedNever();
+                b.OwnsOne(x => x.Details).ToJson().HasColumnType(JsonColumnType);
+                b.OwnsMany(x => x.SubItems).ToJson().HasColumnType(JsonColumnType);
+            }),
+            seed: async context =>
+            {
+                var sqlGenerationHelper = context.GetService<ISqlGenerationHelper>();
+
+                await context.Database.ExecuteSqlRawAsync(
+                    $$$"""INSERT INTO {{{Q("Items")}}} ({{{Q("Id")}}}, {{{Q("SubItems")}}}) VALUES (1, '[null]'), (2, '[42]'), (3, '{{"Name":"x"}}')""");
+
+                await context.Database.ExecuteSqlRawAsync(
+                    $$$"""INSERT INTO {{{Q("Items")}}} ({{{Q("Id")}}}, {{{Q("Details")}}}) VALUES (4, '[{{"Description":"x"}}]')""");
+
+                string Q(string name)
+                    => sqlGenerationHelper.DelimitIdentifier(name);
+            });
+
+        await using var context = contextFactory.CreateDbContext();
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => context.Set<Context39486.Item>().Where(x => x.Id == id).ToListAsync());
+
+        Assert.Equal(expectedMessage, exception.Message);
+    }
+
+    protected class Context39486(DbContextOptions options) : DbContext(options)
+    {
+        public class Item
+        {
+            public int Id { get; set; }
+            public ItemDetails? Details { get; set; }
+            public List<SubItem> SubItems { get; set; } = [];
+        }
+
+        public class ItemDetails
+        {
+            public string? Description { get; set; }
+        }
+
+        public class SubItem
+        {
+            public string? Name { get; set; }
         }
     }
 

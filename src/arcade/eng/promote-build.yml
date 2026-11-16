@@ -6,6 +6,7 @@ parameters:
   default: 3
   values:
   - 3
+  - 4
 
 - name: BARBuildId
   displayName: "Maestro ID of the build to be promoted:"
@@ -82,5 +83,6 @@ extends:
       parameters:
         PromoteToChannelIds: ${{ parameters.PromoteToChannelIds }}
         BARBuildId: ${{ parameters.BARBuildId }}
+        publishingInfraVersion: ${{ parameters.PublishingInfraVersion }}
         symbolPublishingAdditionalParameters: ${{ parameters.SymbolPublishingAdditionalParameters }}
         artifactsPublishingAdditionalParameters: ${{ parameters.ArtifactsPublishingAdditionalParameters }}

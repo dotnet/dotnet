@@ -1445,6 +1445,26 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 entityType, property, expectedType, actualType);
 
         /// <summary>
+        ///     '{method}' can only be called once when configuring 'ExecuteMerge'.
+        /// </summary>
+        public static string ExecuteMergeDuplicateClause(object? method)
+            => string.Format(
+                GetString("ExecuteMergeDuplicateClause", nameof(method)),
+                method);
+
+        /// <summary>
+        ///     The 'Match' call in 'ExecuteMerge' must select at least one property.
+        /// </summary>
+        public static string ExecuteMergeEmptyMatch
+            => GetString("ExecuteMergeEmptyMatch");
+
+        /// <summary>
+        ///     The source of 'ExecuteMerge' is an EF query, which isn't supported. Materialize it first, e.g. with 'ToList'.
+        /// </summary>
+        public static string ExecuteMergeQuerySource
+            => GetString("ExecuteMergeQuerySource");
+
+        /// <summary>
         ///     The methods '{methodName}' and '{asyncMethodName}' are not supported by the current database provider. Please contact the publisher of the database provider for more information.
         /// </summary>
         public static string ExecuteQueriesNotSupported(object? methodName, object? asyncMethodName)
@@ -2072,6 +2092,22 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
         /// </summary>
         public static string IQueryableProviderNotAsync
             => GetString("IQueryableProviderNotAsync");
+
+        /// <summary>
+        ///     The JSON for a collection of '{elementType}' contains a '{tokenType}' token when a JSON array was expected.
+        /// </summary>
+        public static string JsonCollectionExpectedArray(object? elementType, object? tokenType)
+            => string.Format(
+                GetString("JsonCollectionExpectedArray", nameof(elementType), nameof(tokenType)),
+                elementType, tokenType);
+
+        /// <summary>
+        ///     The JSON array for a collection of '{elementType}' contains a '{tokenType}' token, which is not a valid element.
+        /// </summary>
+        public static string JsonCollectionInvalidElement(object? elementType, object? tokenType)
+            => string.Format(
+                GetString("JsonCollectionInvalidElement", nameof(elementType), nameof(tokenType)),
+                elementType, tokenType);
 
         /// <summary>
         ///     Invalid token type: '{tokenType}'.

@@ -73,6 +73,22 @@ namespace NuGet.Packaging.Signing
             out SignatureVerificationStatusFlags verificationFlags,
             out Timestamp? validTimestamp)
         {
+            return TryGetValidTimestamp(
+                settings, fingerprintAlgorithm, issues, out verificationFlags, out validTimestamp, out _, out _);
+        }
+
+        internal bool TryGetValidTimestamp(
+            SignedPackageVerifierSettings settings,
+            HashAlgorithmName fingerprintAlgorithm,
+            List<SignatureLog> issues,
+            out SignatureVerificationStatusFlags verificationFlags,
+            out Timestamp? validTimestamp,
+            out X509ChainStatusFlags chainStatusFlags,
+            out SignatureChainEvaluationStatus chainEvaluationStatus)
+        {
+            chainStatusFlags = X509ChainStatusFlags.NoError;
+            chainEvaluationStatus = SignatureChainEvaluationStatus.NotEvaluated;
+
             if (issues == null)
             {
                 throw new ArgumentNullException(nameof(issues));
@@ -90,6 +106,7 @@ namespace NuGet.Packaging.Signing
 
             if (timestamps.Count == 0)
             {
+                chainEvaluationStatus = SignatureChainEvaluationStatus.NotApplicable;
                 issues.Add(SignatureLog.Issue(!settings.AllowNoTimestamp, NuGetLogCode.NU3027, Strings.ErrorNoTimestamp));
                 if (!settings.AllowNoTimestamp)
                 {
@@ -108,7 +125,8 @@ namespace NuGet.Packaging.Signing
             var timestamp = timestamps.FirstOrDefault();
             if (timestamp != null)
             {
-                verificationFlags |= timestamp.Verify(this, settings, fingerprintAlgorithm, issues);
+                verificationFlags |= timestamp.Verify(
+                    this, settings, fingerprintAlgorithm, issues, out chainStatusFlags, out chainEvaluationStatus);
 
                 if (verificationFlags != SignatureVerificationStatusFlags.NoErrors &&
                     verificationFlags != SignatureVerificationStatusFlags.UnknownRevocation)
@@ -175,6 +193,8 @@ namespace NuGet.Packaging.Signing
             }
 
             DateTimeOffset? expirationTime = null;
+            X509ChainStatusFlags chainStatusFlags = X509ChainStatusFlags.NoError;
+            SignatureChainEvaluationStatus chainEvaluationStatus = SignatureChainEvaluationStatus.NotEvaluated;
             var certificateFlags = VerificationUtility.ValidateSigningCertificate(certificate, !settings.AllowIllegal, FriendlyName, issues);
             if (certificateFlags != SignatureVerificationStatusFlags.NoErrors)
             {
@@ -204,6 +224,9 @@ namespace NuGet.Packaging.Signing
                     }
 
                     var chainBuildingSucceeded = CertificateChainUtility.BuildCertificateChain(chain, certificate, out var chainStatuses);
+                    chainStatusFlags = CertificateChainUtility.GetChainStatusFlags(chainStatuses);
+                    chainEvaluationStatus = CertificateChainUtility.GetChainEvaluationStatus(
+                        chainBuildingSucceeded, chainStatuses, chain, certificate);
                     string x509ChainString = CertificateUtility.X509ChainToString(chain.PrivateReference, fingerprintAlgorithm);
 
                     if (!string.IsNullOrWhiteSpace(x509ChainString))
@@ -215,16 +238,23 @@ namespace NuGet.Packaging.Signing
 
                     if (!chainBuildingSucceeded && chainStatuses.Length == 0)
                     {
-                        return new SignatureVerificationSummary(Type, SignatureVerificationStatus.Unknown, SignatureVerificationStatusFlags.UnknownBuildStatus, timestamp, issues);
+                        return new SignatureVerificationSummary(Type, SignatureVerificationStatus.Unknown, SignatureVerificationStatusFlags.UnknownBuildStatus, timestamp, issues)
+                        {
+                            SignerChainStatusFlags = chainStatusFlags,
+                            SignerChainEvaluationStatus = chainEvaluationStatus
+                        };
                     }
 
                     var statusFlags = CertificateChainUtility.DefaultObservedStatusFlags;
 
                     if (CertificateChainUtility.TryGetStatusAndMessage(chainStatuses, statusFlags, out IEnumerable<string>? messages))
                     {
-                        foreach (string message in messages)
+                        foreach ((X509ChainStatusFlags issueFlags, string message) in CertificateChainUtility.GetStatusAndMessagesWithFlags(
+                            chainStatuses.Where(chainStatus => (chainStatus.Status & statusFlags) != 0)))
                         {
-                            issues.Add(SignatureLog.Issue(!settings.AllowIllegal, NuGetLogCode.NU3012, string.Format(CultureInfo.CurrentCulture, Strings.VerifyChainBuildingIssue, FriendlyName, message)));
+                            issues.Add(SignatureLog.Issue(!settings.AllowIllegal, NuGetLogCode.NU3012,
+                                string.Format(CultureInfo.CurrentCulture, Strings.VerifyChainBuildingIssue, FriendlyName, message),
+                                issueFlags & statusFlags));
                         }
 
                         chainBuildingHasIssues = true;
@@ -236,10 +266,16 @@ namespace NuGet.Packaging.Signing
                     // if we are combining checks for more than one, then we have to use the whole list.
                     if (CertificateChainUtility.TryGetStatusAndMessage(chainStatuses, X509ChainStatusFlags.Revoked, out messages))
                     {
-                        issues.Add(SignatureLog.Error(NuGetLogCode.NU3012, string.Format(CultureInfo.CurrentCulture, Strings.VerifyChainBuildingIssue, FriendlyName, messages.First())));
+                        issues.Add(SignatureLog.Issue(true, NuGetLogCode.NU3012,
+                            string.Format(CultureInfo.CurrentCulture, Strings.VerifyChainBuildingIssue, FriendlyName, messages.First()),
+                            X509ChainStatusFlags.Revoked));
                         flags |= SignatureVerificationStatusFlags.CertificateRevoked;
 
-                        return new SignatureVerificationSummary(Type, SignatureVerificationStatus.Suspect, flags, timestamp, issues);
+                        return new SignatureVerificationSummary(Type, SignatureVerificationStatus.Suspect, flags, timestamp, issues)
+                        {
+                            SignerChainStatusFlags = chainStatusFlags,
+                            SignerChainEvaluationStatus = chainEvaluationStatus
+                        };
                     }
 
                     if (CertificateChainUtility.TryGetStatusAndMessage(chainStatuses, X509ChainStatusFlags.UntrustedRoot, out messages))
@@ -248,7 +284,9 @@ namespace NuGet.Packaging.Signing
                         {
                             SignatureUtility.LogAdditionalContext(chain, issues);
 
-                            issues.Add(SignatureLog.Issue(!settings.AllowUntrusted, NuGetLogCode.NU3018, string.Format(CultureInfo.CurrentCulture, Strings.VerifyChainBuildingIssue_UntrustedRoot, FriendlyName)));
+                            issues.Add(SignatureLog.Issue(!settings.AllowUntrusted, NuGetLogCode.NU3018,
+                                string.Format(CultureInfo.CurrentCulture, Strings.VerifyChainBuildingIssue_UntrustedRoot, FriendlyName),
+                                X509ChainStatusFlags.UntrustedRoot));
                         }
 
                         if (!settings.AllowUntrusted)
@@ -287,12 +325,14 @@ namespace NuGet.Packaging.Signing
                             {
                                 if (offlineRevocationErrors)
                                 {
-                                    issues.Add(SignatureLog.Issue(!settings.AllowUnknownRevocation, NuGetLogCode.NU3018, string.Format(CultureInfo.CurrentCulture, Strings.VerifyChainBuildingIssue, FriendlyName, Strings.VerifyCertTrustOfflineWhileRevocationModeOnline)));
+                                    issues.Add(SignatureLog.Issue(!settings.AllowUnknownRevocation, NuGetLogCode.NU3018, string.Format(CultureInfo.CurrentCulture, Strings.VerifyChainBuildingIssue, FriendlyName, Strings.VerifyCertTrustOfflineWhileRevocationModeOnline),
+                                        X509ChainStatusFlags.OfflineRevocation));
                                 }
 
                                 if (unknownRevocationMessage != null)
                                 {
-                                    issues.Add(SignatureLog.Issue(!settings.AllowUnknownRevocation, NuGetLogCode.NU3018, unknownRevocationMessage));
+                                    issues.Add(SignatureLog.Issue(!settings.AllowUnknownRevocation, NuGetLogCode.NU3018, unknownRevocationMessage,
+                                        X509ChainStatusFlags.RevocationStatusUnknown));
                                 }
                             }
                         }
@@ -318,7 +358,11 @@ namespace NuGet.Packaging.Signing
                     var isSignatureTimeValid = Rfc3161TimestampVerificationUtility.ValidateSignerCertificateAgainstTimestamp(certificate, timestamp);
                     if (isSignatureTimeValid && !chainBuildingHasIssues)
                     {
-                        return new SignatureVerificationSummary(Type, SignatureVerificationStatus.Valid, flags, timestamp, issues);
+                        return new SignatureVerificationSummary(Type, SignatureVerificationStatus.Valid, flags, timestamp, issues)
+                        {
+                            SignerChainStatusFlags = chainStatusFlags,
+                            SignerChainEvaluationStatus = chainEvaluationStatus
+                        };
                     }
                     else if (!isSignatureTimeValid)
                     {
@@ -326,7 +370,8 @@ namespace NuGet.Packaging.Signing
                             SignatureLog.Issue(
                                 !settings.AllowUntrusted,
                                 NuGetLogCode.NU3037,
-                                string.Format(CultureInfo.CurrentCulture, Strings.VerifyError_SignatureNotTimeValid, FriendlyName)));
+                                string.Format(CultureInfo.CurrentCulture, Strings.VerifyError_SignatureNotTimeValid, FriendlyName),
+                                chainStatusFlags & X509ChainStatusFlags.NotTimeValid));
 
                         if (!settings.AllowUntrusted)
                         {
@@ -339,7 +384,11 @@ namespace NuGet.Packaging.Signing
 
                 status = VerificationUtility.GetSignatureVerificationStatus(flags);
 
-                return new SignatureVerificationSummary(Type, status, flags, timestamp, expirationTime, issues);
+                return new SignatureVerificationSummary(Type, status, flags, timestamp, expirationTime, issues)
+                {
+                    SignerChainStatusFlags = chainStatusFlags,
+                    SignerChainEvaluationStatus = chainEvaluationStatus
+                };
             }
         }
 

@@ -565,7 +565,17 @@ namespace NuGet.Packaging
         {
             var fullPath = Path.GetFullPath(Path.Combine(normalizedDestination, normalizedFilePath));
 
-            if (!fullPath.StartsWith(normalizedDestination, PathUtility.GetStringComparisonBasedOnOS()) || fullPath.Length == normalizedDestination.Length)
+            // Keep the prefix guard separate so static analysis recognizes the containment check.
+            if (!fullPath.StartsWith(normalizedDestination, PathUtility.GetStringComparisonBasedOnOS()))
+            {
+                throw new UnsafePackageEntryException(string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.ErrorUnsafePackageEntry,
+                    packageIdentity,
+                    normalizedFilePath));
+            }
+
+            if (fullPath.Length == normalizedDestination.Length)
             {
                 throw new UnsafePackageEntryException(string.Format(
                     CultureInfo.CurrentCulture,

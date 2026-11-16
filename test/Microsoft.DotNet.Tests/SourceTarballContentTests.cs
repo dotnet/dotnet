@@ -94,8 +94,8 @@ public class SourceTarballContentTests
         TarEntry? entry;
         while ((entry = reader.GetNextEntry()) is not null)
         {
-            Assert.True(entry.Uid == 2001, $"{entry.Name} has UID {entry.Uid}, expected 2001.");
-            Assert.True(entry.Gid == 2001, $"{entry.Name} has GID {entry.Gid}, expected 2001.");
+            Assert.True(entry.Uid == 0, $"{entry.Name} has UID {entry.Uid}, expected 0.");
+            Assert.True(entry.Gid == 0, $"{entry.Name} has GID {entry.Gid}, expected 0.");
         }
     }
 

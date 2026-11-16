@@ -106,6 +106,9 @@ public class SqlNullabilityProcessor : ExpressionVisitor
             case SelectExpression select:
                 return Visit(select);
 
+            case MergeExpression { SourceParameterName: { } sourceParameterName } mergeExpression:
+                return Visit(mergeExpression.WithSourceRows(ExpandMergeSourceRows(mergeExpression, sourceParameterName)));
+
             case PredicateJoinExpressionBase join:
             {
                 var newTable = VisitAndConvert(join.Table, nameof(VisitExtension));
@@ -352,10 +355,14 @@ public class SqlNullabilityProcessor : ExpressionVisitor
                 => VisitAtTimeZone(sqlAtTimeZoneExpression, allowOptimizedExpansion, out nullable),
             CaseExpression caseExpression
                 => VisitCase(caseExpression, allowOptimizedExpansion, out nullable),
+            ClrTypeChangeExpression clrTypeChangeExpression
+                => VisitClrTypeChange(clrTypeChangeExpression, allowOptimizedExpansion, out nullable),
             CollateExpression collateExpression
                 => VisitCollate(collateExpression, allowOptimizedExpansion, out nullable),
             ColumnExpression columnExpression
                 => VisitColumn(columnExpression, allowOptimizedExpansion, out nullable),
+            MergeColumnReferenceExpression mergeColumnReferenceExpression
+                => VisitMergeColumnReference(mergeColumnReferenceExpression, out nullable),
             DistinctExpression distinctExpression
                 => VisitDistinct(distinctExpression, allowOptimizedExpansion, out nullable),
             ExistsExpression existsExpression
@@ -415,6 +422,83 @@ public class SqlNullabilityProcessor : ExpressionVisitor
         out bool nullable)
         => throw new InvalidOperationException(
             RelationalStrings.UnhandledExpressionInVisitor(sqlExpression, sqlExpression.GetType(), nameof(SqlNullabilityProcessor)));
+
+    /// <summary>
+    ///     Visits a <see cref="MergeColumnReferenceExpression" /> in the update clause of a merge and computes its nullability.
+    /// </summary>
+    /// <param name="mergeColumnReferenceExpression">A merge column reference to visit.</param>
+    /// <param name="nullable">A bool value indicating whether the expression is nullable.</param>
+    /// <returns>The expression, unchanged.</returns>
+    [Experimental(EFDiagnostics.ExecuteMergeExperimental)]
+    protected virtual SqlExpression VisitMergeColumnReference(
+        MergeColumnReferenceExpression mergeColumnReferenceExpression,
+        out bool nullable)
+    {
+        nullable = true;
+        return mergeColumnReferenceExpression;
+    }
+
+    private List<RowValueExpression> ExpandMergeSourceRows(MergeExpression mergeExpression, string sourceParameterName)
+    {
+        // The SQL depends on the number of source rows, so the generated command can't be cached.
+        var parameters = ParametersDecorator.GetAndDisableCaching();
+        var rows = (IEnumerable?)parameters[sourceParameterName]
+            ?? throw new InvalidOperationException(RelationalStrings.ExecuteMergeNullSource);
+        var template = mergeExpression.SourceRows[0].Values;
+
+        // A setter value parameter (e.g. from SetProperty<object>) is only known now; the column's type mapping wouldn't convert a value
+        // of another type, so it would be written as-is.
+        for (var i = 0; i < template.Count; i++)
+        {
+            ValidateMergeParameterValue(template[i], mergeExpression.InsertColumns[i]);
+        }
+
+        if (mergeExpression.UpdateSetters is { } updateSetters)
+        {
+            foreach (var setter in updateSetters)
+            {
+                ValidateMergeParameterValue(setter.Value, setter.ColumnName);
+            }
+        }
+
+        var sourceRows = new List<RowValueExpression>();
+        var parameterCounter = 0;
+        foreach (var row in rows)
+        {
+            var values = new SqlExpression[template.Count];
+            for (var i = 0; i < template.Count; i++)
+            {
+                if (template[i] is MergeSourceMemberExpression sourceMember)
+                {
+                    var parameterName = Uniquifier.Uniquify(
+                        sourceParameterName, parameters, maxLength: int.MaxValue, uniquifier: ++parameterCounter);
+                    parameters.Add(parameterName, sourceMember.GetValue(row));
+                    values[i] = new SqlParameterExpression(
+                        parameterName, sourceMember.Member.GetMemberType(), sourceMember.TypeMapping);
+                }
+                else
+                {
+                    values[i] = template[i];
+                }
+            }
+
+            sourceRows.Add(new RowValueExpression(values));
+        }
+
+        return sourceRows;
+
+        void ValidateMergeParameterValue(SqlExpression value, string columnName)
+        {
+            if (value is SqlParameterExpression { TypeMapping: { } typeMapping } parameter
+                && parameters[parameter.Name] is { } parameterValue
+                && !typeMapping.ClrType.UnwrapNullableType().IsInstanceOfType(parameterValue))
+            {
+                throw new InvalidOperationException(
+                    RelationalStrings.ExecuteMergeParameterTypeMismatch(
+                        parameterValue.GetType().ShortDisplayName(), columnName, typeMapping.ClrType.ShortDisplayName()));
+            }
+        }
+    }
 
     /// <summary>
     ///     Visits an <see cref="AggregateFunctionExpression" /> and computes its nullability.
@@ -682,6 +766,20 @@ public class SqlNullabilityProcessor : ExpressionVisitor
             }
         }
     }
+
+    /// <summary>
+    ///     Visits a <see cref="ClrTypeChangeExpression" /> and computes its nullability.
+    /// </summary>
+    /// <param name="clrTypeChangeExpression">A CLR type change expression to visit.</param>
+    /// <param name="allowOptimizedExpansion">Whether optimized expansion is allowed.</param>
+    /// <param name="nullable">Whether the SQL expression is nullable.</param>
+    /// <returns>An optimized SQL expression.</returns>
+    protected virtual SqlExpression VisitClrTypeChange(
+        ClrTypeChangeExpression clrTypeChangeExpression,
+        bool allowOptimizedExpansion,
+        out bool nullable)
+        => clrTypeChangeExpression.Update(
+            Visit(clrTypeChangeExpression.Operand, allowOptimizedExpansion, out nullable));
 
     /// <summary>
     ///     Visits a <see cref="CollateExpression" /> and computes its nullability.

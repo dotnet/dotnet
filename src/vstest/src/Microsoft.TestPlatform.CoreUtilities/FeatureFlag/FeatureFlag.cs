@@ -92,6 +92,12 @@ internal partial class FeatureFlag : IFeatureFlag
     // This defaults to true. Set it to 0 to opt in to the feature.
     public const string VSTEST_DISABLE_MTP_TESTHOST = nameof(VSTEST_DISABLE_MTP_TESTHOST);
 
+    // Disable the Unix handling of the directory holding the test session artifacts: narrowing a directory
+    // vstest creates to its owner, and verifying on Linux that a directory given by VSTEST_ARTIFACTS_DIRECTORY
+    // is owned by the current user and reachable by nobody else. Set it to 1 where that ownership or those
+    // permissions cannot be represented or changed, such as a mounted Windows or network volume.
+    public const string VSTEST_DISABLE_ARTIFACTS_DIRECTORY_VERIFICATION = nameof(VSTEST_DISABLE_ARTIFACTS_DIRECTORY_VERIFICATION);
+
     // Disable computing test case ids with xxHash128, falling back to the SHA1 ids the platform has
     // always produced. Moving to xxHash128 changes the id of every test whose id the platform
     // computes, which is a breaking change for anything that stored those ids - most notably Azure

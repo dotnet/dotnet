@@ -1,0 +1,54 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+name: Verify Azure Service Domains
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'config/Domains.json'
+      - 'nodejs/src/Helpers/Domains.ts'
+      - 'dotnet/src/Helpers/Domains.cs'
+  workflow_dispatch: # Allow manual triggering
+
+permissions:
+  contents: read
+
+jobs:
+  verify-domains:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v5
+    
+    - name: Install jq
+      run: sudo apt-get update && sudo apt-get install -y jq
+    
+    - name: Make scripts executable
+      run: chmod +x scripts/*.sh
+    
+    - name: Build Node.js/TypeScript version
+      run: ./scripts/build-domains-nodejs.sh
+    
+    - name: Build C# version
+      run: ./scripts/build-domains-dotnet.sh
+    
+    - name: Verify generated files are up-to-date
+      run: |
+        if ! git diff --exit-code nodejs/src/Helpers/Domains.ts dotnet/src/Helpers/Domains.cs; then
+          echo "❌ Generated domain files are out of sync!"
+          echo "The following files need to be regenerated:"
+          git diff --name-only nodejs/src/Helpers/Domains.ts dotnet/src/Helpers/Domains.cs
+          echo ""
+          echo "Please run the following commands locally and commit the results:"
+          echo "  ./scripts/build-domains-nodejs.sh"
+          echo "  ./scripts/build-domains-dotnet.sh"
+          exit 1
+        else
+          echo "✅ All generated files are up-to-date"
+        fi

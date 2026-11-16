@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +13,7 @@ namespace NuGet.ProjectModel
     /// </summary>
     public class ExternalProjectReference : IEquatable<ExternalProjectReference>, IComparable<ExternalProjectReference>
     {
-        private PackageSpec _packageSpec;
+        private PackageSpec? _packageSpec;
 
         /// <summary>
         /// Represents a reference to a project produced by an external build system, such as msbuild.
@@ -26,10 +24,12 @@ namespace NuGet.ProjectModel
         /// <param name="projectReferences">unique names of the referenced projects</param>
         public ExternalProjectReference(
             string uniqueName,
-            PackageSpec packageSpec,
+            PackageSpec? packageSpec,
             string msbuildProjectPath,
             IEnumerable<string> projectReferences)
+#pragma warning disable CS0618 // The non-obsolete overload delegates to the obsolete constructor for shared initialization.
             : this(uniqueName, packageSpec?.Name, packageSpec?.FilePath, msbuildProjectPath, projectReferences)
+#pragma warning restore CS0618
         {
             _packageSpec = packageSpec;
         }
@@ -41,11 +41,12 @@ namespace NuGet.ProjectModel
         /// <param name="packageSpecPath">project.json file path or null if none exists</param>
         /// <param name="msbuildProjectPath">project file if one exists</param>
         /// <param name="projectReferences">unique names of the referenced projects</param>
+        [Obsolete("This constructor is intended for internal use and will be removed in a future release.")]
         public ExternalProjectReference(
             string uniqueName,
-            string packageSpecProjectName,
-            string packageSpecPath,
-            string msbuildProjectPath,
+            string? packageSpecProjectName,
+            string? packageSpecPath,
+            string? msbuildProjectPath,
             IEnumerable<string> projectReferences)
         {
             if (uniqueName == null)
@@ -73,7 +74,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// The path to the project.json file representing the NuGet dependencies of the project
         /// </summary>
-        public PackageSpec PackageSpec
+        public PackageSpec? PackageSpec
         {
             get
             {
@@ -94,19 +95,19 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// Path to msbuild project file. Ex: xproj, csproj
         /// </summary>
-        public string MSBuildProjectPath { get; }
+        public string? MSBuildProjectPath { get; }
 
         /// <summary>
         /// Path to project.json
         /// </summary>
         /// <remarks>This may be null for projects that do not contain project.json.</remarks>
-        public string ProjectJsonPath { get; }
+        public string? ProjectJsonPath { get; }
 
         /// <summary>
         /// Project name used for project.json
         /// </summary>
         /// <remarks>This may be null for projects that do not contain project.json.</remarks>
-        public string PackageSpecProjectName { get; }
+        public string? PackageSpecProjectName { get; }
 
         /// <summary>
         /// Project name from the package spec or msbuild file.
@@ -129,7 +130,7 @@ namespace NuGet.ProjectModel
             return UniqueName;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as ExternalProjectReference);
         }
@@ -139,7 +140,7 @@ namespace NuGet.ProjectModel
             return StringComparer.Ordinal.GetHashCode(UniqueName);
         }
 
-        public bool Equals(ExternalProjectReference other)
+        public bool Equals(ExternalProjectReference? other)
         {
             if (other == null)
             {
@@ -154,7 +155,7 @@ namespace NuGet.ProjectModel
             return UniqueName.Equals(other.UniqueName, StringComparison.Ordinal);
         }
 
-        public int CompareTo(ExternalProjectReference other)
+        public int CompareTo(ExternalProjectReference? other)
         {
             return StringComparer.Ordinal.Compare(UniqueName, other?.UniqueName);
         }

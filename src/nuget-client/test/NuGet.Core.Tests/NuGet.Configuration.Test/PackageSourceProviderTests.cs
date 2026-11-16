@@ -2254,7 +2254,7 @@ namespace NuGet.Configuration.Test
 
                     // Assert
                     var path = Path.Combine(directory, "NuGet.Config");
-                    Assert.Equal($"Failed to read NuGet.Config due to unauthorized access. Path: '{path}'.", ex.Message);
+                    Assert.Equal($"Failed to read NuGet.Config due to unauthorized access. Path: '{path}'. Reason: {ex.InnerException!.Message}", ex.Message);
                 }
                 finally
                 {

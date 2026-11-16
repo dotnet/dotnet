@@ -175,7 +175,7 @@ namespace ScenarioTests
             discoverer.Find(false, discoverySink, TestFrameworkOptions.ForDiscovery(assemblyConfig));
             discoverySink.Finished.WaitOne();
 
-            XunitFilters filters = CreateFilters(noTraits, traits, offlineOnly, platform, dotnetRoot, targetRid);
+            XunitFilters filters = CreateFilters(noTraits, traits, offlineOnly, platform, targetRid);
 
             var filteredTestCases = discoverySink.TestCases.Where(filters.Filter).ToList();
 
@@ -250,7 +250,7 @@ namespace ScenarioTests
             Environment.SetEnvironmentVariable(ScenarioTestFixture.ExcludedTraitsEnvironmentVariable, string.Join(";", excludedTraits));
         }
 
-        private static XunitFilters CreateFilters(IList<string> excludedTraits, IList<string> includedTraits, bool offlineOnly, OSPlatform platform, string dotnetRoot, string targetRid)
+        private static XunitFilters CreateFilters(IList<string> excludedTraits, IList<string> includedTraits, bool offlineOnly, OSPlatform platform, string targetRid)
         {
             XunitFilters filters = new XunitFilters();
 
@@ -266,7 +266,7 @@ namespace ScenarioTests
             }
 
             UpdateOrAddToDictionary("SkipIfPlatform", [platform.ToString()], filters.ExcludedTraits);
-            UpdateOrAddToDictionary("SkipIfBuild", CreateBuildTraits(dotnetRoot, targetRid), filters.ExcludedTraits);
+            UpdateOrAddToDictionary("SkipIfBuild", CreateBuildTraits(targetRid), filters.ExcludedTraits);
 
             Dictionary<string, List<string>> includedTraitsMap = ParseTraitKeyValuePairs(includedTraits);
             foreach (KeyValuePair<string, List<string>> kvp in includedTraitsMap)
@@ -290,19 +290,13 @@ namespace ScenarioTests
             }
         }
 
-        private static List<string> CreateBuildTraits(string dotnetRoot, string targetRid)
+        private static List<string> CreateBuildTraits(string targetRid)
         {
             List<string> buildTraits = new();
 
             int archSeparatorPos = targetRid.LastIndexOf('-');
             string ridWithoutArch = targetRid.Substring(0, archSeparatorPos != -1 ? archSeparatorPos : 0);
             string arch = targetRid.Substring(archSeparatorPos + 1);
-
-            // Mono
-            if (DetermineIsMonoRuntime(dotnetRoot))
-            {
-                buildTraits.Add("Mono");
-            }
 
             // Portable
             string[] portableRids = [ "linux", "linux-musl" ];
@@ -319,26 +313,6 @@ namespace ScenarioTests
             }
 
             return buildTraits;
-        }
-
-        private static bool DetermineIsMonoRuntime(string dotnetRoot)
-        {
-            string sharedFrameworkRoot = Path.Combine(dotnetRoot, "shared", "Microsoft.NETCore.App");
-            if (!Directory.Exists(sharedFrameworkRoot))
-            {
-                return false;
-            }
-
-            string? version = Directory.GetDirectories(sharedFrameworkRoot).FirstOrDefault();
-            if (version is null)
-            {
-                return false;
-            }
-
-            string sharedFramework = Path.Combine(sharedFrameworkRoot, version);
-
-            // Check the presence of one of the mono header files.
-            return File.Exists(Path.Combine(sharedFramework, "mono-gc.h"));
         }
 
         private static Dictionary<string, List<string>> ParseTraitKeyValuePairs(IList<string> excludedTraits)

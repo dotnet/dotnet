@@ -16,6 +16,11 @@ parameters:
   type: boolean
   default: true
 
+- name: isCodeqlActive
+  displayName: True when the pipeline is configured to run CodeQL
+  type: boolean
+  default: false
+
 # True when the build is a build run from the production pipeline
 - name: isOfficialBuild
   type: boolean
@@ -123,6 +128,7 @@ stages:
         
         targetArchitecture: ${{ leg.targetArchitecture }}
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        isCodeqlActive: ${{ parameters.isCodeqlActive }}
         ${{ if eq(leg.targetArchitecture, 'arm64') }}:
           pool: ${{ parameters.pool_LinuxArm64 }}
         ${{ else }}:
@@ -133,7 +139,6 @@ stages:
         enablePoison: ${{ leg.enablePoison }}
         buildFromArchive: ${{ leg.buildFromArchive }}
         runOnline: ${{ leg.runOnline }}
-        useMonoRuntime: ${{ leg.useMonoRuntime }}
         useSystemLibraries: ${{ leg.useSystemLibraries }}
         withPreviousSDK: ${{ leg.withPreviousSDK }}
         createSourceArtifact: ${{ leg.createSourceArtifact }}
@@ -150,7 +155,7 @@ stages:
         
         # We only want to publish SB artifacts for each distinct distro/version/arch combination.
         # Stage 2 legs (those with reuseBuildArtifactsFrom) also get extraPropertiesStage2.
-        ${{ if and(endsWith(leg.buildNameFormat, 'Offline_MsftSdk'), not(contains(leg.buildNameFormat, '_Mono_'))) }}:
+        ${{ if endsWith(leg.buildNameFormat, 'Offline_MsftSdk') }}:
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             extraProperties: ${{ leg.extraProperties }} ${{ parameters.extraPropertiesStage2 }} /p:DotNetSourceOnlyPublishArtifacts=true
           ${{ else }}:
@@ -161,7 +166,7 @@ stages:
           ${{ else }}:
             extraProperties: ${{ leg.extraProperties }}
 
-- ${{ if and(parameters.isBuiltFromVmr, ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true)) }}:
+- ${{ if and(parameters.isBuiltFromVmr, ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true), not(parameters.isCodeqlActive)) }}:
   - stage: VMR_SourceOnly_Validation
     displayName: VMR Source-Only Validation
     dependsOn:

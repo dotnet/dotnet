@@ -21,12 +21,17 @@ namespace NuGet.LibraryModel
             string name,
             VersionRange versionRange)
         {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (versionRange == null) throw new ArgumentNullException(nameof(versionRange));
+
             Name = name;
             VersionRange = versionRange;
         }
 
         public static implicit operator LibraryRange(DownloadDependency library)
         {
+            if (library == null) throw new ArgumentNullException(nameof(library));
+
             return new LibraryRange
             {
                 Name = library.Name,

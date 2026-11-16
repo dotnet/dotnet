@@ -1,0 +1,439 @@
+{
+    "_sources": {
+        "ianaIpv4": {
+            "title": "IANA IPv4 Special-Purpose Address Registry",
+            "url": "https://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml",
+            "last_updated": "2025-10-09"
+        },
+        "ianaIpv6": {
+            "title": "IANA IPv6 Special-Purpose Address Registry",
+            "url": "https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry.xhtml",
+            "last_updated": "2025-10-09"
+        },
+        "ianaIpv4Multicast": {
+            "title": "IANA IPv4 Multicast Address Space",
+            "url": "https://www.iana.org/assignments/multicast-addresses/multicast-addresses.xhtml",
+            "last_updated": "2026-01-27"
+        },
+        "ianaIpv6Multicast": {
+            "title": "IANA IPv6 Multicast Address Space",
+            "url": "https://www.iana.org/assignments/ipv6-multicast-addresses/ipv6-multicast-addresses.xhtml",
+            "last_updated": "2026-02-02"
+        },
+        "imds": {
+            "title": "Microsoft Learn Azure Instance Metadata Service",
+            "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/instance-metadata-service?tabs=windows",
+            "last_updated": "NA"
+        },
+        "wireserver": {
+            "title": "Microsoft Learn Azure IP Address 168.63.129.16 Overview",
+            "url": "https://learn.microsoft.com/en-us/azure/virtual-network/what-is-ip-address-168-63-129-16?tabs=windows",
+            "last_updated": "NA"
+        },
+        "siteLocal": {
+            "title": "Microsoft Learn IPv6 Link-local and Site-local Addresses",
+            "url": "https://learn.microsoft.com/en-us/windows/win32/winsock/link-local-and-site-local-addresses-2",
+            "last_updated": "NA"
+        }
+    },
+    "amt": {
+        "purpose": "AMT",
+        "cidr": [
+            "192.52.193.0/24",
+            "2001:3::/32"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4",
+            "ianaIpv6"
+        ]
+    },
+    "as112": {
+        "purpose": "AS112",
+        "cidr": [
+            "192.31.196.0/24",
+            "192.175.48.0/24",
+            "2001:4:112::/48",
+            "2620:4f:8000::/48"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4",
+            "ianaIpv6"
+        ]
+    },
+    "benchmarking": {
+        "purpose": "Benchmarking",
+        "cidr": [
+            "198.18.0.0/15",
+            "2001:2::/48"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4",
+            "ianaIpv6"
+        ]
+    },
+    "deprecated": {
+        "purpose": "Deprecated",
+        "cidr": [
+            "192.88.99.0/24",
+            "2001:10::/28"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4",
+            "ianaIpv6"
+        ]
+    },
+    "detsPrefix": {
+        "purpose": "Drone Remote ID Protocol Entity Tags (DETs) Prefix",
+        "cidr": [
+            "2001:30::/28"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv6"
+        ]
+    },
+    "discardOnly": {
+        "purpose": "Discard-Only Address Block",
+        "cidr": [
+            "100::/64"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv6"
+        ]
+    },
+    "dnsSdAnycast": {
+        "purpose": "DNS-SD Service Registration Protocol Anycast",
+        "cidr": [
+            "2001:1::3/128"
+        ],
+        "standaloneVariable": false,
+        "_sources": [
+            "ianaIpv6"
+        ]
+    },
+    "documentation": {
+        "purpose": "Documentation",
+        "cidr": [
+            "192.0.2.0/24",
+            "198.51.100.0/24",
+            "203.0.113.0/24",
+            "2001:db8::/32",
+            "3fff::/20"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4",
+            "ianaIpv6"
+        ]
+    },
+    "dummy": {
+        "purpose": "Dummy address",
+        "cidr": [
+            "192.0.0.8/32",
+            "100:0:0:1::/64"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4",
+            "ianaIpv6"
+        ]
+    },
+    "ietfProtocol": {
+        "purpose": "IETF Protocol Assignments",
+        "cidr": [
+            "192.0.0.0/24",
+            "2001::/23"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4",
+            "ianaIpv6"
+        ]
+    },
+    "imds": {
+        "purpose": "Instance Metadata Service",
+        "cidr": [
+            "169.254.169.254/32"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "imds"
+        ]
+    },
+    "ipv4Ipv6Translat": {
+        "purpose": "IPv4-IPv6 Translated",
+        "cidr": [
+            "64:ff9b::/96",
+            "64:ff9b:1::/48"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv6"
+        ]
+    },
+    "ipv4ServiceContinuity": {
+        "purpose": "IPv4 Service Continuity Prefix",
+        "cidr": [
+            "192.0.0.0/29"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4"
+        ]
+    },
+    "broadcast": {
+        "purpose": "Limited Broadcast",
+        "cidr": [
+            "255.255.255.255/32"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4"
+        ]
+    },
+    "linkLocal": {
+        "purpose": "Link Local",
+        "cidr": [
+            "169.254.0.0/16",
+            "fe80::/10"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4",
+            "ianaIpv6",
+            "siteLocal"
+        ]
+    },
+    "loopback": {
+        "purpose": "Loopback",
+        "cidr": [
+            "127.0.0.0/8",
+            "::1/128"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4",
+            "ianaIpv6"
+        ]
+    },
+    "multicast": {
+        "purpose": "Multicast",
+        "cidr": [
+            "224.0.0.0/4",
+            "ff00::/8"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4Multicast",
+            "ianaIpv6Multicast"
+        ]
+    },
+    "nat64Dns64Discovery": {
+        "purpose": "NAT64/DNS64 Discovery",
+        "cidr": [
+            "192.0.0.170/32",
+            "192.0.0.171/32"
+        ],
+        "standaloneVariable": false,
+        "_sources": [
+            "ianaIpv4"
+        ]
+    },
+    "orchidv2": {
+        "purpose": "ORCHIDv2",
+        "cidr": [
+            "2001:20::/28"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv6"
+        ]
+    },
+    "pcpAnycast": {
+        "purpose": "Port Control Protocol Anycast",
+        "cidr": [
+            "192.0.0.9/32",
+            "2001:1::1/128"
+        ],
+        "standaloneVariable": false,
+        "_sources": [
+            "ianaIpv4",
+            "ianaIpv6"
+        ]
+    },
+    "privateUse": {
+        "purpose": "Private-Use",
+        "cidr": [
+            "10.0.0.0/8",
+            "172.16.0.0/12",
+            "192.168.0.0/16"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4"
+        ]
+    },
+    "reserved": {
+        "purpose": "Reserved",
+        "cidr": [
+            "240.0.0.0/4"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4"
+        ]
+    },
+    "sharedAddressSpace": {
+        "purpose": "Shared Address Space",
+        "cidr": [
+            "100.64.0.0/10"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4"
+        ]
+    },
+    "siteLocal": {
+        "purpose": "Site Local",
+        "cidr": [
+            "fec0::/10"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "siteLocal"
+        ]
+    },
+    "six4aaRelayAnycast": {
+        "purpose": "6a44-relay Anycast Address",
+        "cidr": [
+            "192.88.99.2/32"
+        ],
+        "standaloneVariable": false,
+        "_sources": [
+            "ianaIpv4"
+        ]
+    },
+    "sixto4": {
+        "purpose": "6to4",
+        "cidr": [
+            "2002::/16"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv6"
+        ]
+    },
+    "srv6Sid": {
+        "purpose": "Segment Routing (SRv6) SIDs",
+        "cidr": [
+            "5f00::/16"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv6"
+        ]
+    },
+    "teredo": {
+        "purpose": "TEREDO",
+        "cidr": [
+            "2001::/32"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv6"
+        ]
+    },
+    "turnAnycast": {
+        "purpose": "Traversal Using Relays around NAT Anycast",
+        "cidr": [
+            "192.0.0.10/32",
+            "2001:1::2/128"
+        ],
+        "standaloneVariable": false,
+        "_sources": [
+            "ianaIpv4",
+            "ianaIpv6"
+        ]
+    },
+    "uniqueLocal": {
+        "purpose": "Unique Local Unicast",
+        "cidr": [
+            "fc00::/7"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv6"
+        ]
+    },
+    "unspecified": {
+        "purpose": "This host on this network; unspecified address",
+        "cidr": [
+            "0.0.0.0/8",
+            "::/128"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "ianaIpv4",
+            "ianaIpv6"
+        ]
+    },
+    "wireserver": {
+        "purpose": "Azure WireServer",
+        "cidr": [
+            "168.63.129.16/32"
+        ],
+        "standaloneVariable": true,
+        "_sources": [
+            "wireserver"
+        ]
+    },
+    "recommendedV1": {
+        "purpose": "Current list of recommended special-purpose addresses",
+        "cidr": [
+            "0.0.0.0/8",
+            "10.0.0.0/8",
+            "100.64.0.0/10",
+            "127.0.0.0/8",
+            "168.63.129.16/32",
+            "169.254.0.0/16",
+            "172.16.0.0/12",
+            "192.0.0.0/24",
+            "192.0.2.0/24",
+            "192.31.196.0/24",
+            "192.52.193.0/24",
+            "192.88.99.0/24",
+            "192.168.0.0/16",
+            "192.175.48.0/24",
+            "198.18.0.0/15",
+            "198.51.100.0/24",
+            "203.0.113.0/24",
+            "224.0.0.0/4",
+            "240.0.0.0/4",
+            "::1/128",
+            "::/128",
+            "64:ff9b::/96",
+            "64:ff9b:1::/48",
+            "100::/64",
+            "100:0:0:1::/64",
+            "2001::/23",
+            "2001:db8::/32",
+            "2002::/16",
+            "2620:4f:8000::/48",
+            "3fff::/20",
+            "5f00::/16",
+            "fc00::/7",
+            "fe80::/10",
+            "fec0::/10",
+            "ff00::/8"
+        ],
+        "standaloneVariable": true,
+        "_notes": [
+            "Skipping the following CIDR ranges that are already included in other CIDR ranges: 169.254.169.254/32, 192.0.0.0/29, 192.0.0.8/32, 192.0.0.9/32, 192.0.0.10/32, 192.0.0.170/32, 192.0.0.171/32, 192.88.99.2/32, 255.255.255.255/32, 2001::/32, 2001:1::1/128, 2001:1::2/128, 2001:1::3/128, 2001:2::/48, 2001:3::/32, 2001:4:112::/48, 2001:10::/28, 2001:20::/28, 2001:30::/28"
+        ]
+    }
+}

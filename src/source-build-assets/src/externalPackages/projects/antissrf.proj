@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <AntiSSRFProjectPath>$(ProjectDirectory)dotnet/src/Microsoft.Security.AntiSSRF.csproj</AntiSSRFProjectPath>
+    <AntiSSRFKeyFilePath>$(KeysDir)antissrf.snk</AntiSSRFKeyFilePath>
+    <AntiSSRFPublicKey>$([System.Convert]::ToHexString($([System.IO.File]::ReadAllBytes('$(AntiSSRFKeyFilePath)'))))</AntiSSRFPublicKey>
+    <PackagesOutput>$(ProjectDirectory)pack/</PackagesOutput>
+    <SourceRevisionId>8366ff53e9c75a52d1edcc06fde7b1620243928c</SourceRevisionId>
+
+    <DotNetToolArgs>$(DotNetToolArgs) /p:Configuration=$(Configuration)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:TargetFrameworks=$(NetCurrent)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:Version=$(AntiSSRFReleaseVersion)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:PackageVersion=$(AntiSSRFReleaseVersion)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:SignAssembly=true /p:PublicSign=true</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:AssemblyOriginatorKeyFile=$(AntiSSRFKeyFilePath)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:PublicKey=$(AntiSSRFPublicKey)</DotNetToolArgs>
+
+    <BuildCommand>$(DotNetTool) pack $(AntiSSRFProjectPath) --output $(PackagesOutput) /bl:$(ArtifactsLogRepoDir)build.binlog $(DotNetToolArgs)</BuildCommand>
+  </PropertyGroup>
+
+</Project>

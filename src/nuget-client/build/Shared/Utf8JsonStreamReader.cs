@@ -158,7 +158,9 @@ namespace NuGet.Shared
             var listObjects = new List<T>();
             do
             {
-                listObjects.Add(streamReaderConverter.Read(ref this));
+                T convertedObject = streamReaderConverter.Read(ref this)
+                    ?? throw new JsonException("The converter returned an invalid object.");
+                listObjects.Add(convertedObject);
                 //At this point we're looking at the EndObject token for the object, need to advance.
                 Read();
             }
