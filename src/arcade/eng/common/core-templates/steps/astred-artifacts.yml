@@ -9,6 +9,9 @@ parameters:
 - name: binlogDir
   type: string
   default: $(Build.ArtifactStagingDirectory)/AstredCapture/binlogs
+- name: compilationDatabaseDir
+  type: string
+  default: ''
 - name: capturePath
   type: string
   default: $(Build.ArtifactStagingDirectory)/AstredCapture
@@ -25,19 +28,32 @@ steps:
     $apjOut = Join-Path $env:ASTRED_CAPTURE_PATH 'apj'
     New-Item -ItemType Directory -Force -Path $apjOut | Out-Null
 
-    $binlogs = Get-ChildItem -Path $env:ASTRED_BINLOG_DIR -Recurse -Force -Filter *.binlog `
-      -ErrorAction SilentlyContinue
+    $binlogs = @(Get-ChildItem -Path $env:ASTRED_BINLOG_DIR -Recurse -Force -Filter *.binlog `
+      -ErrorAction SilentlyContinue)
     if (-not $binlogs) {
       Write-Host "##vso[task.logissue type=warning]No binlogs found in $env:ASTRED_BINLOG_DIR. Check the calling job's Astred header configuration for MSBUILDDEBUGENGINE / MSBuildDebugEngine and MSBUILDDEBUGPATH."
+    }
+
+    $compilationDatabases = @()
+    if ($env:ASTRED_COMPILATION_DATABASE_DIR) {
+      if (Test-Path -LiteralPath $env:ASTRED_COMPILATION_DATABASE_DIR -PathType Container) {
+        $compilationDatabases = @(Get-ChildItem -LiteralPath $env:ASTRED_COMPILATION_DATABASE_DIR `
+          -Recurse -Force -File -Filter compile_commands.json)
+      }
+      if (-not $compilationDatabases) {
+        Write-Host "##vso[task.logissue type=warning]No compilation databases found in $env:ASTRED_COMPILATION_DATABASE_DIR. Native code built outside MSBuild will not be captured."
+      }
+    }
+
+    if (-not $binlogs -and -not $compilationDatabases) {
       exit 0
     }
 
     $project = Join-Path $apjOut '.astred.project.json'
-    $binlogPaths = @($binlogs.FullName)
-    $responseFile = Join-Path $apjOut 'binlogs.rsp'
-    $binlogPaths | ForEach-Object { '"{0}"' -f $_ } |
+    $responseFile = Join-Path $apjOut 'astproj-inputs.rsp'
+    ($binlogs + $compilationDatabases) | ForEach-Object { '"{0}"' -f $_.FullName } |
       Set-Content -LiteralPath $responseFile -Encoding utf8
-    Write-Host "astproj: processing $($binlogPaths.Count) binlog(s)"
+    Write-Host "astproj: processing $($binlogs.Count) binlog(s) and $($compilationDatabases.Count) compilation database(s)"
     astred astproj -nofolders "@$responseFile" "-o:$project"
     if ($LASTEXITCODE -ne 0) {
       throw "astproj failed (exit $LASTEXITCODE)"
@@ -46,6 +62,7 @@ steps:
   workingDirectory: ${{ parameters.sourcesPath }}
   env:
     ASTRED_BINLOG_DIR: ${{ parameters.binlogDir }}
+    ASTRED_COMPILATION_DATABASE_DIR: ${{ parameters.compilationDatabaseDir }}
     ASTRED_CAPTURE_PATH: ${{ parameters.capturePath }}
   continueOnError: true
 
