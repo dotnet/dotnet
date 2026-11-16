@@ -244,7 +244,11 @@ internal class RunTestsArgumentExecutor : IArgumentExecutor
             {
                 var settingsXml = _runSettingsProvider.ActiveRunSettings?.SettingsXml;
                 TPDebug.Assert(settingsXml is not null, "RunSettingsProvider.ActiveRunSettings.SettingsXml is null");
-                _artifactProcessingManager.CollectArtifacts(e, settingsXml);
+                var collectionWarning = _artifactProcessingManager.CollectArtifacts(e, settingsXml);
+                if (collectionWarning is not null)
+                {
+                    _output.Warning(false, collectionWarning);
+                }
             }
         }
     }

@@ -236,4 +236,36 @@ public class DataCollectionTests : AcceptanceTestBase
         CreateDataCollectionRunSettingsFile(runsettingsPath, dataCollectionAttributes);
         return runsettingsPath;
     }
+
+    [TestMethod]
+    [TestMatrix(testHost: Net)]
+    public void DataCollectorReceivesTestCaseStartForEveryDataDrivenRow(RunnerInfo runnerInfo)
+    {
+        // Regression test for https://github.com/microsoft/vstest/issues/4997
+        // MSTest data rows share the ManagedType and ManagedMethod values used to calculate
+        // TestCase.Id, so TestCaseStart must still fire for every row execution.
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        var assemblyPaths = GetAssetFullPath("DataDrivenTestProject.dll");
+        string runSettings = GetRunsettingsFilePath(TempDirectory.Path);
+        var extensionsPath = Path.GetDirectoryName(GetTestDllForFramework("OutOfProcDataCollector.dll", "netstandard2.0"));
+        var arguments = PrepareArguments(assemblyPaths, null, runSettings, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
+        arguments = string.Concat(arguments, $" /TestAdapterPath:{extensionsPath}");
+
+        var env = new Dictionary<string, string?>
+        {
+            ["TEST_ASSET_SAMPLE_COLLECTOR_PATH"] = TempDirectory.Path,
+        };
+
+        InvokeVsTest(arguments, env);
+
+        // DataDrivenTestProject has 4 test executions: 3 DataRow rows + 1 simple test.
+        ValidateSummaryStatus(4, 0, 0);
+
+        // The SampleDataCollector creates one testcasefilename{i}.txt per TestCaseStart event.
+        // Before the fix, DataRow rows sharing the same TestCase.Id would get deduplicated,
+        // producing fewer files than actual test executions.
+        var resultFiles = Directory.GetFiles(TempDirectory.Path, "testcasefilename*", SearchOption.AllDirectories);
+        Assert.HasCount(4, resultFiles);
+    }
 }

@@ -418,7 +418,7 @@ public class VirtualizationTest : ServerTestBase<ToggleExecutionModeServerFixtur
             "return document.querySelectorAll('#variable-height-table tbody tr td').length;");
         Assert.True(itemRowCount > 0, "Should have <tr> elements containing <td> cells");
 
-        Browser.ExecuteJavaScript("window.scrollTo(0, document.body.scrollHeight);");
+        Browser.Exists(By.TagName("body")).SendKeys(Keys.End);
         Browser.True(() => Browser.Exists(By.Id("vht-row-499")).Displayed);
 
         var nestedTrCountAfterScroll = (long)js.ExecuteScript(
@@ -3119,6 +3119,34 @@ public class VirtualizationTest : ServerTestBase<ToggleExecutionModeServerFixtur
     }
 
     [Fact]
+    public void AnchorMode_End_AutomaticSortedHistory_DoesNotUndoBottomPin()
+    {
+        var js = (IJavaScriptExecutor)Browser;
+        InstallEndAnchorCorrectionProbe(js);
+
+        try
+        {
+            Browser.MountTestComponent<VirtualizationEndAnchorHistory>();
+            var container = Browser.Exists(By.Id("scroll-container"));
+            Browser.Equal("2696", () => Browser.Exists(By.Id("item-count")).Text);
+            Browser.Equal("1", () => Browser.Exists(By.Id("initial-history-count")).Text);
+            Browser.True(
+                () => (bool)js.ExecuteScript("return window.__endAnchorCorrectionProbe.reachedBottom;"),
+                TimeSpan.FromSeconds(10),
+                "The loaded history must receive a real bottom pin before checking for rollback.");
+
+            WaitForRenderToSettle(container, js, trackScrollHeight: true);
+
+            AssertNoEndAnchorRollback(js, "automatic sorted history");
+            Browser.True(() => GetBottomRenderedIndex(js) == 0 && IsScrolledToBottom(js, container));
+        }
+        finally
+        {
+            js.ExecuteScript("window.__endAnchorCorrectionProbe.restore();");
+        }
+    }
+
+    [Fact]
     public void Table_StartAnchor_AsyncProvider_ContinuousPrepend_MaterializesNewHeadWithoutIndexReversal()
     {
         Browser.MountTestComponent<VirtualizationTableScrollWithAppend>();
@@ -5051,7 +5079,6 @@ public class VirtualizationTest : ServerTestBase<ToggleExecutionModeServerFixtur
     [InlineData(false, false)]
     [InlineData(true, false)]
     [InlineData(false, true)]
-    [InlineData(true, true)]
     public void AnchorMode_WindowScroll_End_PrependAtTop_ViewportStaysStable(bool variableHeight, bool useItemsProvider)
     {
         MountWindowScrollAnchorModeComponent("2", variableHeight, useItemsProvider, delay: useItemsProvider);
@@ -5070,6 +5097,10 @@ public class VirtualizationTest : ServerTestBase<ToggleExecutionModeServerFixtur
         AssertWindowScrollViewportStaysStable(js, root, indexBefore, topBefore,
             "Window End mode at top: same item should stay at same position after prepend");
     }
+
+    [Fact]
+    public virtual void AnchorMode_WindowScroll_End_PrependAtTop_VariableHeightItemsProvider_ViewportStaysStable()
+        => AnchorMode_WindowScroll_End_PrependAtTop_ViewportStaysStable(variableHeight: true, useItemsProvider: true);
 
     [Theory]
     [InlineData(false, false)]
@@ -5217,6 +5248,54 @@ public class VirtualizationTest : ServerTestBase<ToggleExecutionModeServerFixtur
 
         Assert.True(indexMatch && drift <= driftTolerance,
             $"{message} (index before: {indexBefore}, after: {lastPos.index}, relTop before: {relTopBefore}, after: {lastPos.relTop}, scrollTop: {lastPos.scrollTop}, tolerance: {driftTolerance})");
+    }
+
+    private static void InstallEndAnchorCorrectionProbe(IJavaScriptExecutor js)
+    {
+        // WebDriver polling cannot observe both scrollTop assignments within one synchronous refresh.
+        js.ExecuteScript(
+            """
+            const descriptor = Object.getOwnPropertyDescriptor(Element.prototype, 'scrollTop');
+            const probe = {
+                reachedBottom: false,
+                rollbacks: [],
+                restore() {
+                    Object.defineProperty(Element.prototype, 'scrollTop', descriptor);
+                    delete window.__endAnchorCorrectionProbe;
+                }
+            };
+            window.__endAnchorCorrectionProbe = probe;
+            Object.defineProperty(Element.prototype, 'scrollTop', {
+                configurable: true,
+                get() {
+                    return descriptor.get.call(this);
+                },
+                set(value) {
+                    const before = descriptor.get.call(this);
+                    descriptor.set.call(this, value);
+                    if (this.id !== 'scroll-container') {
+                        return;
+                    }
+                    const after = descriptor.get.call(this);
+                    const gap = this.scrollHeight - this.clientHeight - after;
+                    if (probe.reachedBottom && before - after > 1) {
+                        probe.rollbacks.push({ from: before, to: after, gap });
+                    }
+                    if (this.scrollHeight > this.clientHeight && Math.abs(gap) < 2) {
+                        probe.reachedBottom = true;
+                    }
+                }
+            });
+            """);
+    }
+
+    private static void AssertNoEndAnchorRollback(IJavaScriptExecutor js, string scenario)
+    {
+        var rollbackCount = Convert.ToInt64(js.ExecuteScript(
+            "return window.__endAnchorCorrectionProbe.rollbacks.length;"), CultureInfo.InvariantCulture);
+        var rollbacks = js.ExecuteScript("return JSON.stringify(window.__endAnchorCorrectionProbe.rollbacks);");
+        Assert.True(rollbackCount == 0,
+            $"End following must not undo a bottom pin after {scenario}. Recorded viewport rollbacks: {rollbacks}");
     }
 
     /// <summary>

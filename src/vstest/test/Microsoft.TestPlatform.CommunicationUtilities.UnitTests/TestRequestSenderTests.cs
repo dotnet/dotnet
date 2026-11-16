@@ -254,6 +254,21 @@ public class TestRequestSenderTests
     }
 
     [TestMethod]
+    public void CheckVersionWithTestHostShouldUseTestHostVersionForDiscovery()
+    {
+        SetupDeserializeMessage(MessageType.VersionCheck, Dummynegotiatedprotocolversion);
+        SetupRaiseMessageReceivedOnCheckVersion();
+        SetupFakeCommunicationChannel();
+
+        _testRequestSender.CheckVersionWithTestHost();
+        _testRequestSender.InitializeDiscovery(_pathToAdditionalExtensions);
+
+        _mockDataSerializer.Verify(
+            ds => ds.SerializePayload(MessageType.DiscoveryInitialize, _pathToAdditionalExtensions, Dummynegotiatedprotocolversion),
+            Times.Once);
+    }
+
+    [TestMethod]
     public void CheckVersionWithTestHostShouldThrowIfTestHostVersionDoesNotMatch()
     {
         SetupDeserializeMessage(MessageType.ProtocolError, string.Empty);

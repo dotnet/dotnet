@@ -68,6 +68,7 @@ TEST(CommandLineFlagsTest, CanBeAccessedInCodeOnceGTestHIsIncluded) {
 #include <set>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <unordered_set>
 #include <utility>
@@ -215,7 +216,7 @@ class UnitTestRecordPropertyTestHelper : public Test {
   UnitTestRecordPropertyTestHelper() = default;
 
   // Forwards to UnitTest::RecordProperty() to bypass access controls.
-  void UnitTestRecordProperty(const char* key, const std::string& value) {
+  void UnitTestRecordProperty(std::string_view key, std::string_view value) {
     unit_test_.RecordProperty(key, value);
   }
 
@@ -1390,6 +1391,20 @@ TEST(TestPropertyTest, SetValue) {
   EXPECT_STREQ("value_2", property.value());
 }
 
+TEST(TestPropertyTest, StringViewValue) {
+  std::string_view key = std::string_view("key_extra").substr(0, 3);
+  std::string_view value_1 = std::string_view("value_1_extra").substr(0, 7);
+  std::string_view value_2 = std::string_view("value_2_extra").substr(0, 7);
+
+  TestProperty property(key, value_1);
+  EXPECT_STREQ("key", property.key());
+  EXPECT_STREQ("value_1", property.value());
+
+  property.SetValue(value_2);
+  EXPECT_STREQ("key", property.key());
+  EXPECT_STREQ("value_2", property.value());
+}
+
 // Tests the TestResult class
 
 // The test fixture for testing TestResult.
@@ -2107,6 +2122,16 @@ TEST_F(UnitTestRecordPropertyTest,
       Test::RecordProperty("name", "1"),
       "'classname', 'name', 'status', 'time', 'type_param', 'value_param',"
       " 'file', and 'line' are reserved");
+}
+
+TEST_F(UnitTestRecordPropertyTest, AcceptsStringView) {
+  UnitTestRecordProperty(std::string_view("key_extra", 3),
+                         std::string_view("value_extra", 5));
+
+  ASSERT_EQ(1, unit_test_.ad_hoc_test_result().test_property_count());
+  EXPECT_STREQ("key", unit_test_.ad_hoc_test_result().GetTestProperty(0).key());
+  EXPECT_STREQ("value",
+               unit_test_.ad_hoc_test_result().GetTestProperty(0).value());
 }
 
 class UnitTestRecordPropertyTestEnvironment : public Environment {

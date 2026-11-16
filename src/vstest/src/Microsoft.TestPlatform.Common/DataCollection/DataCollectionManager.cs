@@ -741,7 +741,10 @@ internal class DataCollectionManager : IDataCollectionManager
             else
             {
                 // new variable, add to the list.
-                EqtTrace.Verbose("DataCollectionManager.AddCollectionEnvironmentVariables: Adding Environment variable '{0}' value '{1}'", namevaluepair.Key, namevaluepair.Value);
+                EqtTrace.Verbose(
+                    "DataCollectionManager.AddCollectionEnvironmentVariables: Adding Environment variable '{0}' value '{1}'",
+                    namevaluepair.Key,
+                    SecretRedaction.RedactIfSecret(namevaluepair.Key, namevaluepair.Value));
 
                 dataCollectorEnvironmentVariables.Add(
                     namevaluepair.Key,

@@ -29,6 +29,20 @@ public class JsonDataSerializerTests
     }
 
     [TestMethod]
+    public void MessageToStringShouldRedactSecretsWithoutChangingWireData()
+    {
+        const string rawMessage = """{"MessageType":"VersionCheck","Payload":{"ApiToken":"sensitive","Name":"test"}}""";
+        var message = new Message { RawMessage = rawMessage };
+
+        var diagnostic = message.ToString();
+
+        Assert.Contains("\"ApiToken\":\"<redacted>\"", diagnostic);
+        Assert.DoesNotContain("sensitive", diagnostic);
+        Assert.Contains("\"Name\":\"test\"", diagnostic);
+        Assert.AreEqual(rawMessage, message.RawMessage);
+    }
+
+    [TestMethod]
     [DataRow(0)]
     [DataRow(1)]
     [DataRow(2)]

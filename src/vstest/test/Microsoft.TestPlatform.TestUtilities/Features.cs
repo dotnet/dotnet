@@ -16,7 +16,6 @@ public static class Features
     // public const string ATTACH_DEBUGGER_FLOW = nameof(ATTACH_DEBUGGER_FLOW);
     // public const string MULTI_TFM = nameof(MULTI_TFM);
     public const string MSTEST_EXAMPLE_FEATURE = nameof(MSTEST_EXAMPLE_FEATURE);
-    
 
     public static IImmutableDictionary<string, Feature> TestPlatformFeatures { get; } = new Dictionary<string, Feature>
     {

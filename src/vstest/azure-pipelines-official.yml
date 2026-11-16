@@ -4,6 +4,11 @@ trigger:
     include:
     - main
     - rel/*
+    # A merge into internal/rel/<version> must build. rel/* does not match it, so until
+    # this line existed a merged servicing change sat unbuilt until someone queued it by
+    # hand. Azure DevOps reads this file from the branch that was pushed, so this can only
+    # ever select this branch's own servicing line.
+    - internal/rel/*
     exclude:
     - rel/15.*
     - rel/16.*
@@ -98,10 +103,67 @@ variables:
     value: real
   - name: _SignArgs
     value: /p:DotNetSignType=$(_SignType) /p:TeamName=$(_TeamName) /p:Sign=$(_Sign)
-  - name: _Sign
-    value: True
+  # A pull request build has no signing identity and publishes nothing, so it must not sign.
+  # Measured on 3076559: with signing left on, the Build step fails with
+  #   Sign.proj(74,5): error : Nuget package ...Microsoft.NET.Test.Sdk.18.12.0-hotfix-....nupkg
+  #   is not signed properly
+  # for every shipping package, because the real signing plugin never ran in that context.
+  #
+  # This is the same class of defect as the SBOM restore below, and worth stating once: every
+  # PUBLISH step in this file was already gated on Build.Reason, but the delivery work that FEEDS
+  # those steps - signing, and the internal tools restore - was not. Turning the build validation
+  # policy on is what surfaced both, one after the other.
+  #
+  # _SignType is deliberately left at real. The servicing branches gate on it - they refuse to sign
+  # unless it is real - and a pull request build satisfies that gate by not signing at all rather
+  # than by claiming a different type.
+  #
+  # SETTING _Sign ALONE DOES NOTHING, which cost build 3076572. _Sign is only read by _SignArgs,
+  # and the Build step below passes _InternalBuildArgs, not _SignArgs - so the value was never on
+  # the command line. Signing comes from CIBuild.cmd, which always passes -sign, which build.ps1
+  # turns into /p:Sign=True. The override works because build.ps1 appends @properties AFTER
+  # /p:Sign=$sign, so /p:Sign in _InternalBuildArgs is the last one and wins. If that ordering ever
+  # changes, this stops working silently and the signing verification failure comes back.
+  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    - name: _Sign
+      value: false
+  - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+    - name: _Sign
+      value: True
   - name: VisualStudioDropName
-    value: Products/$(System.TeamProject)/$(Build.DefinitionName)/$(Build.SourceBranchName)/$(Build.BuildNumber)
+    # DELIVERY: pinned internal, with the embargo marker on the VARIABLE rather than
+    # only on the upload task. This value is passed to the build at /p:VisualStudioDropName
+    # and is baked into the .vsman payload URLs, so the upload destination and this value
+    # must be the SAME STRING. On the 17.14 line they were two hand-written literals, they
+    # diverged, and every payload URL 404'd. One variable referenced twice cannot diverge.
+    #
+    # The project and definition segments were $(System.TeamProject)/$(Build.DefinitionName),
+    # which inherit the destination from wherever the pipeline runs. As literals, no
+    # queue-time override can move the drop out of Products/internal/.
+    #
+    # The marker is not decoration: these artifacts are REAL-SIGNED with production
+    # certificates, so a signature check cannot tell them from shipped bits.
+    value: Products/internal/microsoft-vstest/realsigned-DO-NOT-SHIP-$(Build.SourceBranchName)/$(Build.BuildNumber)
+  # A pull request build publishes nothing, so it needs no SBOM - the publish steps are already
+  # gated on Build.Reason for exactly that reason. Generating one also drags in the internal tools
+  # restore, and that step FAILS OUTRIGHT in a pull request build: eng/common/internal/Tools.csproj
+  # references both MicroBuild.Core and MicroBuild.Plugins.SwixBuild, NuGet's generated
+  # Tools.csproj.nuget.g.props imports the Swix props, MicroBuild.Core.props imports the same file
+  # again, and -ci turns that MSB4011 duplicate-import warning into an error.
+  #
+  # Measured rather than assumed. Two pull request builds on two different branches failed
+  # identically - 3076553 on 18.12 and 3076479 on 18.0 - while 3076455 and 3075849, manual builds
+  # of the same branches running the same command line, emit no MSB4011 at all.
+  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    - name: _skipRestoreInternalTools
+      value: true
+    - name: _SbomArgs
+      value: ''
+  - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+    - name: _skipRestoreInternalTools
+      value: false
+    - name: _SbomArgs
+      value: /p:GenerateSbom=true
   - name: _InternalBuildArgs
     value: /p:DotNetSignType=$(_SignType)
       /p:TeamName=$(_TeamName)
@@ -109,7 +171,8 @@ variables:
       /p:DotNetPublishUsingPipelines=true
       /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
       /p:VisualStudioDropName=$(VisualStudioDropName)
-      /p:GenerateSbom=true
+      /p:Sign=$(_Sign)
+      $(_SbomArgs)
 
 resources:
   repositories:
@@ -143,8 +206,8 @@ extends:
         parameters:
           enableMicrobuild: true
           enablePublishBuildArtifacts: true
-          enablePublishBuildAssets: true
-          enablePublishUsingPipelines: true
+          # Register only official builds of this private servicing branch, never PRs.
+          enablePublishBuildAssets: ${{ and(eq(variables['System.TeamProjectId'], '7ea9116e-9fac-403d-b258-b31fcf1bb293'), eq(variables['Build.Repository.ID'], 'ef257391-4d76-4240-8649-3f21ac49c392'), eq(variables['Build.SourceBranch'], 'refs/heads/internal/rel/18.12'), ne(variables['Build.Reason'], 'PullRequest')) }}
           enablePublishTestResults: true
           testResultsFormat: 'vstest'
           enableTelemetry: true
@@ -204,7 +267,6 @@ extends:
                   -ci
                   -nobl
                   -integrationTest
-                  -compatibilityTest
                   -performanceTest
                 name: IntegrationTest
                 displayName: Integration Test
@@ -275,6 +337,21 @@ extends:
               - checkout: self
                 fetchDepth: 1
                 clean: true
+
+              - ${{ if eq(pool.os, 'linux') }}:
+                # A regular interactive login creates /run/user/<uid> (the XDG_RUNTIME_DIR convention) via
+                # pam_systemd, which the artifacts-directory fallback (GetUserPrivateTempPath) relies on as
+                # the current user's private temporary directory. The hosted agent never logs in that way, so
+                # the directory is missing and that fallback path goes untested. Create it here the same way a
+                # login session would, rather than loosening the product code or the tests to tolerate it
+                # being absent.
+                - script: |
+                    set -e
+                    uid=$(id -u)
+                    sudo mkdir -p "/run/user/$uid"
+                    sudo chown "$uid" "/run/user/$uid"
+                    sudo chmod 700 "/run/user/$uid"
+                  displayName: Ensure the XDG runtime directory exists
 
               # Build but don't pack, packing does not work on non-windows and we want to test what we built on Windows
               # anyway. Because that is what we will publish.
@@ -355,27 +432,6 @@ extends:
                 inputs:
                   artifactName: VSSetupArtifacts
                   targetPath: '$(Build.SourcesDirectory)/artifacts/VSSetup/Release'
-
-              - ${{ if eq(parameters.isRTM, False) }}:
-                - task: NuGetAuthenticate@1
-                  displayName: 'NuGet Authenticate to dotnet-tools and test-tools feeds'
-
-                - task:  1ES.PublishNuget@1
-                  displayName: 'Publish NuGet packages to dotnet-tools feed'
-                  inputs:
-                    packageParentPath: '$(Build.SourcesDirectory)/artifacts/packages/Release'
-                    packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
-                    publishVstsFeed: 'public/dotnet-tools'
-                
-                - task:  1ES.PublishNuget@1
-                  displayName: 'Publish NuGet packages to test-tools feed'
-                  inputs:
-                    packageParentPath: '$(Build.SourcesDirectory)/artifacts/packages/Release'
-                    packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
-                    publishVstsFeed: 'public/test-tools'
-
-              # Publishes setup VSIXes to a drop.
-              # Note: The insertion tool looks for the display name of this task in the logs.
               - task: AzureCLI@2
                 displayName: Get DevDiv Drop Access Token
                 inputs:
@@ -385,14 +441,14 @@ extends:
                   inlineScript: |
                     $token = az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv
                     Write-Host "##vso[task.setvariable variable=_DevDivDropAccessToken;issecret=true]$token"
-                condition: succeeded()
+                condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
               - task: 1ES.MicroBuildVstsDrop@1
                 displayName: Upload VSTS Drop
                 inputs:
                   dropName: $(VisualStudioDropName)
                   dropFolder: 'artifacts\VSSetup\Release\Insertion'
                   accessToken: $(_DevDivDropAccessToken)
-                condition: succeeded()
+                condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
               - task: 1ES.PublishBuildArtifacts@1
                 displayName: Publish Artifact VSSetup
@@ -409,6 +465,10 @@ extends:
             LclSource: lclFilesfromPackage
             LclPackageId: 'LCL-JUNO-PROD-VSTEST'
 
-    - template: eng/common/templates-official/post-build/post-build.yml@self
-      parameters:
-        enableSigningValidation: true
+    - ${{ if and(eq(variables['System.TeamProjectId'], '7ea9116e-9fac-403d-b258-b31fcf1bb293'), eq(variables['Build.Repository.ID'], 'ef257391-4d76-4240-8649-3f21ac49c392'), eq(variables['Build.SourceBranch'], 'refs/heads/internal/rel/18.12'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+      - template: /eng/common/templates-official/post-build/post-build.yml@self
+        parameters:
+          publishingInfraVersion: 3
+          requireDefaultChannels: true
+          enableSigningValidation: true
+          enableNugetValidation: true

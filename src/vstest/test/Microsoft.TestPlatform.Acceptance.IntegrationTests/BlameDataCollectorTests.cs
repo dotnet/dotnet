@@ -125,7 +125,9 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestMatrix(console: Net)]
+    // Both consoles: the .NET Framework console ships in Microsoft.TestPlatform, the .NET console in Microsoft.TestPlatform.CLI.
+    // Both testhosts: .NET testhost uses Microsoft.Diagnostics.NETCore.Client, .NET Framework testhost uses MiniDumpWriteDump.
+    [TestMatrix]
     public void HangDumpOnTimeout(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

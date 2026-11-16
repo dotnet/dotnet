@@ -105,7 +105,7 @@ extends:
       #                          #
       ############################
 
-      - ${{ if ne(parameters.buildOnly, true) }}:
+      - ${{ if and(ne(variables.isOfficialBuild, true), ne(parameters.buildOnly, true)) }}:
         - template: /eng/pipelines/platform-matrix.yml
           parameters:
             jobTemplate: /eng/pipelines/build.yml
@@ -147,6 +147,29 @@ extends:
             - osx-arm64
             - ${{ if notin(variables['Build.Reason'], 'PullRequest') }}:
               - osx-x64
+            jobParameters:
+              pipelineJobTemplate: ${{ variables.jobTemplate }}
+
+    - ${{ if and(eq(variables.isOfficialBuild, true), ne(parameters.buildOnly, true)) }}:
+      - stage: test_packaged
+        displayName: Test installed build artifacts
+        dependsOn: build
+        jobs:
+        - template: /eng/pipelines/platform-matrix.yml
+          parameters:
+            jobTemplate: /eng/pipelines/tests-packaged-sos.yml
+            isOfficialBuild: ${{ variables.isOfficialBuild }}
+            configurations:
+            - Release
+            platforms:
+            - win-x64
+            - win-x86
+            - win-arm64
+            - linux-x64
+            - linux-arm64
+            - linux-musl-x64
+            - osx-x64
+            - osx-arm64
             jobParameters:
               pipelineJobTemplate: ${{ variables.jobTemplate }}
 
@@ -213,6 +236,8 @@ extends:
                   Move-Item -Path $sourceDir/* -Destination $targetDir -Verbose
                 }
               displayName: 'Setup layout for packaging'
+
+            - template: /eng/common/core-templates/steps/enable-internal-sources.yml@self
 
             # Create nuget packages, sign binaries and publish to blob feed
             - script: $(Build.SourcesDirectory)\eng\ci-prepare-artifacts.cmd /p:DotNetSignType=$(_SignType) /p:TeamName=$(_TeamName) /p:DotNetPublishUsingPipelines=true /p:OfficialBuildId=$(BUILD.BUILDNUMBER)

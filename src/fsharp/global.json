@@ -1,6 +1,6 @@
 {
   "sdk": {
-    "version": "11.0.100-rc.1.26420.103",
+    "version": "11.0.100-rc.3.26522.148",
     "allowPrerelease": true,
     "paths": [
       ".dotnet",
@@ -10,7 +10,7 @@
     "rollForward": "latestMinor"
   },
   "tools": {
-    "dotnet": "11.0.100-rc.1.26420.103",
+    "dotnet": "11.0.100-rc.3.26522.148",
     "vs": {
       "version": "18.0",
       "components": [

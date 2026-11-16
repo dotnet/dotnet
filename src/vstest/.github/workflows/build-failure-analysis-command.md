@@ -33,7 +33,7 @@ permissions:
   copilot-requests: write
 
 concurrency:
-  group: build-failure-analysis-${{ github.event.issue.number }}
+  group: ${{ contains(github.actor, '[bot]') && github.run_id || format('build-failure-analysis-{0}', github.event.issue.number) }}
   cancel-in-progress: true
 
 env:
@@ -80,7 +80,7 @@ jobs:
       # the maintainer ran `/analyze-build-failure` on. Check out the PR's
       # merge ref explicitly so we analyse the same code that the auto
       # `pull_request` workflow would build.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
         with:
           ref: refs/pull/${{ github.event.issue.number }}/merge
 
@@ -126,7 +126,7 @@ jobs:
       - name: Upload analysis artifact
         if: always() && steps.build.outcome == 'failure'
         continue-on-error: true
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: build-failure-analysis-data
           path: |
@@ -141,13 +141,13 @@ jobs:
 # Copilot AI flake).
 steps:
   - name: Download analysis artifact
-    uses: actions/download-artifact@v4
+    uses: actions/download-artifact@v8.0.1
     with:
       name: build-failure-analysis-data
       path: /tmp/
 
   - name: Setup .NET (for NuGet MCP Server)
-    uses: actions/setup-dotnet@v4
+    uses: actions/setup-dotnet@v6.0.0
     with:
       dotnet-version: '9.0.x'
 
@@ -223,6 +223,10 @@ tools:
     - "NuGet.Mcp.Server"
 
 safe-outputs:
+  github-app:
+    client-id: ${{ vars.APP_ID }}
+    private-key: ${{ secrets.APP_PRIVATE_KEY }}
+    ignore-if-missing: true
   # The agent runs only when the build job reports failure (see top-level
   # `if:` above). On a failed build the agent normally emits at most one
   # `noop`, one summary comment, and a small set of inline review comments,

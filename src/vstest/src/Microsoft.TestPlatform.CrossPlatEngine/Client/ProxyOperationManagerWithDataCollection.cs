@@ -152,7 +152,5 @@ public class ProxyOperationManagerWithDataCollection : ProxyOperationManager
     }
 
     private void TestHostLaunchedHandler(object? sender, HostProviderEventArgs e)
-    {
-        ProxyDataCollectionManager.TestHostLaunched(e.ProcessId);
-    }
+        => ProxyDataCollectionManager.TestHostLaunched(e.ProcessId);
 }

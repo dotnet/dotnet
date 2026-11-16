@@ -44,6 +44,10 @@ public class ServerRoutingTest : RoutingTest
     {
     }
 
+    [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/66041")]
+    public override void NavigationLock_CanBlockExternalNavigation()
+        => base.NavigationLock_CanBlockExternalNavigation();
+
     [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/61080")]
     public override void NavigationLock_OverlappingNavigationsCancelExistingNavigations_HistoryNavigation()
         => base.NavigationLock_OverlappingNavigationsCancelExistingNavigations_HistoryNavigation();
@@ -119,6 +123,10 @@ public class ServerVirtualizationTest : VirtualizationTest
     [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/68017")]
     public override void QuickGrid_AnchorMode_Top_AppendKeepsViewportStable(string anchorMode, bool useItemsProvider)
         => base.QuickGrid_AnchorMode_Top_AppendKeepsViewportStable(anchorMode, useItemsProvider);
+
+    [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/70462")]
+    public override void AnchorMode_WindowScroll_End_PrependAtTop_VariableHeightItemsProvider_ViewportStaysStable()
+        => base.AnchorMode_WindowScroll_End_PrependAtTop_VariableHeightItemsProvider_ViewportStaysStable();
 }
 
 public class ServerDynamicComponentRenderingTest : DynamicComponentRenderingTest

@@ -39,7 +39,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
     <InternalsVisibleTo Include="NuGet.Console.TestContract" />
-    <InternalsVisibleTo Include="NuGet.PowerShellHost.Test" />
+    <InternalsVisibleTo Include="NuGet.Console.Test" />
   </ItemGroup>
 
 </Project>

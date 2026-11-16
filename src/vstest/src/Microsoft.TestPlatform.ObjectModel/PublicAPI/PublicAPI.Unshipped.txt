@@ -1,20 +1,4 @@
-﻿#nullable enable
-Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITelemetryEventsHandler
-Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITelemetryEventsHandler.HandleTelemetryEvent(Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent! telemetryEvent) -> void
-Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEndEventArgs.TestOutcome.set -> void
-Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.IsChildTestCase.set -> void
-Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.TestCaseId.set -> void
-Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.TestCaseName.set -> void
-Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.TestElement.set -> void
-Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryInitializer
-Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryInitializer.Initialize(Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryReporter! telemetryReporter) -> void
-Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryReporter
-Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryReporter.Report(Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent! telemetryEvent) -> void
-Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent
-Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent.Name.get -> string!
-Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent.Properties.get -> System.Collections.Generic.IDictionary<string!, object!>!
-Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent.TelemetryEvent(string! name, System.Collections.Generic.IDictionary<string!, object!>! properties) -> void
-Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.CreateNoNewWindow.get -> bool
+#nullable enable
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestPlatform.StartTestSession(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.IRequestData! requestData, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCriteria! criteria, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestSessionEventsHandler! eventsHandler, System.Collections.Generic.Dictionary<string!, Microsoft.VisualStudio.TestPlatform.ObjectModel.SourceDetail!>! sourceToSourceDetailMap, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.IWarningLogger! warningLogger) -> bool
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestSessionEventsHandler
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestSessionEventsHandler.HandleStartTestSessionComplete(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs? eventArgs) -> void
@@ -43,10 +27,14 @@ Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.CreateNoNewWind
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionPayload.CollectMetrics.get -> bool
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionPayload.CollectMetrics.set -> void
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionPayload.StopTestSessionPayload() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionPayload.TestSessionInfo.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestSessionInfo?
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionPayload.TestSessionInfo.set -> void
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs.Metrics.get -> System.Collections.Generic.IDictionary<string!, object!>?
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs.Metrics.set -> void
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs.StartTestSessionCompleteEventArgs() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs.TestSessionInfo.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestSessionInfo?
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs.TestSessionInfo.set -> void
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCriteria
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCriteria.RunSettings.get -> string?
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCriteria.RunSettings.set -> void
@@ -61,10 +49,23 @@ Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.CreateNoNewWind
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs.Metrics.get -> System.Collections.Generic.IDictionary<string!, object!>?
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs.Metrics.set -> void
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs.StopTestSessionCompleteEventArgs() -> void
-*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionPayload.TestSessionInfo.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestSessionInfo?
-*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionPayload.TestSessionInfo.set -> void
-*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs.TestSessionInfo.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestSessionInfo?
-*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs.TestSessionInfo.set -> void
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs.StopTestSessionCompleteEventArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestSessionInfo? testSessionInfo) -> void
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs.TestSessionInfo.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestSessionInfo?
 *REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs.TestSessionInfo.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITelemetryEventsHandler
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITelemetryEventsHandler.HandleTelemetryEvent(Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent! telemetryEvent) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEndEventArgs.TestOutcome.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.IsChildTestCase.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.TestCaseId.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.TestCaseName.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.TestElement.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryInitializer
+Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryInitializer.Initialize(Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryReporter! telemetryReporter) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryReporter
+Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryReporter.Report(Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent! telemetryEvent) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.CreateNoNewWindow.get -> bool
+Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent
+Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent.Name.get -> string!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent.Properties.get -> System.Collections.Generic.IDictionary<string!, object!>!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent.TelemetryEvent(string! name, System.Collections.Generic.IDictionary<string!, object!>! properties) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.EqtHash.GuidFromStringXxHash128(string! data) -> System.Guid
