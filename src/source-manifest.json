@@ -31,16 +31,16 @@
       "commitSha": "940e0b0b2cb05cd142f8e9760fda2779175127bb"
     },
     {
-      "barId": 341403,
+      "barId": 341494,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "a1c64acede986e81403b9ae8b03160680c6bfb53"
+      "commitSha": "11e6bca16ddd667f18cea029a813f1a963af191c"
     },
     {
-      "barId": 341389,
+      "barId": 341496,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "70ae5e4c1b6ae2a2461629f013ddad38d8bcd85e"
+      "commitSha": "ed342ec2dc3359cdff124b2a339b1ce36db3365a"
     },
     {
       "barId": 341264,
@@ -85,10 +85,10 @@
       "commitSha": "b14ecbad07974d4ad92637f6092ad984f4f7bcad"
     },
     {
-      "barId": 341408,
+      "barId": 341478,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "3450faa58bf7e1ed0487f56d4b68b6c64ae60508"
+      "commitSha": "5947e1a3ccd91c77991df85a763292e109ef4cc2"
     },
     {
       "barId": 339449,
