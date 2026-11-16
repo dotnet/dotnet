@@ -28,7 +28,7 @@ public class FileHelper : IFileHelper
 
     /// <inheritdoc/>
     public bool Exists(string? path)
-        => File.Exists(path);
+        => File.Exists(path); // CodeQL [SM00414] All inputs reaching this method originate from trusted sources (command line, runsettings, installation directories). The alert recurs in the VMR only because of ambiguous argument typing at some call sites.
 
     /// <inheritdoc/>
     public bool DirectoryExists(string? path)

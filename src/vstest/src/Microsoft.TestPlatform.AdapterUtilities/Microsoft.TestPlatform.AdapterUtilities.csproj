@@ -5,9 +5,9 @@
       This library is consumed by test frameworks and will run in testhosts, ship as that, and netstandard so everyone can use it.
 
       Adding newer tfms for .NET here is okay if we need to use features that are specific to them.
-      17.11.0 started supporting net9 and net8 explicitly so we can condition serialization attributes.
+      18.13.0 uses net10 as the minimum supported .NET target framework.
     -->
-    <TargetFrameworks>$(TestHostMinimumTargetFrameworks);$(ExtensionTargetFrameworks);net9.0</TargetFrameworks>
+    <TargetFrameworks>$(TestHostMinimumTargetFrameworks);$(ExtensionTargetFrameworks)</TargetFrameworks>
     <AssemblyName>Microsoft.TestPlatform.AdapterUtilities</AssemblyName>
     <RootNamespace>Microsoft.TestPlatform.AdapterUtilities</RootNamespace>
   </PropertyGroup>
@@ -46,6 +46,30 @@
 
   <ItemGroup>
     <Compile Include="..\..\shared\NullableAttributes.cs" Link="NullableAttributes.cs" />
+    <!-- Down-level ExperimentalAttribute. This assembly applies [Experimental] on target frameworks
+         that predate it. -->
+    <Compile Include="..\..\shared\ExperimentalAttribute.cs" Link="ExperimentalAttribute.cs" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Required by the vendored xxHash128 implementation. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Vendored xxHash128, compiled in as internal. See src/Microsoft.TestPlatform.Hashing.Source/README.md.
+         The test case id algorithm resolver must be excluded rather than merely need not be included:
+         it reads the CoreUtilities feature flag, and this assembly has no reference to CoreUtilities,
+         so compiling it in is an error. It is also not needed - this assembly does not read the flag. -->
+    <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Hashing.Source/*.cs"
+             Exclude="$(RepoRoot)src/Microsoft.TestPlatform.Hashing.Source/TestCaseIdAlgorithm.cs"
+             LinkBase="Hashing" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
+    <!-- Span<T> and BinaryPrimitives, required by the vendored xxHash128 implementation on the
+         frameworks that don't ship them inbox. This already has binding redirects in every app.config. -->
+    <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
   </ItemGroup>
 
   <ItemGroup>

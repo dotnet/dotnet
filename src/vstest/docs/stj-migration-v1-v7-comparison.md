@@ -2,11 +2,11 @@
 
 ## Summary
 
-**18 messages are IDENTICAL** between V1 and V7 — only the outer envelope changes (V7 adds `"Version": 7`).
+**14 messages are IDENTICAL** between V1 and V7 — only the outer envelope changes (V7 adds `"Version": 7`).
 
 **5 messages are STRUCTURALLY DIFFERENT** — all because they contain `TestCase` and/or `TestResult` objects, which are serialized differently between protocol versions.
 
-## Identical Messages (18)
+## Identical Messages (14)
 
 These payloads are byte-for-byte identical between V1 and V7. The only difference is the message envelope:
 - V1: `{"MessageType":"...","Payload":{...}}`
@@ -28,10 +28,6 @@ These payloads are byte-for-byte identical between V1 and V7. The only differenc
 | AfterTestRunEnd | `bool` | IsCanceled |
 | AfterTestRunEndResult | `AfterTestRunEndResult` | Attachments + metrics |
 | TestHostLaunched | `TestHostLaunchedPayload` | Process ID |
-| StartTestSession | `StartTestSessionPayload` | Session creation |
-| StartTestSessionCallback | `StartTestSessionAckPayload` | Session ack |
-| StopTestSession | `StopTestSessionPayload` | Session teardown |
-| StopTestSessionCallback | `StopTestSessionAckPayload` | Session teardown ack |
 
 ## Different Messages (5)
 

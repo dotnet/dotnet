@@ -710,7 +710,7 @@ public class TestRequestSenderTests
     {
         var attachDebuggerPayload = new TestProcessAttachDebuggerPayload(123)
         {
-            TargetFramework = ".NETCoreApp,Version=v8.0"
+            TargetFramework = ".NETCoreApp,Version=v10.0"
         };
         _mockExecutionEventsHandler
             .Setup(eh => eh.AttachDebuggerToProcess(It.IsAny<AttachDebuggerInfo>()))

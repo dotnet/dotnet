@@ -15,7 +15,7 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel;
 #if NETFRAMEWORK
 [Serializable]
 #endif
-public class SettingsException : Exception
+public class SettingsException : Exception // CodeQL [SM02227] Not deserialized with an unsafe formatter; the serialization constructor only forwards to the Exception base constructor.
 {
     /// <summary>
     /// Default Constructor
