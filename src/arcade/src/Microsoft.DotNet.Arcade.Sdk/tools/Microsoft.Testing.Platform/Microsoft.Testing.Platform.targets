@@ -27,7 +27,7 @@
 
       <_TestResultDirectory>$([System.IO.Path]::GetDirectoryName('%(TestToRun.ResultsTrxPath)'))</_TestResultDirectory>
       <_TestResultTrxFileName>$([System.IO.Path]::GetFileName('%(TestToRun.ResultsTrxPath)'))</_TestResultTrxFileName>
-      <_TestRunnerArgs>$(_TestRunnerAdditionalArguments) --no-progress --report-trx --report-trx-filename "$(_TestResultTrxFileName)" --results-directory "$(_TestResultDirectory)"</_TestRunnerArgs>
+      <_TestRunnerArgs>$(_TestRunnerAdditionalArguments) --progress off --report-trx --report-trx-filename "$(_TestResultTrxFileName)" --results-directory "$(_TestResultDirectory)"</_TestRunnerArgs>
     </PropertyGroup>
 
     <!-- Validate that non-Core workloads use executable files, not DLL files -->
