@@ -73,11 +73,18 @@ internal class ArtifactProcessingPostProcessModeProcessorExecutor : IArgumentExe
 {
     private readonly CommandLineOptions _commandLineOptions;
     private readonly IArtifactProcessingManager _artifactProcessingManage;
+    private readonly IOutput _output;
 
     public ArtifactProcessingPostProcessModeProcessorExecutor(CommandLineOptions options, IArtifactProcessingManager artifactProcessingManager)
+        : this(options, artifactProcessingManager, ConsoleOutput.Instance)
+    {
+    }
+
+    internal /* for testing */ ArtifactProcessingPostProcessModeProcessorExecutor(CommandLineOptions options, IArtifactProcessingManager artifactProcessingManager, IOutput output)
     {
         _commandLineOptions = options ?? throw new ArgumentNullException(nameof(options));
         _artifactProcessingManage = artifactProcessingManager ?? throw new ArgumentNullException(nameof(artifactProcessingManager));
+        _output = output ?? throw new ArgumentNullException(nameof(output));
     }
 
     public void Initialize(string? _)
@@ -99,6 +106,9 @@ internal class ArtifactProcessingPostProcessModeProcessorExecutor : IArgumentExe
         catch (Exception e)
         {
             EqtTrace.Error("ArtifactProcessingPostProcessModeProcessorExecutor: Exception during artifact post processing: " + e);
+            // Failing here makes vstest.console exit non zero, so the reason has to reach the console as
+            // well. Without this the run ends with an exit code and nothing else unless --diag was passed.
+            _output.Error(false, (e is AggregateException aggregate ? aggregate.Flatten().InnerException ?? e : e).Message);
             return ArgumentProcessorResult.Fail;
         }
     }

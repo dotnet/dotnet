@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 339617,
+      "barId": 340705,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "8f6ae2f6b8dc50ecb3cbe1523351801a40a0ddac"
+      "commitSha": "5e64e00dace05ac187c53ad185957b4f393058b7"
     },
     {
       "barId": 288647,
@@ -19,16 +19,16 @@
       "commitSha": "4c88e1089dbd15bda273d713940cf8401b2293b5"
     },
     {
-      "barId": 330796,
+      "barId": 340497,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "7664dbc52ce33f96c899680fd1bcac85ba059eda"
+      "commitSha": "eba706b893a899960a3bcbbdb51cb368bdce3ed4"
     },
     {
-      "barId": 339135,
+      "barId": 340552,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "5a3033d6bc6f6f94b32a35a941460beda71893a6"
+      "commitSha": "db992fc002bfce49fc6da642cdb0246d9edbc2c6"
     },
     {
       "barId": 309789,
@@ -37,10 +37,10 @@
       "commitSha": "4fb38398b3058d2040cfdb033a1aae3945ddb78a"
     },
     {
-      "barId": 336178,
+      "barId": 340599,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "76d53a5c01a61230c53535ae84f77ab98c4a5e42"
+      "commitSha": "dd1bebd143e319fee9248b9588913c7131ee139e"
     },
     {
       "barId": 339340,
@@ -49,10 +49,10 @@
       "commitSha": "93cdc7261dd774affd7832aaeffb22998c87d372"
     },
     {
-      "barId": 339694,
+      "barId": 340833,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "41ef6d693eee08ff072109dc2bb909bea1a9bab4"
+      "commitSha": "3d90ce145149e0369f594f1289f27528c98d2f21"
     },
     {
       "barId": 339073,
@@ -73,10 +73,10 @@
       "commitSha": "dcf71e3a030490c898a4650f274dfe5664ddd96c"
     },
     {
-      "barId": 328340,
+      "barId": 338811,
       "path": "vstest",
-      "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "3c757a2f5f453db95501b430bc88adc41da291ac"
+      "remoteUri": "https://dev.azure.com/dnceng/internal/_git/microsoft-vstest",
+      "commitSha": "c05ffe01c4d436921d4f93d32645d4d0bb511fd5"
     }
   ],
   "submodules": [

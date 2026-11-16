@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -41,8 +41,10 @@ public class PostProcessingTests : AcceptanceTestBase
 
         // Create and build a single test project once, then reuse it for all parallel vstest runs.
         string projectFolder = Path.Combine(TempDirectory.Path, "testproject");
-        ExecuteApplication(GetConsoleRunnerPath(), $"new mstest -o {projectFolder}", out string setupStdOut, out string setupStdError, out int setupExitCode);
+            // Give this test its own template cache; the shared one races with other scaffolds.
+        ExecuteApplication(GetConsoleRunnerPath(), $"new mstest -o {projectFolder}", out string setupStdOut, out string setupStdError, out int setupExitCode, new Dictionary<string, string> { ["DOTNET_CLI_HOME"] = CreateIsolatedTemplateEngineHome(TempDirectory.Path) });
         Assert.AreEqual(0, setupExitCode);
+        UseLocallyBuiltTestSdk(projectFolder);
         ExecuteApplication(GetConsoleRunnerPath(), $"build {projectFolder} -c release", out setupStdOut, out setupStdError, out setupExitCode);
         Assert.AreEqual(0, setupExitCode);
 

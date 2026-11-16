@@ -1,4 +1,9 @@
 <Project>
+  <PropertyGroup>
+    <!-- Fix CAB signature parsing here: standalone validation imports this file, not eng/Versions.props. -->
+    <MicrosoftDotNetSignCheckTaskVersion>12.0.0-beta.26468.5</MicrosoftDotNetSignCheckTaskVersion>
+  </PropertyGroup>
+
   <!--
     These are third party libraries that we use in Arcade. We need to sign them even if they
     are already signed. However, they must be signed with a 3rd party certificate.

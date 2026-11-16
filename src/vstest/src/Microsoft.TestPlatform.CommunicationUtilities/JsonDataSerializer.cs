@@ -12,6 +12,7 @@ using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
@@ -501,7 +502,10 @@ public class JsonDataSerializer : IDataSerializer
 
         public override string ToString()
         {
-            return $"({MessageType}) -> {RawMessage}";
+            // This is the type DeserializeMessage actually returns, and it overrides ToString, so it
+            // bypasses the redaction on Message.ToString entirely. Both paths have to redact or the
+            // handshake secret is written to a log by whichever one happens to be used.
+            return $"({MessageType}) -> {SecretRedaction.RedactSecretsInJson(RawMessage ?? string.Empty)}";
         }
     }
 
