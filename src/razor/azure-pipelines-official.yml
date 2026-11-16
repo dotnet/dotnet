@@ -311,7 +311,7 @@ extends:
           - job: macOS
             pool:
               name: Azure Pipelines
-              image: macOS-14
+              image: macOS-15
               os: macOS
             strategy:
               matrix:
