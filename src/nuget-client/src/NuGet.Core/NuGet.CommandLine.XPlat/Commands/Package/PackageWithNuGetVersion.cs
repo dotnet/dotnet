@@ -3,8 +3,10 @@
 
 #nullable enable
 
+using System;
 using System.Collections.Generic;
 using System.CommandLine.Parsing;
+using NuGet.Packaging.Core;
 using NuGet.Versioning;
 
 namespace NuGet.CommandLine.XPlat.Commands.Package
@@ -26,37 +28,21 @@ namespace NuGet.CommandLine.XPlat.Commands.Package
 
             foreach (var token in result.Tokens)
             {
-                string? packageId;
-                NuGetVersion? newExactVersion = null;
-
-                int separatorIndex = token.Value.IndexOf('@');
-
-                if (separatorIndex < 0)
+                PackageIdentity identity;
+                try
                 {
-                    packageId = token.Value;
+                    identity = PackageIdentity.Parse(token.Value);
                 }
-                else
+                catch (ArgumentException ex)
                 {
-                    packageId = token.Value.Substring(0, separatorIndex);
-                    string versionString = token.Value.Substring(separatorIndex + 1);
-
-                    if (string.IsNullOrEmpty(versionString))
-                    {
-                        result.AddError(Messages.Error_MissingVersion(token.Value));
-                        return [];
-                    }
-
-                    if (!NuGetVersion.TryParse(versionString, out newExactVersion))
-                    {
-                        result.AddError(Messages.Error_InvalidVersion(versionString));
-                        return [];
-                    }
+                    result.AddError(ex.Message);
+                    return [];
                 }
 
                 var package = new PackageWithNuGetVersion
                 {
-                    Id = packageId,
-                    NuGetVersion = newExactVersion
+                    Id = identity.Id,
+                    NuGetVersion = identity.HasVersion ? identity.Version : null
                 };
 
                 packages.Add(package);
