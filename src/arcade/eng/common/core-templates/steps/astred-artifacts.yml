@@ -12,6 +12,10 @@ parameters:
 - name: compilationDatabaseDir
   type: string
   default: ''
+# Optional Windows setup command to obtain INCLUDE for compilation database imports.
+- name: nativeEnvironmentCommand
+  type: string
+  default: ''
 - name: capturePath
   type: string
   default: $(Build.ArtifactStagingDirectory)/AstredCapture
@@ -49,6 +53,25 @@ steps:
       exit 0
     }
 
+    if ($compilationDatabases -and $env:ASTRED_NATIVE_ENVIRONMENT_COMMAND) {
+      $nativeEnvironmentOutput = & $env:ComSpec /d /c "$env:ASTRED_NATIVE_ENVIRONMENT_COMMAND && set INCLUDE"
+      $nativeEnvironmentExitCode = $LASTEXITCODE
+      $nativeEnvironmentOutput | Where-Object { $_ -notlike 'INCLUDE*=*' } |
+        ForEach-Object { Write-Host $_ }
+      if ($nativeEnvironmentExitCode -ne 0) {
+        throw "Native compiler environment setup failed (exit $nativeEnvironmentExitCode)."
+      }
+
+      $nativeInclude = $nativeEnvironmentOutput |
+        Where-Object { $_ -like 'INCLUDE=*' } |
+        ForEach-Object { $_.Substring('INCLUDE='.Length) } |
+        Select-Object -Last 1
+      if ([string]::IsNullOrWhiteSpace($nativeInclude)) {
+        throw 'Native compiler environment setup did not define INCLUDE.'
+      }
+      $env:INCLUDE = $nativeInclude
+    }
+
     $project = Join-Path $apjOut '.astred.project.json'
     $responseFile = Join-Path $apjOut 'astproj-inputs.rsp'
     ($binlogs + $compilationDatabases) | ForEach-Object { '"{0}"' -f $_.FullName } |
@@ -63,6 +86,7 @@ steps:
   env:
     ASTRED_BINLOG_DIR: ${{ parameters.binlogDir }}
     ASTRED_COMPILATION_DATABASE_DIR: ${{ parameters.compilationDatabaseDir }}
+    ASTRED_NATIVE_ENVIRONMENT_COMMAND: ${{ parameters.nativeEnvironmentCommand }}
     ASTRED_CAPTURE_PATH: ${{ parameters.capturePath }}
   continueOnError: true
 
