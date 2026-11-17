@@ -240,11 +240,7 @@ namespace NuGet.Common
                     return basePath;
                 }
 
-                var folder = RuntimeEnvironmentHelper.IsLinux &&
-                    string.IsNullOrEmpty(EnvironmentVariableReader.GetEnvironmentVariable("NUGET_SCRATCH"))
-                    ? NuGetFolderPath.NuGetHome
-                    : NuGetFolderPath.Temp;
-                basePath = Path.Combine(NuGetEnvironment.GetFolderPath(folder), "lock");
+                basePath = GetLockDirectoryPath();
 
                 Directory.CreateDirectory(basePath);
 
@@ -252,6 +248,20 @@ namespace NuGet.Common
 
                 return basePath;
             }
+        }
+
+        /// <summary>
+        /// Gets the directory used for inter-process lock files without creating it.
+        /// Honors NUGET_SCRATCH when set; otherwise uses the NuGet home directory on Linux
+        /// and the NuGet temp directory on Windows and macOS.
+        /// </summary>
+        public static string GetLockDirectoryPath()
+        {
+            var folder = RuntimeEnvironmentHelper.IsLinux &&
+                string.IsNullOrEmpty(EnvironmentVariableReader.GetEnvironmentVariable("NUGET_SCRATCH"))
+                ? NuGetFolderPath.NuGetHome
+                : NuGetFolderPath.Temp;
+            return Path.Combine(NuGetEnvironment.GetFolderPath(folder), "lock");
         }
 
         private static string FileLockPath(string filePath)
