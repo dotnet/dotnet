@@ -2,25 +2,25 @@
 <Dependencies>
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="sdk" Sha="d147fa546aa7568a8e3f5e34be71388948ce415d" BarId="335769" />
   <ProductDependencies>
-    <Dependency Name="Microsoft.NETCore.App.Ref" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.NETCore.App.Ref" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.Platforms" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.NETCore.Platforms" Version="11.0.0-rtm.26529.118">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.HostModel" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.NET.HostModel" Version="11.0.0-rtm.26529.118">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.IO.Hashing" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.IO.Hashing" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.DependencyModel" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Extensions.DependencyModel" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
     <!-- Change blob version in GenerateInstallerLayout.targets if this is unpinned to service targeting pack -->
     <!-- No new netstandard.library planned for 3.1 timeframe at this time. -->
@@ -28,9 +28,9 @@
       <Uri>https://github.com/dotnet/core-setup</Uri>
       <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Runtime.Emscripten.Internal" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.NET.Runtime.Emscripten.Internal" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Build" Version="18.13.0-1.26508.107">
       <Uri>https://github.com/dotnet/dotnet</Uri>
@@ -165,61 +165,61 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.CodeDom" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.CodeDom" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.ComponentModel.Composition" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.ComponentModel.Composition" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Formats.Asn1" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Formats.Asn1" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Security.Cryptography.ProtectedData" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Security.Cryptography.ProtectedData" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Text.Encoding.CodePages" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Text.Encoding.CodePages" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Resources.Extensions" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Resources.Extensions" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Internal" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.WindowsDesktop.App.Internal" Version="11.0.0-rtm.26529.118">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="11.0.0-rtm.26529.118">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Wpf.ProjectTemplates" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.DotNet.Wpf.ProjectTemplates" Version="11.0.0-rtm.26529.118">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="11.0.0-rtm.26529.118">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.App.Ref" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.App.Ref" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.App.Ref.Internal" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.App.Ref.Internal" Version="11.0.0-rtm.26529.118">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
     <Dependency Name="dotnet-dev-certs" Version="11.0.0-preview.5.26272.112">
       <Uri>https://github.com/dotnet/dotnet</Uri>
@@ -233,94 +233,94 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>85ca690954a6f5e988d523dec249b57b84d1ad0d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Analyzers" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.Analyzers" Version="11.0.0-rtm.26529.118">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
     <!-- Authentication and Components needed for dotnet/maui CoherentParentDependency -->
-    <Dependency Name="Microsoft.AspNetCore.Authentication.Facebook" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.Authentication.Facebook" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Authentication.Google" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.Authentication.Google" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Components" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.Components" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Components.Analyzers" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.Components.Analyzers" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Components.Forms" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.Components.Forms" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Components.WebAssembly" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.Components.WebAssembly" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Components.SdkAnalyzers" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.Components.SdkAnalyzers" Version="11.0.0-rtm.26529.118">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Components.WebView" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.Components.WebView" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Metadata" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.Metadata" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Mvc.Analyzers" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.Mvc.Analyzers" Version="11.0.0-rtm.26529.118">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.FileProviders.Embedded" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Extensions.FileProviders.Embedded" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Authorization" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.Authorization" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Components.Web" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.Components.Web" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.JSInterop" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.JSInterop" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.ObjectPool" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Extensions.ObjectPool" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.DeveloperCertificates.XPlat" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.DeveloperCertificates.XPlat" Version="11.0.0-rtm.26529.118">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.TestHost" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.AspNetCore.TestHost" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Web.ItemTemplates.11.0" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.DotNet.Web.ItemTemplates.11.0" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Web.ProjectTemplates.11.0" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.DotNet.Web.ProjectTemplates.11.0" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
     <Dependency Name="Microsoft.CodeAnalysis.Razor.Tooling.Internal" Version="11.1.0-preview.26508.107">
       <Uri>https://github.com/dotnet/dotnet</Uri>
@@ -334,149 +334,149 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Web.Xdt" Version="3.3.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Web.Xdt" Version="3.3.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
     <Dependency Name="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.13.0-1.26508.107">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
     </Dependency>
-    <Dependency Name="System.CommandLine" Version="3.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.CommandLine" Version="3.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
     <!-- Microsoft.CodeAnalysis.Workspaces.MSBuild transitively references M.Bcl.AsyncInterfaces.
          Adding an explicit dependency to make sure the latest version is used instead of the SBA
          one under source build. -->
-    <Dependency Name="Microsoft.DiaSymReader" Version="3.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.DiaSymReader" Version="3.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="2.0.0-preview.1.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="2.0.0-preview.1.26529.118">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Tasks.Git" Version="11.0.100-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Build.Tasks.Git" Version="11.0.100">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Common" Version="11.0.100-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.SourceLink.Common" Version="11.0.100">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="11.0.100-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="11.0.100">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitHub" Version="11.0.100-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.SourceLink.GitHub" Version="11.0.100">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitLab" Version="11.0.100-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.SourceLink.GitLab" Version="11.0.100">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="11.0.100-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
-    </Dependency>
-    <!-- Dependency required for flowing correct package version in source-build, using PVP flow. -->
-    <Dependency Name="Microsoft.Extensions.Logging" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="11.0.100">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
     <!-- Dependency required for flowing correct package version in source-build, using PVP flow. -->
-    <Dependency Name="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Extensions.Logging" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
     <!-- Dependency required for flowing correct package version in source-build, using PVP flow. -->
-    <Dependency Name="Microsoft.Extensions.Logging.Console" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
     <!-- Dependency required for flowing correct package version in source-build, using PVP flow. -->
-    <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Extensions.Logging.Console" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
     <!-- Dependency required for flowing correct package version in source-build, using PVP flow. -->
-    <Dependency Name="System.ServiceProcess.ServiceController" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Text.Json" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <!-- Dependency required for flowing correct package version in source-build, using PVP flow. -->
+    <Dependency Name="System.ServiceProcess.ServiceController" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Bcl.AsyncInterfaces" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Text.Json" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.FileProviders.Abstractions" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Bcl.AsyncInterfaces" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Win32.SystemEvents" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Extensions.FileProviders.Abstractions" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Composition.AttributedModel" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Win32.SystemEvents" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Composition.Convention" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Composition.AttributedModel" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Composition.Hosting" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Composition.Convention" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Composition.Runtime" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Composition.Hosting" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Composition.TypedParts" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Composition.Runtime" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Configuration.ConfigurationManager" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Composition.TypedParts" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Diagnostics.DiagnosticSource" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Configuration.ConfigurationManager" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Security.Cryptography.Pkcs" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Diagnostics.DiagnosticSource" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Security.Cryptography.Xml" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Security.Cryptography.Pkcs" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Security.Permissions" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Security.Cryptography.Xml" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="System.Windows.Extensions" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Security.Permissions" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
+    </Dependency>
+    <Dependency Name="System.Windows.Extensions" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
     <Dependency Name="Microsoft.CodeAnalysis.ExternalAccess.HotReload" Version="5.13.0-1.26508.107">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.DependencyInjection.Abstractions" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Extensions.DependencyInjection.Abstractions" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.McpServer.ProjectTemplates.11.0" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.McpServer.ProjectTemplates.11.0" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Build.TaskAuthoring.Analyzer" Version="18.13.0-1.26508.107">
       <Uri>https://github.com/dotnet/dotnet</Uri>
@@ -490,9 +490,9 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
@@ -524,9 +524,9 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
     </Dependency>
-    <Dependency Name="System.Reflection.MetadataLoadContext" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="System.Reflection.MetadataLoadContext" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Testing.Platform" Version="2.5.0-preview.26477.3">
       <Uri>https://github.com/microsoft/testfx</Uri>
@@ -536,9 +536,9 @@
       <Uri>https://github.com/microsoft/testfx</Uri>
       <Sha>c670f66a454615d321aa8f67dc23cd9194c1d0ac</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.Configuration.Ini" Version="11.0.0-rc.2.26508.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
+    <Dependency Name="Microsoft.Extensions.Configuration.Ini" Version="11.0.0">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XUnitV3Extensions" Version="11.0.0-beta.26508.107">
       <Uri>https://github.com/dotnet/dotnet</Uri>
