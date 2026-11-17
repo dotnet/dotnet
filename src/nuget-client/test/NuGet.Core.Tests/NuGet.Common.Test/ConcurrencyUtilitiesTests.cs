@@ -37,6 +37,7 @@ namespace NuGet.Core.FuncTest
             StaticState.RaiseBuildEnded();
 
             var lockDirectory = Path.Combine(NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp), "lock");
+            Assert.Equal(lockDirectory, ConcurrencyUtilities.GetLockDirectoryPath());
             var existingFiles = Directory.Exists(lockDirectory) ? Directory.GetFiles(lockDirectory) : Array.Empty<string>();
             ConcurrencyUtilities.ExecuteWithFileLocked(
                 Path.Combine(testDirectory, "package"),
@@ -56,6 +57,8 @@ namespace NuGet.Core.FuncTest
             Environment.SetEnvironmentVariable("NUGET_ConcurrencyUtils_DeleteOnClose", null);
             StaticState.RaiseBuildEnded();
 
+            Assert.Equal(lockDirectory, ConcurrencyUtilities.GetLockDirectoryPath());
+            Assert.False(Directory.Exists(lockDirectory));
             Action assertLockFile = () => Assert.Single(Directory.GetFiles(lockDirectory));
             if (asynchronous)
             {
@@ -90,6 +93,8 @@ namespace NuGet.Core.FuncTest
                 Environment.SetEnvironmentVariable("DOTNET_CLI_HOME", homePath);
                 StaticState.RaiseBuildEnded();
                 var lockDirectory = Path.Combine(homePath, ".nuget", "lock");
+                Assert.Equal(lockDirectory, ConcurrencyUtilities.GetLockDirectoryPath());
+                Assert.False(Directory.Exists(lockDirectory));
                 ConcurrencyUtilities.ExecuteWithFileLocked(
                     filePath,
                     () => Assert.Single(Directory.GetFiles(lockDirectory)));
