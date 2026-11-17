@@ -17,6 +17,15 @@ public static class ExecuteHelper
     // pipeline task timeout. Bounding the wait lets the run fail fast instead.
     public const int KillGraceMilliseconds = 30_000;
 
+    public const string HangTimeoutEnvironmentVariable = "SCENARIO_TESTS_HANG_TIMEOUT_SECONDS";
+
+    // Upper bound for commands executed without an explicit timeout. No single command is expected to come
+    // close to this; exceeding it is treated as a hang and diagnostics are captured before failing the test.
+    public static int HangTimeoutMilliseconds { get; } =
+        int.TryParse(Environment.GetEnvironmentVariable(HangTimeoutEnvironmentVariable), out int seconds) && seconds > 0
+            ? seconds * 1000
+            : 10 * 60 * 1000;
+
     public static (Process Process, string StdOut, string StdErr) ExecuteProcess(
         string fileName,
         string args,
@@ -64,7 +73,15 @@ public static class ExecuteHelper
         process.Start();
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
-        process.WaitForExit(millisecondTimeout);
+
+        if (millisecondTimeout == -1)
+        {
+            WaitForExitOrCaptureHang(process, stdOutput, stdError, outputHelper);
+        }
+        else
+        {
+            process.WaitForExit(millisecondTimeout);
+        }
 
         if (!process.HasExited)
         {
@@ -77,7 +94,7 @@ public static class ExecuteHelper
             }
             ProcessStartInfo startInfo = process.StartInfo;
             string msg = $" {startInfo.FileName} {startInfo.Arguments} timed out after " +
-                $"{millisecondTimeout} milliseconds" +
+                $"{(millisecondTimeout == -1 ? HangTimeoutMilliseconds : millisecondTimeout)} milliseconds" +
                 $"{Environment.NewLine}Exit code: {process.ExitCode}";
             throw new InvalidOperationException(msg);
         }
@@ -103,6 +120,53 @@ public static class ExecuteHelper
         }
 
         return (process, output, error);
+    }
+
+    /// <summary>
+    /// Waits for a command without an explicit timeout to exit and for its redirected output to reach EOF,
+    /// bounded by <see cref="HangTimeoutMilliseconds"/>. On a hang, captures diagnostics; if the process itself
+    /// is stuck it is left running for the caller's kill path, and if only the output pipes are held open
+    /// (by a surviving descendant) the command fails since its output can't be trusted to be complete.
+    /// </summary>
+    private static void WaitForExitOrCaptureHang(
+        Process process, StringBuilder stdOutput, StringBuilder stdError, ITestOutputHelper outputHelper)
+    {
+        Stopwatch stopwatch = Stopwatch.StartNew();
+        if (!process.WaitForExit(HangTimeoutMilliseconds))
+        {
+            CaptureHang(process, $"Process did not exit within {HangTimeoutMilliseconds} ms", stdOutput, stdError, outputHelper);
+            return;
+        }
+
+        // A finite WaitForExit doesn't wait for the async output readers to reach EOF; the parameterless overload does.
+        int remaining = (int)Math.Max(0, HangTimeoutMilliseconds - stopwatch.ElapsedMilliseconds);
+        if (!Task.Run(() => process.WaitForExit()).Wait(remaining))
+        {
+            string reason = $"Process exited with code {process.ExitCode} but its stdout/stderr were still open " +
+                $"after {HangTimeoutMilliseconds} ms (likely held by a surviving descendant process)";
+            CaptureHang(process, reason, stdOutput, stdError, outputHelper);
+            throw new InvalidOperationException($"{process.StartInfo.FileName} {process.StartInfo.Arguments}: {reason}");
+        }
+    }
+
+    private static void CaptureHang(
+        Process process, string reason, StringBuilder stdOutput, StringBuilder stdError, ITestOutputHelper outputHelper)
+    {
+        outputHelper.WriteLine($"Hang detected: {process.StartInfo.FileName} {process.StartInfo.Arguments}: {reason}");
+
+        string output;
+        lock (stdOutput)
+        {
+            output = stdOutput.ToString();
+        }
+
+        string error;
+        lock (stdError)
+        {
+            error = stdError.ToString();
+        }
+
+        HangDiagnostics.Capture(process, reason, output, error, outputHelper);
     }
 
     public static string ExecuteProcessValidateExitCode(string fileName, string args, ITestOutputHelper outputHelper)
