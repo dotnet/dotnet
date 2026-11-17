@@ -258,10 +258,10 @@ public class TestRunRequestTests
         // Assert.
         Assert.IsNotNull(receivedArgs);
         Assert.AreEqual(testRunChangedEventArgs.TestRunStatistics, receivedArgs.TestRunStatistics);
-        CollectionAssert.AreEqual(
+        Assert.AreSequenceEqual(
             testRunChangedEventArgs.NewTestResults!.ToList(),
             receivedArgs.NewTestResults!.ToList());
-        CollectionAssert.AreEqual(testRunChangedEventArgs.ActiveTests!.ToList(), receivedArgs.ActiveTests!.ToList());
+        Assert.AreSequenceEqual(testRunChangedEventArgs.ActiveTests!.ToList(), receivedArgs.ActiveTests!.ToList());
     }
 
     [TestMethod]

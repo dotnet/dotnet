@@ -202,8 +202,8 @@ public class StartDiscoverySerializationTests
 
         Assert.IsNotNull(result);
         Assert.HasCount(2, result.AdapterSourceMap);
-        CollectionAssert.AreEqual(new[] { "one.dll" }, result.AdapterSourceMap["adapter-one"].ToArray());
-        CollectionAssert.AreEqual(new[] { "two.dll", "three.dll" }, result.AdapterSourceMap["adapter-two"].ToArray());
+        Assert.AreSequenceEqual(new[] { "one.dll" }, result.AdapterSourceMap["adapter-one"].ToArray());
+        Assert.AreSequenceEqual(new[] { "two.dll", "three.dll" }, result.AdapterSourceMap["adapter-two"].ToArray());
         Assert.AreEqual(25, result.FrequencyOfDiscoveredTestsEvent);
         Assert.AreEqual(TimeSpan.FromMinutes(1), result.DiscoveredTestEventTimeout);
         Assert.AreEqual("<RunSettings />", result.RunSettings);

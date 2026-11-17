@@ -139,6 +139,8 @@
     <TestRunnerAdditionalArguments Condition=" '$(TestRunnerExternalArguments)' != ''">$(TestRunnerExternalArguments)</TestRunnerAdditionalArguments>
     <!-- Skip windows only tests on non-windows systems. -->
     <TestRunnerAdditionalArguments Condition=" '$(OS)' != 'Windows_NT' ">$(TestRunnerAdditionalArguments) --filter "TestCategory!=Windows&amp;TestCategory!=Windows-Review"</TestRunnerAdditionalArguments>
+    <!-- Arcade always passes the deprecated no-progress flag, which makes MTP 2.5+ warn outside CI and fails local builds that treat warnings as errors. An explicit progress option takes precedence and suppresses the warning. -->
+    <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --progress off</TestRunnerAdditionalArguments>
     <!-- Allow us to see errors instead of capturing everything into files. -->
     <TestCaptureOutput>false</TestCaptureOutput>
   </PropertyGroup>

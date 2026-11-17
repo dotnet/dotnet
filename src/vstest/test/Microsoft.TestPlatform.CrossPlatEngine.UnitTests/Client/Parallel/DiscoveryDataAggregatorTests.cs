@@ -270,7 +270,7 @@ public class DiscoveryDataAggregatorTests
         dataAggregator.MarkSourcesWithStatus(sources, discoveryStatus);
 
         // Assert
-        CollectionAssert.AreEquivalent(new[] { "a", "b" }, dataAggregator.GetSourcesWithStatus(discoveryStatus));
+        Assert.AreSequenceEqual(new[] { "a", "b" }, dataAggregator.GetSourcesWithStatus(discoveryStatus), SequenceOrder.InAnyOrder);
     }
 
     [TestMethod]
@@ -285,7 +285,7 @@ public class DiscoveryDataAggregatorTests
         dataAggregator.MarkSourcesWithStatus(new[] { "a" }, discoveryStatus);
 
         // Assert
-        CollectionAssert.AreEquivalent(new[] { "a" }, dataAggregator.GetSourcesWithStatus(discoveryStatus));
+        Assert.AreSequenceEqual(new[] { "a" }, dataAggregator.GetSourcesWithStatus(discoveryStatus), SequenceOrder.InAnyOrder);
     }
 
     [TestMethod]
@@ -301,7 +301,7 @@ public class DiscoveryDataAggregatorTests
         dataAggregator.MarkSourcesWithStatus(new[] { "a" }, discoveryStatus);
 
         // Assert
-        CollectionAssert.AreEquivalent(new[] { "a" }, dataAggregator.GetSourcesWithStatus(discoveryStatus));
+        Assert.AreSequenceEqual(new[] { "a" }, dataAggregator.GetSourcesWithStatus(discoveryStatus), SequenceOrder.InAnyOrder);
     }
 
     [TestMethod]
@@ -315,7 +315,7 @@ public class DiscoveryDataAggregatorTests
         dataAggregator.MarkSourcesWithStatus(new[] { "a" }, DiscoveryStatus.NotDiscovered);
 
         // Assert
-        CollectionAssert.AreEquivalent(new[] { "a" }, dataAggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered));
+        Assert.AreSequenceEqual(new[] { "a" }, dataAggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered), SequenceOrder.InAnyOrder);
     }
 
     [TestMethod]
@@ -336,8 +336,8 @@ public class DiscoveryDataAggregatorTests
         dataAggregator.MarkSourcesBasedOnDiscoveredTestCases(null, testCases);
 
         // Assert
-        CollectionAssert.AreEquivalent(new[] { "a", "b" }, dataAggregator.GetSourcesWithStatus(DiscoveryStatus.FullyDiscovered));
-        CollectionAssert.AreEquivalent(new[] { "c" }, dataAggregator.GetSourcesWithStatus(DiscoveryStatus.PartiallyDiscovered));
+        Assert.AreSequenceEqual(new[] { "a", "b" }, dataAggregator.GetSourcesWithStatus(DiscoveryStatus.FullyDiscovered), SequenceOrder.InAnyOrder);
+        Assert.AreSequenceEqual(new[] { "c" }, dataAggregator.GetSourcesWithStatus(DiscoveryStatus.PartiallyDiscovered), SequenceOrder.InAnyOrder);
     }
 
     [TestMethod]
@@ -352,8 +352,8 @@ public class DiscoveryDataAggregatorTests
         _ = dataAggregator.MarkSourcesBasedOnDiscoveredTestCases(previousSource, new TestCase[] { new() { Source = "b" }, });
 
         // Assert
-        CollectionAssert.AreEquivalent(new[] { "a" }, dataAggregator.GetSourcesWithStatus(DiscoveryStatus.FullyDiscovered));
-        CollectionAssert.AreEquivalent(new[] { "b" }, dataAggregator.GetSourcesWithStatus(DiscoveryStatus.PartiallyDiscovered));
+        Assert.AreSequenceEqual(new[] { "a" }, dataAggregator.GetSourcesWithStatus(DiscoveryStatus.FullyDiscovered), SequenceOrder.InAnyOrder);
+        Assert.AreSequenceEqual(new[] { "b" }, dataAggregator.GetSourcesWithStatus(DiscoveryStatus.PartiallyDiscovered), SequenceOrder.InAnyOrder);
     }
 
     [TestMethod]
@@ -407,9 +407,9 @@ public class DiscoveryDataAggregatorTests
         var actualNotDiscovered = dataAggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered);
 
         // Assert
-        CollectionAssert.AreEquivalent(fullyDiscoveredSources, actualFullyDiscovered);
-        CollectionAssert.AreEquivalent(partiallyDiscoveredSources, actualPartiallyDiscovered);
-        CollectionAssert.AreEquivalent(notDiscoveredSources, actualNotDiscovered);
+        Assert.AreSequenceEqual(fullyDiscoveredSources, actualFullyDiscovered, SequenceOrder.InAnyOrder);
+        Assert.AreSequenceEqual(partiallyDiscoveredSources, actualPartiallyDiscovered, SequenceOrder.InAnyOrder);
+        Assert.AreSequenceEqual(notDiscoveredSources, actualNotDiscovered, SequenceOrder.InAnyOrder);
     }
 
     [TestMethod]

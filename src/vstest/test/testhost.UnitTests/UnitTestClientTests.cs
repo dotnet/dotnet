@@ -23,7 +23,7 @@ public class UnitTestClientTests
         string[] argsArr = UnitTestClient.SplitArguments(argument);
 
         Assert.HasCount(6, argsArr);
-        CollectionAssert.AreEqual(argsArr, expected);
+        Assert.AreSequenceEqual(argsArr, expected);
     }
 
     [TestMethod]
@@ -34,7 +34,7 @@ public class UnitTestClientTests
         string[] argsArr = UnitTestClient.SplitArguments(argument);
 
         Assert.HasCount(6, argsArr);
-        CollectionAssert.AreEqual(expected, argsArr);
+        Assert.AreSequenceEqual(expected, argsArr);
     }
 
     [TestMethod]
@@ -45,7 +45,7 @@ public class UnitTestClientTests
         string[] argsArr = UnitTestClient.SplitArguments(argument);
 
         Assert.HasCount(7, argsArr);
-        CollectionAssert.AreEqual(expected, argsArr);
+        Assert.AreSequenceEqual(expected, argsArr);
     }
 
     [TestMethod]

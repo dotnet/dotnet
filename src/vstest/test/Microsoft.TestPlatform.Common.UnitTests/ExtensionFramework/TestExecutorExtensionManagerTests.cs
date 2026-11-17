@@ -26,7 +26,7 @@ public class TestExecutorExtensionManagerTests
         var extensionManager = TestExecutorExtensionManager.Create();
 
         Assert.IsNotNull(extensionManager.TestExtensions);
-        Assert.IsTrue(extensionManager.TestExtensions.Any());
+        Assert.IsNotEmpty(extensionManager.TestExtensions);
     }
 
     [TestMethod]
@@ -38,7 +38,7 @@ public class TestExecutorExtensionManagerTests
         TestExecutorExtensionManager.Create();
 
         Assert.IsNotNull(extensionManager.TestExtensions);
-        Assert.IsTrue(extensionManager.TestExtensions.Any());
+        Assert.IsNotEmpty(extensionManager.TestExtensions);
     }
 
     [TestMethod]
@@ -49,7 +49,7 @@ public class TestExecutorExtensionManagerTests
                 typeof(TestExecutorExtensionManagerTests).Assembly.Location);
 
         Assert.IsNotNull(extensionManager.TestExtensions);
-        Assert.IsTrue(extensionManager.TestExtensions.Any());
+        Assert.IsNotEmpty(extensionManager.TestExtensions);
     }
 
     [TestMethod]

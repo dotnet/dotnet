@@ -18,7 +18,7 @@ public class MetadataReaderHelperTests : AcceptanceTestBase
     {
         var dataCollectorFilePath = GetTestDllForFramework("AttachmentProcessorDataCollector.dll", "netstandard2.0");
         var types = MetadataReaderExtensionsHelper.DiscoverTestExtensionTypesV2Attribute(Assembly.LoadFile(dataCollectorFilePath), dataCollectorFilePath);
-        Assert.IsTrue(types.Any(), $"File {dataCollectorFilePath}");
+        Assert.IsNotEmpty(types, $"File {dataCollectorFilePath}");
         Assert.StartsWith("AttachmentProcessorDataCollector.SampleDataCollectorV2", types[0].AssemblyQualifiedName!, $"File {dataCollectorFilePath}");
         Assert.AreEqual(dataCollectorFilePath.Replace("/", @"\"), types[0].Assembly.Location.Replace("/", @"\"), $"File {dataCollectorFilePath}");
         Assert.StartsWith("AttachmentProcessorDataCollector.SampleDataCollectorV1", types[1].AssemblyQualifiedName!, $"File {dataCollectorFilePath}");

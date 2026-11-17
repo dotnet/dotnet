@@ -37,7 +37,7 @@ public class DotnetTestMSBuildOutputTests : AcceptanceTestBase
 
         StdOutputContains("TESTERROR");
         StdOutputContains("FailingTest (");
-        StdOutputContains("Expected: \"ğğğ𦮙我們剛才從𓋴𓅓𓏏𓇏𓇌𓀀\"");
+        StdOutputContains("ğğğ𦮙我們剛才從𓋴𓅓𓏏𓇏𓇌𓀀");
         StdOutputContains("at TerminalLoggerUnitTests.UnitTest1.FailingTest() in");
 
         // Verify that ~, !, |, and % characters in test output survive the MSBuildLogger encoding round-trip.

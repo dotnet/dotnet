@@ -65,7 +65,7 @@ public class InProcessProxyDiscoveryManagerTests
         _inProcessProxyDiscoveryManager.DiscoverTests(discoveryCriteria, null!);
 
         Assert.IsTrue(manualResetEvent.WaitOne(5000), "DiscoverTests should call Initialize");
-        CollectionAssert.AreEquivalent(expectedResult, TestPluginCache.Instance.GetExtensionPaths(string.Empty));
+        Assert.AreSequenceEqual(expectedResult, TestPluginCache.Instance.GetExtensionPaths(string.Empty), SequenceOrder.InAnyOrder);
     }
 
     [TestMethod]

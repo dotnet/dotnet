@@ -27,8 +27,8 @@ public class DiscoveryDataAggregatorRegressionTests
 
         var result = aggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered);
         Assert.HasCount(2, result);
-        CollectionAssert.Contains(result, "test1.dll");
-        CollectionAssert.Contains(result, "test2.dll");
+        Assert.Contains("test1.dll", result);
+        Assert.Contains("test2.dll", result);
     }
 
     // Regression test for #3381
