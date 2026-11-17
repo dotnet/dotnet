@@ -79,9 +79,10 @@ public class TestCaseIdAlgorithmScenarioTests : AcceptanceTestBase
         // Pins the default end to end, in the same terms as the unit tests: not declaring the flag has
         // to produce exactly what pinning it to 1 produces, which is what makes this release a no-op
         // for ids and what a later release deliberately changes.
-        CollectionAssert.AreEquivalent(
+        Assert.AreSequenceEqual(
             optedOut,
             notDeclared,
+            SequenceOrder.InAnyOrder,
             "Not declaring the flag must produce the same ids as opting out, because xxHash128 ships " +
             "available but not default.");
     }

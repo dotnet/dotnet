@@ -66,7 +66,7 @@ public class TestHostContentTests : AcceptanceTestBase
                 : Array.Empty<string>();
             var contentPath = Path.Combine(TempDirectory.Path, $"{framework}.content");
 
-            CollectionAssert.AreEqual(expected, File.ReadAllLines(contentPath), framework);
+            Assert.AreSequenceEqual(expected, File.ReadAllLines(contentPath), framework);
             File.Delete(contentPath);
         }
     }

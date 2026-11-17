@@ -65,6 +65,6 @@ public class InstallationContextTests
         };
         var commonLocations = _installationContext.GetVisualStudioCommonLocations(@"C:\temp").Select(p => p.Replace("/", "\\")).ToArray();
 
-        CollectionAssert.AreEquivalent(expectedLocations, commonLocations);
+        Assert.AreSequenceEqual(expectedLocations, commonLocations, SequenceOrder.InAnyOrder);
     }
 }

@@ -45,7 +45,7 @@ public class TestDiscovererPluginInformationTests
     public void FileExtensionsShouldReturnAFileExtensionForADiscoverer()
     {
         _testPluginInformation = new TestDiscovererPluginInformation(typeof(DummyTestDiscovererWithOneFileExtensions));
-        CollectionAssert.AreEqual(new List<string> { "csv" }, _testPluginInformation.FileExtensions);
+        Assert.AreSequenceEqual(new List<string> { "csv" }, _testPluginInformation.FileExtensions);
         Assert.IsFalse(_testPluginInformation.IsDirectoryBased);
     }
 
@@ -53,7 +53,7 @@ public class TestDiscovererPluginInformationTests
     public void FileExtensionsShouldReturnSupportedFileExtensionsForADiscoverer()
     {
         _testPluginInformation = new TestDiscovererPluginInformation(typeof(DummyTestDiscovererWithTwoFileExtensions));
-        CollectionAssert.AreEqual(new List<string> { "csv", "docx" }, _testPluginInformation.FileExtensions);
+        Assert.AreSequenceEqual(new List<string> { "csv", "docx" }, _testPluginInformation.FileExtensions);
         Assert.IsFalse(_testPluginInformation.IsDirectoryBased);
     }
 
@@ -129,7 +129,7 @@ public class TestDiscovererPluginInformationTests
         var expectedFileExtensions = new List<string> { "csv", "docx" };
         var testPluginMetada = _testPluginInformation.Metadata.ToArray();
 
-        CollectionAssert.AreEqual(expectedFileExtensions, ((List<string>)testPluginMetada[0]!).ToArray());
+        Assert.AreSequenceEqual(expectedFileExtensions, ((List<string>)testPluginMetada[0]!).ToArray());
         Assert.AreEqual("csvexecutor", testPluginMetada[1] as string);
         Assert.AreEqual(AssemblyType.Managed, Enum.Parse(typeof(AssemblyType), testPluginMetada[2]!.ToString()!));
         Assert.IsFalse(bool.Parse(testPluginMetada[3]!.ToString()!));
@@ -157,8 +157,8 @@ public class TestDiscovererPluginInformationTests
         var testPluginMetada = _testPluginInformation.Metadata.ToArray();
         var expectedFileExtensions = new List<string> { "csv", "docx" };
 
-        CollectionAssert.AreEqual(expectedFileExtensions, _testPluginInformation.FileExtensions);
-        CollectionAssert.AreEqual(expectedFileExtensions, ((List<string>)testPluginMetada[0]!));
+        Assert.AreSequenceEqual(expectedFileExtensions, _testPluginInformation.FileExtensions);
+        Assert.AreSequenceEqual(expectedFileExtensions, (List<string>)testPluginMetada[0]!);
 
         Assert.IsTrue(_testPluginInformation.IsDirectoryBased);
         Assert.IsTrue(bool.Parse(testPluginMetada[3]!.ToString()!));

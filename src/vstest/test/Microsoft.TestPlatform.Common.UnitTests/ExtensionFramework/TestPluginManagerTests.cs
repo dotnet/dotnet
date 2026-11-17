@@ -78,7 +78,7 @@ public class TestPluginManagerTests
 
         Assert.IsNotNull(unfilteredTestExtensions);
         Assert.IsNotNull(testExtensions);
-        Assert.IsTrue(testExtensions.Any());
+        Assert.IsNotEmpty(testExtensions);
     }
 
     [TestMethod]
@@ -99,7 +99,7 @@ public class TestPluginManagerTests
             out testExtensions);
 
         Assert.IsNotNull(testExtensions);
-        Assert.IsTrue(testExtensions.Any());
+        Assert.IsNotEmpty(testExtensions);
 
         Assert.AreEqual(2, discoveryCount);
     }
@@ -113,7 +113,7 @@ public class TestPluginManagerTests
                 out var testExtensions);
 
         Assert.IsNotNull(testExtensions);
-        Assert.IsTrue(testExtensions.Any());
+        Assert.IsNotEmpty(testExtensions);
     }
 
     #region Implementations

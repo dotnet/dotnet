@@ -388,7 +388,7 @@ public class InferRunSettingsHelperTests
         var compatibleSources = InferRunSettingsHelper.FilterCompatibleSources(Constants.DefaultPlatform, Constants.DefaultPlatform, _frameworkNet45, _sourceArchitectures, _sourceFrameworks, out string warningMessage);
 
         // None of the DLLs passed are compatible to the chosen settings
-        Assert.AreEqual(0, compatibleSources.Count());
+        Assert.IsEmpty(compatibleSources);
         Assert.AreEqual(expected, warningMessage);
     }
 
@@ -410,7 +410,7 @@ public class InferRunSettingsHelperTests
         var compatibleSources = InferRunSettingsHelper.FilterCompatibleSources(Constants.DefaultPlatform, Constants.DefaultPlatform, _frameworkNet45, _sourceArchitectures, _sourceFrameworks, out string warningMessage);
 
         // only "x64net45.exe" is the compatible source
-        Assert.AreEqual(1, compatibleSources.Count());
+        Assert.HasCount(1, compatibleSources);
         Assert.AreEqual(expected, warningMessage);
     }
 
@@ -423,7 +423,7 @@ public class InferRunSettingsHelperTests
         var compatibleSources = InferRunSettingsHelper.FilterCompatibleSources(Architecture.X86, Constants.DefaultPlatform, _frameworkNet45, _sourceArchitectures, _sourceFrameworks, out string warningMessage);
 
         // only "x86net45.dll" is the compatible source
-        Assert.AreEqual(1, compatibleSources.Count());
+        Assert.HasCount(1, compatibleSources);
         Assert.IsTrue(string.IsNullOrEmpty(warningMessage));
     }
 

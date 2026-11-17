@@ -17,6 +17,7 @@ using Moq;
 
 using TestOutcome = Microsoft.VisualStudio.TestPlatform.ObjectModel.TestOutcome;
 using TestPlatformObjectModel = Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using TestRun = Microsoft.TestPlatform.Extensions.TrxLogger.ObjectModel.TestRun;
 using TrxLoggerConstants = Microsoft.TestPlatform.Extensions.TrxLogger.Utility.Constants;
 using TrxLoggerOutcome = Microsoft.TestPlatform.Extensions.TrxLogger.ObjectModel.TestOutcome;
 using UriDataAttachment = Microsoft.VisualStudio.TestPlatform.ObjectModel.UriDataAttachment;
@@ -98,7 +99,7 @@ public class ConverterTests
 
         object[] expected = ["MethodLevel", "ClassLevel", "AsmLevel"];
 
-        CollectionAssert.AreEqual(expected, unitTestElement.TestCategories.ToArray().OrderByDescending(x => x).ToArray());
+        Assert.AreSequenceEqual(expected, unitTestElement.TestCategories.ToArray().OrderByDescending(x => x).ToArray());
     }
 
     [TestMethod]
@@ -114,7 +115,7 @@ public class ConverterTests
 
         int[] expected = [0, 3, 99999];
 
-        CollectionAssert.AreEquivalent(expected, unitTestElement.WorkItems.ToArray());
+        Assert.AreSequenceEqual(expected, unitTestElement.WorkItems.ToArray(), SequenceOrder.InAnyOrder);
     }
 
     /// <summary>
@@ -129,7 +130,7 @@ public class ConverterTests
 
         object[] expected = Enumerable.Empty<Object>().ToArray();
 
-        CollectionAssert.AreEqual(expected, unitTestElement.TestCategories.ToArray());
+        Assert.AreSequenceEqual(expected, unitTestElement.TestCategories.ToArray());
     }
 
     [TestMethod]
