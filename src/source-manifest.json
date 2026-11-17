@@ -79,10 +79,10 @@
       "commitSha": "3210e18c8b340f9b45ad2788b2c4609df10e1bdd"
     },
     {
-      "barId": 341796,
+      "barId": 341808,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "e9f28fce8fd0277e7abba7d29339107639990d88"
+      "commitSha": "cb53a092a31791abeac732e7b3842ebc0484f802"
     },
     {
       "barId": 341694,
