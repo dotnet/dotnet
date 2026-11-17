@@ -1,1 +1,2 @@
 #nullable enable
+static NuGet.Common.ConcurrencyUtilities.GetLockDirectoryPath() -> string!
