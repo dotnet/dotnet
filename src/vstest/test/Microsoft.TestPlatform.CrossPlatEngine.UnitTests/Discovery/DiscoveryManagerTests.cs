@@ -65,7 +65,7 @@ public class DiscoveryManagerTests
         var allDiscoverers = TestDiscoveryExtensionManager.Create().Discoverers;
 
         Assert.IsNotNull(allDiscoverers);
-        Assert.IsTrue(allDiscoverers.Any());
+        Assert.IsNotEmpty(allDiscoverers);
     }
 
     [TestMethod]
@@ -237,7 +237,7 @@ public class DiscoveryManagerTests
 
         // Assert
         Assert.IsNotNull(receivedDiscoveryCompleteEventArgs!.Metrics);
-        Assert.IsTrue(receivedDiscoveryCompleteEventArgs.Metrics.Any());
+        Assert.IsNotEmpty(receivedDiscoveryCompleteEventArgs.Metrics);
         Assert.IsTrue(receivedDiscoveryCompleteEventArgs.Metrics.ContainsKey("DummyMessage"));
     }
 

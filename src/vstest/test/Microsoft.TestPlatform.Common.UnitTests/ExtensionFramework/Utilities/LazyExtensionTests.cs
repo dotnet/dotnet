@@ -91,7 +91,7 @@ public class LazyExtensionTests
         var metadata = extension.Metadata;
         Assert.IsNotNull(metadata);
         Assert.AreEqual(typeof(DummyDiscovererCapability), metadata.GetType());
-        CollectionAssert.AreEqual(new List<string> { "csv" }, metadata.FileExtension!.ToArray());
+        Assert.AreSequenceEqual(new List<string> { "csv" }, metadata.FileExtension!.ToArray());
         Assert.AreEqual("executor://unittestexecutor/", metadata.DefaultExecutorUri!.AbsoluteUri);
         Assert.AreEqual(AssemblyType.Native, metadata.AssemblyType);
         Assert.IsFalse(metadata.IsDirectoryBased);

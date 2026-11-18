@@ -81,7 +81,7 @@ namespace NuGet.Commands
                     break;
 
                 case LocalResourceName.Temp:
-                    PrintLocalResourcePath(TempResourceName, NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp), localsArgs);
+                    PrintLocalResourcePath(TempResourceName, GetTempFolderPath(), localsArgs);
                     break;
 
                 case LocalResourceName.PluginsCache:
@@ -91,7 +91,7 @@ namespace NuGet.Commands
                 case LocalResourceName.All:
                     PrintLocalResourcePath(HttpCacheResourceName, SettingsUtility.GetHttpCacheFolder(), localsArgs);
                     PrintLocalResourcePath(GlobalPackagesResourceName, SettingsUtility.GetGlobalPackagesFolder(localsArgs.Settings), localsArgs);
-                    PrintLocalResourcePath(TempResourceName, NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp), localsArgs);
+                    PrintLocalResourcePath(TempResourceName, GetTempFolderPath(), localsArgs);
                     PrintLocalResourcePath(PluginsCacheResourceName, SettingsUtility.GetPluginsCacheFolder(), localsArgs);
                     break;
 
@@ -225,7 +225,7 @@ namespace NuGet.Commands
         private bool ClearNuGetTempFolder(LocalsArgs localsArgs)
         {
             var success = true;
-            var tempFolderPath = NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp);
+            var tempFolderPath = GetTempFolderPath();
             if (!string.IsNullOrEmpty(tempFolderPath))
             {
                 localsArgs.LogInformation(string.Format(CultureInfo.CurrentCulture, Strings.LocalsCommand_ClearingNuGetTempCache,
@@ -234,6 +234,17 @@ namespace NuGet.Commands
                 success &= ClearCacheDirectory(tempFolderPath, localsArgs);
             }
             return success;
+        }
+
+        private static string GetTempFolderPath()
+        {
+#if IS_CORECLR
+            if (RuntimeEnvironmentHelper.IsLinux)
+            {
+                return ConcurrencyUtilities.GetLockDirectoryPath();
+            }
+#endif
+            return NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp);
         }
 
         /// <summary>

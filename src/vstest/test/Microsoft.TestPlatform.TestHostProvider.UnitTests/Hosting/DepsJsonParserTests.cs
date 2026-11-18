@@ -47,7 +47,7 @@ public class DepsJsonParserTests
         Assert.AreEqual("Microsoft.TestPlatform.TestHost", result.Name);
         Assert.AreEqual("18.6.0-dev", result.Version);
         Assert.AreEqual("microsoft.testplatform.testhost/18.6.0-dev", result.Path);
-        CollectionAssert.Contains(result.RuntimeAssemblyPaths, "lib/net10.0/testhost.dll");
+        Assert.Contains("lib/net10.0/testhost.dll", result.RuntimeAssemblyPaths);
     }
 
     [TestMethod]
@@ -109,9 +109,9 @@ public class DepsJsonParserTests
 
         Assert.IsNotNull(result);
         Assert.HasCount(3, result.RuntimeAssemblyPaths);
-        CollectionAssert.Contains(result.RuntimeAssemblyPaths, "lib/net10.0/testhost.dll");
-        CollectionAssert.Contains(result.RuntimeAssemblyPaths, "lib/net10.0/testhost.deps.json");
-        CollectionAssert.Contains(result.RuntimeAssemblyPaths, "lib/net10.0/Microsoft.TestPlatform.CommunicationUtilities.dll");
+        Assert.Contains("lib/net10.0/testhost.dll", result.RuntimeAssemblyPaths);
+        Assert.Contains("lib/net10.0/testhost.deps.json", result.RuntimeAssemblyPaths);
+        Assert.Contains("lib/net10.0/Microsoft.TestPlatform.CommunicationUtilities.dll", result.RuntimeAssemblyPaths);
     }
 
     [TestMethod]
@@ -143,7 +143,7 @@ public class DepsJsonParserTests
         Assert.AreEqual("Microsoft.TestPlatform.TestHost", result.Name);
         Assert.AreEqual("18.6.0-dev", result.Version);
         Assert.IsNull(result.Path);
-        CollectionAssert.Contains(result.RuntimeAssemblyPaths, "lib/net10.0/testhost.dll");
+        Assert.Contains("lib/net10.0/testhost.dll", result.RuntimeAssemblyPaths);
     }
 
     [TestMethod]

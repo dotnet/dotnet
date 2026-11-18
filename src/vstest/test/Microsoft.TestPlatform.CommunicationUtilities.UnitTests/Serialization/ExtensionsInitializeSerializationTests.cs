@@ -113,7 +113,7 @@ public class ExtensionsInitializeSerializationTests
         var result = JsonDataSerializer.Instance.DeserializePayload<IEnumerable<string>>(message);
 
         Assert.IsNotNull(result);
-        CollectionAssert.AreEqual(Payload.ToList(), result.ToList());
+        Assert.AreSequenceEqual(Payload.ToList(), result.ToList());
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────

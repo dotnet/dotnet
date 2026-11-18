@@ -57,14 +57,14 @@ public class TestPluginCacheTests
     public void UpdateAdditionalExtensionsShouldNotThrowIfExtensionPathIsNull()
     {
         TestPluginCache.Instance.UpdateExtensions(null, true);
-        Assert.IsFalse(TestPluginCache.Instance.GetExtensionPaths(string.Empty).Any());
+        Assert.IsEmpty(TestPluginCache.Instance.GetExtensionPaths(string.Empty));
     }
 
     [TestMethod]
     public void UpdateAdditionalExtensionsShouldNotThrowIfExtensionPathIsEmpty()
     {
         TestPluginCache.Instance.UpdateExtensions(new List<string>(), true);
-        Assert.IsFalse(TestPluginCache.Instance.GetExtensionPaths(string.Empty).Any());
+        Assert.IsEmpty(TestPluginCache.Instance.GetExtensionPaths(string.Empty));
     }
 
     [TestMethod]
@@ -75,7 +75,7 @@ public class TestPluginCacheTests
         var updatedExtensions = TestPluginCache.Instance.GetExtensionPaths(string.Empty);
 
         Assert.IsNotNull(updatedExtensions);
-        CollectionAssert.AreEqual(additionalExtensions, updatedExtensions.ToList());
+        Assert.AreSequenceEqual(additionalExtensions, updatedExtensions.ToList());
     }
 
     [TestMethod]
@@ -91,7 +91,7 @@ public class TestPluginCacheTests
 
         Assert.IsNotNull(updatedExtensions);
         Assert.ContainsSingle(updatedExtensions);
-        CollectionAssert.AreEqual(new List<string> { additionalExtensions.First() }, updatedExtensions);
+        Assert.AreSequenceEqual(new List<string> { additionalExtensions.First() }, updatedExtensions);
     }
 
     [TestMethod]
@@ -117,7 +117,7 @@ public class TestPluginCacheTests
         Assert.ContainsSingle(updatedExtensions);
     }
 
-    [Ignore]
+    [Ignore("Test is not implemented.")]
     [TestMethod]
     public void UpdateAdditionalExtensionsShouldResetExtensionsDiscoveredFlag()
     {
@@ -152,7 +152,7 @@ public class TestPluginCacheTests
 
         var extensions = TestPluginCache.Instance.GetExtensionPaths("filter.dll");
 
-        CollectionAssert.AreEquivalent(expectedExtensions, extensions);
+        Assert.AreSequenceEqual(expectedExtensions, extensions, SequenceOrder.InAnyOrder);
     }
 
     [TestMethod]
@@ -166,7 +166,7 @@ public class TestPluginCacheTests
 
         var extensions = TestPluginCache.Instance.GetExtensionPaths("filter.dll");
 
-        CollectionAssert.AreEquivalent(expectedExtensions, extensions);
+        Assert.AreSequenceEqual(expectedExtensions, extensions, SequenceOrder.InAnyOrder);
     }
 
     [TestMethod]
@@ -180,7 +180,7 @@ public class TestPluginCacheTests
 
         var extensions = TestPluginCache.Instance.GetExtensionPaths(string.Empty);
 
-        CollectionAssert.AreEquivalent(expectedExtensions, extensions);
+        Assert.AreSequenceEqual(expectedExtensions, extensions, SequenceOrder.InAnyOrder);
     }
 
     [TestMethod]
@@ -211,7 +211,7 @@ public class TestPluginCacheTests
         var resolutionPaths = TestPluginCache.Instance.GetDefaultResolutionPaths();
 
         Assert.IsNotNull(resolutionPaths);
-        CollectionAssert.AreEqual(expectedDirectories, resolutionPaths.ToList());
+        Assert.AreSequenceEqual(expectedDirectories, resolutionPaths.ToList());
     }
 
     [TestMethod]
@@ -234,7 +234,7 @@ public class TestPluginCacheTests
         var expectedExtensions = new List<string> { candidateDirectory, currentDirectory };
 
         Assert.IsNotNull(resolutionPaths);
-        CollectionAssert.AreEqual(expectedExtensions, resolutionPaths.ToList());
+        Assert.AreSequenceEqual(expectedExtensions, resolutionPaths.ToList());
     }
 
     [TestMethod]
@@ -271,7 +271,7 @@ public class TestPluginCacheTests
         var tpCommonDirectory = Path.GetDirectoryName(typeof(TestPluginCache).Assembly.Location)!;
         var expectedPaths = new List<string> { temp, tpCommonDirectory }.ConvertAll(p => p.Replace("/", "\\").TrimEnd('\\'));
 
-        CollectionAssert.AreEqual(expectedPaths, resolutionPaths, $"Collection {string.Join(", ", resolutionPaths)}, is not equal to the expected collection {string.Join(", ", expectedPaths)}.");
+        Assert.AreSequenceEqual(expectedPaths, resolutionPaths, $"Collection {string.Join(", ", resolutionPaths)}, is not equal to the expected collection {string.Join(", ", expectedPaths)}.");
     }
 
     [TestMethod]
@@ -283,7 +283,7 @@ public class TestPluginCacheTests
 
         var expectedPaths = new List<string> { Path.GetDirectoryName(tpCommonlocation)! };
 
-        CollectionAssert.AreEqual(expectedPaths, resolutionPaths.ToList());
+        Assert.AreSequenceEqual(expectedPaths, resolutionPaths.ToList());
     }
 
     #endregion
@@ -309,7 +309,7 @@ public class TestPluginCacheTests
         var testDiscovererPluginInfos = _testablePluginCache.GetTestExtensions<TestDiscovererPluginInformation, ITestDiscoverer>(extensionAssembly);
 
         Assert.IsNotNull(_testablePluginCache.TestExtensions);
-        CollectionAssert.AreEqual(
+        Assert.AreSequenceEqual(
             _testablePluginCache.TestExtensions.TestDiscoverers!.Keys,
             testDiscovererPluginInfos.Keys);
     }
@@ -328,7 +328,7 @@ public class TestPluginCacheTests
         Assert.IsTrue(testDiscovererPluginInfos.ContainsKey("td"));
     }
 
-    [Ignore]
+    [Ignore("Requires a mockable ITestDiscoverer.")]
     [TestMethod]
     public void GetTestExtensionsShouldShouldThrowIfDiscovererThrows()
     {
@@ -376,6 +376,6 @@ public class TestPluginCacheTests
 
         var extensions = TestPluginCache.Instance.GetExtensionPaths("filter.dll", skipDefaultExtensions);
 
-        CollectionAssert.AreEquivalent(expectedExtensions, extensions);
+        Assert.AreSequenceEqual(expectedExtensions, extensions, SequenceOrder.InAnyOrder);
     }
 }
