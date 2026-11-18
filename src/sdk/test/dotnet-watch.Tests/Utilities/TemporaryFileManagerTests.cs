@@ -5,9 +5,10 @@ using System.Runtime.Versioning;
 
 namespace Microsoft.DotNet.Watch.UnitTests;
 
+[TestClass]
 public class TemporaryFileManagerTests
 {
-    [Fact]
+    [TestMethod]
     public void CreateFile_IsOwnerOnlyAndRemovedOnDispose()
     {
         string path1;
@@ -15,33 +16,45 @@ public class TemporaryFileManagerTests
         string directory;
         using (var manager = new TemporaryFileManager())
         {
-            using var file1 = manager.Create(".slnx", FileShare.Read);
-            using var file2 = manager.Create(".tmp", FileShare.Read);
-            path1 = file1.Stream.Name;
-            path2 = file2.Stream.Name;
-
-            directory = Path.GetDirectoryName(path1)!;
-            Assert.Equal(directory, Path.GetDirectoryName(path2));
-
-            Assert.Equal("1.slnx", Path.GetFileName(path1));
-            Assert.Equal("2.tmp", Path.GetFileName(path2));
-            Assert.False(File.Exists(path1));
-            Assert.False(File.Exists(path2));
-            Assert.StartsWith(Path.GetFullPath(Path.GetTempPath()), Path.GetFullPath(path1), PathComparison);
-
-            File.WriteAllText(path1, "<Solution />");
-            Assert.Equal("<Solution />", File.ReadAllText(path1));
-
-            if (!OperatingSystem.IsWindows())
+            using (var file1 = manager.Create(".slnx", stream => stream.Write("<Solution />"u8)))
+            using (var file2 = manager.Create(".tmp", _ => { }))
             {
-                AssertUnixOwnerOnly(directory);
+                path1 = file1.Path;
+                path2 = file2.Path;
+
+                directory = Path.GetDirectoryName(path1)!;
+                Assert.AreEqual(directory, Path.GetDirectoryName(path2));
+                Assert.AreEqual("1.slnx", Path.GetFileName(path1));
+                Assert.AreEqual("2.tmp", Path.GetFileName(path2));
+                Assert.IsTrue(File.Exists(path1));
+                Assert.IsTrue(File.Exists(path2));
+                Assert.IsTrue(Path.GetFullPath(path1).StartsWith(Path.GetFullPath(Path.GetTempPath()), PathComparison));
+
+                // MSBuild reads solution files using File.OpenRead, which requests FileShare.Read.
+                using (var reader = new StreamReader(File.OpenRead(path1)))
+                {
+                    Assert.AreEqual("<Solution />", reader.ReadToEnd());
+                }
+
+                if (OperatingSystem.IsWindows())
+                {
+                    Assert.ThrowsExactly<IOException>(() => new FileStream(path1, FileMode.Open, FileAccess.Write, FileShare.ReadWrite).Dispose());
+                }
+                else
+                {
+                    AssertUnixOwnerOnly(directory);
+                }
             }
+
+            Assert.IsFalse(File.Exists(path1));
+            Assert.IsFalse(File.Exists(path2));
         }
 
-        Assert.False(File.Exists(path1));
-        Assert.False(File.Exists(path2));
-        Assert.False(Directory.Exists(directory));
+        Assert.IsFalse(Directory.Exists(directory));
     }
+
+    private static StringComparison PathComparison
+        => OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
     [UnsupportedOSPlatform("windows")]
     private static void AssertUnixOwnerOnly(string path)
@@ -50,9 +63,6 @@ public class TemporaryFileManagerTests
         const UnixFileMode nonOwnerBits =
             UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.GroupExecute |
             UnixFileMode.OtherRead | UnixFileMode.OtherWrite | UnixFileMode.OtherExecute;
-        Assert.Equal(UnixFileMode.None, mode & nonOwnerBits);
+        Assert.AreEqual(UnixFileMode.None, mode & nonOwnerBits);
     }
-
-    private static StringComparison PathComparison
-        => OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 }
