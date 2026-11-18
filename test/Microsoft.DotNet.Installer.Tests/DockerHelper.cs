@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using TestUtilities;
+using Microsoft.DotNet.ScenarioTests.Common;
 using Xunit;
 
 namespace Microsoft.DotNet.Installer.Tests;
@@ -221,7 +221,8 @@ public class DockerHelper
                     return stdOutput + "--- stderr ---" + Environment.NewLine + stdError;
                 }
             },
-            message => outputHelper?.WriteLine(message));
+            message => outputHelper?.WriteLine(message),
+            CollectContainerDiagnostics);
 
         string output = stdOutput.ToString().Trim();
         if (outputHelper != null && !string.IsNullOrWhiteSpace(output))
@@ -236,6 +237,28 @@ public class DockerHelper
         }
 
         return (process, output, error);
+    }
+
+    // The work of a hung `docker` command happens inside containers, outside the test host's process tree.
+    private static string CollectContainerDiagnostics()
+    {
+        const int MaxContainers = 5;
+        StringBuilder diagnostics = new();
+        diagnostics.AppendLine("docker ps -a:");
+        diagnostics.AppendLine(ProcessHangDiagnostics.RunCommand("docker", "ps -a --no-trunc"));
+
+        string[] runningContainers = ProcessHangDiagnostics.RunCommand("docker", "ps -q")
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(id => !id.StartsWith('('))
+            .ToArray();
+        foreach (string container in runningContainers.Take(MaxContainers))
+        {
+            diagnostics.AppendLine();
+            diagnostics.AppendLine($"docker top {container}:");
+            diagnostics.AppendLine(ProcessHangDiagnostics.RunCommand("docker", $"top {container} -eo pid,ppid,stat,etime,args"));
+        }
+
+        return diagnostics.ToString();
     }
 
     private static string GetDockerOS() => Execute("version -f \"{{ .Server.Os }}\"");

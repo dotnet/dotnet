@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Microsoft.DotNet.ScenarioTests.Common;
 using Xunit;
 
 namespace TestUtilities;

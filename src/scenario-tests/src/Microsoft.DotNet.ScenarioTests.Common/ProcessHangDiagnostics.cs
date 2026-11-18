@@ -2,11 +2,19 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Pipes;
+using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.DotNet.ScenarioTests.Common;
 
@@ -14,9 +22,11 @@ namespace Microsoft.DotNet.ScenarioTests.Common;
 /// Waits for a child process and, when it is still running after a threshold, records what it and its
 /// descendants are doing before continuing to wait. Test jobs intermittently hang on a child process that
 /// never exits and are killed by the pipeline timeout with no information about what was stuck; these
-/// diagnostics (process tree, holders of the inherited stdout/stderr pipes, and dumps of the stuck .NET
-/// processes) are written next to the job logs so the hang can be root-caused.
+/// diagnostics (process tree, holders of the inherited stdout/stderr pipes, the build servers/nodes the
+/// child may be waiting on, a full process list, and dumps of the stuck .NET processes) are written next to
+/// the job logs so the hang can be root-caused.
 /// The wait semantics are unchanged: diagnostics are collected once and the original wait then continues.
+/// This file is shared: the VMR's test/TestUtilities compiles it from here (src/scenario-tests builds standalone).
 /// </summary>
 public static class ProcessHangDiagnostics
 {
@@ -24,16 +34,28 @@ public static class ProcessHangDiagnostics
     public const string DirectoryEnvironmentVariable = "TEST_HANG_DIAGNOSTICS_DIR";
 
     private const int DefaultThresholdMinutes = 10;
-    private const int MaxDumps = 4;
+    private const int MaxDumps = 6;
     private const int DumpTimeoutMilliseconds = 120_000;
+    private const int CommandTimeoutMilliseconds = 30_000;
     private const int MaxOutputLines = 200;
+    private const int MaxListedProcesses = 500;
     private const int MaxCommandLineLength = 1000;
+
+    // Long-lived processes that a `dotnet` command talks to over IPC. They are usually not descendants of the
+    // stuck process (a reused node or server belongs to whichever command started it), so they are found by name.
+    private static readonly Regex s_buildServerPattern = new(@"nodemode[:=]|VBCSCompiler|\bbuild-server\b|razor-?server", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
     private static int s_dumpCount;
 
     /// <summary>
     /// Same semantics as <see cref="Process.WaitForExit(int)"/>, plus diagnostics when the process outlives the threshold.
     /// </summary>
-    public static bool WaitForExit(Process process, int millisecondTimeout, Func<string> getOutputSoFar, Action<string> log)
+    /// <param name="collectAdditionalDiagnostics">Optional caller-specific diagnostics appended to the report, e.g. container state.</param>
+    public static bool WaitForExit(
+        Process process,
+        int millisecondTimeout,
+        Func<string> getOutputSoFar,
+        Action<string> log,
+        Func<string>? collectAdditionalDiagnostics = null)
     {
         int thresholdMilliseconds = GetThresholdMilliseconds();
         if (thresholdMilliseconds <= 0 || (millisecondTimeout != Timeout.Infinite && millisecondTimeout <= thresholdMilliseconds))
@@ -46,7 +68,7 @@ public static class ProcessHangDiagnostics
             return true;
         }
 
-        CollectDiagnostics(process, thresholdMilliseconds, getOutputSoFar, log);
+        CollectDiagnostics(process, thresholdMilliseconds, getOutputSoFar, log, collectAdditionalDiagnostics);
 
         return process.WaitForExit(millisecondTimeout == Timeout.Infinite ? Timeout.Infinite : millisecondTimeout - thresholdMilliseconds);
     }
@@ -74,7 +96,12 @@ public static class ProcessHangDiagnostics
         return minutes <= 0 ? 0 : (int)Math.Min(int.MaxValue, minutes * 60_000L);
     }
 
-    private static void CollectDiagnostics(Process process, int thresholdMilliseconds, Func<string> getOutputSoFar, Action<string> log)
+    private static void CollectDiagnostics(
+        Process process,
+        int thresholdMilliseconds,
+        Func<string> getOutputSoFar,
+        Action<string> log,
+        Func<string>? collectAdditionalDiagnostics)
     {
         try
         {
@@ -94,28 +121,38 @@ public static class ProcessHangDiagnostics
                 : "The process is still RUNNING.");
             report.AppendLine();
 
+            // Dump order matters because of the dump limit: the stuck child and its descendants first, then
+            // processes holding the inherited pipes, then the servers/nodes the child may be waiting on.
             List<int> dumpCandidates = [];
             if (!exited)
             {
                 dumpCandidates.Add(process.Id);
             }
 
-            if (OperatingSystem.IsLinux())
+            Dictionary<int, ProcessEntry>? processes =
+                OperatingSystem.IsLinux() ? ReadLinuxProcesses() :
+                OperatingSystem.IsMacOS() ? ReadPsProcesses() :
+                null;
+
+            if (processes is not null)
             {
-                Dictionary<int, ProcessEntry> processes = ReadLinuxProcesses();
                 List<ProcessEntry> tree = GetSubtree(processes, process.Id);
                 AppendProcesses(report, "Process tree of the child", tree);
                 dumpCandidates.AddRange(tree.Select(p => p.Pid));
 
-                List<ProcessEntry> pipeHolders = GetLinuxPipeHolders(processes);
-                AppendProcesses(report, "Pipe holders (processes sharing a pipe with the test host, other than its own stdio)", pipeHolders);
-                dumpCandidates.AddRange(pipeHolders.Select(p => p.Pid));
-            }
-            else if (OperatingSystem.IsMacOS())
-            {
-                List<ProcessEntry> tree = GetSubtree(ReadPsProcesses(), process.Id);
-                AppendProcesses(report, "Process tree of the child", tree);
-                dumpCandidates.AddRange(tree.Select(p => p.Pid));
+                if (OperatingSystem.IsLinux())
+                {
+                    List<ProcessEntry> pipeHolders = GetLinuxPipeHolders(processes);
+                    AppendProcesses(report, "Pipe holders (processes sharing a pipe with the test host, other than its own stdio)", pipeHolders);
+                    dumpCandidates.AddRange(pipeHolders.Select(p => p.Pid));
+                }
+
+                List<ProcessEntry> servers = processes.Values
+                    .Where(p => p.Pid != Environment.ProcessId && s_buildServerPattern.IsMatch(p.CommandLine))
+                    .OrderBy(p => p.Pid)
+                    .ToList();
+                AppendProcesses(report, "Build servers and nodes (MSBuild nodes/server, compiler server, other build servers)", servers);
+                dumpCandidates.AddRange(servers.Select(p => p.Pid));
             }
 
             report.AppendLine("Output of the child so far (last lines):");
@@ -125,6 +162,26 @@ public static class ProcessHangDiagnostics
                 report.AppendLine("  " + line.TrimEnd('\r'));
             }
             report.AppendLine();
+
+            if (collectAdditionalDiagnostics is not null)
+            {
+                report.AppendLine("Additional diagnostics:");
+                try
+                {
+                    report.AppendLine(collectAdditionalDiagnostics());
+                }
+                catch (Exception ex)
+                {
+                    report.AppendLine($"  failed: {ex}");
+                }
+                report.AppendLine();
+            }
+
+            if (processes is not null)
+            {
+                List<ProcessEntry> all = processes.Values.OrderBy(p => p.Pid).ToList();
+                AppendProcesses(report, $"All processes ({all.Count}{(all.Count > MaxListedProcesses ? $", first {MaxListedProcesses}" : "")})", all.Take(MaxListedProcesses).ToList());
+            }
 
             File.WriteAllText(reportPath, report.ToString());
             log($"Process {process.Id} ({process.StartInfo.FileName} {process.StartInfo.Arguments}) has not completed after {thresholdMilliseconds / 60_000} minutes. Hang diagnostics: {reportPath}");
@@ -158,9 +215,24 @@ public static class ProcessHangDiagnostics
             return configured;
         }
 
-        // The binlog directory is published with the job logs, including when the job is canceled by its timeout.
-        string? binlogDir = Environment.GetEnvironmentVariable(ScenarioTestFixture.BinlogDirEnvironmentVariable);
-        return Path.Combine(string.IsNullOrEmpty(binlogDir) ? Path.GetTempPath() : binlogDir, "hang-diagnostics");
+        // Scenario tests: the binlog directory is published with the job logs, including when the job is canceled.
+        string? binlogDir = Environment.GetEnvironmentVariable("SCENARIO_TESTS_BINLOG_DIR");
+        if (!string.IsNullOrEmpty(binlogDir))
+        {
+            return Path.Combine(binlogDir, "hang-diagnostics");
+        }
+
+        // VMR tests run from <repo>/artifacts/bin/...; <repo>/artifacts/log is published with the job logs,
+        // including when the job is canceled by its timeout.
+        for (DirectoryInfo? dir = new(AppContext.BaseDirectory); dir is not null; dir = dir.Parent)
+        {
+            if (dir.Name == "artifacts")
+            {
+                return Path.Combine(dir.FullName, "log", "hang-diagnostics");
+            }
+        }
+
+        return Path.Combine(Path.GetTempPath(), "hang-diagnostics");
     }
 
     private sealed record ProcessEntry(int Pid, int ParentPid, string State, string CommandLine, string? Note = null);
@@ -230,7 +302,21 @@ public static class ProcessHangDiagnostics
                     commandLine = "[" + stat[(stat.IndexOf('(') + 1)..commEnd] + "]";
                 }
 
-                processes[pid] = new ProcessEntry(pid, int.Parse(fields[1]), fields[0], Truncate(commandLine));
+                // wchan is the kernel function the process is blocked in (e.g. pipe_write, futex_wait_queue, do_epoll_wait).
+                string state = fields[0];
+                try
+                {
+                    string wchan = File.ReadAllText(Path.Combine(dir, "wchan")).Trim();
+                    if (wchan.Length > 0 && wchan != "0")
+                    {
+                        state += "/" + wchan;
+                    }
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                {
+                }
+
+                processes[pid] = new ProcessEntry(pid, int.Parse(fields[1], System.Globalization.CultureInfo.InvariantCulture), state, Truncate(commandLine));
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or FormatException or IndexOutOfRangeException or ArgumentOutOfRangeException)
             {
@@ -298,19 +384,7 @@ public static class ProcessHangDiagnostics
     private static Dictionary<int, ProcessEntry> ReadPsProcesses()
     {
         Dictionary<int, ProcessEntry> processes = [];
-        using Process ps = new()
-        {
-            StartInfo =
-            {
-                FileName = "ps",
-                Arguments = "-axo pid=,ppid=,stat=,command=",
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-            }
-        };
-
-        ps.Start();
-        string output = ps.StandardOutput.ReadToEndAsync().WaitAsync(TimeSpan.FromSeconds(30)).GetAwaiter().GetResult();
+        string output = RunCommand("ps", "-axo pid=,ppid=,stat=,command=");
         foreach (string line in output.Split('\n', StringSplitOptions.RemoveEmptyEntries))
         {
             string[] parts = line.Trim().Split(' ', 4, StringSplitOptions.RemoveEmptyEntries);
@@ -325,6 +399,50 @@ public static class ProcessHangDiagnostics
 
     private static string Truncate(string value) =>
         value.Length <= MaxCommandLineLength ? value : value[..MaxCommandLineLength] + "...";
+
+    /// <summary>
+    /// Runs a short diagnostic command with a bounded wait (including for its output), so collecting diagnostics
+    /// can never hang the way the process being diagnosed did.
+    /// </summary>
+    public static string RunCommand(string fileName, string arguments, int millisecondTimeout = CommandTimeoutMilliseconds)
+    {
+        try
+        {
+            using Process command = new()
+            {
+                StartInfo =
+                {
+                    FileName = fileName,
+                    Arguments = arguments,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                }
+            };
+
+            command.Start();
+            Task<string> stdout = command.StandardOutput.ReadToEndAsync();
+            Task<string> stderr = command.StandardError.ReadToEndAsync();
+            if (!Task.WhenAll(stdout, stderr).Wait(millisecondTimeout))
+            {
+                try
+                {
+                    command.Kill(entireProcessTree: true);
+                }
+                catch (InvalidOperationException)
+                {
+                }
+
+                return $"({fileName} {arguments} did not complete within {millisecondTimeout} ms)";
+            }
+
+            return (stdout.Result + stderr.Result).TrimEnd();
+        }
+        catch (Exception ex) when (ex is Win32Exception or InvalidOperationException)
+        {
+            return $"({fileName} {arguments} failed: {ex.Message})";
+        }
+    }
 
     /// <summary>
     /// Asks a .NET process to write a dump of itself through its diagnostics IPC channel (the same request
