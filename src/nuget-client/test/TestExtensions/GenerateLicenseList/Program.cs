@@ -5,6 +5,8 @@ using System;
 using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace GenerateLicenseList
 {
@@ -35,6 +37,18 @@ namespace GenerateLicenseList
                 var codeIssues = node.GetDiagnostics();
                 if (!codeIssues.Any())
                 {
+                    if (File.Exists(targetFile))
+                    {
+                        SyntaxNode existingNode = CSharpSyntaxTree.ParseText(File.ReadAllText(targetFile)).GetRoot();
+                        string? existingContent = GetContentWithoutVersion(existingNode);
+                        if (existingContent != null &&
+                            string.Equals(existingContent, GetContentWithoutVersion(node), StringComparison.Ordinal))
+                        {
+                            Console.WriteLine($"License and exception data are unchanged. Leaving {targetFile} unchanged.");
+                            return 0;
+                        }
+                    }
+
                     using (var writer = File.CreateText(targetFile))
                     {
                         node.WriteTo(writer);
@@ -52,6 +66,38 @@ namespace GenerateLicenseList
                 Console.WriteLine("License List file generation failed.");
             }
             return -1;
+        }
+
+        private static string? GetContentWithoutVersion(SyntaxNode node)
+        {
+            if (node.ContainsDiagnostics)
+            {
+                return null;
+            }
+
+            PropertyDeclarationSyntax[] versionProperties = node.DescendantNodes()
+                .OfType<ClassDeclarationSyntax>()
+                .Where(declaration => declaration.Identifier.ValueText == "NuGetLicenseData")
+                .SelectMany(declaration => declaration.Members.OfType<PropertyDeclarationSyntax>())
+                .Where(property => property.Identifier.ValueText == "LicenseListVersion")
+                .ToArray();
+
+            if (versionProperties.Length != 1 ||
+                versionProperties[0].Initializer?.Value is not LiteralExpressionSyntax version ||
+                !version.IsKind(SyntaxKind.StringLiteralExpression))
+            {
+                return null;
+            }
+
+            LiteralExpressionSyntax placeholder = SyntaxFactory.LiteralExpression(
+                SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(string.Empty)).WithTriviaFrom(version);
+            node = node.ReplaceNode(version, placeholder);
+            node = node.ReplaceTrivia(
+                node.DescendantTrivia()
+                    .Where(trivia => trivia.IsKind(SyntaxKind.SingleLineCommentTrivia)),
+                (original, _) => SyntaxFactory.Comment(original.ToString().TrimEnd(' ', '\t')));
+
+            return node.NormalizeWhitespace().ToFullString();
         }
     }
 }
