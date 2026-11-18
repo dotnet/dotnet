@@ -222,7 +222,8 @@ public class DockerHelper
                 }
             },
             message => outputHelper?.WriteLine(message),
-            CollectContainerDiagnostics);
+            CollectContainerDiagnostics,
+            DockerThresholdMinutes);
 
         string output = stdOutput.ToString().Trim();
         if (outputHelper != null && !string.IsNullOrWhiteSpace(output))
@@ -238,6 +239,10 @@ public class DockerHelper
 
         return (process, output, error);
     }
+
+    // `docker run` of the whole scenario-tests suite legitimately takes 15-30 minutes on arm64; passing installer
+    // jobs finish within ~35 minutes and the job limit is 120, so only a real hang reaches this.
+    private const int DockerThresholdMinutes = 60;
 
     // The work of a hung `docker` command happens inside containers, outside the test host's process tree.
     private static string CollectContainerDiagnostics()

@@ -33,7 +33,9 @@ public static class ProcessHangDiagnostics
     public const string ThresholdMinutesEnvironmentVariable = "TEST_HANG_DIAGNOSTICS_THRESHOLD_MINUTES";
     public const string DirectoryEnvironmentVariable = "TEST_HANG_DIAGNOSTICS_DIR";
 
-    private const int DefaultThresholdMinutes = 10;
+    // Individual `dotnet` commands in these tests take seconds (the slowest whole SourceBuild test is ~1.5 minutes), so
+    // a command still running after 10 minutes is stuck. Callers with legitimately long commands pass a larger value.
+    public const int DefaultThresholdMinutes = 10;
     private const int MaxDumps = 6;
     private const int DumpTimeoutMilliseconds = 120_000;
     private const int CommandTimeoutMilliseconds = 30_000;
@@ -50,14 +52,16 @@ public static class ProcessHangDiagnostics
     /// Same semantics as <see cref="Process.WaitForExit(int)"/>, plus diagnostics when the process outlives the threshold.
     /// </summary>
     /// <param name="collectAdditionalDiagnostics">Optional caller-specific diagnostics appended to the report, e.g. container state.</param>
+    /// <param name="thresholdMinutes">How long the process may run before diagnostics are collected; <see cref="ThresholdMinutesEnvironmentVariable"/> overrides it.</param>
     public static bool WaitForExit(
         Process process,
         int millisecondTimeout,
         Func<string> getOutputSoFar,
         Action<string> log,
-        Func<string>? collectAdditionalDiagnostics = null)
+        Func<string>? collectAdditionalDiagnostics = null,
+        int thresholdMinutes = DefaultThresholdMinutes)
     {
-        int thresholdMilliseconds = GetThresholdMilliseconds();
+        int thresholdMilliseconds = GetThresholdMilliseconds(thresholdMinutes);
         if (thresholdMilliseconds <= 0 || (millisecondTimeout != Timeout.Infinite && millisecondTimeout <= thresholdMilliseconds))
         {
             return process.WaitForExit(millisecondTimeout);
@@ -89,10 +93,10 @@ public static class ProcessHangDiagnostics
         }
     }
 
-    private static int GetThresholdMilliseconds()
+    private static int GetThresholdMilliseconds(int thresholdMinutes)
     {
         string? value = Environment.GetEnvironmentVariable(ThresholdMinutesEnvironmentVariable);
-        int minutes = int.TryParse(value, out int parsed) ? parsed : DefaultThresholdMinutes;
+        int minutes = int.TryParse(value, out int parsed) ? parsed : thresholdMinutes;
         return minutes <= 0 ? 0 : (int)Math.Min(int.MaxValue, minutes * 60_000L);
     }
 
@@ -468,7 +472,24 @@ public static class ProcessHangDiagnostics
             channel.ReadExactlyAsync(payload, cts.Token).AsTask().GetAwaiter().GetResult();
 
             uint result = payload.Length >= 4 ? BitConverter.ToUInt32(payload, 0) : 0;
-            return header[17] == IpcResponseOk ? $"written to {dumpPath}" : $"dump request failed with 0x{result:X8}";
+            if (header[17] != IpcResponseOk)
+            {
+                return $"dump request failed with 0x{result:X8}";
+            }
+
+            // The runtime creates dumps readable only by their owner. Offline source-build jobs run the tests as root
+            // (sudo) while the pipeline copies the logs as the agent user, so make the dump readable for that copy.
+            if (!File.Exists(dumpPath))
+            {
+                return $"dump reported as written but not found at {dumpPath}";
+            }
+
+            if (!OperatingSystem.IsWindows())
+            {
+                File.SetUnixFileMode(dumpPath, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.GroupRead | UnixFileMode.OtherRead);
+            }
+
+            return $"written to {dumpPath} ({new FileInfo(dumpPath).Length / (1024 * 1024)} MB)";
         }
         catch (Exception ex)
         {
@@ -481,7 +502,8 @@ public static class ProcessHangDiagnostics
     private const byte DumpCommandSet = 0x01;
     private const byte GenerateCoreDumpCommandId = 0x01;
     private const byte IpcResponseOk = 0x00;
-    private const uint DumpTypeWithHeap = 2;
+    // "Normal" dumps contain all threads' stacks, which is what a hang needs, at a fraction of the size of a heap dump.
+    private const uint DumpTypeNormal = 1;
 
     private static byte[] CreateDumpRequest(string dumpPath)
     {
@@ -490,7 +512,7 @@ public static class ProcessHangDiagnostics
         {
             writer.Write((uint)(dumpPath.Length + 1));
             writer.Write(Encoding.Unicode.GetBytes(dumpPath + "\0"));
-            writer.Write(DumpTypeWithHeap);
+            writer.Write(DumpTypeNormal);
             writer.Write(0u); // diagnostics flags
         }
 
