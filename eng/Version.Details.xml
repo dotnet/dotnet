@@ -26,9 +26,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.Platforms" Version="11.0.0-rc.2.26504.105">
+    <Dependency Name="Microsoft.NETCore.Platforms" Version="11.0.0-rtm.26529.118">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>820230c386db5b0106c5430b3e5aee92a7826bf5</Sha>
+      <Sha>297acf930fb0f5c07fd4e51d78e521b4ad2e5d1f</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

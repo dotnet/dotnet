@@ -12,7 +12,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetBuildManifestPackageVersion>11.0.0-beta.26504.105</MicrosoftDotNetBuildManifestPackageVersion>
     <MicrosoftDotNetSignCheckTaskPackageVersion>11.0.0-beta.26504.105</MicrosoftDotNetSignCheckTaskPackageVersion>
     <MicrosoftNETSdkPackageVersion>11.0.100-rtm.26529.118</MicrosoftNETSdkPackageVersion>
-    <MicrosoftNETCorePlatformsPackageVersion>11.0.100-rtm.26529.118</MicrosoftNETCorePlatformsPackageVersion>
+    <MicrosoftNETCorePlatformsPackageVersion>11.0.0-rtm.26529.118</MicrosoftNETCorePlatformsPackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>11.0.0</MicrosoftNETCoreAppRefPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
