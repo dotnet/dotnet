@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net481;net11.0</TargetFrameworks>
+    <TargetFrameworks>net481;net12.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

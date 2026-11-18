@@ -22,8 +22,8 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 [TestCategory("Windows-Review")]
 public class BlameDataCollectorTests : AcceptanceTestBase
 {
-    public const string NETCOREANDFX = "net481;net11.0";
-    public const string NET = "net11.0";
+    public const string NETCOREANDFX = "net481;net12.0";
+    public const string NET = "net12.0";
     private readonly string _procDumpPath;
 
     public BlameDataCollectorTests()
@@ -246,7 +246,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
         // after TestHostLaunched, which never fires here.
         SetTestEnvironment(_testEnvironment, runnerInfo);
         const string testAssetProjectName = "SimpleTestProjectMessedUpTargetFramework";
-        var assemblyPath = GetTestDllForFramework(testAssetProjectName + ".dll", Core11TargetFramework);
+        var assemblyPath = GetTestDllForFramework(testAssetProjectName + ".dll", Core12TargetFramework);
 
         // Make testhost fail immediately by targeting a non-existent runtime.
         var runtimeConfigJson = Path.Combine(Path.GetDirectoryName(assemblyPath)!, testAssetProjectName + ".runtimeconfig.json");

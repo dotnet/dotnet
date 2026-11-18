@@ -20,7 +20,7 @@ public class DiaSessionTests : AcceptanceTestBase
 #if NETFRAMEWORK
             "net481";
 #else
-            "net11.0";
+            "net12.0";
 #endif
         return currentTargetFrameWork;
     }
