@@ -11,7 +11,7 @@ In the VMR, you can find:
 
 - source files of each product repository which are mirrored inside of their respective directories under [`src/`](https://github.com/dotnet/dotnet/tree/main/src),
 - tooling that enables [building the whole .NET product from source](https://github.com/dotnet/source-build) on Linux platforms,
-- end-to-end for the whole .NET product (under `src/scenario-tests`).
+- end-to-end tests for the whole .NET product (under `src/scenario-tests`).
 
 Just like the development repositories, the VMR has a release branch for every feature band (e.g. `release/10.0.1xx`).
 Similarly, VMR's `main` branch follows the default branches of product repositories (see [Synchronization Based on Declared Dependencies](docs/VMR-Design-And-Operation.md#synchronization-based-on-declared-dependencies)).
@@ -29,7 +29,7 @@ You can download the .NET SDK either as an installer (MSI, PKG) or as an archive
 
 - The main purpose of the [dotnet/dotnet](https://github.com/dotnet/dotnet) repository is to have all source code necessary to build the .NET product available in one repository and identified by a single commit.
 - The VMR is the single place from which we release and service future versions of .NET to reduce the complexity of the product construction process. This allows our partners and 3rd parties to easily build, test and modify .NET using their custom infrastructure as well as make the process available to the community.
-- Lastly, we solve other problems that the previous current multi-repo setup brought:
+- Lastly, we solve other problems that the previous multi-repo setup brought:
   - Enable the standard [down-/up-stream open-source model](docs/VMR-Upstream-Downstream.md).
   - Fulfill requirements of .NET distro builders such as Red Hat or Canonical to natively include .NET in their distribution repositories.
   - Simplify scenarios such as client-run testing of bug fixes and improvements. The build should work in an offline environment too for certain platforms.
@@ -123,8 +123,7 @@ git config --global core.longpaths true
         ./build.sh -sb --clean-while-building
         ```
 
-> [!NOTE]  
-> The "clean while building" flag clears intermediates after building each inner repository. It is only needed when you don't have sufficient disk space available.
+    > **Note:** The "clean while building" flag clears intermediates after building each inner repository. It is only needed when you don't have sufficient disk space available.
 
     The resulting SDK archive is placed at `artifacts/assets/Release/dotnet-sdk-12.0.100-[your-RID].tar.gz`.
 
