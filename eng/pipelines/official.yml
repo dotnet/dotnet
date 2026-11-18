@@ -9,8 +9,17 @@ trigger:
       - main
       - release/*
       - internal/release/*
+    exclude:
+      - release/10.0.4xx
 
 schedules:
+  - cron: "30 6 * * *"
+    displayName: Daily release/10.0.4xx build
+    branches:
+      include:
+      - release/10.0.4xx
+    always: false
+    batch: true
   - cron: "0 12 * * 0,6" # run every Saturday and Sunday at 12:00 (UTC)
     displayName: Signed main build on weekends
     branches:
