@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using TestUtilities;
 using Xunit;
 
 namespace Microsoft.DotNet.Installer.Tests;
@@ -189,15 +190,38 @@ public class DockerHelper
         };
 
         StringBuilder stdOutput = new StringBuilder();
-        process.OutputDataReceived += new DataReceivedEventHandler((sender, e) => stdOutput.AppendLine(e.Data));
+        process.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
+        {
+            lock (stdOutput)
+            {
+                stdOutput.AppendLine(e.Data);
+            }
+        });
 
         StringBuilder stdError = new StringBuilder();
-        process.ErrorDataReceived += new DataReceivedEventHandler((sender, e) => stdError.AppendLine(e.Data));
+        process.ErrorDataReceived += new DataReceivedEventHandler((sender, e) =>
+        {
+            lock (stdError)
+            {
+                stdError.AppendLine(e.Data);
+            }
+        });
 
         process.Start();
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
-        process.WaitForExit();
+        ProcessHangDiagnostics.WaitForExit(
+            process,
+            Timeout.Infinite,
+            () =>
+            {
+                lock (stdOutput)
+                lock (stdError)
+                {
+                    return stdOutput + "--- stderr ---" + Environment.NewLine + stdError;
+                }
+            },
+            message => outputHelper?.WriteLine(message));
 
         string output = stdOutput.ToString().Trim();
         if (outputHelper != null && !string.IsNullOrWhiteSpace(output))
