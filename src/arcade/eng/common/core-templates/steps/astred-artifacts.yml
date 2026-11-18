@@ -17,7 +17,7 @@ steps:
 - task: AstredInstaller@0
   displayName: Install Astred CLI
   inputs:
-    Version: '2.14.1'
+    Version: '2.14.37'
     FeedUrl: 'https://pkgs.dev.azure.com/dnceng/_packaging/dotnet-internal-FoSSE/nuget/v3/index.json'
 
 - pwsh: |
