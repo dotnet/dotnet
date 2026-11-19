@@ -18,7 +18,7 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 REPO_NAME=$(basename $(pwd))
-PATCHES_DIR=$DIR/patches/$REPO_NAME
+PATCHES_DIR="$DIR/$REPO_NAME"
 BASE_SHA=${1:-$(getIndexedSubmoduleSha)}
 
 if [ ! -d $PATCHES_DIR ]; then
