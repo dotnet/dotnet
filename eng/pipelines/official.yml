@@ -14,11 +14,17 @@ trigger:
       - internal/release/10.0.4xx
 
 schedules:
-  - cron: "30 6 * * *"
+  - cron: "30 1 * * *"
     displayName: Daily release/10.0.4xx build
     branches:
       include:
       - release/10.0.4xx
+    always: false
+    batch: true
+  - cron: "30 13 * * *"
+    displayName: Daily internal/release/10.0.4xx build
+    branches:
+      include:
       - internal/release/10.0.4xx
     always: false
     batch: true
