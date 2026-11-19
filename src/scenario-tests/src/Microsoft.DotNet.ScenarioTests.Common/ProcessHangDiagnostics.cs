@@ -25,7 +25,7 @@ namespace Microsoft.DotNet.ScenarioTests.Common;
 /// diagnostics (process tree, holders of the inherited stdout/stderr pipes, the build servers/nodes the
 /// child may be waiting on, a full process list, and dumps of the stuck .NET processes) are written next to
 /// the job logs so the hang can be root-caused.
-/// The wait semantics are unchanged: diagnostics are collected once and the original wait then continues.
+/// The wait semantics are unchanged: diagnostics are collected once, without extending the original deadline.
 /// This file is shared: the VMR's test/TestUtilities compiles it from here (src/scenario-tests builds standalone).
 /// </summary>
 public static class ProcessHangDiagnostics
@@ -38,6 +38,8 @@ public static class ProcessHangDiagnostics
     public const int DefaultThresholdMinutes = 10;
     private const int MaxDumps = 6;
     private const int DumpTimeoutMilliseconds = 120_000;
+    private const int MaxCollectionMilliseconds = 10 * 60_000;
+    private const int ConnectTimeoutMilliseconds = 5_000;
     private const int CommandTimeoutMilliseconds = 30_000;
     private const int MaxOutputLines = 200;
     private const int MaxListedProcesses = 500;
@@ -67,15 +69,48 @@ public static class ProcessHangDiagnostics
             return process.WaitForExit(millisecondTimeout);
         }
 
+        Stopwatch stopwatch = Stopwatch.StartNew();
         if (millisecondTimeout == Timeout.Infinite ? WaitForExitAndOutput(process, thresholdMilliseconds) : process.WaitForExit(thresholdMilliseconds))
         {
             return true;
         }
 
-        CollectDiagnostics(process, thresholdMilliseconds, getOutputSoFar, log, collectAdditionalDiagnostics);
+        // Collection runs in the background and is bounded by the caller's original deadline, so it never extends
+        // the timeout; its steps are individually bounded and stop at the same deadline.
+        int collectionMilliseconds = millisecondTimeout == Timeout.Infinite
+            ? MaxCollectionMilliseconds
+            : Math.Min(MaxCollectionMilliseconds, GetRemainingMilliseconds(millisecondTimeout, stopwatch));
+        CancellationTokenSource collectionCts = new(collectionMilliseconds);
+        Task collection = Task.Run(() =>
+        {
+            try
+            {
+                CollectDiagnostics(process, thresholdMilliseconds, getOutputSoFar, SafeLog, collectAdditionalDiagnostics, collectionCts.Token);
+            }
+            finally
+            {
+                collectionCts.Dispose();
+            }
+        });
+        collection.Wait(collectionMilliseconds);
 
-        return process.WaitForExit(millisecondTimeout == Timeout.Infinite ? Timeout.Infinite : millisecondTimeout - thresholdMilliseconds);
+        return process.WaitForExit(millisecondTimeout == Timeout.Infinite ? Timeout.Infinite : GetRemainingMilliseconds(millisecondTimeout, stopwatch));
+
+        // The test may have finished (and its output helper become unusable) by the time a background message is logged.
+        void SafeLog(string message)
+        {
+            try
+            {
+                log(message);
+            }
+            catch (Exception)
+            {
+            }
+        }
     }
+
+    private static int GetRemainingMilliseconds(int millisecondTimeout, Stopwatch stopwatch) =>
+        (int)Math.Max(0, millisecondTimeout - stopwatch.ElapsedMilliseconds);
 
     // An infinite WaitForExit also waits for the redirected stdout/stderr to reach EOF; WaitForExitAsync has the same
     // behavior and can be bounded, which catches descendants that keep the inherited pipes open after the process exits.
@@ -105,7 +140,8 @@ public static class ProcessHangDiagnostics
         int thresholdMilliseconds,
         Func<string> getOutputSoFar,
         Action<string> log,
-        Func<string>? collectAdditionalDiagnostics)
+        Func<string>? collectAdditionalDiagnostics,
+        CancellationToken cancellationToken)
     {
         try
         {
@@ -193,14 +229,20 @@ public static class ProcessHangDiagnostics
             StringBuilder dumps = new("Dumps:" + Environment.NewLine);
             foreach (int pid in dumpCandidates.Distinct())
             {
-                if (Interlocked.Increment(ref s_dumpCount) > MaxDumps)
+                if (Volatile.Read(ref s_dumpCount) >= MaxDumps)
                 {
                     dumps.AppendLine($"  Dump limit of {MaxDumps} per test run reached.");
                     break;
                 }
 
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    dumps.AppendLine("  Time for collecting diagnostics ran out.");
+                    break;
+                }
+
                 string dumpPath = Path.Combine(directory, $"{prefix}-dump-{pid}.dmp");
-                dumps.AppendLine($"  {pid}: {TryWriteDump(pid, dumpPath)}");
+                dumps.AppendLine($"  {pid}: {TryWriteDump(pid, dumpPath, cancellationToken)}");
             }
 
             File.AppendAllText(reportPath, dumps.ToString());
@@ -211,7 +253,10 @@ public static class ProcessHangDiagnostics
         }
     }
 
-    private static string GetDiagnosticsDirectory()
+    /// <summary>
+    /// The directory diagnostics are written to: <see cref="DirectoryEnvironmentVariable"/>, else a directory published with the job logs.
+    /// </summary>
+    public static string GetDiagnosticsDirectory()
     {
         string? configured = Environment.GetEnvironmentVariable(DirectoryEnvironmentVariable);
         if (!string.IsNullOrEmpty(configured))
@@ -452,17 +497,24 @@ public static class ProcessHangDiagnostics
     /// Asks a .NET process to write a dump of itself through its diagnostics IPC channel (the same request
     /// `dotnet-dump collect` sends), so no extra tools or packages are needed on the machine.
     /// </summary>
-    private static string TryWriteDump(int pid, string dumpPath)
+    private static string TryWriteDump(int pid, string dumpPath, CancellationToken cancellationToken)
     {
         try
         {
-            using Stream? channel = ConnectDiagnosticsChannel(pid);
+            using Stream? channel = ConnectDiagnosticsChannel(pid, cancellationToken);
             if (channel is null)
             {
                 return "no .NET diagnostics endpoint (not a .NET process, or diagnostics are disabled)";
             }
 
-            using CancellationTokenSource cts = new(DumpTimeoutMilliseconds);
+            // Only .NET processes count towards the limit, so native descendants cannot use up the dumps.
+            if (Interlocked.Increment(ref s_dumpCount) > MaxDumps)
+            {
+                return $"not written: dump limit of {MaxDumps} per test run reached";
+            }
+
+            using CancellationTokenSource cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            cts.CancelAfter(DumpTimeoutMilliseconds);
             channel.WriteAsync(CreateDumpRequest(dumpPath), cts.Token).AsTask().GetAwaiter().GetResult();
 
             byte[] header = new byte[IpcHeaderSize];
@@ -507,11 +559,14 @@ public static class ProcessHangDiagnostics
 
     private static byte[] CreateDumpRequest(string dumpPath)
     {
+        // On Windows the runtime appends the name verbatim to the createdump command line, so a path with spaces
+        // must be quoted (as DiagnosticsClient does).
+        string requestPath = OperatingSystem.IsWindows() ? $"\"{dumpPath}\"" : dumpPath;
         using MemoryStream payload = new();
         using (BinaryWriter writer = new(payload, Encoding.Unicode, leaveOpen: true))
         {
-            writer.Write((uint)(dumpPath.Length + 1));
-            writer.Write(Encoding.Unicode.GetBytes(dumpPath + "\0"));
+            writer.Write((uint)(requestPath.Length + 1));
+            writer.Write(Encoding.Unicode.GetBytes(requestPath + "\0"));
             writer.Write(DumpTypeNormal);
             writer.Write(0u); // diagnostics flags
         }
@@ -530,14 +585,14 @@ public static class ProcessHangDiagnostics
         return message.ToArray();
     }
 
-    private static Stream? ConnectDiagnosticsChannel(int pid)
+    private static Stream? ConnectDiagnosticsChannel(int pid, CancellationToken cancellationToken)
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             NamedPipeClientStream pipe = new(".", $"dotnet-diagnostic-{pid}", PipeDirection.InOut, PipeOptions.Asynchronous);
             try
             {
-                pipe.Connect(5_000);
+                pipe.Connect(ConnectTimeoutMilliseconds);
                 return pipe;
             }
             catch (Exception ex) when (ex is TimeoutException or IOException)
@@ -553,16 +608,24 @@ public static class ProcessHangDiagnostics
             return null;
         }
 
+        // A stalled runtime may never accept the connection, so bound it like the Windows connect above.
         Socket socket = new(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified);
+        using CancellationTokenSource cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        cts.CancelAfter(ConnectTimeoutMilliseconds);
         try
         {
-            socket.Connect(new UnixDomainSocketEndPoint(socketPath));
+            socket.ConnectAsync(new UnixDomainSocketEndPoint(socketPath), cts.Token).AsTask().GetAwaiter().GetResult();
             return new NetworkStream(socket, ownsSocket: true);
         }
         catch (SocketException)
         {
             socket.Dispose();
             return null;
+        }
+        catch (OperationCanceledException)
+        {
+            socket.Dispose();
+            throw new TimeoutException($"connecting to the diagnostics endpoint {socketPath} did not complete within {ConnectTimeoutMilliseconds} ms");
         }
     }
 
