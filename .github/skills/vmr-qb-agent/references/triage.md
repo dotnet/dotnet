@@ -107,13 +107,43 @@ One build often contains several unrelated failures. Two diagnostics in the same
 them only when each has its own terminating diagnostic. Do not merge failures that merely share a build. For cascades ("Artifact not
 found") find the root leg, as the pipeline-investigation skill describes.
 
-## 7. Authentication problems are findings
+## 7. Code-flow PRs whose files did not match the source diff
+
+A Maestro comment "This pull request was not automatically approved because the following files did not match the source diff"
+means the VMR result differs from what the product repo changed. Such a PR is **never** green or safe to merge until each listed
+file is explained. Known causes: forward flow committing conflict markers or deleting a file, a hunk applied twice, a source change
+silently dropped, and a VMR-only edit that overrides the source.
+
+For each listed file, compare four versions:
+
+| Name | Version |
+|---|---|
+| V0 | `src/<repo>/<file>` at the merge base of the PR head and its target branch |
+| V1 | `src/<repo>/<file>` at the PR head |
+| S0 | `<file>` in the product repo at the `src/source-manifest.json` `commitSha` of V0 |
+| S1 | `<file>` in the product repo at the `commitSha` of V1 |
+
+Read the product files with `gh api repos/<owner>/<repo>/contents/<file>?ref=<sha> -H "Accept: application/vnd.github.raw"`.
+
+| Result | Verdict |
+|---|---|
+| V1 == S1 | Matches the source. |
+| V0 == S0, V1 != S1 | **The flow broke the file.** Find the Maestro commit in the PR that did it with `git log <base>..<head> -- src/<repo>/<file>`. |
+| V0 != S0 | A divergence that existed before this PR. Find the VMR commit that made it (`git log -- src/<repo>/<file>`). It is benign only when the source change S0 to S1 is a backflow of an older VMR state that the VMR has since replaced (for example a VMR-only branding bump). Otherwise it is a dropped source change. |
+
+Also check the product file itself: Maestro conflict placeholders ("PLEASE READ ... Please remove this file during conflict
+resolution") merged into the product repo are a product-repo bug. Report them to the repo owner.
+
+A PR with a broken file is blocked: report the file, the culprit commit and the fix (restore it from S1 in a new commit on the PR
+branch; never force-push). Report a Maestro defect to dotnet/arcade-services.
+
+## 8. Authentication problems are findings
 
 If the collector could not read internal data, the report is **partial, not healthy**. Keep the explicit error and its sign-in hint
 in the report. Do not confuse it with a CI job's own private-feed 401, which is a build failure to triage. Run the preflight first: it
 prints authentication problems, with the sign-in command, before anything else.
 
-## 8. Before you report
+## 9. Before you report
 
 - [ ] Fatal classification came from records, not message text
 - [ ] The named diagnostic is the one that terminated the leg, and the name matches the previous finding names
@@ -121,3 +151,4 @@ prints authentication problems, with the sign-in command, before anything else.
 - [ ] Every owner handle comes from the ownership/routing JSON, and the destination accepts this failure type
 - [ ] Not already tracked, not already owned, not a team member's own PR
 - [ ] Independent failures are separate rows
+- [ ] No code-flow PR with a "did not match the source diff" note is called green or safe before its files are explained
