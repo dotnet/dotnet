@@ -100,17 +100,9 @@ git config --global core.longpaths true
 
     - **Microsoft based build**
 
-        For Unix:
+        For Unix: `./build.sh`
 
-        ```bash
-        ./build.sh --clean-while-building
-        ```
-
-        For Windows:
-
-        ```cmd
-        .\build.cmd -cleanWhileBuilding
-        ```
+        For Windows: `.\build.cmd`
 
     - **Building from source**
 
@@ -120,10 +112,10 @@ git config --global core.longpaths true
         ./prep-source-build.sh
 
         # Build the .NET SDK
-        ./build.sh -sb --clean-while-building
+        ./build.sh -sb
         ```
 
-    > **Note:** The "clean while building" flag clears intermediates after building each inner repository. It is only needed when you don't have sufficient disk space available.
+    > **Note:** If you don't have sufficient disk space available, pass the `-cleanWhileBuilding` / `--clean-while-building` flag to clear intermediates after building each inner repository. 
 
     The resulting SDK archive is placed at `artifacts/assets/Release/dotnet-sdk-12.0.100-[your-RID].tar.gz`.
 
@@ -164,13 +156,13 @@ docker run --rm -it -v vmr:/vmr -w /vmr mcr.microsoft.com/dotnet-buildtools/prer
 git clone https://github.com/dotnet/dotnet .
 
 # - Microsoft based build
-./build.sh --clean-while-building
+./build.sh
 
 # - Building from source
-./prep-source-build.sh && ./build.sh -sb --clean-while-building
+./prep-source-build.sh && ./build.sh -sb
 
 mkdir -p $HOME/.dotnet
-tar -zxf artifacts/assets/Release/dotnet-sdk-12.0.100-centos.9-x64.tar.gz -C $HOME/.dotnet
+tar -zxf artifacts/assets/Release/dotnet-sdk-12.0.100-centos.10-x64.tar.gz -C $HOME/.dotnet
 ln -s $HOME/.dotnet/dotnet /usr/bin/dotnet
 ```
 
