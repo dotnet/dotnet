@@ -4,7 +4,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Text.Json;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -13,6 +13,12 @@ namespace Microsoft.DotNet.Arcade.Sdk;
 public class LocateDotNet : Microsoft.Build.Utilities.Task
 {
     private static readonly string s_cacheKey = "LocateDotNet-FCDFF825-F35B-4601-9CB5-74DCA498B589";
+
+    private static readonly JsonDocumentOptions s_globalJsonOptions = new()
+    {
+        AllowTrailingCommas = true,
+        CommentHandling = JsonCommentHandling.Skip,
+    };
 
     private sealed class CacheEntry
     {
@@ -57,15 +63,11 @@ public class LocateDotNet : Microsoft.Build.Utilities.Task
 
         var globalJson = File.ReadAllText(globalJsonPath);
 
-        // avoid Newtonsoft.Json dependency
-        var match = Regex.Match(globalJson, @"""dotnet""\s*:\s*""([^""]+)""");
-        if (!match.Success)
+        if (!TryGetDotNetSdkVersion(globalJson, globalJsonPath, out var sdkVersion, out var error))
         {
-            Log.LogError($"Unable to determine dotnet version from file '{globalJsonPath}'.");
+            Log.LogError(error);
             return;
         }
-
-        var sdkVersion = match.Groups[1].Value;
 
         var fileName = (Path.DirectorySeparatorChar == '\\') ? "dotnet.exe" : "dotnet";
         var dotNetDir = paths.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(p => File.Exists(Path.Combine(p, fileName)));
@@ -78,5 +80,60 @@ public class LocateDotNet : Microsoft.Build.Utilities.Task
 
         DotNetPath = Path.GetFullPath(Path.Combine(dotNetDir, fileName));
         BuildEngine4.RegisterTaskObject(s_cacheKey, new CacheEntry(lastWrite, paths, DotNetPath), RegisteredTaskObjectLifetime.Build, allowEarlyCollection: true);
+    }
+
+    /// <summary>
+    /// Reads the .NET SDK version that Arcade installs from global.json content: 'tools.dotnet' if
+    /// specified, otherwise 'sdk.version'.
+    /// Keep in sync with eng/common/tools.ps1 and eng/common/tools.sh.
+    /// </summary>
+    internal static bool TryGetDotNetSdkVersion(string globalJsonContent, string globalJsonPath, out string version, out string error)
+    {
+        version = null;
+        error = null;
+
+        JsonDocument document;
+        try
+        {
+            document = JsonDocument.Parse(globalJsonContent, s_globalJsonOptions);
+        }
+        catch (JsonException e)
+        {
+            error = $"Unable to parse file '{globalJsonPath}': {e.Message}";
+            return false;
+        }
+
+        using (document)
+        {
+            JsonElement root = document.RootElement;
+
+            if (TryGetNonEmptyString(root, "tools", "dotnet", out version) ||
+                TryGetNonEmptyString(root, "sdk", "version", out version))
+            {
+                return true;
+            }
+
+            error = $"Unable to determine dotnet version from file '{globalJsonPath}'. Specify 'tools.dotnet' or 'sdk.version'.";
+            return false;
+        }
+    }
+
+    private static bool TryGetProperty(JsonElement element, string name, out JsonElement value)
+    {
+        value = default;
+        return element.ValueKind == JsonValueKind.Object && element.TryGetProperty(name, out value);
+    }
+
+    private static bool TryGetNonEmptyString(JsonElement root, string objectName, string propertyName, out string value)
+    {
+        value = null;
+        if (TryGetProperty(root, objectName, out JsonElement obj) &&
+            TryGetProperty(obj, propertyName, out JsonElement property) &&
+            property.ValueKind == JsonValueKind.String)
+        {
+            value = property.GetString();
+        }
+
+        return !string.IsNullOrEmpty(value);
     }
 }
