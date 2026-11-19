@@ -69,3 +69,4 @@ extends:
           oneLocEnabled: true
         microbuildUseESRP: true
         runValidateSdk: ${{ parameters.runValidateSdk }}
+        runPromotionValidation: true
