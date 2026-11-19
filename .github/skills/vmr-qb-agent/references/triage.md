@@ -109,33 +109,45 @@ found") find the root leg, as the pipeline-investigation skill describes.
 
 ## 7. Code-flow PRs whose files did not match the source diff
 
-A Maestro comment "This pull request was not automatically approved because the following files did not match the source diff"
-means the VMR result differs from what the product repo changed. Such a PR is **never** green or safe to merge until each listed
-file is explained. Known causes: forward flow committing conflict markers or deleting a file, a hunk applied twice, a source change
-silently dropped, and a VMR-only edit that overrides the source.
+Maestro auto-approves a forward-flow PR only when its `src/<repo>` changes reproduce the product repo's own change. The check is
+`CodeflowSourceDiffVerifier` in dotnet/arcade-services. It compares the VMR diff `<target>...<PR head>` under `src/<repo>` with the
+product repo diff `<S0>...<S1>`, where S0 is the target branch's `src/source-manifest.json` `commitSha` and S1 is the flowed commit.
+It skips the mapping's excludes, `eng/common` (except for arcade), `Version.Details.xml`/`.props`, `global.json` and the
+`dotnet-tools` files. It checks `eng/Versions.props`. A file is listed when:
 
-For each listed file, compare four versions:
+- the PR changed it but the source did not;
+- both changed it, but the added and removed lines differ; or
+- the source changed it, the PR did not, and the VMR copy is not identical to the source.
+
+The check compares changes, not files, so a listed file is not proof of damage: a file the VMR already had (for example a VMR-only
+change that later backflowed) is listed too. A missing comment is not proof of safety either: the check runs only for auto-approve
+subscriptions on branches that require approval of the last push, and only while every PR commit came from Maestro. After anyone
+else pushes, no new comment appears and the last one goes stale.
+
+**A PR with this comment is not merge-ready until every listed file is explained.** For each file, take four versions:
 
 | Name | Version |
 |---|---|
-| V0 | `src/<repo>/<file>` at the merge base of the PR head and its target branch |
+| V0 | `src/<repo>/<file>` at `git merge-base <PR head> origin/<target>` |
 | V1 | `src/<repo>/<file>` at the PR head |
 | S0 | `<file>` in the product repo at the `src/source-manifest.json` `commitSha` of V0 |
 | S1 | `<file>` in the product repo at the `commitSha` of V1 |
 
-Read the product files with `gh api repos/<owner>/<repo>/contents/<file>?ref=<sha> -H "Accept: application/vnd.github.raw"`.
+Read product files with `gh api "repos/<owner>/<repo>/contents/<file>?ref=<sha>" -H "Accept: application/vnd.github.raw"` and use an
+empty file for a missing one. Compute what the flow should have produced, which is the VMR's file plus the source's change:
+`git merge-file -p V0 S0 S1 > EXPECTED`. Then classify, first match wins:
 
 | Result | Verdict |
 |---|---|
+| S1 is Maestro's placeholder ("PLEASE READ ... Please remove this file during conflict resolution") | The product repo merged an unresolved backflow. The VMR is right not to have the file; the repo owner must delete it. Check the flow for side effects: Maestro can treat the placeholder as a rename of a real file. |
 | V1 == S1 | Matches the source. |
-| V0 == S0, V1 != S1 | **The flow broke the file.** Find the Maestro commit in the PR that did it with `git log <base>..<head> -- src/<repo>/<file>`. |
-| V0 != S0 | A divergence that existed before this PR. Find the VMR commit that made it (`git log -- src/<repo>/<file>`). It is benign only when the source change S0 to S1 is a backflow of an older VMR state that the VMR has since replaced (for example a VMR-only branding bump). Otherwise it is a dropped source change. |
+| `merge-file` is clean and V1 == EXPECTED | The source change applied and VMR-only edits were kept. Fine. |
+| `merge-file` conflicts | For each conflicting hunk, find the source commit (`git log S0..S1 -- <file>` in the product repo) and the VMR commit (`git log origin/<target> -- src/<repo>/<file>`). Fine only when the source side came from a backflow ("Source code updates from dotnet/dotnet" or "Backflow from") and the VMR side is a later VMR commit, so the VMR is already ahead. Otherwise it is a real conflict the flow did not surface: route it to the repo owner. |
+| `merge-file` is clean and V1 != EXPECTED | **The flow damaged the file.** Find the Maestro commit with `git log origin/<target>..<PR head> -- src/<repo>/<file>` and show how V1 differs from EXPECTED. |
 
-Also check the product file itself: Maestro conflict placeholders ("PLEASE READ ... Please remove this file during conflict
-resolution") merged into the product repo are a product-repo bug. Report them to the repo owner.
-
-A PR with a broken file is blocked: report the file, the culprit commit and the fix (restore it from S1 in a new commit on the PR
-branch; never force-push). Report a Maestro defect to dotnet/arcade-services.
+A damaged file blocks the PR. Report the file, the culprit commit and the fix: write EXPECTED to the file in a new commit on the PR
+branch (this keeps VMR-only edits; never force-push). Send flow defects to @dotnet/prodconsvcs (General VMR infra in the Repo
+Ownership table).
 
 ## 8. Authentication problems are findings
 
