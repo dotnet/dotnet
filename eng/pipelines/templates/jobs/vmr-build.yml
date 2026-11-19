@@ -1079,6 +1079,10 @@ jobs:
       parameters:
         sourcesPath: $(sourcesPath)
         binlogDir: $(Build.ArtifactStagingDirectory)/AstredCapture/binlogs
+        # Runtime's CMake/Ninja compiler invocations are not recorded in MSBuild binlogs.
+        compilationDatabaseDir: $(sourcesPath)/src/runtime/artifacts/obj
+        ${{ if eq(parameters.targetOS, 'windows') }}:
+          nativeEnvironmentCommand: 'call "$(sourcesPath)\src\runtime\eng\native\init-vs-env.cmd" ${{ parameters.targetArchitecture }}'
 
   # Keep the following two CopyFiles tasks separate to avoid scanning the entire artifacts folder
   - task: CopyFiles@2
