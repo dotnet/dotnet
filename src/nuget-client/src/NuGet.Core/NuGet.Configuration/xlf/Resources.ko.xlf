@@ -235,13 +235,13 @@
       </trans-unit>
       <trans-unit id="ShowError_ConfigInvalidOperation">
         <source>NuGet.Config is malformed. Path: '{0}'. Reason: {1}</source>
-        <target state="new">NuGet.Config is malformed. Path: '{0}'. Reason: {1}</target>
+        <target state="translated">NuGet.Config 형식이 잘못되었습니다. 경로: '{0}'. 이유: {1}</target>
         <note>0 - path to the config file
 1 - original exception message</note>
       </trans-unit>
       <trans-unit id="ShowError_ConfigInvalidXml">
         <source>NuGet.Config is not valid XML. Path: '{0}'. Reason: {1}</source>
-        <target state="new">NuGet.Config is not valid XML. Path: '{0}'. Reason: {1}</target>
+        <target state="translated">NuGet.Config 유효한 XML이 아닙니다. 경로: '{0}'. 이유: {1}</target>
         <note>0 - path to the config file
 1 - original exception message</note>
       </trans-unit>
@@ -252,7 +252,7 @@
       </trans-unit>
       <trans-unit id="ShowError_ConfigUnauthorizedAccess">
         <source>Failed to read NuGet.Config due to unauthorized access. Path: '{0}'. Reason: {1}</source>
-        <target state="new">Failed to read NuGet.Config due to unauthorized access. Path: '{0}'. Reason: {1}</target>
+        <target state="translated">무단 액세스로 인해 NuGet.Config 읽지 못했습니다. 경로: '{0}'. 이유: {1}</target>
         <note>0 - path to the config file
 1 - original exception message</note>
       </trans-unit>
@@ -278,7 +278,7 @@
       </trans-unit>
       <trans-unit id="Unknown_Config_Exception">
         <source>Unexpected failure reading NuGet.Config. Path: '{0}'. Reason: {1}</source>
-        <target state="new">Unexpected failure reading NuGet.Config. Path: '{0}'. Reason: {1}</target>
+        <target state="translated">NuGet.Config 읽는 동안 예기치 않은 오류가 발생했습니다. 경로: '{0}'. 이유: {1}</target>
         <note>0 - path to the config file
 1 - original exception message</note>
       </trans-unit>

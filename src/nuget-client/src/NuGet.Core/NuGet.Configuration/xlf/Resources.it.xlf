@@ -235,13 +235,13 @@
       </trans-unit>
       <trans-unit id="ShowError_ConfigInvalidOperation">
         <source>NuGet.Config is malformed. Path: '{0}'. Reason: {1}</source>
-        <target state="new">NuGet.Config is malformed. Path: '{0}'. Reason: {1}</target>
+        <target state="translated">NuGet.Config non è valido. Percorso: '{0}'. Motivo: {1}</target>
         <note>0 - path to the config file
 1 - original exception message</note>
       </trans-unit>
       <trans-unit id="ShowError_ConfigInvalidXml">
         <source>NuGet.Config is not valid XML. Path: '{0}'. Reason: {1}</source>
-        <target state="new">NuGet.Config is not valid XML. Path: '{0}'. Reason: {1}</target>
+        <target state="translated">NuGet.Config non è un codice XML valido. Percorso: '{0}'. Motivo: {1}</target>
         <note>0 - path to the config file
 1 - original exception message</note>
       </trans-unit>
@@ -252,7 +252,7 @@
       </trans-unit>
       <trans-unit id="ShowError_ConfigUnauthorizedAccess">
         <source>Failed to read NuGet.Config due to unauthorized access. Path: '{0}'. Reason: {1}</source>
-        <target state="new">Failed to read NuGet.Config due to unauthorized access. Path: '{0}'. Reason: {1}</target>
+        <target state="translated">Non è stato possibile leggere NuGet.Config a causa di un accesso non autorizzato. Percorso: '{0}'. Motivo: {1}</target>
         <note>0 - path to the config file
 1 - original exception message</note>
       </trans-unit>
@@ -278,7 +278,7 @@
       </trans-unit>
       <trans-unit id="Unknown_Config_Exception">
         <source>Unexpected failure reading NuGet.Config. Path: '{0}'. Reason: {1}</source>
-        <target state="new">Unexpected failure reading NuGet.Config. Path: '{0}'. Reason: {1}</target>
+        <target state="translated">Errore imprevisto durante la lettura NuGet.Config. Percorso: '{0}'. Motivo: {1}</target>
         <note>0 - path to the config file
 1 - original exception message</note>
       </trans-unit>

@@ -562,7 +562,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="RepositorySignaturesResourceMustBeHttps">
         <source>Repository Signatures resource must be served over HTTPS. Source: {0}</source>
-        <target state="needs-review-translation">La risorsa Firme del repository deve essere gestita tramite HTTPS. Origine: {0}</target>
+        <target state="translated">La risorsa Firme del repository deve essere fornita tramite HTTPS. Fonte: {0}</target>
         <note>{0} source service index</note>
       </trans-unit>
       <trans-unit id="StringCannotBeNullOrEmpty">
