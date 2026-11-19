@@ -18,7 +18,7 @@ Each morning:
 ## Before Your Shift
 
 - Make sure the previous QB has added you to the required [Teams channels](#communication-channels)
-- Make sure you're in the **".NET VMR Owners" security group (netvmr-lt)** — you'll need this to admin-merge PRs on release day. Join the group via [aka.ms/idweb](https://aka.ms/idweb)
+- Make sure you're in the **"dotnet/dotnet infra owners" security group (netvmr-infra)** — you'll need this to admin-merge PRs on release day. Join the group via [aka.ms/idweb](https://aka.ms/idweb)
 - Make sure the previous QB has scheduled a **handoff sync** with you before your shift starts
 
 ## Build Health Monitoring
