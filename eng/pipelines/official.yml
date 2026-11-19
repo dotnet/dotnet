@@ -19,6 +19,12 @@ schedules:
     branches:
       include:
       - release/11.0.1xx
+    always: false
+    batch: true
+  - cron: "30 21 * * *"
+    displayName: Daily internal/release/11.0.1xx build
+    branches:
+      include:
       - internal/release/11.0.1xx
     always: false
     batch: true
