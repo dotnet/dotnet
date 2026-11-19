@@ -23,8 +23,8 @@ public class TestRunCriteriaTests
         var testRunCriteria = new TestRunCriteria(sources, frequencyOfRunStatsChangeEvent: 10);
 
         Assert.IsNotNull(testRunCriteria.AdapterSourceMap);
-        CollectionAssert.AreEqual(new List<string> { "_none_" }, testRunCriteria.AdapterSourceMap.Keys);
-        CollectionAssert.AreEqual(sources, testRunCriteria.AdapterSourceMap.Values.First().ToList());
+        Assert.AreSequenceEqual(new List<string> { "_none_" }, testRunCriteria.AdapterSourceMap.Keys);
+        Assert.AreSequenceEqual(sources, testRunCriteria.AdapterSourceMap.Values.First().ToList());
     }
 
     [TestMethod]
@@ -34,8 +34,8 @@ public class TestRunCriteriaTests
         var testRunCriteria = new TestRunCriteria(sources, new TestRunCriteria(new List<string> { "temp.dll" }, 10));
 
         Assert.IsNotNull(testRunCriteria.AdapterSourceMap);
-        CollectionAssert.AreEqual(new List<string> { "_none_" }, testRunCriteria.AdapterSourceMap.Keys);
-        CollectionAssert.AreEqual(sources, testRunCriteria.AdapterSourceMap.Values.First().ToList());
+        Assert.AreSequenceEqual(new List<string> { "_none_" }, testRunCriteria.AdapterSourceMap.Keys);
+        Assert.AreSequenceEqual(sources, testRunCriteria.AdapterSourceMap.Values.First().ToList());
     }
 
     [TestMethod]
@@ -50,9 +50,9 @@ public class TestRunCriteriaTests
         var testRunCriteria = new TestRunCriteria(adapterSourceMap, 10, false, null, TimeSpan.MaxValue, null);
 
         Assert.IsNotNull(testRunCriteria.AdapterSourceMap);
-        CollectionAssert.AreEqual(new List<string> { "dummyadapter1", "dummyadapter2" }, testRunCriteria.AdapterSourceMap.Keys);
-        CollectionAssert.AreEqual(sourceSet1, testRunCriteria.AdapterSourceMap.Values.First().ToList());
-        CollectionAssert.AreEqual(sourceSet2, testRunCriteria.AdapterSourceMap.Values.ToArray()[1].ToList());
+        Assert.AreSequenceEqual(new List<string> { "dummyadapter1", "dummyadapter2" }, testRunCriteria.AdapterSourceMap.Keys);
+        Assert.AreSequenceEqual(sourceSet1, testRunCriteria.AdapterSourceMap.Values.First().ToList());
+        Assert.AreSequenceEqual(sourceSet2, testRunCriteria.AdapterSourceMap.Values.ToArray()[1].ToList());
     }
 
     #endregion
@@ -72,7 +72,7 @@ public class TestRunCriteriaTests
 
         var expectedSourceSet = new List<string>(sourceSet1);
         expectedSourceSet.AddRange(sourceSet2);
-        CollectionAssert.AreEqual(expectedSourceSet, testRunCriteria.Sources!.ToList());
+        Assert.AreSequenceEqual(expectedSourceSet, testRunCriteria.Sources!.ToList());
     }
 
     [TestMethod]

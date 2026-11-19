@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace NuGetClone.Frameworks
 {
     [Serializable]
-    internal class FrameworkException : Exception
+    internal class FrameworkException : Exception // CodeQL [SM02227] Not deserialized with an unsafe formatter; the serialization constructor only forwards to the Exception base constructor.
     {
         public FrameworkException(string message)
             : base(message)

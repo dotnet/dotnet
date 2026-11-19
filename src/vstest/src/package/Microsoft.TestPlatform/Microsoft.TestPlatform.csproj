@@ -68,6 +68,7 @@
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.BlameDataCollector\Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.TrxLogger\Microsoft.TestPlatform.Extensions.TrxLogger.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkRunnerTargetFramework)" />
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.TestIdsLogger\Microsoft.TestPlatform.Extensions.TestIdsLogger.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkRunnerTargetFramework)" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.TestHostProvider\Microsoft.TestPlatform.TestHostProvider.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\Microsoft.TestPlatform.PlatformAbstractions.csproj" />
     <ProjectReference Include="..\..\SettingsMigrator\SettingsMigrator.csproj" />
@@ -319,7 +320,7 @@
   <!--
     Publish the .NET (NetCoreAppMinimum) testhost and pack its output into the TestHostNet folder.
 
-    Previously the TestHostNet payload was hand-listed: testhost.dll came from the net8.0 build output
+    Previously the TestHostNet payload was hand-listed: testhost.dll came from the minimum .NET build output
     but the Test Platform dependency assemblies (Microsoft.TestPlatform.CoreUtilities.dll, ObjectModel,
     CrossPlatEngine, ...) and their satellite resources were copied from the *net48* build output
     ($(OutputPath)net48\...). That shipped .NET Framework-built assemblies - and a testhost.dll.config
@@ -346,7 +347,7 @@
     <ItemGroup>
       <!-- The managed testhost payload comes wholesale from the publish (testhost.dll + its
            .config + deps.json + the shared TestPlatform DLLs and their satellites), guaranteeing
-           the DLLs and their configs are all net8.0 and mutually consistent. The generated apphost
+           the DLLs and their configs use the minimum .NET target and are mutually consistent. The generated apphost
            (testhost.exe), doc XML, and the single generated runtimeconfig are excluded: the package
            ships templated testhost-<ver>.runtimeconfig.json files (added as extras below) instead. -->
       <_NetTestHostPublishedFile Include="$(_NetTestHostPublishDir)**\*" Exclude="$(_NetTestHostPublishDir)**\*.xml;$(_NetTestHostPublishDir)testhost.exe;$(_NetTestHostPublishDir)testhost.runtimeconfig.json" />
@@ -407,6 +408,9 @@
       <_HtmlLoggerContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.HtmlLogger\$(Configuration)\net48\**\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger*.dll">
         <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </_HtmlLoggerContent>
+      <_TestIdsLoggerContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.TestIdsLogger\$(Configuration)\net48\**\Microsoft.VisualStudio.TestPlatform.Extensions.TestIds.TestLogger*.dll">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </_TestIdsLoggerContent>
       <_TestHostRuntimeProviderContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.TestHostProvider\$(Configuration)\net48\**\Microsoft.TestPlatform.TestHostRuntimeProvider*.dll">
         <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </_TestHostRuntimeProviderContent>
@@ -420,7 +424,7 @@
       <_EventLogCollectorContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.EventLogCollector\$(Configuration)\net48\Microsoft.TestPlatform.Extensions.EventLogCollector.dll">
         <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(Filename)%(Extension)</PackagePath>
       </_EventLogCollectorContent>
-      <TfmSpecificPackageFile Include="@(_TrxLoggerContent);@(_HtmlLoggerContent);@(_TestHostRuntimeProviderContent);@(_BlameDataCollectorContent);@(_NetCoreClientContent);@(_EventLogCollectorContent)" />
+      <TfmSpecificPackageFile Include="@(_TrxLoggerContent);@(_HtmlLoggerContent);@(_TestIdsLoggerContent);@(_TestHostRuntimeProviderContent);@(_BlameDataCollectorContent);@(_NetCoreClientContent);@(_EventLogCollectorContent)" />
     </ItemGroup>
   </Target>
   <!--
@@ -459,7 +463,7 @@
     Pack the .NET Framework testhost executables (and their .config files) for every supported netfx
     TFM (net462..net481) and architecture (default/x86/arm64) from each testhost project's own
     RID-specific build output. The paths are enumerated explicitly rather than globbed: a wildcard
-    over the TFM folder would both over-capture the netcore testhost's RID subfolder (net8.0, handled
+    over the TFM folder would both over-capture the netcore testhost's RID subfolder (handled
     separately by _PublishNetTestHostContent) and, via %(RecursiveDir), preserve the TFM\RID path
     instead of flattening. Each executable has a unique file name, so explicit paths flatten into the
     runner root by file name. Each architecture uses a distinct item name because reusing one item

@@ -15,7 +15,7 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 #if NETFRAMEWORK
 [Serializable]
 #endif
-public class TestPlatformFormatException : Exception
+public class TestPlatformFormatException : Exception // CodeQL [SM02227] Not deserialized with an unsafe formatter; the serialization constructor only forwards to the Exception base constructor and reads one string.
 {
     /// <summary>
     /// Creates a new TestPlatformFormatException

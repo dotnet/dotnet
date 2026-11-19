@@ -103,7 +103,7 @@ public class DiscovererEnumeratorTests
         _discovererEnumerator.LoadTests(extensionSourceMap, _runSettingsMock.Object, null, _messageLoggerMock.Object);
 
         Assert.IsTrue(EverythingTestDiscoverer.IsDiscoverTestCalled);
-        CollectionAssert.AreEqual(sources, EverythingTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(sources, EverythingTestDiscoverer.Sources!.ToList());
 
         Assert.IsFalse(ManagedDllTestDiscoverer.IsManagedDiscoverTestCalled);
         Assert.IsFalse(NativeDllTestDiscoverer.IsNativeDiscoverTestCalled);
@@ -136,10 +136,10 @@ public class DiscovererEnumeratorTests
         _discovererEnumerator.LoadTests(extensionSourceMap, _runSettingsMock.Object, testCaseFilter, _messageLoggerMock.Object);
 
         Assert.IsTrue(NativeDllTestDiscoverer.IsNativeDiscoverTestCalled);
-        CollectionAssert.AreEqual(sources, NativeDllTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(sources, NativeDllTestDiscoverer.Sources!.ToList());
 
         Assert.IsTrue(EverythingTestDiscoverer.IsDiscoverTestCalled);
-        CollectionAssert.AreEqual(sources, EverythingTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(sources, EverythingTestDiscoverer.Sources!.ToList());
 
         Assert.IsFalse(ManagedDllTestDiscoverer.IsManagedDiscoverTestCalled);
         Assert.IsFalse(JsonTestDiscoverer.IsDiscoverTestCalled);
@@ -171,10 +171,10 @@ public class DiscovererEnumeratorTests
         _discovererEnumerator.LoadTests(extensionSourceMap, _runSettingsMock.Object, testCaseFilter, _messageLoggerMock.Object);
 
         Assert.IsTrue(ManagedDllTestDiscoverer.IsManagedDiscoverTestCalled);
-        CollectionAssert.AreEqual(sources, ManagedDllTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(sources, ManagedDllTestDiscoverer.Sources!.ToList());
 
         Assert.IsTrue(EverythingTestDiscoverer.IsDiscoverTestCalled);
-        CollectionAssert.AreEqual(sources, EverythingTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(sources, EverythingTestDiscoverer.Sources!.ToList());
 
         Assert.IsFalse(NativeDllTestDiscoverer.IsNativeDiscoverTestCalled);
         Assert.IsFalse(JsonTestDiscoverer.IsDiscoverTestCalled);
@@ -211,14 +211,14 @@ public class DiscovererEnumeratorTests
         _discovererEnumerator.LoadTests(extensionSourceMap, _runSettingsMock.Object, testCaseFilter, _messageLoggerMock.Object);
 
         Assert.IsTrue(ManagedDllTestDiscoverer.IsManagedDiscoverTestCalled);
-        CollectionAssert.AreEqual(managedSources, ManagedDllTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(managedSources, ManagedDllTestDiscoverer.Sources!.ToList());
 
         Assert.IsTrue(NativeDllTestDiscoverer.IsNativeDiscoverTestCalled);
-        CollectionAssert.AreEqual(nativeSources, NativeDllTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(nativeSources, NativeDllTestDiscoverer.Sources!.ToList());
 
         var allSources = nativeSources.Concat(managedSources).OrderBy(source => source).ToList();
         Assert.IsTrue(EverythingTestDiscoverer.IsDiscoverTestCalled);
-        CollectionAssert.AreEqual(allSources, EverythingTestDiscoverer.Sources!.OrderBy(source => source).ToList());
+        Assert.AreSequenceEqual(allSources, EverythingTestDiscoverer.Sources!.OrderBy(source => source).ToList());
 
         Assert.IsFalse(JsonTestDiscoverer.IsDiscoverTestCalled);
         Assert.IsFalse(DirectoryTestDiscoverer.IsDiscoverTestCalled);
@@ -253,13 +253,13 @@ public class DiscovererEnumeratorTests
         Assert.IsFalse(DirectoryAndFileTestDiscoverer.IsDiscoverTestCalled);
 
         // Also validate that the right set of arguments were passed on to the discoverer.
-        CollectionAssert.AreEqual(sources.Distinct().ToList(), ManagedDllTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(sources.Distinct().ToList(), ManagedDllTestDiscoverer.Sources!.ToList());
         Assert.AreEqual(_runSettingsMock.Object, DllTestDiscoverer.DiscoveryContext!.RunSettings);
         Assert.AreEqual(testCaseFilter, ((DiscoveryContext)DllTestDiscoverer.DiscoveryContext).FilterExpressionWrapper!.FilterString);
         Assert.AreEqual(_messageLoggerMock.Object, DllTestDiscoverer.MessageLogger);
         Assert.IsNotNull(DllTestDiscoverer.DiscoverySink);
 
-        CollectionAssert.AreEqual(sources.Distinct().ToList(), EverythingTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(sources.Distinct().ToList(), EverythingTestDiscoverer.Sources!.ToList());
         Assert.AreEqual(_runSettingsMock.Object, EverythingTestDiscoverer.DiscoveryContext!.RunSettings);
         Assert.AreEqual(testCaseFilter, ((DiscoveryContext)EverythingTestDiscoverer.DiscoveryContext).FilterExpressionWrapper!.FilterString);
         Assert.AreEqual(_messageLoggerMock.Object, EverythingTestDiscoverer.MessageLogger);
@@ -314,33 +314,33 @@ public class DiscovererEnumeratorTests
         Assert.IsTrue(DirectoryAndFileTestDiscoverer.IsDiscoverTestCalled);
 
         // Also validate that the right set of arguments were passed on to the discoverer.
-        CollectionAssert.AreEqual(dllsources.Distinct().ToList(), ManagedDllTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(dllsources.Distinct().ToList(), ManagedDllTestDiscoverer.Sources!.ToList());
         Assert.AreEqual(runSettings, DllTestDiscoverer.DiscoveryContext!.RunSettings);
         Assert.AreEqual(testCaseFilter, ((DiscoveryContext)DllTestDiscoverer.DiscoveryContext).FilterExpressionWrapper!.FilterString);
         Assert.AreEqual(_messageLoggerMock.Object, DllTestDiscoverer.MessageLogger);
         Assert.IsNotNull(DllTestDiscoverer.DiscoverySink);
 
-        CollectionAssert.AreEqual(jsonsources, JsonTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(jsonsources, JsonTestDiscoverer.Sources!.ToList());
         Assert.AreEqual(runSettings, JsonTestDiscoverer.DiscoveryContext!.RunSettings);
         Assert.AreEqual(testCaseFilter, ((DiscoveryContext)JsonTestDiscoverer.DiscoveryContext).FilterExpressionWrapper!.FilterString);
         Assert.AreEqual(_messageLoggerMock.Object, JsonTestDiscoverer.MessageLogger);
         Assert.IsNotNull(JsonTestDiscoverer.DiscoverySink);
 
         var allSources = sources.Distinct().OrderBy(source => source).ToList();
-        CollectionAssert.AreEqual(allSources, EverythingTestDiscoverer.Sources!.OrderBy(source => source).ToList());
+        Assert.AreSequenceEqual(allSources, EverythingTestDiscoverer.Sources!.OrderBy(source => source).ToList());
         Assert.AreEqual(runSettings, EverythingTestDiscoverer.DiscoveryContext!.RunSettings);
         Assert.AreEqual(testCaseFilter, ((DiscoveryContext)EverythingTestDiscoverer.DiscoveryContext).FilterExpressionWrapper!.FilterString);
         Assert.AreEqual(_messageLoggerMock.Object, EverythingTestDiscoverer.MessageLogger);
         Assert.IsNotNull(EverythingTestDiscoverer.DiscoverySink);
 
-        CollectionAssert.AreEqual(directorySources, DirectoryTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(directorySources, DirectoryTestDiscoverer.Sources!.ToList());
         Assert.AreEqual(runSettings, DirectoryTestDiscoverer.DiscoveryContext!.RunSettings);
         Assert.AreEqual(testCaseFilter, ((DiscoveryContext)DirectoryTestDiscoverer.DiscoveryContext).FilterExpressionWrapper!.FilterString);
         Assert.AreEqual(_messageLoggerMock.Object, DirectoryTestDiscoverer.MessageLogger);
         Assert.IsNotNull(DirectoryTestDiscoverer.DiscoverySink);
 
         var jsonAndDirectorySources = jsonsources.Concat(directorySources).OrderBy(source => source).ToList();
-        CollectionAssert.AreEqual(jsonAndDirectorySources, DirectoryAndFileTestDiscoverer.Sources!.OrderBy(source => source).ToList());
+        Assert.AreSequenceEqual(jsonAndDirectorySources, DirectoryAndFileTestDiscoverer.Sources!.OrderBy(source => source).ToList());
         Assert.AreEqual(runSettings, DirectoryAndFileTestDiscoverer.DiscoveryContext!.RunSettings);
         Assert.AreEqual(testCaseFilter, ((DiscoveryContext)DirectoryAndFileTestDiscoverer.DiscoveryContext).FilterExpressionWrapper!.FilterString);
         Assert.AreEqual(_messageLoggerMock.Object, DirectoryAndFileTestDiscoverer.MessageLogger);
@@ -378,13 +378,13 @@ public class DiscovererEnumeratorTests
         Assert.IsFalse(DirectoryAndFileTestDiscoverer.IsDiscoverTestCalled);
 
         // Also validate that the right set of arguments were passed on to the discoverer.
-        CollectionAssert.AreEqual(new List<string> { sources[1] }, ManagedDllTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(new List<string> { sources[1] }, ManagedDllTestDiscoverer.Sources!.ToList());
         Assert.AreEqual(runSettings, DllTestDiscoverer.DiscoveryContext!.RunSettings);
         Assert.AreEqual(testCaseFilter, ((DiscoveryContext)DllTestDiscoverer.DiscoveryContext).FilterExpressionWrapper!.FilterString);
         Assert.AreEqual(_messageLoggerMock.Object, DllTestDiscoverer.MessageLogger);
         Assert.IsNotNull(DllTestDiscoverer.DiscoverySink);
 
-        CollectionAssert.AreEqual(sources.ToList(), EverythingTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(sources.ToList(), EverythingTestDiscoverer.Sources!.ToList());
         Assert.AreEqual(runSettings, EverythingTestDiscoverer.DiscoveryContext!.RunSettings);
         Assert.AreEqual(testCaseFilter, ((DiscoveryContext)EverythingTestDiscoverer.DiscoveryContext).FilterExpressionWrapper!.FilterString);
         Assert.AreEqual(_messageLoggerMock.Object, EverythingTestDiscoverer.MessageLogger);
@@ -422,13 +422,13 @@ public class DiscovererEnumeratorTests
         Assert.IsFalse(DirectoryAndFileTestDiscoverer.IsDiscoverTestCalled);
 
         // Also validate that the right set of arguments were passed on to the discoverer.
-        CollectionAssert.AreEqual(new List<string> { sources[1] }, ManagedDllTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(new List<string> { sources[1] }, ManagedDllTestDiscoverer.Sources!.ToList());
         Assert.AreEqual(runSettings, DllTestDiscoverer.DiscoveryContext!.RunSettings);
         Assert.AreEqual(testCaseFilter, ((DiscoveryContext)DllTestDiscoverer.DiscoveryContext).FilterExpressionWrapper!.FilterString);
         Assert.AreEqual(_messageLoggerMock.Object, DllTestDiscoverer.MessageLogger);
         Assert.IsNotNull(DllTestDiscoverer.DiscoverySink);
 
-        CollectionAssert.AreEqual(sources.ToList(), EverythingTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(sources.ToList(), EverythingTestDiscoverer.Sources!.ToList());
         Assert.AreEqual(runSettings, EverythingTestDiscoverer.DiscoveryContext!.RunSettings);
         Assert.AreEqual(testCaseFilter, ((DiscoveryContext)EverythingTestDiscoverer.DiscoveryContext).FilterExpressionWrapper!.FilterString);
         Assert.AreEqual(_messageLoggerMock.Object, EverythingTestDiscoverer.MessageLogger);
@@ -606,26 +606,26 @@ public class DiscovererEnumeratorTests
         Assert.IsFalse(DirectoryTestDiscoverer.IsDiscoverTestCalled);
 
         // Also validate that the right set of arguments were passed on to the discoverer.
-        CollectionAssert.AreEqual(dllsources.Distinct().ToList(), ManagedDllTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(dllsources.Distinct().ToList(), ManagedDllTestDiscoverer.Sources!.ToList());
         Assert.AreEqual(runSettings, DllTestDiscoverer.DiscoveryContext!.RunSettings);
         Assert.AreEqual(testCaseFilter, ((DiscoveryContext)DllTestDiscoverer.DiscoveryContext).FilterExpressionWrapper!.FilterString);
         Assert.AreEqual(_messageLoggerMock.Object, DllTestDiscoverer.MessageLogger);
         Assert.IsNotNull(DllTestDiscoverer.DiscoverySink);
 
-        CollectionAssert.AreEqual(jsonsources, JsonTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(jsonsources, JsonTestDiscoverer.Sources!.ToList());
         Assert.AreEqual(runSettings, JsonTestDiscoverer.DiscoveryContext!.RunSettings);
         Assert.AreEqual(testCaseFilter, ((DiscoveryContext)JsonTestDiscoverer.DiscoveryContext).FilterExpressionWrapper!.FilterString);
         Assert.AreEqual(_messageLoggerMock.Object, JsonTestDiscoverer.MessageLogger);
         Assert.IsNotNull(JsonTestDiscoverer.DiscoverySink);
 
         var allSources = jsonsources.Concat(dllsources).Distinct().OrderBy(source => source).ToList();
-        CollectionAssert.AreEqual(allSources, EverythingTestDiscoverer.Sources!.OrderBy(source => source).ToList());
+        Assert.AreSequenceEqual(allSources, EverythingTestDiscoverer.Sources!.OrderBy(source => source).ToList());
         Assert.AreEqual(runSettings, EverythingTestDiscoverer.DiscoveryContext!.RunSettings);
         Assert.AreEqual(testCaseFilter, ((DiscoveryContext)EverythingTestDiscoverer.DiscoveryContext).FilterExpressionWrapper!.FilterString);
         Assert.AreEqual(_messageLoggerMock.Object, EverythingTestDiscoverer.MessageLogger);
         Assert.IsNotNull(EverythingTestDiscoverer.DiscoverySink);
 
-        CollectionAssert.AreEqual(jsonsources, DirectoryAndFileTestDiscoverer.Sources!.ToList());
+        Assert.AreSequenceEqual(jsonsources, DirectoryAndFileTestDiscoverer.Sources!.ToList());
         Assert.AreEqual(runSettings, DirectoryAndFileTestDiscoverer.DiscoveryContext!.RunSettings);
         Assert.AreEqual(testCaseFilter, ((DiscoveryContext)DirectoryAndFileTestDiscoverer.DiscoveryContext).FilterExpressionWrapper!.FilterString);
         Assert.AreEqual(_messageLoggerMock.Object, DirectoryAndFileTestDiscoverer.MessageLogger);

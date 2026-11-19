@@ -21,7 +21,7 @@ Testhost processes execute user tests. Assembly loading correctness and framewor
 
 ## Cross-TFM Safety
 
-- Changes must work on all targeted TFMs (net462, net8.0+).
+- Changes must work on all targeted TFMs (net462, net10.0+).
 - net462 hosts lack binding redirects in DTA scenarios — test the DtaLikeHost pattern.
 - RID-specific native assets must resolve correctly on Windows, Linux, and macOS.
 

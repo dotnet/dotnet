@@ -76,12 +76,12 @@
   </ItemGroup>
 
   <!--
-    Bundle the .NET testhost runtime output into lib\net8.0 and build\net8.0. The platform
+    Bundle the .NET testhost runtime output into lib\net10.0 and build\net10.0. The platform
     assemblies, the managed testhost.dll, its deps.json and the satellites are harvested from
-    src\testhost\testhost.csproj's OWN net8.0 publish rather than cherry-picked from this package's
+    src\testhost\testhost.csproj's OWN net10.0 publish rather than cherry-picked from this package's
     commingled $(OutputPath) (where every ProjectReference copies its output). Sourcing each DLL from
-    the single project that publishes it guarantees a self-consistent net8.0 set instead of files that
-    won a race in a shared folder. See eng/PublishForPackaging.targets. Runs in the inner net8.0 build
+    the single project that publishes it guarantees a self-consistent net10.0 set instead of files that
+    won a race in a shared folder. See eng/PublishForPackaging.targets. Runs in the inner net10.0 build
     (where the msdia path property and the package's own props/targets output are available). -->
   <Target Name="IncludeTestHostContent"
           Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) "
@@ -96,7 +96,7 @@
     <Error Condition="!Exists('$(_NetTestHostPublishDir)')"
            Text="Expected published .NET testhost at '$(_NetTestHostPublishDir)'. It is produced by src\testhost\testhost.csproj during the build when packing; ensure the build ran with -pack (Arcade sets __ImportPackTargets)." />
     <ItemGroup>
-      <!-- Platform assemblies + managed testhost + deps.json from the net8.0 publish. Name-scoped so
+      <!-- Platform assemblies + managed testhost + deps.json from the net10.0 publish. Name-scoped so
            only the historically shipped assemblies are packed; testhost.exe (used for the launcher
            below), testhost.dll.config, the *.xml docs and testhost.runtimeconfig.json that also live
            in the publish are left out, matching the original payload. -->
@@ -111,7 +111,7 @@
       <TfmSpecificPackageFile Include="$(OutputPath)arm64\msdia140.dll" PackagePath="lib/$(TargetFramework)/arm64/" />
 
       <!-- testhost launchers: the AnyCPU host (used for x64, see the original nuspec) from testhost's
-           net8.0 publish, the x86 host from testhost.x86's own net8.0 build output. -->
+           net10.0 publish, the x86 host from testhost.x86's own net10.0 build output. -->
       <TfmSpecificPackageFile Include="$(_NetTestHostPublishDir)testhost.dll" PackagePath="build/$(TargetFramework)/x64/" />
       <TfmSpecificPackageFile Include="$(_NetTestHostPublishDir)testhost.exe" PackagePath="build/$(TargetFramework)/x64/" />
       <TfmSpecificPackageFile Include="$(_NetTestHostX86Dir)testhost.x86.dll" PackagePath="build/$(TargetFramework)/x86/" />

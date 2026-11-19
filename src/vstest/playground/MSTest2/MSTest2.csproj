@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworks);net48;net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);net48;net10.0</TargetFrameworks>
     <Prefer32Bit>false</Prefer32Bit>
     <IsPackable>false</IsPackable>
   </PropertyGroup>

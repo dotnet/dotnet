@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities;
 
 [Serializable]
-public class InvalidManagedNameException : Exception, ISerializable
+public class InvalidManagedNameException : Exception, ISerializable // CodeQL [SM02227] Not deserialized with an unsafe formatter; the serialization constructor only forwards to the Exception base constructor.
 {
     public InvalidManagedNameException(string? message) : base(message) { }
 

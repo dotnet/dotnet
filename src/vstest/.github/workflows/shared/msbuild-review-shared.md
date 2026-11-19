@@ -18,6 +18,10 @@ tools:
   bash: ["git", "grep", "find", "cat", "head", "tail", "sed", "wc", "sort", "date"]
 
 safe-outputs:
+  github-app:
+    client-id: ${{ vars.APP_ID }}
+    private-key: ${{ secrets.APP_PRIVATE_KEY }}
+    ignore-if-missing: true
   # The scan-mode msbuild-reviewer agent self-posts. Provide a generous-enough
   # budget for a single weekly report plus an optional draft PR with safe fixes.
   create-issue:
@@ -27,6 +31,7 @@ safe-outputs:
     expires: 7d
   create-pull-request:
     draft: true
+    github-token-for-extra-empty-commit: app
     title-prefix: "[msbuild-quality] "
     labels: ["agentic-workflows", "Area: Engineering"]
     max: 1
@@ -45,8 +50,9 @@ Review the MSBuild authoring quality of this repository using the
 ## Instructions
 
 1. Launch the `msbuild-reviewer` agent in **`scan` mode** as a **background** task
-   (`task` tool, `agent_type: "general-purpose"`, `model: "claude-opus-4.6"`,
-   `mode: "background"`). In the sub-agent prompt include:
+   (`task` tool, `agent_type: "general-purpose"`, `mode: "background"`).
+   Omit the `model` override to use automatic model selection. In the sub-agent
+   prompt include:
    - The string `MODE: scan` on the first line so the agent picks the correct
      operating mode.
    - The repository owner/name and the current date.

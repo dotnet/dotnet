@@ -99,7 +99,7 @@ public class DiaSessionTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [Ignore] // TODO: This test tests against a time threshold, which makes it fail on server sometimes.
+    [Ignore("Tests against a time threshold, which makes it fail on server sometimes.")]
     public void DiaSessionPerfTest()
     {
         var currentTargetFrameWork = GetAndSetTargetFrameWork(_testEnvironment);

@@ -324,7 +324,7 @@ namespace NuGet.Packaging
         public void Save(Stream stream)
         {
             // Make sure we're saving a valid package id
-            PackageIdValidator.ValidatePackageId(Id!);
+            ValidatePackageIdForPack(Id!);
 
             // Throw if the package doesn't contain any dependencies nor content
             if (!Files.Any() && !DependencyGroups.SelectMany(d => d.Packages).Any() && !FrameworkReferences.Any() && !FrameworkReferenceGroups.Any())
@@ -486,8 +486,18 @@ namespace NuGet.Packaging
 
             foreach (var dep in dependencies.SelectMany(s => s.Packages))
             {
-                PackageIdValidator.ValidatePackageId(dep.Id);
+                ValidatePackageIdForPack(dep.Id);
             }
+        }
+
+        private static void ValidatePackageIdForPack(string packageId)
+        {
+            if (packageId.Length > PackageIdValidator.MaxPackageIdLength)
+            {
+                throw new ArgumentException(NuGetResources.Manifest_IdMaxLengthExceeded);
+            }
+
+            PackageIdValidator.ValidatePackageId(packageId, useRestrictedSet: false);
         }
 
         public static void ValidateReferenceAssemblies(IEnumerable<IPackageFile> files, IEnumerable<PackageReferenceSet> packageAssemblyReferences)

@@ -373,23 +373,15 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                 testHostPath = GetTestHostPath(runtimeConfigDevPath, depsFilePath, sourceDirectory);
                 if (!testHostPath.IsNullOrWhiteSpace() && testHostPath.IndexOf("microsoft.testplatform.testhost", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    // testhost.dll is present in path {testHostNugetRoot}\lib\net8.0\testhost.dll
-                    // testhost.(x86).exe is present in location {testHostNugetRoot}\build\net8.0\{x86/x64}\{testhost.x86.exe/testhost.exe}
+                    // testhost.dll is present in path {testHostNugetRoot}\lib\net10.0\testhost.dll
+                    // testhost.(x86).exe is present in location {testHostNugetRoot}\build\net10.0\{x86/x64}\{testhost.x86.exe/testhost.exe}
                     var folderName = _architecture is Architecture.X64 or Architecture.Default or Architecture.AnyCPU
                         ? Architecture.X64.ToString().ToLowerInvariant()
                         : _architecture.ToString().ToLowerInvariant();
 
                     var testHostNugetRoot = new DirectoryInfo(testHostPath).Parent!.Parent!.Parent!;
 
-#if DOTNET_BUILD_FROM_SOURCE
-                    var testHostExeNugetPath = Path.Combine(testHostNugetRoot.FullName, "build", "net8.0", folderName, exeName);
-                    if (!_fileHelper.Exists(testHostExeNugetPath))
-                    {
-                        testHostExeNugetPath = Path.Combine(testHostNugetRoot.FullName, "build", "net9.0", folderName, exeName);
-                    }
-#else
-                    var testHostExeNugetPath = Path.Combine(testHostNugetRoot.FullName, "build", "net8.0", folderName, exeName);
-#endif
+                    var testHostExeNugetPath = Path.Combine(testHostNugetRoot.FullName, "build", "net10.0", folderName, exeName);
 
                     if (_fileHelper.Exists(testHostExeNugetPath))
                     {

@@ -184,7 +184,7 @@
       </trans-unit>
       <trans-unit id="MtpTestCaseMissingNodeUid">
         <source>Cannot run test '{0}' because it does not carry a Microsoft.Testing.Platform node identifier. The test case was not produced by a Microsoft.Testing.Platform discovery, or the identifier was lost in transit. Re-run discovery for this project, or run without a test selection.</source>
-        <target state="new">Cannot run test '{0}' because it does not carry a Microsoft.Testing.Platform node identifier. The test case was not produced by a Microsoft.Testing.Platform discovery, or the identifier was lost in transit. Re-run discovery for this project, or run without a test selection.</target>
+        <target state="translated">Test „{0}“ kann nicht ausgeführt werden, da er keinen Knotenbezeichner für Microsoft.Testing.Platform aufweist. Der Testfall wurde nicht durch eine Microsoft.Testing.Platform-Ermittlung erzeugt, oder der Bezeichner ist bei der Übertragung verloren gegangen. Führen Sie die Ermittlung für dieses Projekt erneut aus, oder führen Sie sie ohne Testauswahl aus.</target>
         <note />
       </trans-unit>
       <trans-unit id="SkippingSource">

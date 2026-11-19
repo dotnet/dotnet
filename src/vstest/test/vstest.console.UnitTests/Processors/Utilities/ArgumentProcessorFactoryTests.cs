@@ -123,9 +123,10 @@ public class ArgumentProcessorFactoryTests
         }
         var factory = ArgumentProcessorFactory.Create();
 
-        CollectionAssert.AreEquivalent(
+        Assert.AreSequenceEqual(
             specialCommandNames.Concat(xplatspecialCommandNames).ToList(),
-            factory.SpecialCommandToProcessorMap.Keys.ToList());
+            factory.SpecialCommandToProcessorMap.Keys.ToList(),
+            SequenceOrder.InAnyOrder);
     }
 
     [TestMethod]
@@ -157,9 +158,10 @@ public class ArgumentProcessorFactoryTests
         ArgumentProcessorFactory factory = ArgumentProcessorFactory.Create(featureFlag.Object);
 
         // Expect command processors to contain both long and short commands.
-        CollectionAssert.AreEquivalent(
+        Assert.AreSequenceEqual(
             commands.Concat(xplatCommandName).Concat(shortCommands).Concat(xplatShortCommandName).ToList(),
-            factory.CommandToProcessorMap.Keys.ToList());
+            factory.CommandToProcessorMap.Keys.ToList(),
+            SequenceOrder.InAnyOrder);
     }
 
     private static IEnumerable<IArgumentProcessor> GetArgumentProcessors(bool specialCommandFilter)

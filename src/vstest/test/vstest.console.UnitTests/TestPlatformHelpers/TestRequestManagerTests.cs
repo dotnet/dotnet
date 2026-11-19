@@ -226,7 +226,7 @@ public class TestRequestManagerTests
         Assert.AreEqual(testCaseFilterValue, actualDiscoveryCriteria!.TestCaseFilter, "TestCaseFilter must be set");
 
         Assert.AreEqual(1, createDiscoveryRequestCalled, "CreateDiscoveryRequest must be invoked only once.");
-        Assert.AreEqual(2, actualDiscoveryCriteria.Sources.Count(), "All Sources must be used for discovery request");
+        Assert.HasCount(2, actualDiscoveryCriteria.Sources, "All Sources must be used for discovery request");
         Assert.AreEqual("a", actualDiscoveryCriteria.Sources.First(), "First Source in list is incorrect");
         Assert.AreEqual("b", actualDiscoveryCriteria.Sources.ElementAt(1), "Second Source in list is incorrect");
 
@@ -1182,7 +1182,7 @@ public class TestRequestManagerTests
         Assert.AreEqual(testCaseFilterValue, observedCriteria!.TestCaseFilter, "TestCaseFilter must be set");
 
         Assert.AreEqual(1, createRunRequestCalled, "CreateRunRequest must be invoked only once.");
-        Assert.AreEqual(2, observedCriteria.Sources!.Count(), "All Sources must be used for discovery request");
+        Assert.HasCount(2, observedCriteria.Sources!, "All Sources must be used for discovery request");
         Assert.AreEqual("a", observedCriteria.Sources!.First(), "First Source in list is incorrect");
         Assert.AreEqual("b", observedCriteria.Sources!.ElementAt(1), "Second Source in list is incorrect");
 
@@ -1675,8 +1675,8 @@ public class TestRequestManagerTests
 
         Assert.Contains(Constants.DotNetFramework46, actualTestRunCriteria!.TestRunSettings!);
         Assert.Contains(nameof(Architecture.ARM), actualTestRunCriteria.TestRunSettings!);
-        CollectionAssert.AreEqual(actualSources, archSources);
-        CollectionAssert.AreEqual(actualSources, fxSources);
+        Assert.AreSequenceEqual(actualSources, archSources);
+        Assert.AreSequenceEqual(actualSources, fxSources);
     }
 
     [TestMethod]

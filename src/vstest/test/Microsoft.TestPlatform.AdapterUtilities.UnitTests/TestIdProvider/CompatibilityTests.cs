@@ -8,6 +8,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.TestPlatform.AdapterUtilities.UnitTests.TestIdProvider;
 
+/// <summary>
+/// Pins the SHA1 based test id algorithm, which is the one test ids are computed with by default.
+/// See XxHash128CompatibilityTests for the equivalent vectors covering its xxHash128 based
+/// successor, which is available but not yet the default.
+/// </summary>
 [TestClass]
 public class CompatibilityTests
 {

@@ -217,7 +217,7 @@ public class JsonDataSerializerTests
         Assert.AreEqual(testCase.Source, clonedTestCase.Source);
         Assert.IsFalse(ReferenceEquals(testCase.Source, clonedTestCase.Source));
 
-        Assert.AreEqual(1, clonedTestCase.Traits.Count());
+        Assert.HasCount(1, clonedTestCase.Traits);
 
         foreach (var trait in clonedTestCase.Traits)
         {

@@ -8,8 +8,12 @@ using System.Text;
 namespace Microsoft.TestPlatform.AdapterUtilities;
 
 /// <summary>
-/// Used to generate id for tests.
+/// Used to generate id for tests, using SHA1.
 /// </summary>
+/// <remarks>
+/// This is the algorithm test case ids are computed with by default. See <see cref="TestIdProviderXxHash128"/>
+/// for the xxHash128 based successor, which is available but not yet the default.
+/// </remarks>
 public class TestIdProvider
 {
     private Guid _id = Guid.Empty;
@@ -22,7 +26,7 @@ public class TestIdProvider
     /// </summary>
     public TestIdProvider()
     {
-        _sha = SHA1.Create();
+        _sha = SHA1.Create(); // CodeQL [SM02196] SHA1 is used only to derive a non-security test identifier, never for integrity or authentication. It is being phased out: the xxHash128 provider (TestIdProviderXxHash128) is available behind an opt-in flag, will become the default, and SHA1 will then be removed.
     }
 
     /// <summary>

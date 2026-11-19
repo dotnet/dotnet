@@ -49,6 +49,6 @@ public class ArgumentProcessorUtilitiesTests
         var parameterDict = ArgumentProcessorUtilities.GetArgumentParameters(new string[] { "key1=value1", "key2=value2", "key3=value3" }, ArgumentProcessorUtilities.EqualNameValueSeparator, "test exception.");
 
         var expectedDict = new Dictionary<string, string> { { "key1", "value1" }, { "key2", "value2" }, { "key3", "value3" } };
-        CollectionAssert.AreEqual(parameterDict.OrderBy(kv => kv.Key).ToList(), expectedDict.OrderBy(kv => kv.Key).ToList());
+        Assert.AreSequenceEqual(parameterDict.OrderBy(kv => kv.Key).ToList(), expectedDict.OrderBy(kv => kv.Key).ToList());
     }
 }

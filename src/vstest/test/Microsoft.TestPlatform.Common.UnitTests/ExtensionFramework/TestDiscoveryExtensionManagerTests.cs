@@ -28,7 +28,7 @@ public class TestDiscoveryExtensionManagerTests
         var extensionManager = TestDiscoveryExtensionManager.Create();
 
         Assert.IsNotNull(extensionManager.Discoverers);
-        Assert.IsTrue(extensionManager.Discoverers.Any());
+        Assert.IsNotEmpty(extensionManager.Discoverers);
     }
 
     [TestMethod]
@@ -40,7 +40,7 @@ public class TestDiscoveryExtensionManagerTests
         TestDiscoveryExtensionManager.Create();
 
         Assert.IsNotNull(extensionManager.Discoverers);
-        Assert.IsTrue(extensionManager.Discoverers.Any());
+        Assert.IsNotEmpty(extensionManager.Discoverers);
     }
 
     [TestMethod]
@@ -51,7 +51,7 @@ public class TestDiscoveryExtensionManagerTests
                 typeof(TestDiscoveryExtensionManagerTests).Assembly.Location);
 
         Assert.IsNotNull(extensionManager.Discoverers);
-        Assert.IsTrue(extensionManager.Discoverers.Any());
+        Assert.IsNotEmpty(extensionManager.Discoverers);
     }
 
     #region LoadAndInitialize tests
@@ -119,7 +119,7 @@ public class TestDiscovererMetadataTests
         var extensions = new List<string> { "csv", "dll" };
         var metadata = new TestDiscovererMetadata(extensions, null);
 
-        CollectionAssert.AreEqual(extensions, metadata.FileExtension!.ToList());
+        Assert.AreSequenceEqual(extensions, metadata.FileExtension!.ToList());
         Assert.IsFalse(metadata.IsDirectoryBased);
     }
 
