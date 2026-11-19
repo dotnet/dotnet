@@ -12,8 +12,10 @@ references:
       name: helixkv
 
 keys:
-  # Retain the signing keys until both consumers are migrated to the
-  # github-app-secret private keys declared below.
+  # Keep these active RSA signing keys. Pipelines use the Key Vault Sign
+  # operation, not the github-app-secret PEM projections below. Rotation
+  # must coordinate the GitHub App with its RSA key; PEM rotation alone
+  # does not update the signing key.
   dotnet-monitor-release-app-key:
     type: RSA
     size: 2048
