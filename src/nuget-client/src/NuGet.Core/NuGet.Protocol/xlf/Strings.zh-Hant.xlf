@@ -562,7 +562,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="RepositorySignaturesResourceMustBeHttps">
         <source>Repository Signatures resource must be served over HTTPS. Source: {0}</source>
-        <target state="needs-review-translation">存放庫簽章資源必須透過 HTTPS 提供。來源: {0}</target>
+        <target state="translated">存放庫簽章資源必須透過 HTTPS 提供。來源: {0}</target>
         <note>{0} source service index</note>
       </trans-unit>
       <trans-unit id="StringCannotBeNullOrEmpty">

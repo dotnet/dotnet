@@ -2,10 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Deployment.DotNet.Releases;
+using Microsoft.NET.Sdk.WorkloadManifestReader;
 using NuGet.Versioning;
 using Xunit;
 
@@ -14,6 +17,59 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests;
 [Collection("6.0.200 Toolchain manifest tests")]
 public class PackageTests : TestBase
 {
+    [WindowsOnlyTheory]
+    [InlineData("11.0.100", null, "x86,x64,arm64")]
+    [InlineData("12.0.100-alpha.1", null, "x64,arm64")]
+    [InlineData("12.0.200", null, "x64,arm64")]
+    [InlineData("13.0.100", null, "x64,arm64")]
+    [InlineData("11.0.100", "any", "x86,x64,arm64")]
+    [InlineData("12.0.100", "any", "x64,arm64")]
+    [InlineData("12.0.100", "win", "x64,arm64")]
+    public void ItSelectsInstallerPlatformsForNeutralPacks(string sdkFeatureBand, string aliasRid, string expectedPlatforms)
+    {
+        WorkloadPack pack = new(new WorkloadPackId("Example.Templates"), "1.0.0", WorkloadPackKind.Template,
+            aliasRid == null ? null : new Dictionary<string, WorkloadPackId> { [aliasRid] = new("Example.Templates") });
+        string[] platforms = WorkloadPackageBase.GetSupportedPlatforms(new ReleaseVersion(sdkFeatureBand));
+
+        var sourcePackages = WorkloadPackPackage.GetSourcePackages(TestAssetsPath, pack, platforms).ToArray();
+
+        var sourcePackage = Assert.Single(sourcePackages);
+        Assert.Equal(Path.Combine(TestAssetsPath, "Example.Templates.1.0.0.nupkg"), sourcePackage.sourcePackage);
+        Assert.Equal(expectedPlatforms.Split(','), sourcePackage.platforms);
+    }
+
+    [WindowsOnlyTheory]
+    [InlineData("11.0.100", "x86,x64,arm64")]
+    [InlineData("12.0.100-alpha.1", "x64,arm64")]
+    public void ItFiltersAliasedPackInstallersBySdkHost(string sdkFeatureBand, string expectedPlatforms)
+    {
+        WorkloadPack pack = new(new WorkloadPackId("Example.Tool"), "1.0.0", WorkloadPackKind.Tool,
+            new Dictionary<string, WorkloadPackId>
+            {
+                ["win-x86"] = new("Example.Tool.win-x86"),
+                ["win-x64"] = new("Example.Tool.win-x64"),
+                ["win-arm64"] = new("Example.Tool.win-arm64"),
+                ["linux-x64"] = new("Example.Tool.linux-x64")
+            });
+        string[] platforms = WorkloadPackageBase.GetSupportedPlatforms(new ReleaseVersion(sdkFeatureBand));
+
+        var sourcePackages = WorkloadPackPackage.GetSourcePackages(TestAssetsPath, pack, platforms).ToArray();
+
+        Assert.Equal(expectedPlatforms.Split(','), sourcePackages.SelectMany(p => p.platforms));
+        Assert.Equal(expectedPlatforms.Split(',').Select(p => Path.Combine(TestAssetsPath, $"Example.Tool.win-{p}.1.0.0.nupkg")),
+            sourcePackages.Select(p => p.sourcePackage));
+    }
+
+    [WindowsOnlyFact]
+    public void ItSkipsPacksAvailableOnlyForAnUnsupportedSdkHost()
+    {
+        WorkloadPack pack = new(new WorkloadPackId("Example.Tool"), "1.0.0", WorkloadPackKind.Tool,
+            new Dictionary<string, WorkloadPackId> { ["win-x86"] = new("Example.Tool.win-x86") });
+        string[] platforms = WorkloadPackageBase.GetSupportedPlatforms(new ReleaseVersion("12.0.100"));
+
+        Assert.Empty(WorkloadPackPackage.GetSourcePackages(TestAssetsPath, pack, platforms));
+    }
+
     [WindowsOnlyFact]
     public void ItCanReadAManifestPackage()
     {
