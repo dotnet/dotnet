@@ -265,9 +265,6 @@
              Targets="@(_SolutionBuildTargets)"
              Condition="'@(_SolutionBuildTargets)' != ''" />
 
-    <!--
-      Sign artifacts.
-    -->
     <MSBuild Projects="Sign.proj"
              Properties="@(_CommonProps)"
              Targets="Execute"
@@ -278,14 +275,8 @@
              Targets="@(_SolutionBuildTargets)"
              Condition="'@(_SolutionBuildTargets)' != ''" />
 
-    <ItemGroup>
-      <_PublishProps Include="@(_CommonProps)"/>
-      <!-- Used in a few places in the stack to decide if publishing was enabled or not. -->
-      <_PublishProps Include="Publish=$(Publish)"/>
-    </ItemGroup>
-
     <MSBuild Projects="Publish.proj"
-             Properties="@(_PublishProps)"
+             Properties="@(_CommonProps)"
              Targets="Execute"
              Condition="'$(Publish)' == 'true'"/>
   </Target>

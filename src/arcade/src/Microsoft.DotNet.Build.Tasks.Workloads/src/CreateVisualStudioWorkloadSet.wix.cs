@@ -48,7 +48,7 @@ public class CreateVisualStudioWorkloadSet : VisualStudioWorkloadTaskBase
             WorkloadSetPackage workloadSetPackage = new(workloadSetPackageFile, PackageRootDirectory,
                 msiVersion, shortNames: null, Log);
 
-            foreach (string platform in SupportedPlatforms)
+            foreach (string platform in WorkloadPackageBase.GetSupportedPlatforms(workloadSetPackage.SdkFeatureBand))
             {
                 var workloadSetMsi = new WorkloadSetMsi(workloadSetPackage, platform, BuildEngine,
                     WixToolsetConfig, BaseIntermediateOutputPath, CreateWixPacks);
