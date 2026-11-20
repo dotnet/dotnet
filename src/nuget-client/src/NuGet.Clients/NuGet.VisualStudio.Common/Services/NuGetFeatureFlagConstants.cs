@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using NuGet.Shared;
 
 namespace NuGet.VisualStudio
 {
@@ -31,5 +32,6 @@ namespace NuGet.VisualStudio
         internal bool DefaultState { get; }
 
         public static readonly NuGetFeatureFlagConstants RenderReadmeInPMUI = new("NuGet.RenderReadmeInPMUI", "NUGET_RENDER_README_IN_PMUI", defaultState: true);
+        public static readonly NuGetFeatureFlagConstants ControlPowerShellScriptExecution = new(NuGetFeatureFlags.ControlPowerShellScriptExecutionSwitchName, NuGetFeatureFlags.ControlPowerShellScriptExecutionEnvVar, defaultState: false);
     }
 }

@@ -12,20 +12,22 @@ namespace NuGet.Shared
         internal const string UseSystemTextJsonDeserializationSwitchName = "NuGet.UseSystemTextJsonDeserialization";
         internal const string UseSystemTextJsonDeserializationEnvVar = "NUGET_USE_SYSTEM_TEXT_JSON_DESERIALIZATION";
 
-        static NuGetFeatureFlags()
+        internal const string ControlPowerShellScriptExecutionSwitchName = "NuGet.ControlPowerShellScriptExecution";
+        internal const string ControlPowerShellScriptExecutionEnvVar = "NUGET_CONTROL_POWERSHELL_SCRIPT_EXECUTION";
+
+        internal static bool IsControlPowerShellScriptExecutionEnabled(IEnvironmentVariableReader? env = null)
         {
-            StaticState.BuildEnded += ResetCache;
+            string? value = (env ?? EnvironmentVariableWrapper.Instance).GetEnvironmentVariable(ControlPowerShellScriptExecutionEnvVar);
+            if (value == "0" || value == "1")
+            {
+                return value == "1";
+            }
+
+            return AppContext.TryGetSwitch(ControlPowerShellScriptExecutionSwitchName, out bool enabled) && enabled;
         }
 
-        private static Lazy<bool> _isSystemTextJsonDeserializationEnabledByEnvironment =
-            new Lazy<bool>(() => IsSystemTextJsonDeserializationEnabledByEnvironment(EnvironmentVariableWrapper.Instance));
-
-        /// <summary>Discards the cached value so it is re-read from the environment on next use.</summary>
-        internal static void ResetCache() =>
-            _isSystemTextJsonDeserializationEnabledByEnvironment =
-                new Lazy<bool>(() => IsSystemTextJsonDeserializationEnabledByEnvironment(EnvironmentVariableWrapper.Instance));
-
         /// <summary>Feature switch for System.Text.Json deserialization. Defaults to <see langword="false"/> (Newtonsoft is the default).</summary>
+        /// <remarks>Cached per assembly to keep the serializer choice stable even if VS publishes the switch later.</remarks>
         [FeatureSwitchDefinition(UseSystemTextJsonDeserializationSwitchName)]
         internal static bool UseSystemTextJsonDeserializationFeatureSwitch { get; } =
             AppContext.TryGetSwitch(UseSystemTextJsonDeserializationSwitchName, out bool value) && value;
@@ -40,11 +42,25 @@ namespace NuGet.Shared
         {
             if (env is null)
             {
-                return _isSystemTextJsonDeserializationEnabledByEnvironment.Value;
+                return SystemTextJsonEnvironmentCache.Value.Value;
             }
 
             string? envValue = env.GetEnvironmentVariable(UseSystemTextJsonDeserializationEnvVar);
             return string.Equals(envValue, "true", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static class SystemTextJsonEnvironmentCache
+        {
+            internal static Lazy<bool> Value =
+                new Lazy<bool>(() => IsSystemTextJsonDeserializationEnabledByEnvironment(EnvironmentVariableWrapper.Instance));
+
+            static SystemTextJsonEnvironmentCache()
+            {
+                StaticState.BuildEnded += ResetCache;
+            }
+
+            private static void ResetCache() =>
+                Value = new Lazy<bool>(() => IsSystemTextJsonDeserializationEnabledByEnvironment(EnvironmentVariableWrapper.Instance));
         }
     }
 }

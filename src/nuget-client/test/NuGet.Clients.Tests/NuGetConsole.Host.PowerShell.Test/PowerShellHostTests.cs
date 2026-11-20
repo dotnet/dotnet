@@ -7,6 +7,7 @@ using System.IO;
 using System.Management.Automation.Runspaces;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Shell;
@@ -26,6 +27,7 @@ using NuGet.Versioning;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Common.Telemetry.PowerShell;
 using NuGetConsole.Host.PowerShell.Implementation;
+using Test.Utility;
 using Xunit;
 
 namespace NuGetConsole.Host.PowerShell.Test
@@ -39,6 +41,7 @@ namespace NuGetConsole.Host.PowerShell.Test
         {
             _globalServiceProvider = globalServiceProvider;
             _globalServiceProvider.Reset();
+            NuGetUIThreadHelper.SetCustomJoinableTaskFactory(ThreadHelper.JoinableTaskFactory);
             ServiceLocator.InitializePackageServiceProvider(this);
         }
 
@@ -109,6 +112,9 @@ namespace NuGetConsole.Host.PowerShell.Test
             componentModel.Setup(c => c.GetService<ISettings>()).Returns(settings);
             componentModel.Setup(c => c.GetService<IVsSolutionManager>()).Returns(solutionManager.Object);
             componentModel.Setup(c => c.GetService<IScriptExecutor>()).Returns(scriptExecutor.Object);
+            var featureFlagInitializer = new Mock<INuGetFeatureFlagInitializer>();
+            featureFlagInitializer.Setup(f => f.InitializeAsync()).Returns(Task.CompletedTask);
+            componentModel.Setup(c => c.GetService<INuGetFeatureFlagInitializer>()).Returns(featureFlagInitializer.Object);
             componentModel.Setup(c => c.GetService<ISourceRepositoryProvider>())
                 .Returns(new SourceRepositoryProvider(
                     new PackageSourceProvider(settings), Repository.Provider.GetCoreV3()));
@@ -168,5 +174,55 @@ namespace NuGetConsole.Host.PowerShell.Test
         }
 
         public Task<object?> GetServiceAsync(Type serviceType) => Task.FromResult<object?>(null);
+
+        [Fact]
+        public async Task Initialize_WaitsForFeatureFlags_AndDoesNotCreateRunspaceOnFailureAsync()
+        {
+            var initializationStarted = new TaskCompletionSource<bool>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+            var initialization = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var featureFlagInitializer = new Mock<INuGetFeatureFlagInitializer>(MockBehavior.Strict);
+            featureFlagInitializer.Setup(x => x.InitializeAsync())
+                .Callback(() => initializationStarted.TrySetResult(true))
+                .Returns(initialization.Task);
+            var sourceRepositoryProvider = new Mock<ISourceRepositoryProvider>();
+            sourceRepositoryProvider.Setup(x => x.GetRepositories()).Returns(Array.Empty<SourceRepository>());
+            sourceRepositoryProvider.SetupGet(x => x.PackageSourceProvider).Returns(Mock.Of<IPackageSourceProvider>());
+            var componentModel = new Mock<IComponentModel>(MockBehavior.Strict);
+            componentModel.Setup(x => x.GetService<ISourceRepositoryProvider>()).Returns(sourceRepositoryProvider.Object);
+            componentModel.Setup(x => x.GetService<INuGetFeatureFlagInitializer>()).Returns(featureFlagInitializer.Object);
+            var serviceProvider = new Mock<IAsyncServiceProvider>();
+            serviceProvider.Setup(x => x.GetServiceAsync(typeof(SComponentModel))).ReturnsAsync(componentModel.Object);
+            ServiceLocator.InitializePackageServiceProvider(serviceProvider.Object);
+
+            var runspaceManager = new Mock<IRunspaceManager>(MockBehavior.Strict);
+            var environment = new TestEnvironmentVariableReader(new Dictionary<string, string>());
+            using var host = new SyncPowerShellHost(
+                "Test host", Mock.Of<IRestoreEvents>(), runspaceManager.Object, environment);
+            var console = Mock.Of<IConsole>();
+
+            Task initializeHost = Task.Run(() => host.Initialize(console));
+            try
+            {
+                Task started = await Task.WhenAny(
+                    initializationStarted.Task, initializeHost, Task.Delay(TimeSpan.FromSeconds(10)));
+                started.Should().BeSameAs(initializationStarted.Task);
+                initializeHost.IsCompleted.Should().BeFalse();
+                runspaceManager.VerifyNoOtherCalls();
+
+                initialization.SetException(new InvalidOperationException("Feature flag initialization failed."));
+            }
+            finally
+            {
+                initialization.TrySetCanceled();
+                Task completed = await Task.WhenAny(initializeHost, Task.Delay(TimeSpan.FromSeconds(10)));
+                completed.Should().BeSameAs(initializeHost, "host initialization must not hang");
+                await initializeHost;
+            }
+
+            host.IsInitializedSuccessfully.Should().BeFalse();
+            host.IsCommandEnabled.Should().BeFalse();
+            runspaceManager.VerifyNoOtherCalls();
+        }
     }
 }
