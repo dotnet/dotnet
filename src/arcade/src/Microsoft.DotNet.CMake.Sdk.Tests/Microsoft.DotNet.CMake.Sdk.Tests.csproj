@@ -5,12 +5,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Common\Microsoft.Arcade.Test.Common\Microsoft.Arcade.Test.Common.csproj" />
     <ProjectReference Include="..\Microsoft.DotNet.CMake.Sdk\Microsoft.DotNet.CMake.Sdk.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.XUnitExtensions\src\Microsoft.DotNet.XUnitExtensions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Framework" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="..\Microsoft.DotNet.CMake.Sdk\build\Microsoft.DotNet.CMake.Sdk.targets"
              Link="testassets\CMakeSdkBuild\Microsoft.DotNet.CMake.Sdk.targets"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Microsoft.DotNet.CMake.Sdk\sdk\ProjectReference.targets"
+             Link="testassets\CMakeSdkBuild\ProjectReference.targets"
              CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

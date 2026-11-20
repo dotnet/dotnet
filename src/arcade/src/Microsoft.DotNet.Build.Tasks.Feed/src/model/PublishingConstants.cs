@@ -2506,6 +2506,42 @@ public class PublishingConstants
             targetFeeds: DotNetToolsFeeds,
             symbolTargetType: SymbolPublishVisibility.Public,
             flatten: false),
+
+        // VS 18 - Canary
+        new TargetChannelConfig(
+            id: 11274,
+            isInternal: false,
+            publishingInfraVersion: PublishingInfraVersion.Latest,
+            akaMSChannelNames: [],
+            akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+            akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+            targetFeeds: DotNetToolsFeeds,
+            symbolTargetType: SymbolPublishVisibility.Public,
+            flatten: false),
+
+        // VS 18 - Insiders
+        new TargetChannelConfig(
+            id: 11275,
+            isInternal: false,
+            publishingInfraVersion: PublishingInfraVersion.Latest,
+            akaMSChannelNames: [],
+            akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+            akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+            targetFeeds: DotNetToolsFeeds,
+            symbolTargetType: SymbolPublishVisibility.Public,
+            flatten: false),
+
+        // VS 18 - Stable
+        new TargetChannelConfig(
+            id: 11276,
+            isInternal: false,
+            publishingInfraVersion: PublishingInfraVersion.Latest,
+            akaMSChannelNames: [],
+            akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+            akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+            targetFeeds: DotNetToolsFeeds,
+            symbolTargetType: SymbolPublishVisibility.Public,
+            flatten: false),
         #endregion
     ];
 

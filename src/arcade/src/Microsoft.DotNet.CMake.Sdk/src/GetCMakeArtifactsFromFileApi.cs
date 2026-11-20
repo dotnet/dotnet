@@ -12,7 +12,7 @@ using System.Text.Json;
 namespace Microsoft.DotNet.CMake.Sdk;
 
 /// <summary>
-/// Reads CMake File API response to find artifacts for a specific source directory.
+/// Reads CMake File API response to find artifacts for a specific source directory or target.
 /// </summary>
 [MSBuildMultiThreadableTask]
 public class GetCMakeArtifactsFromFileApi : Task, IMultiThreadableTask
@@ -29,14 +29,23 @@ public class GetCMakeArtifactsFromFileApi : Task, IMultiThreadableTask
     /// <summary>
     /// The source directory of the CMakeLists.txt to find artifacts for.
     /// </summary>
-    [Required]
     public string SourceDirectory { get; set; }
+
+    /// <summary>
+    /// Semicolon-separated CMake target names to find artifacts for.
+    /// </summary>
+    public string CMakeTargets { get; set; }
 
     /// <summary>
     /// The configuration name (e.g., Debug, Release).
     /// </summary>
     [Required]
     public string Configuration { get; set; }
+
+    /// <summary>
+    /// Synchronizes the File API read with native builds using the same output directory.
+    /// </summary>
+    public bool SynchronizeWithCMakeBuild { get; set; }
 
     /// <summary>
     /// Output: The list of artifact file paths.
@@ -49,6 +58,14 @@ public class GetCMakeArtifactsFromFileApi : Task, IMultiThreadableTask
         try
         {
             string replyDir = Path.Combine(CMakeOutputDir, ".cmake", "api", "v1", "reply");
+
+            if (SynchronizeWithCMakeBuild && !Directory.Exists(TaskEnvironment.GetAbsolutePath(CMakeOutputDir)))
+            {
+                Log.LogError("CMake File API reply directory does not exist: {0}", replyDir);
+                return false;
+            }
+
+            using var mutex = SynchronizeWithCMakeBuild ? CMakeBuildMutex.Acquire(TaskEnvironment, CMakeOutputDir) : null;
             
             AbsolutePath replyDirPath = TaskEnvironment.GetAbsolutePath(replyDir);
             if (!Directory.Exists(replyDirPath))
@@ -105,12 +122,6 @@ public class GetCMakeArtifactsFromFileApi : Task, IMultiThreadableTask
             // Get the source root from the codemodel
             string sourceRoot = codeModel.Paths?.Source?.Replace('\\', '/').TrimEnd('/') ?? "";
 
-            // Normalize source directory for comparison
-            // GetAbsolutePath does not canonicalize, but this value is string-compared against
-            // dirSource below, and Path.GetFullPath used to resolve the "." and ".." segments that
-            // CMake's file API routinely emits.
-            string normalizedSourceDir = TaskEnvironment.GetAbsolutePath(SourceDirectory).GetCanonicalForm().Value.Replace('\\', '/').TrimEnd('/');
-
             // Find the configuration using LINQ
             var config = codeModel.Configurations?.FirstOrDefault(c => 
                 string.Equals(c.Name, Configuration, StringComparison.OrdinalIgnoreCase));
@@ -123,84 +134,96 @@ public class GetCMakeArtifactsFromFileApi : Task, IMultiThreadableTask
 
             Log.LogMessage(MessageImportance.Low, "Found configuration: {0}", Configuration);
 
-            if (config.Directories == null || config.Targets == null)
+            if (config.Targets == null || (string.IsNullOrEmpty(CMakeTargets) && config.Directories == null))
             {
                 Log.LogError("Configuration '{0}' has no directories or targets.", Configuration);
                 return false;
             }
 
-            // Find the matching directory using LINQ
-            var directory = config.Directories.FirstOrDefault(d =>
-            {
-                string dirSource = d.Source?.Replace('\\', '/').TrimEnd('/') ?? "";
-                
-                // Make the directory source path absolute
-                if (!Path.IsPathRooted(dirSource))
-                {
-                    dirSource = Path.Combine(sourceRoot, dirSource);
-                    dirSource = TaskEnvironment.GetAbsolutePath(dirSource).GetCanonicalForm().Value.Replace('\\', '/').TrimEnd('/');
-                }
-                
-                return string.Equals(dirSource, normalizedSourceDir, StringComparison.OrdinalIgnoreCase);
-            });
-
-            if (directory == null)
-            {
-                Log.LogError("Source directory '{0}' not found in CMake File API response.", SourceDirectory);
-                return false;
-            }
-
-            Log.LogMessage(MessageImportance.Low, "Found matching directory: {0}", SourceDirectory);
-
             // Get artifacts
             var artifacts = new List<ITaskItem>();
-
-            if (directory.TargetIndexes != null)
+            IEnumerable<CMakeTarget> targets;
+            if (!string.IsNullOrEmpty(CMakeTargets))
             {
-                foreach (int targetIndex in directory.TargetIndexes)
+                var requestedTargets = CMakeTargets.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                // Generator-provided targets such as "install" are not present in the codemodel.
+                targets = config.Targets.Where(t => requestedTargets.Contains(t.Name, StringComparer.Ordinal));
+                Log.LogMessage(MessageImportance.Low, "Found {0} requested CMake target(s) for configuration '{1}'.", targets.Count(), Configuration);
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(SourceDirectory))
                 {
-                    if (targetIndex < 0 || targetIndex >= config.Targets.Count)
+                    Log.LogError("Either SourceDirectory or CMakeTargets must be specified.");
+                    return false;
+                }
+
+                // GetAbsolutePath does not canonicalize, but this value is string-compared against
+                // dirSource below, and Path.GetFullPath used to resolve the "." and ".." segments that
+                // CMake's file API routinely emits.
+                string normalizedSourceDir = TaskEnvironment.GetAbsolutePath(SourceDirectory).GetCanonicalForm().Value.Replace('\\', '/').TrimEnd('/');
+                var directory = config.Directories.FirstOrDefault(d =>
+                {
+                    string dirSource = d.Source?.Replace('\\', '/').TrimEnd('/') ?? "";
+                    if (!Path.IsPathRooted(dirSource))
                     {
-                        continue;
+                        dirSource = Path.Combine(sourceRoot, dirSource);
                     }
+                    dirSource = TaskEnvironment.GetAbsolutePath(dirSource).GetCanonicalForm().Value.Replace('\\', '/').TrimEnd('/');
 
-                    var target = config.Targets[targetIndex];
-                    if (string.IsNullOrEmpty(target.JsonFile))
+                    return string.Equals(dirSource, normalizedSourceDir, StringComparison.OrdinalIgnoreCase);
+                });
+
+                if (directory == null)
+                {
+                    Log.LogError("Source directory '{0}' not found in CMake File API response.", SourceDirectory);
+                    return false;
+                }
+
+                Log.LogMessage(MessageImportance.Low, "Found matching directory: {0}", SourceDirectory);
+                targets = directory.TargetIndexes?
+                    .Where(targetIndex => targetIndex >= 0 && targetIndex < config.Targets.Count)
+                    .Select(targetIndex => config.Targets[targetIndex])
+                    ?? Enumerable.Empty<CMakeTarget>();
+            }
+
+            foreach (var target in targets)
+            {
+                if (string.IsNullOrEmpty(target.JsonFile))
+                {
+                    continue;
+                }
+
+                string targetFile = Path.Combine(replyDir, target.JsonFile);
+                AbsolutePath targetFilePath = TaskEnvironment.GetAbsolutePath(targetFile);
+                if (!File.Exists(targetFilePath))
+                {
+                    continue;
+                }
+
+                Log.LogMessage(MessageImportance.Low, "Reading target file: {0}", targetFile);
+
+                // Read target details
+                string targetJson = File.ReadAllText(targetFilePath);
+                var targetDetails = JsonSerializer.Deserialize<CMakeTargetDetails>(targetJson, options);
+
+                // Get artifacts
+                if (targetDetails?.Artifacts != null)
+                {
+                    foreach (var artifact in targetDetails.Artifacts)
                     {
-                        continue;
-                    }
-
-                    string targetFile = Path.Combine(replyDir, target.JsonFile);
-                    AbsolutePath targetFilePath = TaskEnvironment.GetAbsolutePath(targetFile);
-                    if (!File.Exists(targetFilePath))
-                    {
-                        continue;
-                    }
-
-                    Log.LogMessage(MessageImportance.Low, "Reading target file: {0}", targetFile);
-
-                    // Read target details
-                    string targetJson = File.ReadAllText(targetFilePath);
-                    var targetDetails = JsonSerializer.Deserialize<CMakeTargetDetails>(targetJson, options);
-
-                    // Get artifacts
-                    if (targetDetails?.Artifacts != null)
-                    {
-                        foreach (var artifact in targetDetails.Artifacts)
+                        if (!string.IsNullOrEmpty(artifact.Path))
                         {
-                            if (!string.IsNullOrEmpty(artifact.Path))
-                            {
-                                string fullPath = Path.Combine(CMakeOutputDir, artifact.Path);
-                                // Emitted as an item spec, and combining the output dir with a
-                                // CMake-relative artifact path routinely produces ".." segments
-                                // that Path.GetFullPath used to resolve.
-                                fullPath = TaskEnvironment.GetAbsolutePath(fullPath).GetCanonicalForm();
-                                
-                                var item = new TaskItem(fullPath);
-                                artifacts.Add(item);
-                                
-                                Log.LogMessage(MessageImportance.Low, "Found artifact: {0}", fullPath);
-                            }
+                            string fullPath = Path.Combine(CMakeOutputDir, artifact.Path);
+                            // Emitted as an item spec, and combining the output dir with a
+                            // CMake-relative artifact path routinely produces ".." segments
+                            // that Path.GetFullPath used to resolve.
+                            fullPath = TaskEnvironment.GetAbsolutePath(fullPath).GetCanonicalForm();
+
+                            var item = new TaskItem(fullPath);
+                            artifacts.Add(item);
+
+                            Log.LogMessage(MessageImportance.Low, "Found artifact: {0}", fullPath);
                         }
                     }
                 }
@@ -208,11 +231,23 @@ public class GetCMakeArtifactsFromFileApi : Task, IMultiThreadableTask
 
             if (artifacts.Count == 0)
             {
-                Log.LogWarning("No artifacts found for source directory '{0}' in configuration '{1}'.", SourceDirectory, Configuration);
+                Log.LogWarning(
+                    string.IsNullOrEmpty(CMakeTargets)
+                        ? "No artifacts found for source directory '{0}' in configuration '{1}'."
+                        : "No artifacts found for CMake target(s) '{0}' in configuration '{1}'.",
+                    string.IsNullOrEmpty(CMakeTargets) ? SourceDirectory : CMakeTargets,
+                    Configuration);
             }
 
             Artifacts = artifacts.ToArray();
-            Log.LogMessage(MessageImportance.Normal, "Found {0} artifact(s) for source directory '{1}' in configuration '{2}'", Artifacts.Length, SourceDirectory, Configuration);
+            Log.LogMessage(
+                MessageImportance.Normal,
+                string.IsNullOrEmpty(CMakeTargets)
+                    ? "Found {0} artifact(s) for source directory '{1}' in configuration '{2}'"
+                    : "Found {0} artifact(s) for CMake target(s) '{1}' in configuration '{2}'",
+                Artifacts.Length,
+                string.IsNullOrEmpty(CMakeTargets) ? SourceDirectory : CMakeTargets,
+                Configuration);
             
             return true;
         }
