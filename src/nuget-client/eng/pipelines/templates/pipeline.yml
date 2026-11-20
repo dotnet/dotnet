@@ -29,7 +29,7 @@ stages:
     timeoutInMinutes: 10
     pool:
       name: AzurePipelines-EO
-      image: 1ESPT-Windows2022
+      image: 1ESPT-Windows2025
       os: windows
     steps:
     - template: /eng/pipelines/templates/Initialize_Build_SemanticVersion.yml@self
@@ -42,7 +42,7 @@ stages:
       BuildRevision: $[counter(format('{0}.{1}', variables['SemanticVersion'], variables['build.definitionname']), 1)]
     pool:
       name: AzurePipelines-EO
-      image: 1ESPT-Windows2022
+      image: 1ESPT-Windows2025
       os: windows
     steps:
     - template: /eng/pipelines/templates/Initialize_Build.yml@self
