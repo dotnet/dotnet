@@ -32,7 +32,7 @@ namespace Microsoft.TestPlatform.TestUtilities;
 public class IntegrationTestBase
 {
     public const string DesktopRunnerFramework = "net481";
-    public const string CoreRunnerFramework = "net11.0";
+    public const string CoreRunnerFramework = "net12.0";
 
     private const string TotalTestsMessage = "Total tests: {0}";
     private const string PassedTestsMessage = " Passed: {0}";

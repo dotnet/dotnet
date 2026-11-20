@@ -40,6 +40,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Execution;
 /// <summary>
 /// The base run tests.
 /// </summary>
+[SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable", Justification = "TestRunCache and FrameworkHandle are disposed at the end of RunTests. Implementing IDisposable would cascade to the public ExecutionManager type.")]
 internal abstract class BaseRunTests
 {
     private readonly ITestCaseEventsHandler? _testCaseEventsHandler;
@@ -198,6 +199,7 @@ internal abstract class BaseRunTests
     public void RunTests()
     {
         using (TestRunCache)
+        using (FrameworkHandle)
         {
             TimeSpan? elapsedTime = null;
             Exception? exception = null;

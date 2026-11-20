@@ -236,10 +236,17 @@ internal class ArtifactProcessingManager : IArtifactProcessingManager
             return null;
         }
 
+        // We need to save in case of attachements, we'll show these at the end on console.
+        // A null collection is treated the same as an empty one, there is nothing to persist either way.
+        if (testRunCompleteEventArgs.AttachmentSets is not { Count: > 0 })
+        {
+            return null;
+        }
+
         // A correlation id means the .NET SDK wants artifacts produced here and consumed by itself later, so
         // a silent fallback away from the directory it asked for is worth a warning the user actually sees,
-        // not just a trace that needs --diag. Computed as soon as the id is known to be present, rather than
-        // only once there happens to be something to persist, so it is reported on every such run.
+        // not just a trace that needs --diag. It is only reported when there are artifacts to persist,
+        // otherwise the directory is never used and the warning would be noise.
         string? artifactsDirectoryFallbackWarning = null;
         if (!_artifactsDirectoryWasProvided)
         {
@@ -249,13 +256,6 @@ internal class ArtifactProcessingManager : IArtifactProcessingManager
             artifactsDirectoryFallbackWarning = rawArtifactsDirectory.IsNullOrWhiteSpace()
                 ? $"{ArtifactsDirectoryEnvironmentVariableName} environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project."
                 : $"{ArtifactsDirectoryEnvironmentVariableName} environment variable was set but ignored because its value '{rawArtifactsDirectory}' is not a usable absolute path, falling back to a user-private temporary directory.";
-        }
-
-        // We need to save in case of attachements, we'll show these at the end on console.
-        // A null collection is treated the same as an empty one, there is nothing to persist either way.
-        if (testRunCompleteEventArgs.AttachmentSets is not { Count: > 0 })
-        {
-            return artifactsDirectoryFallbackWarning;
         }
 
         TPDebug.Assert(_testSessionProcessArtifactFolder is not null, "_testSessionProcessArtifactFolder is null");

@@ -55,7 +55,7 @@ public sealed class CodeCoveragePublishTests : AcceptanceTestBase
         File.WriteAllText(projectPath, $"""
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
-                <TargetFramework>{Core11TargetFramework}</TargetFramework>
+                <TargetFramework>{Core12TargetFramework}</TargetFramework>
                 <EnableDefaultItems>false</EnableDefaultItems>
                 <DisableMsCoverageReferencedPathMaps>true</DisableMsCoverageReferencedPathMaps>
               </PropertyGroup>
@@ -125,7 +125,8 @@ public sealed class CodeCoveragePublishTests : AcceptanceTestBase
         var report = Directory.GetFiles(deployment.Path, "*.cobertura.xml", SearchOption.AllDirectories).Single();
         var coverage = new XmlDocument();
         coverage.Load(report);
-        Assert.IsGreaterThan(0, int.Parse(coverage.DocumentElement!.GetAttribute("lines-covered"), System.Globalization.CultureInfo.InvariantCulture), report);
+        // The root element does not always carry lines-covered, so look for a line that was hit instead.
+        Assert.IsNotNull(coverage.SelectSingleNode("//line[number(@hits) > 0]"), report);
 
         var diagnostics = string.Join(Environment.NewLine, Directory.GetFiles(DiagLogsDirectory, "*.log").Select(File.ReadAllText));
         Assert.Contains(collectorPath, diagnostics);

@@ -7,7 +7,7 @@
 
   <PropertyGroup>
     <AssemblyName>Microsoft.TestPlatform.CrossPlatEngine.UnitTests</AssemblyName>
-    <TargetFrameworks>net11.0;net481</TargetFrameworks>
+    <TargetFrameworks>net12.0;net481</TargetFrameworks>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
