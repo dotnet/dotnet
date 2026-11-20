@@ -2,10 +2,10 @@
 # - dotnet-unified-build (internal)
 #   https://dev.azure.com/dnceng/internal/_build?definitionId=1330
 
-# Keep trigger and daily schedules identical on main and all release branches.
-# Feature band branches (release/N.0.Bxx and internal/release/N.0.Bxx) build only on the
-# daily schedules below. main, preview/rc branches and internal patch/hotfix branches
-# (e.g. internal/release/10.0.115) use batched CI.
+# Keep this trigger identical on main and all release branches. main, preview/rc branches and
+# internal patch/hotfix branches (e.g. internal/release/10.0.115) use batched CI. Feature band
+# branches (release/N.0.Bxx and internal/release/N.0.Bxx) are excluded and build only on the daily
+# schedule defined in each release branch.
 trigger:
   batch: true
   branches:
@@ -17,66 +17,38 @@ trigger:
     exclude:
       - internal/release/*.0.?xx
 
-# Daily feature band builds are staggered 3 hours apart by band and public/internal to spread
-# load across the day. A build is queued only if the branch changed since its last successful
-# scheduled run and no scheduled run for it is in progress.
 schedules:
-  - cron: "30 1 * * *"
-    displayName: Daily release/*.0.1xx build
-    branches:
-      include:
-      - release/*.0.1xx
-    always: false
-    batch: true
-  - cron: "30 4 * * *"
-    displayName: Daily internal/release/*.0.2xx build
-    branches:
-      include:
-      - internal/release/*.0.2xx
-    always: false
-    batch: true
-  - cron: "30 7 * * *"
-    displayName: Daily release/*.0.4xx build
-    branches:
-      include:
-      - release/*.0.4xx
-    always: false
-    batch: true
-  - cron: "30 10 * * *"
-    displayName: Daily internal/release/*.0.3xx build
-    branches:
-      include:
-      - internal/release/*.0.3xx
-    always: false
-    batch: true
-  - cron: "30 13 * * *"
-    displayName: Daily internal/release/*.0.1xx build
-    branches:
-      include:
-      - internal/release/*.0.1xx
-    always: false
-    batch: true
-  - cron: "30 16 * * *"
-    displayName: Daily release/*.0.2xx build
-    branches:
-      include:
-      - release/*.0.2xx
-    always: false
-    batch: true
-  - cron: "30 19 * * *"
-    displayName: Daily internal/release/*.0.4xx build
-    branches:
-      include:
-      - internal/release/*.0.4xx
-    always: false
-    batch: true
-  - cron: "30 22 * * *"
-    displayName: Daily release/*.0.3xx build
-    branches:
-      include:
-      - release/*.0.3xx
-    always: false
-    batch: true
+  # Enable the matching block below in release/12.0.1xx or release/12.0.2xx after it branches from
+  # main. The timing may need to be readjusted after branching to stagger against other release
+  # branch schedules.
+  # - cron: "30 7 * * *"
+  #   displayName: Daily release/12.0.1xx build
+  #   branches:
+  #     include:
+  #     - release/12.0.1xx
+  #   always: false
+  #   batch: true
+  # - cron: "30 19 * * *"
+  #   displayName: Daily internal/release/12.0.1xx build
+  #   branches:
+  #     include:
+  #     - internal/release/12.0.1xx
+  #   always: false
+  #   batch: true
+  # - cron: "30 10 * * *"
+  #   displayName: Daily release/12.0.2xx build
+  #   branches:
+  #     include:
+  #     - release/12.0.2xx
+  #   always: false
+  #   batch: true
+  # - cron: "30 22 * * *"
+  #   displayName: Daily internal/release/12.0.2xx build
+  #   branches:
+  #     include:
+  #     - internal/release/12.0.2xx
+  #   always: false
+  #   batch: true
   - cron: "0 12 * * 6" # run every Saturday at 12:00 (UTC)
     displayName: Signed main build on Saturdays
     branches:
