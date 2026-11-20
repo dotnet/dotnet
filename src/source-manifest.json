@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 342266,
+      "barId": 342357,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "fdfe91727d34ca2fa46fff76e329ef827d3acef2"
+      "commitSha": "92e1cbf088f2ec432aea381ba69fbce83945ed89"
     },
     {
       "barId": 329538,
@@ -25,22 +25,22 @@
       "commitSha": "f896797a0f9b238a8cb1c482be424b714037ddc5"
     },
     {
-      "barId": 341907,
+      "barId": 342299,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "3e68eeebdcaef39261d7d5396fd2aa76ca52edcf"
+      "commitSha": "3474e44a456caeb426d8e22bb818881138b5852f"
     },
     {
-      "barId": 341973,
+      "barId": 342393,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "0d428c0305148200b0a6f20fe4065e5bb58f3fdb"
+      "commitSha": "e6a245b6f72ae35a6860b533d8ecc54cb11ac1b4"
     },
     {
-      "barId": 342315,
+      "barId": 342395,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "5f7bf52d6015ff8986375f1f7a86edfcfaafed9d"
+      "commitSha": "6359e24bca635945cdfd13d2b5f823ee002d3b29"
     },
     {
       "barId": 331904,
