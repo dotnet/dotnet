@@ -494,6 +494,10 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>d147fa546aa7568a8e3f5e34be71388948ce415d</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.CodeAnalysis.Razor.DotNetFormat" Version="11.2.0-preview.26567.106">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>3aae1dd4eb96b8f61cb3b7b3fab684b01375867e</Sha>
+    </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26567.106">
