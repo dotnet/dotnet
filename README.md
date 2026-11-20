@@ -11,10 +11,10 @@ In the VMR, you can find:
 
 - source files of each product repository which are mirrored inside of their respective directories under [`src/`](https://github.com/dotnet/dotnet/tree/main/src),
 - tooling that enables [building the whole .NET product from source](https://github.com/dotnet/source-build) on Linux platforms,
-- *[in future]* E2E tests for the whole .NET product.
+- end-to-end tests for the whole .NET product (under `src/scenario-tests`).
 
-Just like the development repositories, the VMR will have a release branch for every feature band (e.g. `release/10.0.1xx`).
-Similarly, VMR's `main` branch will follow default branches of product repositories (see [Synchronization Based on Declared Dependencies](docs/VMR-Design-And-Operation.md#synchronization-based-on-declared-dependencies)).
+Just like the development repositories, the VMR has a release branch for every feature band (e.g. `release/10.0.1xx`).
+Similarly, VMR's `main` branch follows the default branches of product repositories (see [Synchronization Based on Declared Dependencies](docs/VMR-Design-And-Operation.md#synchronization-based-on-declared-dependencies)).
 
 More in-depth documentation about the VMR can be found in [VMR Design And Operation](docs/VMR-Design-And-Operation.md#layout).
 See also [dotnet/source-build](https://github.com/dotnet/source-build) for more information about our whole-product source-build.
@@ -28,23 +28,20 @@ You can download the .NET SDK either as an installer (MSI, PKG) or as an archive
 ## Goals
 
 - The main purpose of the [dotnet/dotnet](https://github.com/dotnet/dotnet) repository is to have all source code necessary to build the .NET product available in one repository and identified by a single commit.
-- The VMR also aims to become the place from which we release and service future versions of .NET to reduce the complexity of the product construction process. This should allow our partners and 3rd parties to easily build, test and modify .NET using their custom infrastructure as well as make the process available to the community.
-- Lastly, we hope to solve other problems that the current multi-repo setup brings:
+- The VMR is the single place from which we release and service future versions of .NET to reduce the complexity of the product construction process. This allows our partners and 3rd parties to easily build, test and modify .NET using their custom infrastructure as well as make the process available to the community.
+- Lastly, we solve other problems that the previous multi-repo setup brought:
   - Enable the standard [down-/up-stream open-source model](docs/VMR-Upstream-Downstream.md).
   - Fulfill requirements of .NET distro builders such as Red Hat or Canonical to natively include .NET in their distribution repositories.
   - Simplify scenarios such as client-run testing of bug fixes and improvements. The build should work in an offline environment too for certain platforms.
   - Enable developers to make and test changes spanning multiple repositories.
   - More efficient pipeline for security fixes during the CVE pre-disclosure process.
 
-We will achieve these goals while keeping active coding work in the separate repos where it happens today. For example: ASP.NET features will continue to be developed in `dotnet/aspnetcore` and CLR features will be continue to be developed in `dotnet/runtime`. Each of these repos have their own distinct communities and processes, and aggregating development into a true mono-repo would work against that. Hence, the "virtual" monolithic repo: the VMR gives us the simplicity of a mono-repo for building and servicing the product, while active development of components of that product stays in its various existing repos. The day to day experience for typical contributors will not change.
+We achieve these goals while keeping active coding work in the separate repos. For example: ASP.NET features continue to be developed in `dotnet/aspnetcore` and CLR features continue to be developed in `dotnet/runtime`. Each of these repos have their own distinct communities and processes, and aggregating development into a true mono-repo would work against that. Hence, the "virtual" monolithic repo: the VMR gives us the simplicity of a mono-repo for building and servicing the product, while active development of components of that product stays in its various existing repos. The day to day experience for typical contributors doesn't change.
 
 ## Supported platforms
 
-- 8.0 and 9.0
-  - source-build configuration on Linux
-- 10.0+ (WIP)
-  - source-build configuration on Linux
-  - non-source-build configuration on Linux, Mac, and Windows
+- source-build configuration on Linux
+- non-source-build configuration on Linux, Mac, and Windows
 
 For the latest information about Source-Build support for new .NET versions, please check our [GitHub Discussions page](https://github.com/dotnet/source-build/discussions) for announcements.
 
@@ -54,13 +51,14 @@ The contents of the VMR are two-way synchronized with the product repositories v
 
 ## Contribution
 
-Contribution to the .NET product should currently be done mostly in the constituent repositories. The reasons for this are two-fold:
-- We want to slowly ramp up direct VMR changes to avoid surprises.
-- The individual repositories still have the best validation for most changes.
+Contribution to the .NET product should be done mostly in the constituent repositories. The individual repositories still have the best validation for most changes.
+
+Please note that this repository still has a number of usability issues.
+These can be nuisances such as some checked-in files getting modified by the build itself and similar.
 
 If you would like to make a cross-cutting change in the VMR, please ask the Unified Build team (please tag @dotnet/product-construction in an issue/discussion in your repository). However, some changes **should** be made directly in the VMR. For a breakdown of where changes should be made, please see below.
 
-#### Where to make changes:
+### Where to make changes:
 
 - `src/*` - Constituent repositories, except VMR pipeline changes.
 - Non `src/*` directories - Directly in VMR
@@ -71,12 +69,6 @@ If you would like to make a cross-cutting change in the VMR, please ask the Unif
 
 For any questions, please ask the Unified Build team.
 
-## Dev instructions
-
-Please note that **this repository is a work-in-progress** and there are some usability issues connected to this.
-These can be nuisances such as some checked-in files getting modified by the build itself and similar.
-For the latest information about Source-Build support, please watch for announcements posted on our [GitHub Discussions page](https://github.com/dotnet/source-build/discussions).
-
 ### Prerequisites
 
 The dependencies for building can be found [here](https://github.com/dotnet/runtime/blob/main/docs/workflow/requirements/).
@@ -85,7 +77,7 @@ In case you don't want to / cannot prepare your environment per the requirements
 For building the VMR with Source-Build, the following additional dependencies are required for your Linux environment:
 * `brotli-dev`
 
-For building the VMR on Windows, it is recommended to put the repo under a short path, i.e. `C:\dotnet`. Also, [long path support must be enabled](https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=registry#enable-long-paths-in-windows-10-version-1607-and-later). This is necessary as some of the tools used don't support long paths (WiX Toolset v3 and cl.exe).
+For building the VMR on Windows, it is recommended to put the repo under a short path, i.e. `C:\dotnet`. Also, [long path support must be enabled](https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=registry#enable-long-paths-in-windows-10-version-1607-and-later). This is necessary as some of the tools used don't support long paths (cl.exe).
 
 For some `git` commands and when synchronizing changes via the `darc` CLI, long path support should be enabled in the `git` config as well:
 ```bash
@@ -108,17 +100,9 @@ git config --global core.longpaths true
 
     - **Microsoft based build**
 
-        For Unix:
+        For Unix: `./build.sh`
 
-        ```bash
-        ./build.sh --clean-while-building
-        ```
-
-        For Windows:
-
-        ```cmd
-        .\build.cmd -cleanWhileBuilding
-        ```
+        For Windows: `.\build.cmd`
 
     - **Building from source**
 
@@ -128,10 +112,12 @@ git config --global core.longpaths true
         ./prep-source-build.sh
 
         # Build the .NET SDK
-        ./build.sh -sb --clean-while-building
+        ./build.sh -sb
         ```
 
-    The resulting SDK is placed at `artifacts/assets/Release/dotnet-sdk-9.0.100-[your-RID].tar.gz` (for Unix) or `artifacts/assets/Release/dotnet-sdk-9.0.100-[your-RID].zip` (for Windows).
+    > **Note:** If you don't have sufficient disk space available, pass the `-cleanWhileBuilding` / `--clean-while-building` flag to clear intermediates after building each inner repository. 
+
+    The resulting SDK archive is placed at `artifacts/assets/Release/dotnet-sdk-12.0.100-[your-RID].tar.gz`.
 
 1. *(Optional)* **Unpack and install the .NET SDK**
 
@@ -139,7 +125,7 @@ git config --global core.longpaths true
 
     ```bash
     mkdir -p $HOME/dotnet
-    tar zxf artifacts/assets/Release/dotnet-sdk-10.0.100-[your-RID].tar.gz -C $HOME/dotnet
+    tar zxf artifacts/assets/Release/dotnet-sdk-12.0.100-[your-RID].tar.gz -C $HOME/dotnet
     ln -s $HOME/dotnet/dotnet /usr/bin/dotnet
     ```
 
@@ -147,7 +133,7 @@ git config --global core.longpaths true
 
     ```cmd
     mkdir %userprofile%\dotnet
-    tar -xf artifacts/assets/Release/dotnet-sdk-10.0.100-[your RID].zip -C %userprofile%\dotnet
+    tar -xf artifacts/assets/Release/dotnet-sdk-12.0.100-[your RID].zip -C %userprofile%\dotnet
     set "PATH=%userprofile%\dotnet;%PATH%"
     ```
 
@@ -170,13 +156,13 @@ docker run --rm -it -v vmr:/vmr -w /vmr mcr.microsoft.com/dotnet-buildtools/prer
 git clone https://github.com/dotnet/dotnet .
 
 # - Microsoft based build
-./build.sh --clean-while-building
+./build.sh
 
 # - Building from source
-./prep-source-build.sh && ./build.sh -sb --clean-while-building
+./prep-source-build.sh && ./build.sh -sb
 
 mkdir -p $HOME/.dotnet
-tar -zxf artifacts/assets/Release/dotnet-sdk-9.0.100-centos.9-x64.tar.gz -C $HOME/.dotnet
+tar -zxf artifacts/assets/Release/dotnet-sdk-12.0.100-centos.10-x64.tar.gz -C $HOME/.dotnet
 ln -s $HOME/.dotnet/dotnet /usr/bin/dotnet
 ```
 

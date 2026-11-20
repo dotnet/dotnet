@@ -16,6 +16,20 @@ public class PrecompiledQuerySqlServerTest(
 
     #region Expression types
 
+    public override async Task MemberInit_with_required_init_only_properties()
+    {
+        await base.MemberInit_with_required_init_only_properties();
+
+        AssertSql(
+            """
+@id='8'
+
+SELECT TOP(1) [b].[Id], [b].[Name]
+FROM [Blogs] AS [b]
+WHERE [b].[Id] = @id
+""");
+    }
+
     public override async Task Class_constant_in_predicate()
     {
         await base.Class_constant_in_predicate();
@@ -537,6 +551,66 @@ ORDER BY [b].[Name]
 SELECT TOP(@p) [b].[Id], [b].[Name], [b].[Json]
 FROM [Blogs] AS [b]
 ORDER BY [b].[Name]
+""");
+    }
+
+    public override async Task Skip_Take_with_parameters()
+    {
+        await base.Skip_Take_with_parameters();
+
+        AssertSql(
+            """
+@p='0'
+@p1='3'
+
+SELECT [p].[Id]
+FROM [Posts] AS [p]
+ORDER BY [p].[Id]
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+""",
+            """
+@p='1'
+@p1='2'
+
+SELECT [p].[Id]
+FROM [Posts] AS [p]
+ORDER BY [p].[Id]
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+""",
+            """
+@p='1'
+@p1='1'
+
+SELECT [p].[Id]
+FROM [Posts] AS [p]
+ORDER BY [p].[Id]
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+""",
+            """
+@p='5'
+@p1='1'
+
+SELECT [p].[Id]
+FROM [Posts] AS [p]
+ORDER BY [p].[Id]
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+""");
+    }
+
+    public override async Task Skip_Take_with_captured_parameters_in_local_function()
+    {
+        await base.Skip_Take_with_captured_parameters_in_local_function();
+
+        AssertSql(
+            """
+@p='1'
+@p1='2'
+
+SELECT [p].[Id]
+FROM [Posts] AS [p]
+WHERE [p].[Id] > 10
+ORDER BY [p].[Id]
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
 """);
     }
 

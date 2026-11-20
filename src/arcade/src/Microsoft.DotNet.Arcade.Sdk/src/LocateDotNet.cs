@@ -4,7 +4,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Text.Json;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -14,6 +14,12 @@ namespace Microsoft.DotNet.Arcade.Sdk;
 public class LocateDotNet : Task, IMultiThreadableTask
 {
     private readonly record struct CacheKey(AbsolutePath GlobalJsonPath, DateTime LastWrite, string Paths);
+
+    private static readonly JsonDocumentOptions s_globalJsonOptions = new()
+    {
+        AllowTrailingCommas = true,
+        CommentHandling = JsonCommentHandling.Skip,
+    };
 
     /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
     public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
@@ -61,15 +67,11 @@ public class LocateDotNet : Task, IMultiThreadableTask
 
         var globalJson = File.ReadAllText(globalJsonPath);
 
-        // avoid Newtonsoft.Json dependency
-        var match = Regex.Match(globalJson, @"""dotnet""\s*:\s*""([^""]+)""");
-        if (!match.Success)
+        if (!TryGetDotNetSdkVersion(globalJson, globalJsonPath, out var sdkVersion, out var error))
         {
-            Log.LogError($"Unable to determine dotnet version from file '{globalJsonPath}'.");
+            Log.LogError(error);
             return;
         }
-
-        var sdkVersion = match.Groups[1].Value;
 
         var fileName = (Path.DirectorySeparatorChar == '\\') ? "dotnet.exe" : "dotnet";
         // Split with RemoveEmptyEntries, so no entry is empty and GetAbsolutePath cannot reject one.
@@ -86,5 +88,60 @@ public class LocateDotNet : Task, IMultiThreadableTask
         // routinely carry '..' segments and trailing separators.
         DotNetPath = TaskEnvironment.GetAbsolutePath(Path.Combine(dotNetDir, fileName)).GetCanonicalForm();
         BuildEngine4.RegisterTaskObject(cacheKey, DotNetPath, RegisteredTaskObjectLifetime.Build, allowEarlyCollection: true);
+    }
+
+    /// <summary>
+    /// Reads the .NET SDK version that Arcade installs from global.json content: 'tools.dotnet' if
+    /// specified, otherwise 'sdk.version'.
+    /// Keep in sync with eng/common/tools.ps1 and eng/common/tools.sh.
+    /// </summary>
+    internal static bool TryGetDotNetSdkVersion(string globalJsonContent, string globalJsonPath, out string version, out string error)
+    {
+        version = null;
+        error = null;
+
+        JsonDocument document;
+        try
+        {
+            document = JsonDocument.Parse(globalJsonContent, s_globalJsonOptions);
+        }
+        catch (JsonException e)
+        {
+            error = $"Unable to parse file '{globalJsonPath}': {e.Message}";
+            return false;
+        }
+
+        using (document)
+        {
+            JsonElement root = document.RootElement;
+
+            if (TryGetNonEmptyString(root, "tools", "dotnet", out version) ||
+                TryGetNonEmptyString(root, "sdk", "version", out version))
+            {
+                return true;
+            }
+
+            error = $"Unable to determine dotnet version from file '{globalJsonPath}'. Specify 'tools.dotnet' or 'sdk.version'.";
+            return false;
+        }
+    }
+
+    private static bool TryGetProperty(JsonElement element, string name, out JsonElement value)
+    {
+        value = default;
+        return element.ValueKind == JsonValueKind.Object && element.TryGetProperty(name, out value);
+    }
+
+    private static bool TryGetNonEmptyString(JsonElement root, string objectName, string propertyName, out string value)
+    {
+        value = null;
+        if (TryGetProperty(root, objectName, out JsonElement obj) &&
+            TryGetProperty(obj, propertyName, out JsonElement property) &&
+            property.ValueKind == JsonValueKind.String)
+        {
+            value = property.GetString();
+        }
+
+        return !string.IsNullOrEmpty(value);
     }
 }
