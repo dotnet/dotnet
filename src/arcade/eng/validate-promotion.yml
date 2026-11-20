@@ -49,7 +49,7 @@ jobs:
         azureSubscription: "dnceng-arcade-promotion-githubapp"
         keyVaultName: EngKeyVault
         appIdSecretName: arcade-promotion-validation-app-app-id
-        appPrivateKeySecretName: arcade-promotion-validation-app-app-private-key
+        keyName: arcade-promotion-validation-app-key
         installationOwner: dotnet
         outputVariableName: GitHubAppInstallationToken
     - task: AzureCLI@2
