@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.DotNet.Build.Tasks.Installers;
+using Microsoft.DotNet.ScenarioTests.Common;
 using System;
 using System.Collections.Generic;
 using System.Formats.Tar;
@@ -409,6 +410,11 @@ public partial class LinuxInstallerTests : IDisposable
         string containerLogDir = "/logs";
         string containerLogPath = Path.Combine(containerLogDir, $"scenario-tests-{GetSanitizedImageName(baseImage)}.xml");
 
+        // Hang diagnostics of the scenario tests (temporary) go to the published log directory instead of the container's /tmp.
+        string hostHangDiagnosticsDir = Path.Combine(ProcessHangDiagnostics.GetDiagnosticsDirectory(), $"scenario-tests-{GetSanitizedImageName(baseImage)}");
+        Directory.CreateDirectory(hostHangDiagnosticsDir);
+        string containerHangDiagnosticsDir = "/hang-diagnostics";
+
         string testCommand =
             $"sh -c \"dnx --help && dotnet {GetScenarioTestsBinaryPath()} --dotnet-root /usr/share/dotnet/ " +
             $"--xml {containerLogPath} --no-traits Category=RequiresNonTargetRidPackages\"";
@@ -424,7 +430,12 @@ public partial class LinuxInstallerTests : IDisposable
             buildCompleted = true;
 
             // Mount the host log directory to the container
-            List<string> optionalRunArgs = [$"-v {QuoteDockerArgument($"{hostLogDir}:{containerLogDir}")}"];
+            List<string> optionalRunArgs =
+            [
+                $"-v {QuoteDockerArgument($"{hostLogDir}:{containerLogDir}")}",
+                $"-v {QuoteDockerArgument($"{hostHangDiagnosticsDir}:{containerHangDiagnosticsDir}")}",
+                $"-e {ProcessHangDiagnostics.DirectoryEnvironmentVariable}={containerHangDiagnosticsDir}",
+            ];
             optionalRunArgs.AddRange(GetNuGetAuthDockerRunArgs());
             output = _dockerHelper.Run(tag, tag, testCommand, optionalRunArgs: string.Join(' ', optionalRunArgs));
 

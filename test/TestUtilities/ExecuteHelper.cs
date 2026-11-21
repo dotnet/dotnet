@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Microsoft.DotNet.ScenarioTests.Common;
 using Xunit;
 
 namespace TestUtilities;
@@ -72,7 +73,7 @@ public static class ExecuteHelper
 
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
-        process.WaitForExit(millisecondTimeout);
+        ProcessHangDiagnostics.WaitForExit(process, millisecondTimeout, GetOutputSoFar, outputHelper.WriteLine);
 
         if (!process.HasExited)
         {
@@ -112,6 +113,15 @@ public static class ExecuteHelper
         }
 
         return (process, output, error);
+
+        string GetOutputSoFar()
+        {
+            lock (stdOutput)
+            lock (stdError)
+            {
+                return stdOutput + "--- stderr ---" + Environment.NewLine + stdError;
+            }
+        }
     }
 
     public static string ExecuteProcessValidateExitCode(string fileName, string args, ITestOutputHelper outputHelper, string additionalOutput = "")

@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Microsoft.DotNet.ScenarioTests.Common;
 using Xunit;
 
 namespace Microsoft.DotNet.Installer.Tests;
@@ -189,15 +190,40 @@ public class DockerHelper
         };
 
         StringBuilder stdOutput = new StringBuilder();
-        process.OutputDataReceived += new DataReceivedEventHandler((sender, e) => stdOutput.AppendLine(e.Data));
+        process.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
+        {
+            lock (stdOutput)
+            {
+                stdOutput.AppendLine(e.Data);
+            }
+        });
 
         StringBuilder stdError = new StringBuilder();
-        process.ErrorDataReceived += new DataReceivedEventHandler((sender, e) => stdError.AppendLine(e.Data));
+        process.ErrorDataReceived += new DataReceivedEventHandler((sender, e) =>
+        {
+            lock (stdError)
+            {
+                stdError.AppendLine(e.Data);
+            }
+        });
 
         process.Start();
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
-        process.WaitForExit();
+        ProcessHangDiagnostics.WaitForExit(
+            process,
+            Timeout.Infinite,
+            () =>
+            {
+                lock (stdOutput)
+                lock (stdError)
+                {
+                    return stdOutput + "--- stderr ---" + Environment.NewLine + stdError;
+                }
+            },
+            message => outputHelper?.WriteLine(message),
+            CollectContainerDiagnostics,
+            DockerThresholdMinutes);
 
         string output = stdOutput.ToString().Trim();
         if (outputHelper != null && !string.IsNullOrWhiteSpace(output))
@@ -212,6 +238,32 @@ public class DockerHelper
         }
 
         return (process, output, error);
+    }
+
+    // `docker run` of the whole scenario-tests suite legitimately takes 15-30 minutes on arm64; passing installer
+    // jobs finish within ~35 minutes and the job limit is 120, so only a real hang reaches this.
+    private const int DockerThresholdMinutes = 60;
+
+    // The work of a hung `docker` command happens inside containers, outside the test host's process tree.
+    private static string CollectContainerDiagnostics()
+    {
+        const int MaxContainers = 5;
+        StringBuilder diagnostics = new();
+        diagnostics.AppendLine("docker ps -a:");
+        diagnostics.AppendLine(ProcessHangDiagnostics.RunCommand("docker", "ps -a --no-trunc"));
+
+        string[] runningContainers = ProcessHangDiagnostics.RunCommand("docker", "ps -q")
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(id => !id.StartsWith('('))
+            .ToArray();
+        foreach (string container in runningContainers.Take(MaxContainers))
+        {
+            diagnostics.AppendLine();
+            diagnostics.AppendLine($"docker top {container}:");
+            diagnostics.AppendLine(ProcessHangDiagnostics.RunCommand("docker", $"top {container} -eo pid,ppid,stat,etime,args"));
+        }
+
+        return diagnostics.ToString();
     }
 
     private static string GetDockerOS() => Execute("version -f \"{{ .Server.Os }}\"");
