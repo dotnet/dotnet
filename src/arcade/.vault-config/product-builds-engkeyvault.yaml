@@ -20,6 +20,10 @@ keys:
     type: RSA
     size: 2048
 
+  dotnet-vscode-csharp-release-tags-app-key:
+    type: RSA
+    size: 2048
+
   oneloc-localization-app-key:
     type: RSA
     size: 2048
