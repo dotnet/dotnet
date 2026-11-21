@@ -66,14 +66,14 @@ public class NetCoreTargetFrameworkDataSourceAttribute : Attribute, ITestDataSou
         {
             var runnerFramework = IntegrationTestBase.DesktopRunnerFramework;
 
-            AddRunnerDataRow(dataRows, runnerFramework, AcceptanceTestBase.Core11TargetFramework);
+            AddRunnerDataRow(dataRows, runnerFramework, AcceptanceTestBase.Core12TargetFramework);
         }
 
         if (_useCoreRunner)
         {
             var runnerFramework = IntegrationTestBase.CoreRunnerFramework;
 
-            AddRunnerDataRow(dataRows, runnerFramework, AcceptanceTestBase.Core11TargetFramework);
+            AddRunnerDataRow(dataRows, runnerFramework, AcceptanceTestBase.Core12TargetFramework);
         }
 
         return dataRows;

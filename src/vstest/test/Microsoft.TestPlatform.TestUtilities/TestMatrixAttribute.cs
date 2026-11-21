@@ -16,7 +16,7 @@ namespace Microsoft.TestPlatform.TestUtilities;
 /// using the locally-built bits. Each generated row is handed to the test as a <see cref="RunnerInfo"/>.
 ///
 /// With no arguments the test runs the full matrix: both consoles — .NET Framework (<c>vstest.console.exe</c>)
-/// and .NET (<c>dotnet vstest.console.dll</c>) — against both testhost target frameworks (net481 and net11.0).
+/// and .NET (<c>dotnet vstest.console.dll</c>) — against both testhost target frameworks (net481 and net12.0).
 /// Pin an axis to narrow it, e.g. <c>[TestMatrix(testHost: Net)]</c> keeps both consoles but only the
 /// .NET testhost, and <c>[TestMatrix(console: Net)]</c> keeps both testhosts but only the .NET console.
 ///
@@ -36,7 +36,7 @@ public sealed class TestMatrixAttribute : Attribute, ITestDataSource
     /// Initializes a new instance of the <see cref="TestMatrixAttribute"/> class.
     /// </summary>
     /// <param name="console">Which vstest.console to run: both (default), only .NET Framework, or only .NET.</param>
-    /// <param name="testHost">Which testhost target framework to run against: both (default), only net481, or only net11.0.</param>
+    /// <param name="testHost">Which testhost target framework to run against: both (default), only net481, or only net12.0.</param>
     /// <param name="inIsolation">Emit the <c>/InIsolation</c> row for the .NET Framework console × .NET Framework testhost cell (default <see langword="true"/>). Ignored for every other cell.</param>
     /// <param name="inProcess">Additionally run the .NET Framework console × .NET Framework testhost cell in-process (without <c>/InIsolation</c>). Ignored for every other cell.</param>
     /// <param name="vsix">Additively run the vstest.console shipped in the Visual Studio VSIX as its own row (a .NET Framework console and testhost), independent of the <paramref name="console"/> and <paramref name="testHost"/> axes. Windows-only.</param>
@@ -70,7 +70,7 @@ public sealed class TestMatrixAttribute : Attribute, ITestDataSource
         var wantNetHost = _testHost is Target.Both or Target.Net;
 
         // .NET Framework testhost (net481) is Windows-only in its entirety. Emitted first so that for the
-        // both-testhost matrix the rows are ordered net481 then net11.0, matching the legacy attributes.
+        // both-testhost matrix the rows are ordered net481 then net12.0, matching the legacy attributes.
         if (wantNetFxHost && isWindows)
         {
             if (wantNetConsole)
@@ -99,19 +99,19 @@ public sealed class TestMatrixAttribute : Attribute, ITestDataSource
             AddRow(dataRows, IntegrationTestBase.DesktopRunnerFramework, AcceptanceTestBase.DesktopTargetFramework, inIsolationValue: null, vsixConsole: true);
         }
 
-        // .NET testhost (net11.0).
+        // .NET testhost (net12.0).
         if (wantNetHost)
         {
             // .NET Framework console driving a .NET testhost is Windows-only; never isolated.
             if (wantNetFxConsole && isWindows)
             {
-                AddRow(dataRows, IntegrationTestBase.DesktopRunnerFramework, AcceptanceTestBase.Core11TargetFramework, inIsolationValue: null);
+                AddRow(dataRows, IntegrationTestBase.DesktopRunnerFramework, AcceptanceTestBase.Core12TargetFramework, inIsolationValue: null);
             }
 
             // .NET console driving a .NET testhost runs on every OS.
             if (wantNetConsole)
             {
-                AddRow(dataRows, IntegrationTestBase.CoreRunnerFramework, AcceptanceTestBase.Core11TargetFramework, inIsolationValue: null);
+                AddRow(dataRows, IntegrationTestBase.CoreRunnerFramework, AcceptanceTestBase.Core12TargetFramework, inIsolationValue: null);
             }
         }
 
@@ -155,7 +155,7 @@ public sealed class TestMatrixAttribute : Attribute, ITestDataSource
 /// <summary>
 /// Selects a runtime family — .NET Framework or .NET — for an axis of <see cref="TestMatrixAttribute"/>.
 /// Shared by the <c>console</c> axis (<c>vstest.console.exe</c> vs <c>dotnet vstest.console.dll</c>) and the
-/// <c>testHost</c> axis (net481 vs net11.0); the parameter name selects which axis it applies to.
+/// <c>testHost</c> axis (net481 vs net12.0); the parameter name selects which axis it applies to.
 /// </summary>
 public enum Target
 {
@@ -165,6 +165,6 @@ public enum Target
     /// <summary>Run only the .NET Framework variant (<c>vstest.console.exe</c> / net481 testhost).</summary>
     NetFx,
 
-    /// <summary>Run only the .NET variant (<c>dotnet vstest.console.dll</c> / net11.0 testhost).</summary>
+    /// <summary>Run only the .NET variant (<c>dotnet vstest.console.dll</c> / net12.0 testhost).</summary>
     Net,
 }

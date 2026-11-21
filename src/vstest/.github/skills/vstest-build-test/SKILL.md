@@ -152,7 +152,7 @@ See [CONTRIBUTING.md](../../../CONTRIBUTING.md#running-a-specific-test) for more
 
 ### Running tests locally (DOTNET_ROOT gotcha)
 
-Test executables are built against the repo's preview TFM (e.g. `net11.0`), and integration and
+Test executables are built against the repo's preview TFM (e.g. `net12.0`), and integration and
 smoke tests additionally launch test-asset apphosts built the same way. An apphost resolves its
 shared runtime from `DOTNET_ROOT`, falling back to the machine-wide install
 (`C:\Program Files\dotnet`), which usually lacks the preview runtime — so it fails instantly with
