@@ -23,7 +23,10 @@ extends:
     settings:
       networkIsolationPolicy: Permissive,CFSClean,CFSClean2,CFSClean3,APIScan
     sdl:
-      sourceAnalysisPool: VSEng-MicroBuildVSStable
+      sourceAnalysisPool:
+        name: AzurePipelines-EO
+        image: 1ESPT-Windows2025
+        os: windows
       binskim:
         enabled: true
         scanOutputDirectoryOnly: true
@@ -41,7 +44,7 @@ extends:
           notificationAliases: $(TsaNotificationAliases)
     pool:
       name: AzurePipelines-EO
-      image: VSEng-MicroBuildVSStable
+      image: 1ESPT-Windows2025
       os: windows
     stages:
     - stage: compliance
@@ -50,8 +53,6 @@ extends:
       - job: Static_Analysis
         displayName: "Static Analysis"
         timeoutInMinutes: 180
-        pool:
-          name: VSEng-MicroBuildVSStable
         templateContext:
           inputs:
             - input: pipelineArtifact
