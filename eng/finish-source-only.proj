@@ -16,6 +16,11 @@
     <MSBuildWarningsNotAsErrors>$(MSBuildWarningsNotAsErrors);SBA001</MSBuildWarningsNotAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Deterministic Condition="'$(Deterministic)' == ''">true</Deterministic>
+    <TarDirectoryDeterministicTimestamp Condition="'$(DeterministicTimestamp)' != 'true' and '$(DeterministicTimestamp)' != 'false'">$(DeterministicTimestamp)</TarDirectoryDeterministicTimestamp>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="$(TasksDir)Microsoft.DotNet.UnifiedBuild.Tasks\Microsoft.DotNet.UnifiedBuild.Tasks.csproj" />
     <ProjectReference Include="$(TasksDir)Microsoft.DotNet.SourceBuild.Tasks.LeakDetection\Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.csproj" />
@@ -208,8 +213,13 @@
           Inputs="@(IntermediateSymbol)"
           Outputs="$(UnifiedSymbolsTarball)">
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(UnifiedSymbolsTarball)'))" />
-    <Exec Command="tar --numeric-owner --owner=2001 --group=2001 -czf $(UnifiedSymbolsTarball) *"
-          WorkingDirectory="$(IntermediateSymbolsRootDir)" />
+
+    <TarDirectory SourceDirectory="$(IntermediateSymbolsRootDir)"
+                  DestinationFile="$(UnifiedSymbolsTarball)"
+                  Compression="GZip"
+                  Format="Gnu"
+                  Overwrite="true"
+                  DeterministicTimestamp="$(TarDirectoryDeterministicTimestamp)" />
 
     <Message Importance="High" Text="Packaged all symbols in '$(UnifiedSymbolsTarball)'" />
   </Target>
@@ -230,8 +240,12 @@
                             SdkSymbolsLayoutPath="$(IntermediateSdkSymbolsLayout)"
                             FailOnMissingPDBs="false" />
 
-    <Exec Command="tar --numeric-owner --owner=2001 --group=2001 -czf $(SdkSymbolsTarball) *"
-          WorkingDirectory="$(IntermediateSdkSymbolsLayout)" />
+    <TarDirectory SourceDirectory="$(IntermediateSdkSymbolsLayout)"
+                  DestinationFile="$(SdkSymbolsTarball)"
+                  Compression="GZip"
+                  Format="Gnu"
+                  Overwrite="true"
+                  DeterministicTimestamp="$(TarDirectoryDeterministicTimestamp)" />
 
     <Message Importance="High" Text="Packaged sdk symbols in '$(SdkSymbolsTarball)'" />
 
@@ -278,7 +292,13 @@
     </PropertyGroup>
 
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(PrebuiltsTarball)'))" />
-    <Exec Command="tar --numeric-owner --owner=2001 --group=2001 -zcf $(PrebuiltsTarball) -C $(PrebuiltsTarballWorkingDir) ." />
+
+    <TarDirectory SourceDirectory="$(PrebuiltsTarballWorkingDir)"
+                  DestinationFile="$(PrebuiltsTarball)"
+                  Compression="GZip"
+                  Format="Gnu"
+                  Overwrite="true"
+                  DeterministicTimestamp="$(TarDirectoryDeterministicTimestamp)" />
 
     <Message Text="Tarball '$(PrebuiltsTarball)' was successfully created from '$(PrebuiltsTarballWorkingDir)'" Importance="High" />
 
