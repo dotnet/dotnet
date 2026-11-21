@@ -94,6 +94,8 @@ If you want to drive a native CMake build with this SDK, add a .proj file next t
 
 Building this project will configure and build the CMakeLists.txt project with the default generator provided by the SDK (Visual Studio on Windows, Unix Makefiles off-Windows).
 
+The build checks that `CMakeDefines` and `CMakeArguments` match those used during configuration. Use separate `CMakeOutputDir` directories for projects with different configure inputs.
+
 #### Referencing Native assets with NativeProjectReference
 
 An important feature of the Microsoft.DotNet.CMake.Sdk is that it enables the user to reference their native assets from a managed project. This is the most valuable in a testing scenario such as the CoreCLR test tree since it does not currently do any special handling of multiple architectures.
@@ -119,6 +121,18 @@ If you have many native project references and don't want to specify the `CMakeP
 All assets that are a direct output of this CMakeLists.txt will be copied to your output folder. This includes all library and executable targets defined in this CMakeLists.txt. This CMakeLists.txt does not have to be the root of your CMake tree, but it must be transitively included by the CMakeLists.txt specified in the referenced `CMakeProject` project.
 
 By default, a NativeProjectReference will not build the native project. It assumes that the project has already been built. To build the project as part of the reference, you can opt-in by setting the `BuildNative="true"` metadata on the `NativeProjectReference`.
+
+#### Referencing CMake targets with CMakeProjectReference
+
+To build and copy the artifacts for particular CMake targets, add a `CMakeProjectReference` item. Its `CMakeTargets` metadata contains the case-sensitive target names to build:
+
+```xml
+<ItemGroup>
+    <CMakeProjectReference Include="path/to/CMake/Project/UsingThisSdk.proj" CMakeTargets="my-library" />
+</ItemGroup>
+```
+
+The target artifacts are read from the CMake File API target descriptions and copied to the consuming project's output folder. Multiple target references to the same CMake SDK project are supported. CMake configure and build executions are serialized per CMake build tree across processes to avoid concurrent native tool access.
 
 ### Generating a raw build script for bringup scenarios
 

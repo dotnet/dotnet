@@ -107,13 +107,55 @@ One build often contains several unrelated failures. Two diagnostics in the same
 them only when each has its own terminating diagnostic. Do not merge failures that merely share a build. For cascades ("Artifact not
 found") find the root leg, as the pipeline-investigation skill describes.
 
-## 7. Authentication problems are findings
+## 7. Code-flow PRs whose files did not match the source diff
+
+Maestro auto-approves a forward-flow PR only when its `src/<repo>` changes reproduce the product repo's own change. The check is
+`CodeflowSourceDiffVerifier` in dotnet/arcade-services. It compares the VMR diff `<target>...<PR head>` under `src/<repo>` with the
+product repo diff `<S0>...<S1>`, where S0 is the target branch's `src/source-manifest.json` `commitSha` and S1 is the flowed commit.
+It skips the mapping's excludes, `eng/common` (except for arcade), `Version.Details.xml`/`.props`, `global.json` and the
+`dotnet-tools` files. It checks `eng/Versions.props`. A file is listed when:
+
+- the PR changed it but the source did not;
+- both changed it, but the added and removed lines differ; or
+- the source changed it, the PR did not, and the VMR copy is not identical to the source.
+
+The check compares changes, not files, so a listed file is not proof of damage: a file the VMR already had (for example a VMR-only
+change that later backflowed) is listed too. A missing comment is not proof of safety either: the check runs only for auto-approve
+subscriptions on branches that require approval of the last push, and only while every PR commit came from Maestro. After anyone
+else pushes, no new comment appears and the last one goes stale.
+
+**A PR with this comment is not merge-ready until every listed file is explained.** For each file, take four versions:
+
+| Name | Version |
+|---|---|
+| V0 | `src/<repo>/<file>` at `git merge-base <PR head> origin/<target>` |
+| V1 | `src/<repo>/<file>` at the PR head |
+| S0 | `<file>` in the product repo at the `src/source-manifest.json` `commitSha` of V0 |
+| S1 | `<file>` in the product repo at the `commitSha` of V1 |
+
+Read product files with `gh api "repos/<owner>/<repo>/contents/<file>?ref=<sha>" -H "Accept: application/vnd.github.raw"` and use an
+empty file for a missing one. Compute what the flow should have produced, which is the VMR's file plus the source's change:
+`git merge-file -p V0 S0 S1 > EXPECTED`. Then classify, first match wins:
+
+| Result | Verdict |
+|---|---|
+| S1 is Maestro's placeholder ("PLEASE READ ... Please remove this file during conflict resolution") | The product repo merged an unresolved backflow. The VMR is right not to have the file; the repo owner must delete it. Check the flow for side effects: Maestro can treat the placeholder as a rename of a real file. |
+| V1 == S1 | Matches the source. |
+| `merge-file` is clean and V1 == EXPECTED | The source change applied and VMR-only edits were kept. Fine. |
+| `merge-file` conflicts | For each conflicting hunk, find the source commit (`git log S0..S1 -- <file>` in the product repo) and the VMR commit (`git log origin/<target> -- src/<repo>/<file>`). Fine only when the source side came from a backflow ("Source code updates from dotnet/dotnet" or "Backflow from") and the VMR side is a later VMR commit, so the VMR is already ahead. Otherwise it is a real conflict the flow did not surface: route it to the repo owner. |
+| `merge-file` is clean and V1 != EXPECTED | **The flow damaged the file.** Find the Maestro commit with `git log origin/<target>..<PR head> -- src/<repo>/<file>` and show how V1 differs from EXPECTED. |
+
+A damaged file blocks the PR. Report the file, the culprit commit and the fix: write EXPECTED to the file in a new commit on the PR
+branch (this keeps VMR-only edits; never force-push). Send flow defects to @dotnet/prodconsvcs (General VMR infra in the Repo
+Ownership table).
+
+## 8. Authentication problems are findings
 
 If the collector could not read internal data, the report is **partial, not healthy**. Keep the explicit error and its sign-in hint
 in the report. Do not confuse it with a CI job's own private-feed 401, which is a build failure to triage. Run the preflight first: it
 prints authentication problems, with the sign-in command, before anything else.
 
-## 8. Before you report
+## 9. Before you report
 
 - [ ] Fatal classification came from records, not message text
 - [ ] The named diagnostic is the one that terminated the leg, and the name matches the previous finding names
@@ -121,3 +163,4 @@ prints authentication problems, with the sign-in command, before anything else.
 - [ ] Every owner handle comes from the ownership/routing JSON, and the destination accepts this failure type
 - [ ] Not already tracked, not already owned, not a team member's own PR
 - [ ] Independent failures are separate rows
+- [ ] No code-flow PR with a "did not match the source diff" note is called green or safe before its files are explained

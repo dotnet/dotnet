@@ -34,7 +34,12 @@ public class CreateCMakeFileApiQuery : Task, IMultiThreadableTask
             string queryFile = Path.Combine(queryDir, "codemodel-v2");
             
             // Create an empty file to request codemodel-v2 information
-            File.WriteAllText(TaskEnvironment.GetAbsolutePath(queryFile), string.Empty);
+            using var queryStream = new FileStream(
+                TaskEnvironment.GetAbsolutePath(queryFile),
+                FileMode.OpenOrCreate,
+                FileAccess.Write,
+                FileShare.ReadWrite);
+            queryStream.SetLength(0);
             
             Log.LogMessage(MessageImportance.Low, "Created CMake File API query at: {0}", queryFile);
             

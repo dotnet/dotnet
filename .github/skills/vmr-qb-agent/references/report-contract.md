@@ -24,7 +24,8 @@ gh pr list --repo dotnet/dotnet --search "author:dotnet-bot" --state open --limi
 
 - Step 3: list the open code-flow PRs (first command), check CI for a few of the most relevant (second) and their remaining merge
   gates (third). Green CI alone is not merge-ready: report conflicts, required reviews, pending Maestro gates and unsafe or
-  high-file-count flows separately for each PR. Do not assume every release/* branch is locked; follow the VMR QB Guide and
+  high-file-count flows separately for each PR. A "did not match the source diff" Maestro note is a blocker until explained
+  (`triage.md` section 7). Do not assume every release/* branch is locked; follow the VMR QB Guide and
   verified branch restrictions.
 - Step 4: the open re-bootstrap PRs from dotnet-bot (fourth command; titles like ".NET X.Y.Z-... Updates") and their CI status.
 
