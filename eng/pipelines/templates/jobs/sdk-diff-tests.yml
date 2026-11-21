@@ -47,7 +47,7 @@ jobs:
 
       if [[ -z "$dotnet_dotnet_build" ]]; then
         if [[ -z "$triggering_alias" ]]; then
-          dotnet_dotnet_build=$(az pipelines runs list --branch '$(Build.SourceBranch)' --organization '$(AZDO_ORG)' --project '$(AZDO_PROJECT)' --pipeline-ids '$(DOTNET_DOTNET_CI_PIPELINE_ID)' --status completed --top 1 --query "[].id" --output tsv)
+          dotnet_dotnet_build=$(az pipelines runs list --branch '$(Build.SourceBranch)' --organization '$(AZDO_ORG)' --project '$(AZDO_PROJECT)' --pipeline-ids '$(DOTNET_DOTNET_CI_PIPELINE_ID)' --status completed --result succeeded --query-order FinishTimeDesc --top 1 --query "[].id" --output tsv)
         else
           runID=RESOURCES_PIPELINE_${triggering_alias}_RUNID
           dotnet_dotnet_build=$(printenv "$runID")
@@ -55,7 +55,7 @@ jobs:
       fi
 
       if [[ -z "$dotnet_dotnet_build" ]]; then
-        echo "Could not find a completed dotnet-dotnet build for branch '$(Build.SourceBranch)'"
+        echo "Could not select a dotnet-dotnet build for branch '$(Build.SourceBranch)'"
         exit 1
       fi
 
