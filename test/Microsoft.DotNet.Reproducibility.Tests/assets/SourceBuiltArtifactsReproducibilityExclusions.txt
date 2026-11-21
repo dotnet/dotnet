@@ -10,5 +10,4 @@ VerticalManifest.xml
 assets/Release/Runtime/*/dotnet-runtime-*-centos.10-x64.tar.gz
 assets/Release/aspnetcore/Runtime/*/aspnetcore-runtime-*-centos.10-x64.tar.gz
 assets/Release/dotnet-symbols-all-*-centos.10-x64.tar.gz
-runtime.centos.10-x64.runtime.centos.10-x64.Microsoft.NETCore.ILDAsm.*.nupkg
 runtime.centos.10-x64.Microsoft.NETCore.TestHost.*.nupkg
