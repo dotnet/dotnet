@@ -100,7 +100,7 @@ namespace System.Collections.Generic
             {
                 // To avoid excess resizes, first set size based on collection's count. The collection may
                 // contain duplicates, so call TrimExcess if resulting HashSet is larger than the threshold.
-                if (collection is ICollection<T> coll)
+                if (collection is IReadOnlyCollection<T> coll)
                 {
                     int count = coll.Count;
                     if (count > 0)
@@ -833,7 +833,7 @@ namespace System.Collections.Generic
             }
 
             // If other is known to be empty, intersection is empty set; remove all elements, and we're done.
-            if (other is ICollection<T> otherAsCollection)
+            if (other is IReadOnlyCollection<T> otherAsCollection)
             {
                 if (otherAsCollection.Count == 0)
                 {
@@ -973,7 +973,7 @@ namespace System.Collections.Generic
                 return false;
             }
 
-            if (other is ICollection<T> otherAsCollection)
+            if (other is IReadOnlyCollection<T> otherAsCollection)
             {
                 // No set is a proper subset of a set with less or equal number of elements.
                 if (otherAsCollection.Count <= Count)
@@ -1018,7 +1018,7 @@ namespace System.Collections.Generic
             }
 
             // Try to fall out early based on counts.
-            if (other is ICollection<T> otherAsCollection)
+            if (other is IReadOnlyCollection<T> otherAsCollection)
             {
                 // If other is the empty set then this is a superset.
                 if (otherAsCollection.Count == 0)
@@ -1062,7 +1062,7 @@ namespace System.Collections.Generic
                 return false;
             }
 
-            if (other is ICollection<T> otherAsCollection)
+            if (other is IReadOnlyCollection<T> otherAsCollection)
             {
                 // If other is the empty set then this is a superset.
                 if (otherAsCollection.Count == 0)
@@ -1161,7 +1161,7 @@ namespace System.Collections.Generic
                 return true;
             }
 
-            if (other is ICollection<T> otherAsCollection)
+            if (other is IReadOnlyCollection<T> otherAsCollection)
             {
                 // If this is empty, they are equal iff other is empty.
                 if (Count == 0)

@@ -71,7 +71,7 @@ public class ShadowValuesFactoryFactory : SnapshotFactoryFactory<IDictionary<str
         => false;
 
     private static readonly PropertyInfo DictionaryIndexer
-        = typeof(IDictionary<string, object?>).GetRuntimeProperties().Single(p => p.GetIndexParameters().Length > 0);
+        = typeof(IDictionary<string, object?>).GetProperty("Item")!;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to

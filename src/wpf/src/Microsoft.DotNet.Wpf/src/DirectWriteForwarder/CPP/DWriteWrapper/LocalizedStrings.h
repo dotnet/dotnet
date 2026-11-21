@@ -69,6 +69,24 @@ namespace MS { namespace Internal { namespace Text { namespace TextInterface
                 array<String^>^ get();
             }
 
+            property IEnumerable<CultureInfo^>^ ReadOnlyKeys
+            {
+                virtual IEnumerable<CultureInfo^>^ get() sealed =
+                    IReadOnlyDictionary<CultureInfo^, String^>::Keys::get
+                {
+                    return Keys;
+                }
+            }
+
+            property IEnumerable<String^>^ ReadOnlyValues
+            {
+                virtual IEnumerable<String^>^ get() sealed =
+                    IReadOnlyDictionary<CultureInfo^, String^>::Values::get
+                {
+                    return Values;
+                }
+            }
+
         internal:
 
             /// <summary>
@@ -153,7 +171,8 @@ namespace MS { namespace Internal { namespace Text { namespace TextInterface
             /// </summary>
             property ICollection<CultureInfo^>^ Keys
             {
-                virtual ICollection<CultureInfo^>^ get();
+                virtual ICollection<CultureInfo^>^ get() sealed =
+                    IDictionary<CultureInfo^, String^>::Keys::get;
             }
 
             /// <summary>
@@ -184,7 +203,8 @@ namespace MS { namespace Internal { namespace Text { namespace TextInterface
 
             property ICollection<String^>^ Values
             {
-                virtual ICollection<String^>^ get();
+                virtual ICollection<String^>^ get() sealed =
+                    IDictionary<CultureInfo^, String^>::Values::get;
             }
 
             property String^ default[CultureInfo^]
