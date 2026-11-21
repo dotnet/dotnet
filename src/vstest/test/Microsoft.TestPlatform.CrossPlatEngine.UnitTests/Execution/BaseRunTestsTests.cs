@@ -587,6 +587,16 @@ public class BaseRunTestsTests
     }
 
     [TestMethod]
+    public void RunTestsShouldDisposeFrameworkHandle()
+    {
+        SetUpTestRunEvents();
+
+        _runTestsInstance.RunTests();
+
+        Assert.ThrowsExactly<ObjectDisposedException>(() => _runTestsInstance.GetFrameworkHandle.LaunchProcessWithDebuggerAttached(null!, null, null, null));
+    }
+
+    [TestMethod]
     public void RunTestsShouldNotCloneTestCaseAndTestResultsObjectForNonPackageSource()
     {
         SetUpTestRunEvents();

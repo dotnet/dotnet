@@ -20,7 +20,7 @@ public class DataCollectorTestsCoverlets : AcceptanceTestBase
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
         // We use netcoreapp runner
-        // "...\vstest\tools\dotnet\dotnet.exe "...\vstest\artifacts\Debug\net11.0\vstest.console.dll" --collect:"XPlat Code Coverage" ...
+        // "...\vstest\tools\dotnet\dotnet.exe "...\vstest\artifacts\Debug\net12.0\vstest.console.dll" --collect:"XPlat Code Coverage" ...
         var resultsDir = new TempDirectory();
 
         string coverletAdapterPath = Path.GetDirectoryName(Directory.GetFiles(_testEnvironment.GetNugetPackage("coverlet.collector"), "coverlet.collector.dll", SearchOption.AllDirectories).Single())!;

@@ -37,12 +37,12 @@ public class DotnetRootArchitectureMismatchTests : AcceptanceTestBase
     public void RunningX86NetTestThroughVsTestConsoleExeWithX64DotnetRootRunsWithoutErrors()
     {
         // Desktop runner => vstest.console.exe (.NET Framework) is invoked directly, which is the
-        // scenario where the SDK does not pass VSTEST_DOTNET_ROOT_PATH. Target net11.0 + /Platform:x86
+        // scenario where the SDK does not pass VSTEST_DOTNET_ROOT_PATH. Target net12.0 + /Platform:x86
         // makes vstest launch an x86 testhost that resolves its runtime from the DOTNET_ROOT* variables.
         SetTestEnvironment(_testEnvironment, new RunnerInfo
         {
             RunnerFramework = DesktopRunnerFramework,
-            TargetFramework = Core11TargetFramework,
+            TargetFramework = Core12TargetFramework,
             InIsolationValue = InIsolation,
         });
 
@@ -52,7 +52,7 @@ public class DotnetRootArchitectureMismatchTests : AcceptanceTestBase
         var x86DotnetRoot = Path.GetDirectoryName(GetDownloadedDotnetMuxerFromTools("X86"))!;
 
         var arguments = PrepareArguments(
-            GetTestDllForFramework("SimpleTestProject.dll", Core11TargetFramework, automaticallyResolveCompatibilityTestAsset: false),
+            GetTestDllForFramework("SimpleTestProject.dll", Core12TargetFramework, automaticallyResolveCompatibilityTestAsset: false),
             GetTestAdapterPath(),
             string.Empty,
             FrameworkArgValue,

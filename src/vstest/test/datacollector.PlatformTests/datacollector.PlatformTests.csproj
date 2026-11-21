@@ -8,7 +8,7 @@
     <RootNamespace>Microsoft.VisualStudio.TestPlatform.DataCollector.PlatformTests</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFrameworks>net11.0;net481</TargetFrameworks>
+    <TargetFrameworks>net12.0;net481</TargetFrameworks>
     <OutputType Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">Exe</OutputType>
     <AssemblyName>datacollector.PlatformTests</AssemblyName>
   </PropertyGroup>

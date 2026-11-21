@@ -19,7 +19,7 @@
     <RootNamespace>Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFrameworks>net11.0;net481</TargetFrameworks>
+    <TargetFrameworks>net12.0;net481</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <AssemblyName>Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests</AssemblyName>
   </PropertyGroup>
