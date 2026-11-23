@@ -8,6 +8,16 @@
 #       P:Property
 #       T:Type
 
+# Require invariant casing by default, including when a culture argument is supplied.
+M:System.String.ToLower; Use ToLowerInvariant() for culture-independent normalization. Culture-sensitive casing for localized text requires a justified exception.
+M:System.String.ToLower(System.Globalization.CultureInfo); Use ToLowerInvariant() for culture-independent normalization. Culture-sensitive casing for localized text requires a justified exception.
+M:System.String.ToUpper; Use ToUpperInvariant() for culture-independent normalization. Culture-sensitive casing for localized text requires a justified exception.
+M:System.String.ToUpper(System.Globalization.CultureInfo); Use ToUpperInvariant() for culture-independent normalization. Culture-sensitive casing for localized text requires a justified exception.
+M:System.Char.ToLower(System.Char); Use char.ToLowerInvariant() for culture-independent normalization. Culture-sensitive casing for localized text requires a justified exception.
+M:System.Char.ToLower(System.Char,System.Globalization.CultureInfo); Use char.ToLowerInvariant() for culture-independent normalization. Culture-sensitive casing for localized text requires a justified exception.
+M:System.Char.ToUpper(System.Char); Use char.ToUpperInvariant() for culture-independent normalization. Culture-sensitive casing for localized text requires a justified exception.
+M:System.Char.ToUpper(System.Char,System.Globalization.CultureInfo); Use char.ToUpperInvariant() for culture-independent normalization. Culture-sensitive casing for localized text requires a justified exception.
+
 M: System.Xml.XmlReader.Create(string inputUri, System.Xml.XmlReaderSettings? settings, System.Xml.XmlParserContext? inputContext); Use one of the methods with a stream instead of path string because paths get escaped.
 M: System.Xml.XmlReader.Create(string inputUri, System.Xml.XmlReaderSettings? settings); Use one of the methods with a stream instead of path string because paths get escaped.
 

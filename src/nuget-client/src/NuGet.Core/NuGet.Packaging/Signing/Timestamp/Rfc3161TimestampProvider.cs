@@ -217,7 +217,7 @@ namespace NuGet.Packaging.Signing
         /// </summary>
         private static string GetNameOrOidString(Oid oid)
         {
-            return oid.FriendlyName?.ToUpper(CultureInfo.InvariantCulture) ?? oid.Value!;
+            return oid.FriendlyName?.ToUpperInvariant() ?? oid.Value!;
         }
 
         private static byte[] GenerateNonce()

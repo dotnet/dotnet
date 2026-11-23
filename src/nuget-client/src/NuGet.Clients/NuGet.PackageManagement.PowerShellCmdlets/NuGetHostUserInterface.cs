@@ -294,9 +294,11 @@ namespace NuGetConsole.Host.PowerShell.Implementation
                         && ampIndex < label.Length - 1)
                     {
                         // grab the letter after '&'
+#pragma warning disable RS0030 // Preserve existing culture-sensitive casing of PowerShell console prompt shortcuts.
                         accelerators[index] = label
                             .Substring(ampIndex + 1, 1)
                             .ToUpper(CultureInfo.CurrentCulture);
+#pragma warning restore RS0030
                     }
 
                     Write(string.Format(CultureInfo.CurrentCulture, "[{0}] {1}  ",

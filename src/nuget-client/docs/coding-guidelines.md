@@ -382,6 +382,14 @@ public void MyMethod()
 })
 ```
 
+### Culture-independent casing
+
+Use `ToLowerInvariant()` or `ToUpperInvariant()` when normalizing identifiers such as package IDs. For identifier comparisons, prefer `StringComparison.Ordinal` or `StringComparison.OrdinalIgnoreCase` instead of converting case.
+
+The banned-API analyzer (`RS0030`) rejects `string` and `char` `ToLower`/`ToUpper` overloads in shipping product projects, including overloads that accept a culture. Even `CultureInfo.InvariantCulture` arguments must use the invariant methods instead. This prevents culture-dependent behavior such as Turkish casing changing ASCII `I` to dotless `\u0131`.
+
+Intentional culture-sensitive casing of localized text requires a narrowly scoped, justified exception. Do not replace localized number/date formatting with invariant formatting; this restriction applies to casing, not all uses of `CultureInfo.CurrentCulture`.
+
 ### When to use internals vs. public and when to use InternalsVisibleTo
 
 Usage of internal types and members is allowed. Do consider whether external customers could benefit from having said internal class public.
