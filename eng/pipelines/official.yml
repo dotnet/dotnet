@@ -2,22 +2,37 @@
 # - dotnet-unified-build (internal)
 #   https://dev.azure.com/dnceng/internal/_build?definitionId=1330
 
+# Keep this trigger identical on main and all release branches. main, preview/rc branches and
+# internal patch/hotfix branches (e.g. internal/release/10.0.115) use batched CI. Feature band
+# branches (release/N.0.Bxx and internal/release/N.0.Bxx) are excluded and build only on the daily
+# schedule defined in each release branch.
 trigger:
   batch: true
   branches:
     include:
       - main
-      - release/*
-      - internal/release/*
+      - release/*-preview*
+      - release/*-rc*
+      - internal/release/*.0.*
     exclude:
-      - release/10.0.1xx
+      - internal/release/*.0.?xx
 
+# Daily builds of this feature band and its internal counterpart (which merges into it). A build is
+# queued only if the branch changed since its last successful scheduled run. Times are staggered
+# across release branches to spread load through the day.
 schedules:
-  - cron: "30 12 * * *"
+  - cron: "30 4 * * *"
     displayName: Daily release/10.0.1xx build
     branches:
       include:
       - release/10.0.1xx
+    always: false
+    batch: true
+  - cron: "30 16 * * *"
+    displayName: Daily internal/release/10.0.1xx build
+    branches:
+      include:
+      - internal/release/10.0.1xx
     always: false
     batch: true
   - cron: "0 12 * * 0,6" # run every Saturday and Sunday at 12:00 (UTC)
