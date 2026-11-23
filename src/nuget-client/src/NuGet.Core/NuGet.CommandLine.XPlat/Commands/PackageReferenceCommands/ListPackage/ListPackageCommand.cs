@@ -297,7 +297,7 @@ namespace NuGet.CommandLine.XPlat
             var enumValues = Enum.GetValues<T>()
                .Select(x => x.ToString());
 
-            return string.Join(", ", enumValues).ToLower(CultureInfo.CurrentCulture);
+            return string.Join(", ", enumValues).ToLowerInvariant();
         }
     }
 }

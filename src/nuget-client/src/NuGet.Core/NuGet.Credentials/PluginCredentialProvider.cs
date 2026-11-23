@@ -187,7 +187,7 @@ namespace NuGet.Credentials
             string? verbosity = request.Verbosity;
             if (PassVerbosityFlag(verbosity))
             {
-                argumentString += $" -verbosity {verbosity.ToLower(CultureInfo.InvariantCulture)}";
+                argumentString += $" -verbosity {verbosity.ToLowerInvariant()}";
             }
 
             var startInfo = new ProcessStartInfo
