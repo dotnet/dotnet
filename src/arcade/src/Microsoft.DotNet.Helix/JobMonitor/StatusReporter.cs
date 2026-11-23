@@ -315,6 +315,14 @@ internal sealed class StatusReporter
         LogError("One or more non-monitor pipeline jobs failed.");
     }
 
+    public void LogAbandonedPipelineJob(AzureDevOpsTimelineRecord job)
+    {
+        _logger.LogWarning(
+            "Azure DevOps job '{JobName}' (state: {State}) appears to have been abandoned (its agent stopped responding or its phase already finished). Treating it as failed so the monitor does not wait for it.",
+            job.Name ?? job.ReferenceName ?? job.Identifier,
+            job.State);
+    }
+
     public void LogNoHelixJobsFailure()
     {
         LogError($"No Helix jobs were submitted by this stage in any attempt. Stage: '{_options.StageName}', BuildId: {_options.BuildId}.");
