@@ -25,22 +25,22 @@
       "commitSha": "66187a30e8bb81d571f0244d4bd64405182ca219"
     },
     {
-      "barId": 342299,
+      "barId": 342421,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "3474e44a456caeb426d8e22bb818881138b5852f"
+      "commitSha": "32a0557a08cb47652dc75818d6198ff0f94802ee"
     },
     {
-      "barId": 342393,
+      "barId": 342546,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "e6a245b6f72ae35a6860b533d8ecc54cb11ac1b4"
+      "commitSha": "496ae9d46a6d27daffa4decf077995517dcc5b60"
     },
     {
-      "barId": 342518,
+      "barId": 342565,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "ee8e32c6bf9a76f876318bfa2fe4ec6e9d89ab0f"
+      "commitSha": "da9878a16b492563fdcefc4259f2692fc07ddb24"
     },
     {
       "barId": 331904,
