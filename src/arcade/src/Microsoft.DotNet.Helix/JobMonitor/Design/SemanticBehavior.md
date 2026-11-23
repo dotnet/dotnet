@@ -414,6 +414,11 @@ Each iteration:
    resubmitted into the current attempt, or is itself already terminal (§2.1,
    §2.3). When true, wait for pending uploads, emit the final report, and exit
    per §2.5.
+   An AzDO job that is still `inProgress`/`pending` but has been abandoned —
+   it carries an agent-loss error issue (e.g. "We stopped hearing from
+   agent") or its parent phase is already `completed` — counts as complete
+   *and* failed, so a lost agent cannot keep the monitor waiting until its
+   own timeout.
 9. Otherwise sleep for the configured poll interval and repeat.
 
 ### 5.5 Completion of a Helix job
