@@ -128,7 +128,7 @@ namespace Microsoft.Extensions.DependencyInjection.Extensions
             Func<IServiceProvider, object?, TService> implementationFactory)
             where TService : class
         {
-            services.TryAdd(ServiceDescriptor.KeyedTransient(serviceKey, implementationFactory));
+            services.TryAdd(ServiceDescriptor.KeyedTransient<TService>(serviceKey, implementationFactory));
         }
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace Microsoft.Extensions.DependencyInjection.Extensions
             Func<IServiceProvider, object?, TService> implementationFactory)
             where TService : class
         {
-            services.TryAdd(ServiceDescriptor.KeyedScoped(serviceKey, implementationFactory));
+            services.TryAdd(ServiceDescriptor.KeyedScoped<TService>(serviceKey, implementationFactory));
         }
 
         /// <summary>
@@ -392,7 +392,7 @@ namespace Microsoft.Extensions.DependencyInjection.Extensions
             Func<IServiceProvider, object?, TService> implementationFactory)
             where TService : class
         {
-            services.TryAdd(ServiceDescriptor.KeyedSingleton(serviceKey, implementationFactory));
+            services.TryAdd(ServiceDescriptor.KeyedSingleton<TService>(serviceKey, implementationFactory));
         }
 
         /// <summary>
