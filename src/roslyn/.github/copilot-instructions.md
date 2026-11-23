@@ -134,16 +134,6 @@ documentation-only changes did not need tests.
 Include validation information only when it adds useful evidence beyond CI, such as
 manual scenario checks, benchmark results, or known validation limitations.
 
-## Pull Request Descriptions
-
-Keep PR descriptions focused on what changed and why. Omit routine validation details
-that CI covers, such as builds, unit tests, formatting, and analyzers. Do not add a
-validation section just to list commands or passing results, or to say that
-documentation-only changes did not need tests.
-
-Include validation information only when it adds useful evidence beyond CI, such as
-manual scenario checks, benchmark results, or known validation limitations.
-
 ## Definition of Done
 
 Work is done only when every applicable step below is complete:
