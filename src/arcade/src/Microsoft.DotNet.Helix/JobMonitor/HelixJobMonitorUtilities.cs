@@ -39,6 +39,18 @@ public sealed class AzureDevOpsTimelineRecord
 
     [JsonProperty("previousAttempts")]
     public PreviousAttemptReference[] PreviousAttempts { get; set; }
+
+    [JsonProperty("issues")]
+    public AzureDevOpsTimelineIssue[] Issues { get; set; }
+}
+
+public sealed class AzureDevOpsTimelineIssue
+{
+    [JsonProperty("type")]
+    public string Type { get; set; }
+
+    [JsonProperty("message")]
+    public string Message { get; set; }
 }
 
 public sealed class PreviousAttemptReference
@@ -55,8 +67,41 @@ public sealed class PreviousAttemptReference
 
 public static class HelixJobMonitorUtilities
 {
+    // Error messages Azure DevOps attaches to a job whose agent was lost. Such a job can stay
+    // "inProgress" in the timeline for hours after the agent is gone, so it must not block the monitor.
+    private static readonly string[] s_agentLostMessages =
+    [
+        "We stopped hearing from agent",
+        "Agents can't recover from restarts",
+    ];
+
     public static bool AreNonMonitorJobsComplete(IEnumerable<AzureDevOpsTimelineRecord> records, string jobMonitorName)
-        => GetRelevantNonMonitorJobRecords(records, jobMonitorName).All(IsTerminal);
+    {
+        List<AzureDevOpsTimelineRecord> allRecords = (records ?? []).ToList();
+        HashSet<AzureDevOpsTimelineRecord> abandoned = [.. GetAbandonedNonMonitorJobRecords(allRecords, jobMonitorName)];
+        return GetRelevantNonMonitorJobRecords(allRecords, jobMonitorName).All(r => IsTerminal(r) || abandoned.Contains(r));
+    }
+
+    /// <summary>
+    /// Returns non-monitor jobs that are not yet completed in the timeline but have been abandoned
+    /// by Azure DevOps — either because their agent stopped responding (reported as an error issue
+    /// on the job) or because their parent phase has already completed. Such jobs will never make
+    /// progress, so the monitor treats them as finished and failed instead of waiting until timeout.
+    /// </summary>
+    public static IReadOnlyList<AzureDevOpsTimelineRecord> GetAbandonedNonMonitorJobRecords(
+        IEnumerable<AzureDevOpsTimelineRecord> records,
+        string jobMonitorName)
+    {
+        List<AzureDevOpsTimelineRecord> allRecords = (records ?? []).ToList();
+        Dictionary<string, AzureDevOpsTimelineRecord> recordsById = GetRecordsById(allRecords);
+
+        return
+        [
+            ..GetRelevantJobRecords(allRecords, jobMonitorName)
+                .Where(r => !IsTerminal(r))
+                .Where(r => HasAgentLostError(r) || HasCompletedParentPhase(r, recordsById))
+        ];
+    }
 
     public static bool HasFailedNonMonitorJobs(IEnumerable<AzureDevOpsTimelineRecord> records, string jobMonitorName)
         => HasFailedNonMonitorJobs(records, jobMonitorName, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
@@ -65,11 +110,16 @@ public static class HelixJobMonitorUtilities
         IEnumerable<AzureDevOpsTimelineRecord> records,
         string jobMonitorName,
         IReadOnlySet<string> ignoredJobNames)
-        => GetRelevantNonMonitorJobRecords(records, jobMonitorName)
+    {
+        List<AzureDevOpsTimelineRecord> allRecords = (records ?? []).ToList();
+        HashSet<AzureDevOpsTimelineRecord> abandoned = [.. GetAbandonedNonMonitorJobRecords(allRecords, jobMonitorName)];
+        return GetRelevantNonMonitorJobRecords(allRecords, jobMonitorName)
             .Where(r => ignoredJobNames == null || !ignoredJobNames.Contains(r.ReferenceName))
             .Any(r =>
-                string.Equals(r.Result, "failed", StringComparison.OrdinalIgnoreCase)
+                abandoned.Contains(r)
+                || string.Equals(r.Result, "failed", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(r.Result, "canceled", StringComparison.OrdinalIgnoreCase));
+    }
 
     public static IEnumerable<AzureDevOpsTimelineRecord> GetRelevantNonMonitorJobRecords(
         IEnumerable<AzureDevOpsTimelineRecord> records,
@@ -148,10 +198,7 @@ public static class HelixJobMonitorUtilities
                 .Where(id => !string.IsNullOrEmpty(id))
         ];
 
-        Dictionary<string, AzureDevOpsTimelineRecord> recordsById = allRecords
-            .Where(r => !string.IsNullOrEmpty(r.Id))
-            .GroupBy(r => r.Id, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, AzureDevOpsTimelineRecord> recordsById = GetRecordsById(allRecords);
 
         return allRecords
             .Where(r => string.Equals(r.Type, "Job", StringComparison.OrdinalIgnoreCase))
@@ -159,8 +206,28 @@ public static class HelixJobMonitorUtilities
             .Where(r => !HasMonitorAncestor(r, recordsById, monitorRecordIds));
     }
 
+    private static Dictionary<string, AzureDevOpsTimelineRecord> GetRecordsById(IEnumerable<AzureDevOpsTimelineRecord> records)
+        => records
+            .Where(r => !string.IsNullOrEmpty(r.Id))
+            .GroupBy(r => r.Id, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
     private static bool IsTerminal(AzureDevOpsTimelineRecord record)
         => string.Equals(record?.State, "completed", StringComparison.OrdinalIgnoreCase);
+
+    private static bool HasAgentLostError(AzureDevOpsTimelineRecord record)
+        => (record.Issues ?? []).Any(issue =>
+            string.Equals(issue?.Type, "error", StringComparison.OrdinalIgnoreCase)
+            && issue.Message != null
+            && s_agentLostMessages.Any(m => issue.Message.Contains(m, StringComparison.OrdinalIgnoreCase)));
+
+    private static bool HasCompletedParentPhase(
+        AzureDevOpsTimelineRecord record,
+        IReadOnlyDictionary<string, AzureDevOpsTimelineRecord> recordsById)
+        => !string.IsNullOrEmpty(record.ParentId)
+            && recordsById.TryGetValue(record.ParentId, out AzureDevOpsTimelineRecord parent)
+            && string.Equals(parent.Type, "Phase", StringComparison.OrdinalIgnoreCase)
+            && IsTerminal(parent);
 
     private static bool IsMonitorRecord(AzureDevOpsTimelineRecord record, string jobMonitorName)
     {

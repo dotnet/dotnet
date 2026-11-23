@@ -522,6 +522,16 @@ internal sealed class JobMonitorRunner : IJobMonitorRunner, IDisposable
             loopState.HasLoggedInitialStatus = true;
         }
 
+        foreach (AzureDevOpsTimelineRecord abandonedJob in HelixJobMonitorUtilities.GetAbandonedNonMonitorJobRecords(
+            timelineRecords,
+            _options.JobMonitorName))
+        {
+            if (loopState.ReportedAbandonedJobIds.Add(abandonedJob.Id ?? abandonedJob.Identifier ?? abandonedJob.Name ?? string.Empty))
+            {
+                _reporter.LogAbandonedPipelineJob(abandonedJob);
+            }
+        }
+
         bool anyNonMonitorFailure = HelixJobMonitorUtilities.HasFailedNonMonitorJobs(
             timelineRecords,
             _options.JobMonitorName,
@@ -880,6 +890,7 @@ internal sealed class JobMonitorRunner : IJobMonitorRunner, IDisposable
     {
         public int PollNumber { get; set; }
         public bool HasLoggedInitialStatus { get; set; }
+        public HashSet<string> ReportedAbandonedJobIds { get; } = new(StringComparer.OrdinalIgnoreCase);
         public Dictionary<string, IReadOnlyCollection<WorkItemSummary>> WorkItemsByJob { get; } =
             new(StringComparer.OrdinalIgnoreCase);
     }
