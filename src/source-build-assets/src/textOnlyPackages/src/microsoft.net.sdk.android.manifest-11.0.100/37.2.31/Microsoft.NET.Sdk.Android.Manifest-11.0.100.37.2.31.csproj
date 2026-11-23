@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackageId>Microsoft.NET.Sdk.Android.Manifest-11.0.100</PackageId>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>37.2.31</PackageVersion>
+    <AssemblyName>Microsoft.NET.Sdk.Android.Manifest-11.0.100</AssemblyName>
+    <Description>Microsoft.NET.Sdk.Android workload manifest. Please do not reference directly.</Description>
+    <PackageProjectUrl>https://dot.net/</PackageProjectUrl>
+    <PackageLicenseFile>LICENSE.TXT</PackageLicenseFile>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageType>DotnetPlatform</PackageType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="data/localize/WorkloadManifest.cs.json" Pack="true" PackagePath="data/localize" />
+    <None Include="data/localize/WorkloadManifest.de.json" Pack="true" PackagePath="data/localize" />
+    <None Include="data/localize/WorkloadManifest.en.json" Pack="true" PackagePath="data/localize" />
+    <None Include="data/localize/WorkloadManifest.es.json" Pack="true" PackagePath="data/localize" />
+    <None Include="data/localize/WorkloadManifest.fr.json" Pack="true" PackagePath="data/localize" />
+    <None Include="data/localize/WorkloadManifest.it.json" Pack="true" PackagePath="data/localize" />
+    <None Include="data/localize/WorkloadManifest.ja.json" Pack="true" PackagePath="data/localize" />
+    <None Include="data/localize/WorkloadManifest.ko.json" Pack="true" PackagePath="data/localize" />
+    <None Include="data/localize/WorkloadManifest.pl.json" Pack="true" PackagePath="data/localize" />
+    <None Include="data/localize/WorkloadManifest.pt-BR.json" Pack="true" PackagePath="data/localize" />
+    <None Include="data/localize/WorkloadManifest.ru.json" Pack="true" PackagePath="data/localize" />
+    <None Include="data/localize/WorkloadManifest.tr.json" Pack="true" PackagePath="data/localize" />
+    <None Include="data/localize/WorkloadManifest.zh-Hans.json" Pack="true" PackagePath="data/localize" />
+    <None Include="data/localize/WorkloadManifest.zh-Hant.json" Pack="true" PackagePath="data/localize" />
+    <None Include="data/WorkloadDependencies.json" Pack="true" PackagePath="data" />
+    <None Include="data/WorkloadManifest.json" Pack="true" PackagePath="data" />
+    <None Include="data/WorkloadManifest.targets" Pack="true" PackagePath="data" />
+    <None Include="LICENSE.TXT" Pack="true" PackagePath="" />
+    <None Include="THIRD-PARTY-NOTICES.TXT" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>
