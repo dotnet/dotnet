@@ -7,7 +7,7 @@
 
   <PropertyGroup>
     <AssemblyName>Microsoft.TestPlatform.TestHostProvider.UnitTests</AssemblyName>
-    <TargetFrameworks>net12.0;net481</TargetFrameworks>
+    <TargetFrameworks>$(NetCurrent);net481</TargetFrameworks>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>

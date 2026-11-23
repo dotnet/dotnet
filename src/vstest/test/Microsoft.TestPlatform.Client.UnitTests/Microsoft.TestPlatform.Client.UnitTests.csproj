@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>net12.0;net481</TargetFrameworks>
+    <TargetFrameworks>$(NetCurrent);net481</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <AssemblyName>Microsoft.TestPlatform.Client.UnitTests</AssemblyName>
   </PropertyGroup>

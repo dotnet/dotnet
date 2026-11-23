@@ -8,7 +8,7 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
-    <TargetFrameworks>net12.0</TargetFrameworks>
+    <TargetFrameworks>$(NetCurrent)</TargetFrameworks>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
