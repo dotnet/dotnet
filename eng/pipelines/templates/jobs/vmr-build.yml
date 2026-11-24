@@ -469,6 +469,7 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 1
+    fetchTags: false
     retryCountOnTaskFailure: 5
 
   - ${{ if eq(parameters.tagPipelineBuildWithCodeql, true) }}:

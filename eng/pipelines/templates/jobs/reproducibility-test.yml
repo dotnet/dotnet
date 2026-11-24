@@ -34,6 +34,12 @@ jobs:
       targetPath: '$(Build.StagingDirectory)/BuildLogs'
       artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
   steps:
+  - checkout: self
+    fetchDepth: 1
+    fetchTags: false
+    retryCountOnTaskFailure: 5
+    fetchFilter: blob:none
+    sparseCheckoutDirectories: eng .config test # Reduce checkout time by excluding unused directories
 
   # Download the first SDK tarball from this pipeline's Build1 stage.
   - task: DownloadPipelineArtifact@2
