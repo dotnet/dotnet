@@ -14,7 +14,8 @@ internal interface IArtifactProcessingManager
     /// </summary>
     /// <returns>
     /// A warning to surface to the user when the artifacts directory could not be verified (so nothing was
-    /// collected), or <see langword="null"/> when there is nothing to report.
+    /// collected), or when attachments were saved to the user-private fallback directory because
+    /// VSTEST_ARTIFACTS_DIRECTORY was missing or unusable; otherwise <see langword="null"/>.
     /// </returns>
     string? CollectArtifacts(TestRunCompleteEventArgs testRunCompleteEventArgs, string runSettingsXml);
     Task PostProcessArtifactsAsync();

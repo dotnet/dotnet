@@ -25,7 +25,7 @@ namespace child_hang
             var directory = "Release";
 #endif
             // wait for child to hang
-            var childProcess = Path.GetFullPath($@"../../../hanging-child/{directory}/net11.0/hanging-child{(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".exe" : ".dll")}");
+            var childProcess = Path.GetFullPath($@"../../../hanging-child/{directory}/net12.0/hanging-child{(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".exe" : ".dll")}");
             // 1 child, that is 2 hanging processes
             var process = (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Process.Start(childProcess, "1") : Process.Start(GetFullPath("dotnet"), $"{childProcess} 1"));
             process.WaitForExit();

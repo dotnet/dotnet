@@ -778,7 +778,7 @@ public class DotnetTestHostManagerTests
     // the user set one), the built-in testhost fallback always rolls forward to the latest installed runtime via
     // testhost-latest.runtimeconfig.json. We no longer ship version-specific testhost-<ver>.runtimeconfig.json files.
     [DataRow("net10.0")]
-    [DataRow("net11.0")]
+    [DataRow("net12.0")]
     public void GetTestHostProcessStartInfoNativeFallbackAlwaysUsesLatestRuntimeConfigRegardlessOfTfm(string tfm)
     {
         // Absolute path to the source directory

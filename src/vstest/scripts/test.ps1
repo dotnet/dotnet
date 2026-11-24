@@ -14,7 +14,7 @@ Param(
     [System.String] $TargetRuntime = "win7-x64",
 
     [Parameter(Mandatory=$false)]
-    [ValidateSet("net48", "net11.0")]
+    [ValidateSet("net48", "net12.0")]
     [Alias("f")]
     [System.String] $TargetFramework,
 
@@ -95,11 +95,11 @@ $env:NUGET_PACKAGES = $env:TP_PACKAGES_DIR
 $TPT_TargetFrameworkNet462 = "net462"
 $TPT_TargetFrameworkNet48 = "net48"
 $TPT_RunnerTargetFrameworkNet100 = "net10.0"
-$TPT_TargetFrameworkNet110 = "net11.0"
+$TPT_TargetFrameworkNet120 = "net12.0"
 Write-Verbose "Setup build configuration."
 $Script:TPT_Configuration = $Configuration
 $Script:TPT_SourceFolders =  @("test")
-$Script:TPT_TargetFrameworks =@($TPT_TargetFrameworkNet48, $TPT_TargetFrameworkNet110)
+$Script:TPT_TargetFrameworks =@($TPT_TargetFrameworkNet48, $TPT_TargetFrameworkNet120)
 $Script:TPT_TargetFramework = $TargetFramework
 $Script:TPT_TargetRuntime = $TargetRuntime
 $Script:TPT_SkipProjects = @("_none_");
@@ -225,7 +225,7 @@ function Invoke-Test
                 $testFilter = "/testCaseFilter:`"$TPT_TestFilter`""
             }
 
-            if($fx -eq $TPT_TargetFrameworkNet110)
+            if($fx -eq $TPT_TargetFrameworkNet120)
             {
                 $vstestConsoleFileName = "vstest.console.dll"
                 $targetRunTime = ""

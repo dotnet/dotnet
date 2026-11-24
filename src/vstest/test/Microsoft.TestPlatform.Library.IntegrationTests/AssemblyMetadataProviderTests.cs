@@ -56,7 +56,7 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
 
     [TestMethod]
     [DataRow("net481")]
-    [DataRow("net11.0")]
+    [DataRow("net12.0")]
     public void GetArchitectureShouldReturnCorrentArchForx64Assembly(string framework)
     {
         TestDotnetAssemblyArch("SimpleTestProject3", framework, Architecture.X64, expectedElapsedTime: ExpectedTimeForFindingArchForDotNetAssembly);
@@ -64,7 +64,7 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
 
     [TestMethod]
     [DataRow("net481")]
-    [DataRow("net11.0")]
+    [DataRow("net12.0")]
     public void GetArchitectureShouldReturnCorrentArchForx86Assembly(string framework)
     {
         TestDotnetAssemblyArch("SimpleTestProjectx86", framework, Architecture.X86, expectedElapsedTime: ExpectedTimeForFindingArchForDotNetAssembly);
@@ -72,7 +72,7 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
 
     [TestMethod]
     [DataRow("net481")]
-    [DataRow("net11.0")]
+    [DataRow("net12.0")]
     public void GetArchitectureShouldReturnCorrentArchForAnyCpuAssembly(string framework)
     {
         TestDotnetAssemblyArch("SimpleTestProject", framework, Architecture.AnyCPU, expectedElapsedTime: ExpectedTimeForFindingArchForDotNetAssembly);
@@ -80,7 +80,7 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
 
     [TestMethod]
     [DataRow("net481")]
-    [DataRow("net11.0")]
+    [DataRow("net12.0")]
     public void GetArchitectureShouldReturnCorrentArchForArm64Assembly(string framework)
     {
         TestDotnetAssemblyArch("SimpleTestProjectARM64", framework, Architecture.ARM64, expectedElapsedTime: ExpectedTimeForFindingArchForDotNetAssembly);
@@ -109,7 +109,7 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
 
     [TestMethod]
     [DataRow("net481")]
-    [DataRow("net11.0")]
+    [DataRow("net12.0")]
     public void GetFrameWorkForDotNetAssembly(string framework)
     {
         var expectedElapsedTime = 5;
@@ -127,7 +127,7 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
         }
         else
         {
-            Assert.AreEqual(".NETCoreApp,Version=v11.0", actualFx.FullName);
+            Assert.AreEqual(".NETCoreApp,Version=v12.0", actualFx.FullName);
         }
 
         Console.WriteLine("Framework:{0}, {1}", framework, string.Format(CultureInfo.CurrentCulture, PerfAssertMessageFormat, expectedElapsedTime, stopWatch.ElapsedMilliseconds));
