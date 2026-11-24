@@ -2,13 +2,18 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Threading;
+using Microsoft.VisualStudio.Utilities;
 using Moq;
 using NuGet.Configuration;
+using NuGet.ProjectManagement;
 using NuGet.VisualStudio;
+using NuGet.VisualStudio.Services;
 using Xunit;
 
 namespace NuGet.PackageManagement.VisualStudio.Test
@@ -21,6 +26,56 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         public VSSolutionManagerTest(GlobalServiceProvider globalServiceProvider)
             : base(globalServiceProvider)
         {
+        }
+
+        [Fact]
+        public async Task GetNuGetProjectsAsync_WaitsForFeatureFlagInitialization_AndLogsUnexpectedFailure()
+        {
+            var initialization = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var featureFlagInitializer = new Mock<INuGetFeatureFlagInitializer>(MockBehavior.Strict);
+            featureFlagInitializer.Setup(x => x.InitializeAsync()).Returns(initialization.Task);
+            var projectSystemCache = new Mock<IProjectSystemCache>(MockBehavior.Strict);
+            var logger = new Mock<Common.ILogger>();
+            var projectFactory = new NuGetProjectFactory(
+                Array.Empty<Lazy<INuGetProjectProvider, IOrderable>>(),
+                Mock.Of<IVsProjectThreadingService>(),
+                logger.Object);
+            using var solutionManager = new VSSolutionManager(
+                this,
+                projectSystemCache.Object,
+                projectFactory,
+                Mock.Of<ICredentialServiceProvider>(),
+                Mock.Of<IVsProjectAdapterProvider>(),
+                logger.Object,
+                new Lazy<ISettings>(() => Mock.Of<ISettings>()),
+                featureFlagInitializer.Object,
+                NuGetUIThreadHelper.JoinableTaskFactory.Context,
+                new Lazy<IProjectJsonToPackageReferenceMigratorExt>(
+                    () => Mock.Of<IProjectJsonToPackageReferenceMigratorExt>()),
+                new Lazy<INuGetUILogger>(() => Mock.Of<INuGetUILogger>()));
+
+            var projects = solutionManager.GetNuGetProjectsAsync();
+
+            Assert.False(projects.IsCompleted);
+            projectSystemCache.VerifyNoOtherCalls();
+            projectSystemCache.Setup(x => x.GetNuGetProjects()).Returns(Array.Empty<NuGetProject>());
+
+            var expected = new InvalidOperationException("Feature flag initialization failed.");
+            // The existing catch calls Debug.Fail; suppress listeners for this intentional failure.
+            TraceListener[] listeners = Trace.Listeners.Cast<TraceListener>().ToArray();
+            try
+            {
+                Trace.Listeners.Clear();
+                initialization.SetException(expected);
+                Assert.Empty(await projects);
+            }
+            finally
+            {
+                Trace.Listeners.AddRange(listeners);
+            }
+            logger.Verify(x => x.LogError(expected.ToString()), Times.Once);
+            projectSystemCache.Verify(x => x.GetNuGetProjects(), Times.Once);
+            projectSystemCache.VerifyNoOtherCalls();
         }
 
         [Fact]

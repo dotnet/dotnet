@@ -14,6 +14,12 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = "maddress", Help = "Displays a breakdown of the virtual address space.")]
     public sealed class MAddressCommand : CommandBase
     {
+        public MAddressCommand(IServiceProvider services, NativeAddressHelper addressHelper)
+            : base(services)
+        {
+            AddressHelper = addressHelper;
+        }
+
         private const string ImagesFlag = "-images";
         private const string SummaryFlag = "-summary";
         private const string ReserveFlag = "-reserve";
@@ -22,29 +28,28 @@ namespace Microsoft.Diagnostics.ExtensionCommands
         private const string ListFlag = "-list";
         private const string BySizeFlag = "-orderBySize";
 
-        [Option(Name = SummaryFlag, Aliases = new string[] { "-stat", }, Help = "Only print summary table.")]
+        [Option<bool>(Name = SummaryFlag, Aliases = new string[] { "-stat", }, Help = "Only print summary table.")]
         public bool Summary { get; set; }
 
-        [Option(Name = ImagesFlag, Help = "Prints a summary table of image memory usage.")]
+        [Option<bool>(Name = ImagesFlag, Help = "Prints a summary table of image memory usage.")]
         public bool ShowImageTable { get; set; }
 
-        [Option(Name = ReserveFlag, Help = "Include MEM_RESERVE regions in the output.")]
+        [Option<bool>(Name = ReserveFlag, Help = "Include MEM_RESERVE regions in the output.")]
         public bool IncludeReserveMemory { get; set; }
 
-        [Option(Name = ReserveHeuristicFlag, Help = "Heuristically tag MEM_RESERVE regions based on adjacent memory regions.")]
+        [Option<bool>(Name = ReserveHeuristicFlag, Help = "Heuristically tag MEM_RESERVE regions based on adjacent memory regions.")]
         public bool TagReserveMemoryHeuristically { get; set; }
 
-        [Option(Name = ForceHandleTableFlag, Help = "We only tag the HandleTable if we can do so efficiently on newer runtimes.  This option ensures we always tag HandleTable memory, even if it will take a long time.")]
+        [Option<bool>(Name = ForceHandleTableFlag, Help = "We only tag the HandleTable if we can do so efficiently on newer runtimes.  This option ensures we always tag HandleTable memory, even if it will take a long time.")]
         public bool IncludeHandleTableIfSlow { get; set; }
 
-        [Option(Name = BySizeFlag, Help = "List the raw addresses by size, not by base address.")]
+        [Option<bool>(Name = BySizeFlag, Help = "List the raw addresses by size, not by base address.")]
         public bool BySize { get; set; }
 
-        [Option(Name = ListFlag, Help = "A separated list of memory regions to list allocations for.")]
+        [Option<string>(Name = ListFlag, Help = "A separated list of memory regions to list allocations for.")]
         public string List { get; set; }
 
-        [ServiceImport]
-        public NativeAddressHelper AddressHelper { get; set; }
+        public NativeAddressHelper AddressHelper { get; }
 
         public override void Invoke()
         {
@@ -197,7 +202,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
         }
 
         [FilterInvoke(Message = "The memory region service does not exists. This command is only supported under windbg/cdb debuggers.")]
-        public static bool FilterInvoke([ServiceImport(Optional = true)] NativeAddressHelper helper) => helper != null;
+        public static bool FilterInvoke(IServiceProvider services) => services.GetService<NativeAddressHelper>() != null;
 
         [HelpInvoke]
         public static string GetDetailedHelp() =>

@@ -14,10 +14,15 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = "listnearobj", Aliases = new[] { "lno", "ListNearObj" }, Help = "Displays the object preceding and succeeding the specified address.")]
     public class ListNearObjCommand : ClrRuntimeCommandBase
     {
-        [ServiceImport]
-        public IMemoryService MemoryService { get; set; }
+        public ListNearObjCommand(IServiceProvider services, IMemoryService memoryService)
+            : base(services)
+        {
+            MemoryService = memoryService;
+        }
 
-        [Argument(Help = "The address on the GC heap to list near objects")]
+        public IMemoryService MemoryService { get; }
+
+        [Argument<string>(Help = "The address on the GC heap to list near objects")]
         public string Address { get; set; }
 
         public override void Invoke()

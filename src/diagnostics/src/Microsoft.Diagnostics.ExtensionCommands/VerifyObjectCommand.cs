@@ -14,10 +14,15 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = "verifyobj", Aliases = new[] { "VerifyObj" }, Help = "Checks the given object for signs of corruption.")]
     public sealed class VerifyObjectCommand : ClrRuntimeCommandBase
     {
-        [ServiceImport]
-        public IMemoryService Memory { get; set; }
+        public VerifyObjectCommand(IServiceProvider services, IMemoryService memory)
+            : base(services)
+        {
+            Memory = memory;
+        }
 
-        [Argument(Name = "objectaddress", Help = "The object to verify.")]
+        public IMemoryService Memory { get; }
+
+        [Argument<string>(Name = "objectaddress", Help = "The object to verify.")]
         public string ObjectAddress { get; set; }
 
         public override void Invoke()

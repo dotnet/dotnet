@@ -5,6 +5,9 @@
   <!-- Exclude Helix from source-build until we find a reason to use it. -->
   <PropertyGroup>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
+    <!-- Excluded projects are still restored, which resolves an apphost for executables such as the
+         JobMonitor tool; source-build may have none for the target RID (e.g. linux-riscv64). -->
+    <UseAppHost Condition="'$(DotNetBuildSourceOnly)' == 'true'">false</UseAppHost>
   </PropertyGroup>
 
 </Project>
