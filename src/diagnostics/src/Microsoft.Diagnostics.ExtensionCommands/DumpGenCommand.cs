@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Collections.Generic;
 using Microsoft.Diagnostics.DebugServices;
 using Microsoft.Diagnostics.Runtime;
@@ -10,18 +11,23 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = "dumpgen", Aliases = new string[] { "dg" }, Help = "Displays heap content for the specified generation.")]
     public class DumpGenCommand : ClrMDHelperCommandBase
     {
+        public DumpGenCommand(IServiceProvider services)
+            : base(services)
+        {
+        }
+
         private const string statsHeader32bits = "      MT    Count    TotalSize Class Name";
         private const string statsHeader64bits = "              MT    Count    TotalSize Class Name";
         private const string methodTableHeader32bits = " Address       MT     Size";
         private const string methodTableHeader64bits = "         Address               MT     Size";
 
-        [Argument(Name = "generation", Help = "The GC generation to get heap data from.")]
+        [Argument<string>(Name = "generation", Help = "The GC generation to get heap data from.")]
         public string Generation { get; set; }
 
-        [Option(Name = "-type", Help = "List only those objects whose type name is a substring match of the provided string.")]
+        [Option<string>(Name = "-type", Help = "List only those objects whose type name is a substring match of the provided string.")]
         public string FilterByTypeName { get; set; }
 
-        [Option(Name = "-mt", Help = "The address pointing on a Method table.")]
+        [Option<string>(Name = "-mt", Help = "The address pointing on a Method table.")]
         public string MethodTableAddress { get; set; }
 
         public override void Invoke()

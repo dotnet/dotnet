@@ -16,30 +16,40 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = "notreachableinrange", Help = "A helper command for !finalizerqueue")]
     public class NotReachableInRangeCommand : ClrRuntimeCommandBase
     {
+        public NotReachableInRangeCommand(
+            IServiceProvider services,
+            LiveObjectService liveObjects,
+            RootCacheService rootCache,
+            DumpHeapService dumpHeap,
+            IMemoryService memory)
+            : base(services)
+        {
+            LiveObjects = liveObjects;
+            RootCache = rootCache;
+            DumpHeap = dumpHeap;
+            Memory = memory;
+        }
+
         private HashSet<ulong> _nonFQLiveObjects;
 
-        [ServiceImport]
-        public LiveObjectService LiveObjects { get; set; }
+        public LiveObjectService LiveObjects { get; }
 
-        [ServiceImport]
-        public RootCacheService RootCache { get; set; }
+        public RootCacheService RootCache { get; }
 
-        [ServiceImport]
-        public DumpHeapService DumpHeap { get; set; }
+        public DumpHeapService DumpHeap { get; }
 
-        [ServiceImport]
-        public IMemoryService Memory { get; set; }
+        public IMemoryService Memory { get; }
 
-        [Option(Name = "-short")]
+        [Option<bool>(Name = "-short")]
         public bool Short { get; set; }
 
-        [Option(Name = "-nofinalizer")]
+        [Option<bool>(Name = "-nofinalizer")]
         public bool NoFinalizer { get; set; }
 
-        [Argument(Name = "start")]
+        [Argument<string>(Name = "start")]
         public string StartAddress { get; set; }
 
-        [Argument(Name = "end")]
+        [Argument<string>(Name = "end")]
         public string EndAddress { get; set; }
 
         public override void Invoke()

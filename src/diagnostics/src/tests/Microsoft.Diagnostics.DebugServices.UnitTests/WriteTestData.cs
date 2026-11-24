@@ -9,7 +9,12 @@ namespace Microsoft.Diagnostics.DebugServices.UnitTests
     [Command(Name = "writetestdata", Help = "Writes the test data xml file.")]
     public class WriteTestDataCommand : CommandBase
     {
-        [Argument(Name = "FileName", Help = "Test data file path.")]
+        public WriteTestDataCommand(IServiceProvider services)
+            : base(services)
+        {
+        }
+
+        [Argument<string>(Name = "FileName", Help = "Test data file path.")]
         public string FileName { get; set; }
 
         public override void Invoke()

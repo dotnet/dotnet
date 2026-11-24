@@ -18,29 +18,34 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = "modules", Aliases = new string[] { "lm" }, Help = "Displays the native modules in the process.")]
     public class ModulesCommand : CommandBase
     {
-        [Option(Name = "--verbose", Aliases = new string[] { "-v" }, Help = "Displays more details.")]
+        public ModulesCommand(IServiceProvider services, ITarget target, IModuleService moduleService, IMemoryService memoryService)
+            : base(services)
+        {
+            Target = target;
+            ModuleService = moduleService;
+            MemoryService = memoryService;
+        }
+
+        [Option<bool>(Name = "--verbose", Aliases = new string[] { "-v" }, Help = "Displays more details.")]
         public bool Verbose { get; set; }
 
-        [Option(Name = "--segments", Aliases = new string[] { "-s" }, Help = "Displays the module segments.")]
+        [Option<bool>(Name = "--segments", Aliases = new string[] { "-s" }, Help = "Displays the module segments.")]
         public bool Segment { get; set; }
 
-        [Option(Name = "--resources", Aliases = new string[] { "-r" }, Help = "Displays the module resources.")]
+        [Option<bool>(Name = "--resources", Aliases = new string[] { "-r" }, Help = "Displays the module resources.")]
         public bool Resources { get; set; }
 
-        [Option(Name = "--name", Aliases = new string[] { "-n" }, Help = "RegEx filter on module name (path not included).")]
+        [Option<string>(Name = "--name", Aliases = new string[] { "-n" }, Help = "RegEx filter on module name (path not included).")]
         public string ModuleName { get; set; }
 
-        [Option(Name = "--address", Aliases = new string[] { "-a" }, Help = "Lookup address in module list.")]
+        [Option<ulong?>(Name = "--address", Aliases = new string[] { "-a" }, Help = "Lookup address in module list.")]
         public ulong? Address { get; set; }
 
-        [ServiceImport]
-        public ITarget Target { get; set; }
+        public ITarget Target { get; }
 
-        [ServiceImport]
-        public IModuleService ModuleService { get; set; }
+        public IModuleService ModuleService { get; }
 
-        [ServiceImport]
-        public IMemoryService MemoryService { get; set; }
+        public IMemoryService MemoryService { get; }
 
         public override void Invoke()
         {
