@@ -49,11 +49,8 @@
     -->
     <PrivateSourceBuiltSdkVersion>12.0.100-alpha.1.26557.102</PrivateSourceBuiltSdkVersion>
     <PrivateSourceBuiltArtifactsVersion>12.0.100-alpha.1.26557.102</PrivateSourceBuiltArtifactsVersion>
-    <!-- The SDK package retains its build stamp when shipping manifests switch to stable or .final versions. -->
+    <!-- Non-1xx branches must set DotNet1xxWorkloadManifestVersion to the exact version produced by the selected 1xx build. -->
     <_DotNet1xxSdkPrereleaseLabel>$([System.Text.RegularExpressions.Regex]::Match('$(MicrosoftNETSdkVersion)', '(?&lt;=-)[^.]+').Value)</_DotNet1xxSdkPrereleaseLabel>
-    <DotNet1xxWorkloadManifestVersion>$(MicrosoftNETSdkVersion)</DotNet1xxWorkloadManifestVersion>
-    <DotNet1xxWorkloadManifestVersion Condition="'$(_DotNet1xxSdkPrereleaseLabel)' == 'servicing' or '$(RepoDotNetFinalVersionKind)' == 'release'">$([System.Text.RegularExpressions.Regex]::Match('$(MicrosoftNETSdkVersion)', '^\d+\.\d+\.\d+').Value)</DotNet1xxWorkloadManifestVersion>
-    <DotNet1xxWorkloadManifestVersion Condition="'$(RepoDotNetFinalVersionKind)' == 'preview' and '$(_DotNet1xxSdkPrereleaseLabel)' != 'servicing' and '$(_DotNet1xxSdkPrereleaseLabel)' != 'rtm'">$([System.Text.RegularExpressions.Regex]::Replace('$(MicrosoftNETSdkVersion)', '^(\d+\.\d+\.\d+-[^.]+(?:\.\d+)?)(?:\.\d+){2}$', '$1.final'))</DotNet1xxWorkloadManifestVersion>
     <!-- Manifest IDs include the selected 1xx prerelease branding, without the build number or .final. -->
     <DotNet1xxWorkloadManifestPackageIdSuffix Condition="'$(_DotNet1xxSdkPrereleaseLabel)' != '' and '$(_DotNet1xxSdkPrereleaseLabel)' != 'rtm' and '$(_DotNet1xxSdkPrereleaseLabel)' != 'servicing'">$([System.Text.RegularExpressions.Regex]::Replace('$(MicrosoftNETSdkVersion)', '^\d+\.\d+\.\d+|\.(\d+\.\d+|final)$', ''))</DotNet1xxWorkloadManifestPackageIdSuffix>
     <!-- command-line-api dependencies -->
