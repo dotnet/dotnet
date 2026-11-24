@@ -60,6 +60,17 @@ public class SocketClientTests : SocketTestsBase, IDisposable
     }
 
     [TestMethod]
+    public void SocketClientStartShouldUseIPv4SocketForIPv4Endpoint()
+    {
+        var connectionInfo = StartLocalServer();
+
+        _socketClient.Start(connectionInfo);
+
+        // A default TcpClient is a dual-mode IPv6 socket, which loopback-only macOS sandboxes reject.
+        Assert.AreEqual(AddressFamily.InterNetwork, ((SocketClient)_socketClient).TcpClient!.Client.AddressFamily);
+    }
+
+    [TestMethod]
     [Ignore("Disabled long ago; original reason was not recorded.")]
     public void SocketClientStartShouldThrowIfServerIsNotListening()
     {

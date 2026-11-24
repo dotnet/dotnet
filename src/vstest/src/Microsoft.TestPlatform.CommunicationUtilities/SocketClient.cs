@@ -21,9 +21,9 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 public class SocketClient : ICommunicationEndPoint
 {
     private readonly CancellationTokenSource _cancellation;
-    private readonly TcpClient _tcpClient;
     private readonly Func<Stream, ICommunicationChannel> _channelFactory;
 
+    private TcpClient? _tcpClient;
     private ICommunicationChannel? _channel;
     private bool _stopped;
     private string? _endPoint;
@@ -38,8 +38,6 @@ public class SocketClient : ICommunicationEndPoint
         // Used to cancel the message loop
         _cancellation = new CancellationTokenSource();
         _stopped = false;
-
-        _tcpClient = new TcpClient { NoDelay = true };
         _channelFactory = channelFactory;
     }
 
@@ -49,6 +47,8 @@ public class SocketClient : ICommunicationEndPoint
     /// <inheritdoc />
     public event EventHandler<DisconnectedEventArgs>? Disconnected;
 
+    internal TcpClient? TcpClient => _tcpClient;
+
     /// <inheritdoc />
     public string Start(string endPoint)
     {
@@ -57,8 +57,14 @@ public class SocketClient : ICommunicationEndPoint
 
         EqtTrace.Info("SocketClient.Start: connecting to server endpoint: {0}", endPoint);
 
+        // Match the endpoint's address family. The default TcpClient is a dual-mode IPv6 socket,
+        // so an IPv4 endpoint reaches the OS as an IPv4-mapped IPv6 address (::ffff:127.0.0.1),
+        // which sandboxes that allow only localhost reject.
+        var tcpClient = new TcpClient(ipEndPoint.AddressFamily) { NoDelay = true };
+        _tcpClient = tcpClient;
+
         // Don't start if the endPoint port is zero
-        _tcpClient.ConnectAsync(ipEndPoint.Address, ipEndPoint.Port).ContinueWith(OnServerConnected);
+        tcpClient.ConnectAsync(ipEndPoint.Address, ipEndPoint.Port).ContinueWith(task => OnServerConnected(task, tcpClient));
         return ipEndPoint.ToString();
     }
 
@@ -82,7 +88,7 @@ public class SocketClient : ICommunicationEndPoint
         }
     }
 
-    private void OnServerConnected(Task connectAsyncTask)
+    private void OnServerConnected(Task connectAsyncTask, TcpClient tcpClient)
     {
         EqtTrace.Info("SocketClient.OnServerConnected: connected to server endpoint: {0}", _endPoint);
 
@@ -98,13 +104,13 @@ public class SocketClient : ICommunicationEndPoint
             return;
         }
 
-        _channel = _channelFactory(_tcpClient.GetStream());
+        _channel = _channelFactory(tcpClient.GetStream());
         Connected.SafeInvoke(this, new ConnectedEventArgs(_channel), "SocketClient: ServerConnected");
 
         EqtTrace.Verbose("Connected to server, and starting MessageLoopAsync");
 
         // Start the message loop
-        Task.Run(() => _tcpClient.MessageLoopAsync(
+        Task.Run(() => tcpClient.MessageLoopAsync(
                 _channel,
                 StopOnError,
                 _cancellation.Token))
