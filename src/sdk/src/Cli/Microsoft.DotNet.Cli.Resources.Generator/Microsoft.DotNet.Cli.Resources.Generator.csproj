@@ -16,10 +16,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Common"
-                      VersionOverride="$(MicrosoftCodeAnalysisVersionForNetAnalyzers)"
+                      VersionOverride="$(MicrosoftCodeAnalysisVersionForSourceGenerators)"
                       PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp"
-                      VersionOverride="$(MicrosoftCodeAnalysisVersionForNetAnalyzers)"
+                      VersionOverride="$(MicrosoftCodeAnalysisVersionForSourceGenerators)"
                       PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>

@@ -130,6 +130,8 @@
 
     <MicrosoftCodeAnalysisVersionForNetAnalyzers Condition="'$(DotNetBuildSourceOnly)' != 'true'">4.14.0</MicrosoftCodeAnalysisVersionForNetAnalyzers>
     <MicrosoftCodeAnalysisVersionForNetAnalyzers Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(MicrosoftCodeAnalysisVersion)</MicrosoftCodeAnalysisVersionForNetAnalyzers>
+    <MicrosoftCodeAnalysisVersionForSourceGenerators>$(MicrosoftCodeAnalysisVersionForNetAnalyzers)</MicrosoftCodeAnalysisVersionForSourceGenerators>
+    <MicrosoftCodeAnalysisVersionForSourceGenerators Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(MicrosoftCodeAnalysisCSharpPreviousVersion)' != ''">$(MicrosoftCodeAnalysisCSharpPreviousVersion)</MicrosoftCodeAnalysisVersionForSourceGenerators>
   </PropertyGroup>
 
   <Import Project="build/GenerateResxSource.targets" />
