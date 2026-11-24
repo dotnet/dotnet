@@ -62,7 +62,7 @@ public class MtpUnderVstestTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    // MTP apps are .NET (Core) applications. Pin the testhost axis to .NET so we drive the net11.0 MTP app
+    // MTP apps are .NET (Core) applications. Pin the testhost axis to .NET so we drive the net12.0 MTP app
     // from both the .NET Framework and the .NET console (the .NET Framework console exercises the Jsonite
     // JSON-RPC path; it is Windows-only and skipped elsewhere by the matrix).
     [TestMatrix(testHost: Target.Net)]

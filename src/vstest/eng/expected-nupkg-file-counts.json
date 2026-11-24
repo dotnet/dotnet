@@ -1,7 +1,7 @@
 {
-  "Microsoft.CodeCoverage": 81,
+  "Microsoft.CodeCoverage": 83,
   "Microsoft.NET.Test.Sdk": 26,
-  "Microsoft.TestPlatform": 555,
+  "Microsoft.TestPlatform": 556,
   "Microsoft.TestPlatform.AdapterUtilities": 51,
   "Microsoft.TestPlatform.Build": 22,
   "Microsoft.TestPlatform.CLI": 484,

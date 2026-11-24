@@ -31,7 +31,7 @@ public class NativeAotCompatibilityTests
 {
     private static readonly string TestAssetPath = Path.GetFullPath(
         Path.Combine(
-            // Navigate from the test output directory (artifacts/bin/<project>/Debug/net11.0)
+            // Navigate from the test output directory (artifacts/bin/<project>/Debug/net12.0)
             // to the repo root, then into the test asset.
             AppContext.BaseDirectory,
             "..", "..", "..", "..", "..",
