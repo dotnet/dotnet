@@ -139,6 +139,17 @@ public class SocketCommunicationManagerTests : IDisposable
     }
 
     [TestMethod]
+    public async Task SetupClientAsyncShouldUseIPv4SocketForIPv4Endpoint()
+    {
+        var port = StartServer();
+        _ = _communicationManager.SetupClientAsync(new IPEndPoint(IPAddress.Loopback, port));
+        await _tcpListener.AcceptTcpClientAsync();
+
+        // A default TcpClient is a dual-mode IPv6 socket, which loopback-only macOS sandboxes reject.
+        Assert.AreEqual(AddressFamily.InterNetwork, _communicationManager.Socket!.AddressFamily);
+    }
+
+    [TestMethod]
     public async Task WaitForServerConnectionShouldWaitUntilClientIsConnected()
     {
         var port = StartServer();
