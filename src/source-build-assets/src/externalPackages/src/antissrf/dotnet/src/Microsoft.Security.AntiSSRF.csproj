@@ -1,0 +1,84 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <!-- ASSEMBLY IDENTITY -->
+    <PropertyGroup>
+        <RootNamespace>Microsoft.Security.AntiSSRF</RootNamespace>
+        <AssemblyName>$(RootNamespace)</AssemblyName>
+    </PropertyGroup>
+
+    <!-- PACKAGE METADATA -->
+    <PropertyGroup>
+        <PackageId>Microsoft.Security.AntiSSRF</PackageId>
+        <Authors>Microsoft</Authors>
+        <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+        <Description>Microsoft AntiSSRF is a security library that helps .NET developers protect their applications from Server-Side Request Forgery (SSRF) attacks. The library provides configurable policies to validate and filter outbound HTTP requests, preventing attackers from exploiting server-side functionality to access internal resources or perform unauthorized network requests. Features include IP address validation, URL filtering, and custom policy configuration.</Description>
+        <PackageTags>security ssrf anti-ssrf antissrf http request protection vulnerability filtering validation web-security</PackageTags>
+    </PropertyGroup>
+
+    <!-- PACKAGE LICENSING -->
+    <PropertyGroup>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RequireLicenseAcceptance>true</RequireLicenseAcceptance>
+    </PropertyGroup>
+
+    <!-- PACKAGE RESOURCES -->
+    <PropertyGroup>
+        <PackageProjectUrl>https://github.com/Microsoft/AntiSSRF</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Microsoft/AntiSSRF</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageIcon>microsoft.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <!-- LANGUAGE DETAILS -->
+    <PropertyGroup>
+        <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
+        <LangVersion>Latest</LangVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <!-- ASSEMBLY ATTRIBUTES -->
+    <!-- InternalsVisibleTo - without strong name signing -->
+    <ItemGroup Condition="'$(SignAssembly)' != 'true'">
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>Microsoft.Security.AntiSSRF.UnitTests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    
+    <!-- InternalsVisibleTo - with strong name signing using PublicKey MSBuild property -->
+    <ItemGroup Condition="'$(SignAssembly)' == 'true'">
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>Microsoft.Security.AntiSSRF.UnitTests, PublicKey=$(PublicKey)</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <!-- VERSION -->
+    <PropertyGroup>
+        <Major Condition="'$(Major)'==''">1</Major>
+        <Minor Condition="'$(Minor)'==''">0</Minor>
+        <Patch Condition="'$(Patch)'==''">0</Patch>
+        <VersionPrefix>$(Major).$(Minor).$(Patch)</VersionPrefix>
+        <!-- If VersionSuffix is blank => PackageVersion is just VersionPrefix -->
+        <PackageVersion Condition="'$(VersionSuffix)'=='' or '$(VersionSuffix)'==' '">$(VersionPrefix)</PackageVersion>
+        <PackageVersion Condition="'$(VersionSuffix)'!='' and '$(VersionSuffix)'!=' '">$(VersionPrefix)-$(VersionSuffix)</PackageVersion>
+        <!-- Assembly identity (stable) -->
+        <AssemblyVersion>$(Major).$(Minor).0.0</AssemblyVersion>
+        <!-- Windows file version (precise) -->
+        <FileVersion>$(Major).$(Minor).$(Patch).0</FileVersion>
+        <!-- What 'dotnet \-\-info', logs, and many tools show -->
+        <InformationalVersion>$(PackageVersion)</InformationalVersion>
+    </PropertyGroup>
+
+    <!-- FRAMEWORK SUPPORT -->
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <PackageReference Include="System.Memory" />
+        <PackageReference Include="System.Threading.Tasks.Extensions" />
+    </ItemGroup>
+
+    <!-- PACKAGE ASSETS -->
+    <ItemGroup>
+        <None Include="microsoft.png" Pack="true" PackagePath="" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

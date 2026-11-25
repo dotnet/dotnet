@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using Microsoft.Diagnostics.DebugServices;
 using Microsoft.Diagnostics.ExtensionCommands.Output;
 
@@ -9,10 +10,15 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = "histobjfind", Aliases = new[] { "HistObjFind", "hof" }, Help = "Displays all the log entries that reference an object at the specified address.")]
     public sealed class HistObjFindCommand : ClrRuntimeCommandBase
     {
-        [ServiceImport]
-        public GCHistory History { get; set; }
+        public HistObjFindCommand(IServiceProvider services, GCHistory history)
+            : base(services)
+        {
+            History = history;
+        }
 
-        [Argument(Name = "object", Help = "The object address to search for in the stress log.")]
+        public GCHistory History { get; }
+
+        [Argument<string>(Name = "object", Help = "The object address to search for in the stress log.")]
         public string ObjectAddress { get; set; }
 
         public override void Invoke()

@@ -15,7 +15,6 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 public class DisableAppdomainTests : AcceptanceTestBase
 {
     [TestMethod]
-    [TestCategory("Windows")]
     // Run in .NET Framework testhost, disabling appdomain will force running out of process in all cases.
     [TestMatrix(testHost: NetFx, inProcess: true)]
     public void DisableAppdomainTest(RunnerInfo runnerInfo)
@@ -29,7 +28,6 @@ public class DisableAppdomainTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows")]
     [TestMatrix(testHost: NetFx)]
     public void NewtonSoftDependencyWithDisableAppdomainTest(RunnerInfo runnerInfo)
     {

@@ -396,6 +396,7 @@ namespace NuGet.SolutionRestoreManager
         private static string GetBestOriginalFrameworkValue(TargetFrameworkInformation tfi)
         {
             // Validate the framework
+            Assumes.NotNull(tfi.FrameworkName);
             string shortFolderName = tfi.FrameworkName.GetShortFolderName();
             return !string.IsNullOrEmpty(tfi.TargetAlias) ? tfi.TargetAlias : shortFolderName;
         }

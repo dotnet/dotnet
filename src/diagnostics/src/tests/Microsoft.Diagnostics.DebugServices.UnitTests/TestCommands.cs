@@ -10,13 +10,18 @@ namespace Microsoft.Diagnostics.DebugServices.UnitTests
     [Command(Name = "testcommand", Help = "Test command #1")]
     public class TestCommand1 : CommandBase
     {
+        public TestCommand1(IServiceProvider services, ITarget target)
+            : base(services)
+        {
+            Target = target;
+        }
+
         public static bool FilterValue;
         public static bool Invoked;
 
-        [ServiceImport]
-        public ITarget Target { get; set; }
+        public ITarget Target { get; }
 
-        [Argument(Name = "FileName", Help = "Test argument.")]
+        [Argument<string>(Name = "FileName", Help = "Test argument.")]
         public string FileName { get; set; }
 
         public override void Invoke()
@@ -32,13 +37,18 @@ namespace Microsoft.Diagnostics.DebugServices.UnitTests
     [Command(Name = "testcommand", Help = "Test command #2")]
     public class TestCommand2 : CommandBase
     {
+        public TestCommand2(IServiceProvider services, ITarget target)
+            : base(services)
+        {
+            Target = target;
+        }
+
         public static bool FilterValue;
         public static bool Invoked;
 
-        [ServiceImport]
-        public ITarget Target { get; set; }
+        public ITarget Target { get; }
 
-        [Option(Name = "--foo", Help = "Test option.")]
+        [Option<int>(Name = "--foo", Help = "Test option.")]
         public int Foo { get; set; }
 
         public override void Invoke()
@@ -54,13 +64,18 @@ namespace Microsoft.Diagnostics.DebugServices.UnitTests
     [Command(Name = "testcommand", Help = "Test command #3")]
     public class TestCommand3 : CommandBase
     {
+        public TestCommand3(IServiceProvider services, ITarget target)
+            : base(services)
+        {
+            Target = target;
+        }
+
         public static bool FilterValue;
         public static bool Invoked;
 
-        [ServiceImport]
-        public ITarget Target { get; set; }
+        public ITarget Target { get; }
 
-        [Option(Name = "--foo", Help = "Test option.")]
+        [Option<int>(Name = "--foo", Help = "Test option.")]
         public int Foo { get; set; }
 
         public override void Invoke()

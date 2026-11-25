@@ -326,11 +326,53 @@ namespace NuGet.Packaging
             return filesCopied;
         }
 
+        /// <summary>
+        /// Extracts a package file to the caller-specified output path.
+        /// </summary>
+        /// <remarks>
+        /// The caller is responsible for validating <paramref name="targetFilePath"/>.
+        /// Use the overload that accepts a destination directory, or <see cref="CopyFiles"/>, to validate extraction paths.
+        /// </remarks>
+        [Obsolete("Use the ExtractFile overload with a destination directory, or CopyFiles, to validate extraction paths.")]
         public string ExtractFile(string packageFile, string targetFilePath, ILogger logger)
         {
             var entry = GetEntry(packageFile);
             var copiedFile = entry.SaveAsFile(targetFilePath, logger);
             return copiedFile;
+        }
+
+        /// <summary>
+        /// Extracts a package file after validating that its output path is inside the destination directory.
+        /// </summary>
+        /// <param name="packageFile">The file to read from the package.</param>
+        /// <param name="destination">The directory that must contain the extracted file.</param>
+        /// <param name="targetFilePath">An output path relative to the destination, or an absolute path inside it.</param>
+        /// <param name="logger">The logger, or <see langword="null"/> to disable logging.</param>
+        /// <returns>The canonical path of the extracted file.</returns>
+        /// <exception cref="UnsafePackageEntryException">The output path is not inside the destination directory.</exception>
+        public string ExtractFile(string packageFile, string destination, string targetFilePath, ILogger? logger)
+        {
+            if (packageFile == null)
+            {
+                throw new ArgumentNullException(nameof(packageFile));
+            }
+
+            if (destination == null)
+            {
+                throw new ArgumentNullException(nameof(destination));
+            }
+
+            if (targetFilePath == null)
+            {
+                throw new ArgumentNullException(nameof(targetFilePath));
+            }
+
+            var validatedTargetFilePath = GetValidatedPackageEntryPath(
+                PathUtility.EnsureTrailingSlash(Path.GetFullPath(destination)),
+                targetFilePath,
+                GetIdentity());
+            var entry = GetEntry(packageFile);
+            return entry.SaveAsFile(validatedTargetFilePath, logger ?? NullLogger.Instance);
         }
 
         public ZipArchiveEntry GetEntry(string packageFile)

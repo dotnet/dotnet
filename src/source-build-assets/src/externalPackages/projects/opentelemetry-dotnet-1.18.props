@@ -1,0 +1,17 @@
+<Project>
+
+  <Import Project="$(MSBuildThisFileDirectory)validation.props" />
+
+  <PropertyGroup>
+    <!-- MinVer is disabled by IntegrationBuild; match the published stable package metadata. -->
+    <FileVersionRevision>2160</FileVersionRevision>
+    <AssemblyVersionOverride>1.0.0.0</AssemblyVersionOverride>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FileVersionValidationPackage Include="OpenTelemetry">
+      <ReleaseVersionProperty>OpenTelemetryDotNet118ReleaseVersion</ReleaseVersionProperty>
+    </FileVersionValidationPackage>
+  </ItemGroup>
+
+</Project>

@@ -300,15 +300,17 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
         var columnModifications = new List<IColumnModification>();
         Dictionary<string, ColumnValuePropagator>? sharedTableColumnMap = null;
 
-        // Detect table-splitting and populate shared columns to propagate values back to the sharing entries.
-        if (_entries.Count > 1
-            || (_entries is [var singleEntry]
-                && (singleEntry.SharedIdentityEntry is not null
-                    || singleEntry.EntityType.GetComplexProperties()
-                        .Any(cp => !cp.IsCollection && !cp.ComplexType.IsMappedToJson()))))
-        {
-            Check.DebugAssert(StoreStoredProcedure is null, "Multiple entries/shared identity not supported with stored procedures");
+        Check.DebugAssert(StoreStoredProcedure is null || _entries.Count == 1, "Multiple entries not supported with stored procedures");
 
+        // Detect table-splitting and populate shared columns to propagate values back to the sharing entries.
+        // Stored procedures are always sent all their parameters, so they don't need this, even for a shared identity entry.
+        if (StoreStoredProcedure is null
+            && (_entries.Count > 1
+                || (_entries is [var singleEntry]
+                    && (singleEntry.SharedIdentityEntry is not null
+                        || singleEntry.EntityType.GetComplexProperties()
+                            .Any(cp => !cp.IsCollection && !cp.ComplexType.IsMappedToJson())))))
+        {
             sharedTableColumnMap = [];
 
             if (_comparer != null
@@ -342,11 +344,10 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
             }
         }
 
+        // A replaced dependent's JSON has to be cleared even if no current entry has JSON
         if (!deleting
-            && _entries.Any(e => e.EntityType is { } entityType
-                && (entityType.IsMappedToJson()
-                    || entityType.GetFlattenedComplexProperties().Any(cp => cp.ComplexType.IsMappedToJson())
-                    || entityType.GetNavigations().Any(e => e.IsCollection && e.TargetEntityType.IsMappedToJson()))))
+            && _entries.Any(e => HasJson(e.EntityType)
+                || e.SharedIdentityEntry is { EntityState: EntityState.Deleted } replacedEntry && HasJson(replacedEntry.EntityType)))
         {
             HandleJson(columnModifications);
         }
@@ -372,7 +373,9 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
                 optionalDependentWithAllNull =
                     entry.EntityState is EntityState.Modified or EntityState.Added
                     && tableMapping.Table.IsOptional(entry.EntityType)
-                    && tableMapping.Table.GetRowInternalForeignKeys(entry.EntityType).Any();
+                    && tableMapping.Table.GetRowInternalForeignKeys(entry.EntityType).Any()
+                    && entry.EntityType.GetComplexProperties()
+                        .All(p => !p.ComplexType.IsMappedToJson() || entry.GetCurrentValue(p) == null);
 
                 HandleNonJson(entry, entry.EntityType, tableMapping, nonMainEntry, ref optionalDependentWithAllNull);
             }
@@ -395,6 +398,11 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
         }
 
         return columnModifications;
+
+        static bool HasJson(IEntityType entityType)
+            => entityType.IsMappedToJson()
+                || entityType.GetFlattenedComplexProperties().Any(cp => cp.ComplexType.IsMappedToJson())
+                || entityType.GetNavigations().Any(e => e.IsCollection && e.TargetEntityType.IsMappedToJson());
 
         void HandleNonJson(
             IUpdateEntry entry,
@@ -675,8 +683,18 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
             }
 
             var modifiedMembers = entry.EntityType.GetFlattenedProperties().Where(entry.IsModified).ToList();
-            if (modifiedMembers.Count == 1)
+
+            // Patch one scalar at a time, except for complex collections and null changes of complex properties
+            if (modifiedMembers.Count == 1
+                && !entry.EntityType.GetFlattenedComplexProperties().Any(cp => cp.IsCollection && entry.IsModified(cp))
+                && GetComplexPropertyPath(entry, modifiedMembers[0]) is { } complexPropertyPath)
             {
+                // The containing complex properties are part of the path, so that it's only merged with paths that share them
+                foreach (var complexProperty in complexPropertyPath)
+                {
+                    result.Add(new JsonPartialUpdatePathEntry(complexProperty.GetJsonPropertyName()!, null, entry, complexProperty));
+                }
+
                 result.Add(
                     new JsonPartialUpdatePathEntry(
                         modifiedMembers[0].GetJsonPropertyName()!,
@@ -693,6 +711,31 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
 
             // parent entity got deleted, no need to do any json-specific processing
             return currentEntry?.EntityState == EntityState.Deleted ? null : result;
+
+            // The complex properties containing the property, outermost first, or null if any of them is or was null
+            static List<IComplexProperty>? GetComplexPropertyPath(IUpdateEntry entry, IProperty property)
+            {
+                var path = new List<IComplexProperty>();
+                var type = property.DeclaringType as IComplexType;
+                while (type != null)
+                {
+                    path.Insert(0, type.ComplexProperty);
+                    type = type.ComplexProperty.DeclaringType as IComplexType;
+                }
+
+                foreach (var complexProperty in path)
+                {
+                    if (complexProperty.IsNullable
+                        && (entry.GetCurrentValue(complexProperty) == null
+                            || !entry.CanHaveOriginalValue(complexProperty)
+                            || entry.GetOriginalValue(complexProperty) == null))
+                    {
+                        return null;
+                    }
+                }
+
+                return path;
+            }
         }
 
         static List<JsonPartialUpdatePathEntry> FindCommonJsonPartialUpdateInfo(
@@ -757,6 +800,8 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
                 jsonColumnsUpdateMap[jsonColumn] = jsonPartialUpdateInfo;
             }
 
+            // The JSON columns of removed dependents, cleared unless another entry in the row writes them
+            HashSet<IColumn>? jsonColumnsToClear = null;
             foreach (var entry in _entries)
             {
                 if (entry.EntityType.IsMappedToJson())
@@ -784,23 +829,67 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
                     }
                 }
 
-                foreach (var complexProperty in entry.EntityType.GetFlattenedComplexProperties())
+                // A dependent replaced by one of another type in the same row is only reachable through the replacement
+                if (entry.SharedIdentityEntry is { EntityState: EntityState.Deleted } replacedEntry
+                    && replacedEntry.EntityType != entry.EntityType)
                 {
-                    var complexType = complexProperty.ComplexType;
-                    if (!complexType.IsMappedToJson()
-                        || complexProperty.DeclaringType.IsMappedToJson()
-                        || (entry.EntityState != EntityState.Added
-                            && !entry.IsModified(complexProperty)))
+                    foreach (var complexProperty in GetJsonComplexProperties(replacedEntry.EntityType))
+                    {
+                        if (FindJsonColumn(replacedEntry, complexProperty.ComplexType) is { } jsonColumn)
+                        {
+                            (jsonColumnsToClear ??= []).Add(jsonColumn);
+                        }
+                    }
+                }
+
+                foreach (var complexProperty in GetJsonComplexProperties(entry.EntityType))
+                {
+                    var jsonColumn = FindJsonColumn(entry, complexProperty.ComplexType);
+                    if (jsonColumn is null
+                        || jsonColumnsUpdateMap.ContainsKey(jsonColumn))
                     {
                         continue;
                     }
 
-                    var jsonColumn = GetTableMapping(entry.EntityType)!.Table.FindColumn(complexType.GetContainerColumnName()!);
-                    if (jsonColumn is not null && !jsonColumnsUpdateMap.ContainsKey(jsonColumn))
+                    if (entry.EntityState == EntityState.Deleted)
+                    {
+                        (jsonColumnsToClear ??= []).Add(jsonColumn);
+                        continue;
+                    }
+
+                    if (entry.EntityState == EntityState.Added
+                        || entry.IsModified(complexProperty))
                     {
                         var jsonPartialUpdateInfo = new List<JsonPartialUpdatePathEntry> { new("$", null, entry, complexProperty) };
                         jsonColumnsUpdateMap[jsonColumn] = jsonPartialUpdateInfo;
                     }
+                }
+            }
+
+            if (jsonColumnsToClear != null)
+            {
+                foreach (var jsonColumn in jsonColumnsToClear)
+                {
+                    if (jsonColumnsUpdateMap.ContainsKey(jsonColumn))
+                    {
+                        continue;
+                    }
+
+                    columnModifications.Add(
+                        CreateColumnModification(
+                            new ColumnModificationParameters(
+                                jsonColumn.Name,
+                                originalValue: null,
+                                value: null,
+                                property: null,
+                                jsonColumn.StoreTypeMapping.StoreType,
+                                jsonColumn.StoreTypeMapping,
+                                read: false,
+                                write: true,
+                                key: false,
+                                condition: false,
+                                _sensitiveLoggingEnabled,
+                                isNullable: true) { GenerateParameterName = _generateParameterName }));
                 }
             }
 
@@ -918,6 +1007,21 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
                                 _sensitiveLoggingEnabled)
                             { GenerateParameterName = _generateParameterName }));
                 }
+            }
+
+            static IEnumerable<IComplexProperty> GetJsonComplexProperties(IEntityType entityType)
+                => entityType.GetFlattenedComplexProperties()
+                    .Where(p => p.ComplexType.IsMappedToJson() && !p.DeclaringType.IsMappedToJson());
+
+            IColumn? FindJsonColumn(IUpdateEntry entry, IComplexType complexType)
+            {
+                // With TPT, the JSON columns of base and derived types in different tables can have the same name,
+                // and a replaced dependent isn't necessarily mapped to this table
+                var table = GetTableMapping(entry.EntityType)?.Table;
+                return table != null
+                    && complexType.GetContainerColumnName(StoreObjectIdentifier.Table(table.Name, table.Schema)) is { } columnName
+                        ? table.FindColumn(columnName)
+                        : null;
             }
         }
     }
@@ -1270,6 +1374,7 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
         private object? _originalValue;
         private object? _currentValue;
         private bool _originalValueInitialized;
+        private bool _currentValueFromDeleted;
 
         public IColumnModification? ColumnModification { get; set; }
 
@@ -1285,6 +1390,7 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
                     {
                         _write = true;
                         _currentValue = Update.ColumnModification.GetCurrentProviderValue(entry, property);
+                        _currentValueFromDeleted = false;
                         _originalValue = Update.ColumnModification.GetOriginalProviderValue(entry, property);
                         _originalValueInitialized = true;
                     }
@@ -1292,7 +1398,9 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
                     break;
                 case EntityState.Added:
                     var currentProviderValue = Update.ColumnModification.GetCurrentProviderValue(entry, property);
+                    // A deleted entry's null is not a value from a current writer.
                     if (_originalValueInitialized
+                        && !_currentValueFromDeleted
                         && mapping.Column.ProviderValueComparer.Equals(_originalValue, currentProviderValue))
                     {
                         // This Added entry has the same value as the original (pre-modification) value.
@@ -1306,6 +1414,7 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
                             property.Sentinel))
                     {
                         _currentValue = currentProviderValue;
+                        _currentValueFromDeleted = false;
                     }
 
                     _write = true;
@@ -1319,6 +1428,7 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
                     {
                         _write = true;
                         _currentValue = null;
+                        _currentValueFromDeleted = true;
                     }
 
                     break;
@@ -1339,9 +1449,7 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
         public bool TryPropagate(IColumnMappingBase mapping, IUpdateEntry entry)
         {
             var property = mapping.Property;
-            if (!_write
-                || (property.DeclaringType is IComplexType complexType
-                    && entry.GetCurrentValue(complexType.ComplexProperty) == null))
+            if (!_write)
             {
                 return true;
             }
@@ -1357,6 +1465,12 @@ public class ModificationCommand : IModificationCommand, INonTrackedModification
             if (!shouldPropagate)
             {
                 return false;
+            }
+
+            if (property.DeclaringType is IComplexType complexType
+                && entry.GetCurrentValue(complexType.ComplexProperty) == null)
+            {
+                return true;
             }
 
             if ((property.GetAfterSaveBehavior() == PropertySaveBehavior.Save

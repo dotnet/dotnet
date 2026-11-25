@@ -96,7 +96,9 @@ public class SourceBuiltArtifactsTests : SdkTests
         Assert.NotNull(Config.SourceBuiltArtifactsPath);
 
         string artifactsDirectory = Path.GetDirectoryName(Config.SourceBuiltArtifactsPath)!;
-        string[] tarballPaths = Directory.GetFiles(artifactsDirectory, "*.tar.gz", SearchOption.AllDirectories);
+        string[] tarballPaths = Directory.GetFiles(artifactsDirectory, "*.tar.gz", SearchOption.AllDirectories)
+            .Where(path => !Path.GetFileName(path).StartsWith("dotnet-source-", StringComparison.Ordinal))
+            .ToArray();
         Assert.NotEmpty(tarballPaths);
 
         foreach (string tarballPath in tarballPaths)

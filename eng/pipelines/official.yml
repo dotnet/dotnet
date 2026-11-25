@@ -2,15 +2,53 @@
 # - dotnet-unified-build (internal)
 #   https://dev.azure.com/dnceng/internal/_build?definitionId=1330
 
+# Keep this trigger identical on main and all release branches. main, preview/rc branches and
+# internal patch/hotfix branches (e.g. internal/release/10.0.115) use batched CI. Feature band
+# branches (release/N.0.Bxx and internal/release/N.0.Bxx) are excluded and build only on the daily
+# schedule defined in each release branch.
 trigger:
   batch: true
   branches:
     include:
       - main
-      - release/*
-      - internal/release/*
+      - release/*-preview*
+      - release/*-rc*
+      - internal/release/*.0.*
+    exclude:
+      - internal/release/*.0.?xx
 
 schedules:
+  # Enable the matching block below in release/12.0.1xx or release/12.0.2xx after it branches from
+  # main. The timing may need to be readjusted after branching to stagger against other release
+  # branch schedules.
+  # - cron: "30 7 * * *"
+  #   displayName: Daily release/12.0.1xx build
+  #   branches:
+  #     include:
+  #     - release/12.0.1xx
+  #   always: false
+  #   batch: true
+  # - cron: "30 19 * * *"
+  #   displayName: Daily internal/release/12.0.1xx build
+  #   branches:
+  #     include:
+  #     - internal/release/12.0.1xx
+  #   always: false
+  #   batch: true
+  # - cron: "30 10 * * *"
+  #   displayName: Daily release/12.0.2xx build
+  #   branches:
+  #     include:
+  #     - release/12.0.2xx
+  #   always: false
+  #   batch: true
+  # - cron: "30 22 * * *"
+  #   displayName: Daily internal/release/12.0.2xx build
+  #   branches:
+  #     include:
+  #     - internal/release/12.0.2xx
+  #   always: false
+  #   batch: true
   - cron: "0 12 * * 6" # run every Saturday at 12:00 (UTC)
     displayName: Signed main build on Saturdays
     branches:
@@ -47,12 +85,21 @@ parameters:
     - Preview (produces assets with a .final branding suffix)
     - Release (produces assets without a branding suffix)
 
+- name: forceCodeql
+  displayName: 'Force running CodeQL?'
+  type: boolean
+  default: false
+
 variables:
 - name: isScheduleTrigger
   value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
 
-- name: Codeql.DoNotStartTimes
-  value: 'Mon;Tue;Wed;Thu;Fri;Sat' # run only on the unsigned scheduled build on Sunday
+- ${{ if eq(parameters.forceCodeql, true) }}:
+  - name: Codeql.Cadence
+    value: 0
+- ${{ else }}:
+  - name: Codeql.DoNotStartTimes
+    value: 'Mon;Tue;Wed;Thu;Fri;Sat' # run only on the unsigned scheduled build on Sunday
 
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
   - name: skipComponentGovernanceDetection  # we run CG on internal builds only
@@ -197,6 +244,7 @@ extends:
           desiredSigning: ${{ parameters.desiredSigning }}
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
         isOfficialBuild: true
+        isCodeqlActive: ${{ or(parameters.forceCodeql, eq(variables['Build.CronSchedule.DisplayName'], 'Unsigned CodeQL main build on Sundays')) }}
         scope: full
         # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
         # This is enabled for all branches except main and 1xx

@@ -13,7 +13,12 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = "name2ee", Aliases = new[] { "Name2EE" }, Help = "Displays the MethodTable structure and EEClass structure for the specified type or method in the specified module.")]
     public class Name2EECommand : ClrRuntimeCommandBase
     {
-        [Argument(Name = "arguments", Help = "module_name type_or_method_name (or module_name!type_or_method_name)")]
+        public Name2EECommand(IServiceProvider services)
+            : base(services)
+        {
+        }
+
+        [Argument<string[]>(Name = "arguments", Help = "module_name type_or_method_name (or module_name!type_or_method_name)")]
         public string[] Arguments { get; set; }
 
         private enum MatchKind

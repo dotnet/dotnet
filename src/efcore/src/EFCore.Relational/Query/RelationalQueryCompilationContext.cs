@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
@@ -46,7 +47,12 @@ public class RelationalQueryCompilationContext : QueryCompilationContext
         : base(dependencies, async, precompiling)
     {
         RelationalDependencies = relationalDependencies;
-        QuerySplittingBehavior = RelationalOptionsExtension.Extract(ContextOptions).QuerySplittingBehavior;
+
+        var relationalOptions = RelationalOptionsExtension.Extract(ContextOptions);
+        QuerySplittingBehavior = relationalOptions.QuerySplittingBehavior;
+#pragma warning disable EF9001 // Window function support is experimental
+        UseWindowFunctionAggregates = relationalOptions.UseWindowFunctionAggregates;
+#pragma warning restore EF9001
         SqlAliasManager = relationalDependencies.SqlAliasManagerFactory.Create();
     }
 
@@ -63,7 +69,21 @@ public class RelationalQueryCompilationContext : QueryCompilationContext
     public virtual QuerySplittingBehavior? QuerySplittingBehavior { get; internal set; }
 
     /// <summary>
+    ///     A value indicating whether aggregates projected alongside the elements of a grouping are translated as window functions.
+    /// </summary>
+    /// <remarks>
+    ///     See <see cref="RelationalOptionsExtension.UseWindowFunctionAggregates" />.
+    /// </remarks>
+    [Experimental(EFDiagnostics.ExperimentalApi)]
+    public virtual bool UseWindowFunctionAggregates { get; }
+
+    /// <summary>
     ///     A manager for SQL aliases, capable of generate uniquified table aliases.
     /// </summary>
     public virtual SqlAliasManager SqlAliasManager { get; }
+
+    // The SelectExpressions that SQL currently being translated may be placed into, outermost first, or null where the caller
+    // translating didn't say which query its result goes into. Shared by the SQL translators of the query and all its subqueries,
+    // so that an aggregate over a grouping can tell which query SQL will evaluate it in (#27130).
+    internal List<SelectExpression?> TranslationScopes { get; } = [];
 }

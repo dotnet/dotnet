@@ -70,7 +70,7 @@ public class DiscoveryResultCacheTests
 
         Assert.IsNotNull(reportedTestCases);
         Assert.HasCount(2, reportedTestCases);
-        CollectionAssert.AreEqual(new List<TestCase> { testCase1, testCase2 }, reportedTestCases.ToList());
+        Assert.AreSequenceEqual(new List<TestCase> { testCase1, testCase2 }, reportedTestCases.ToList());
     }
 
     [TestMethod]

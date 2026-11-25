@@ -12,22 +12,27 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = "objsize", Aliases = new[] { "ObjSize" }, Help = "Lists the sizes of the all the objects found on managed threads.")]
     public class ObjSizeCommand : ClrRuntimeCommandBase
     {
-        [ServiceImport]
-        public DumpHeapService DumpHeap { get; set; }
+        public ObjSizeCommand(IServiceProvider services, DumpHeapService dumpHeap)
+            : base(services)
+        {
+            DumpHeap = dumpHeap;
+        }
 
-        [Option(Name = "-short")]
+        public DumpHeapService DumpHeap { get; }
+
+        [Option<bool>(Name = "-short")]
         public bool Short { get; set; }
 
-        [Option(Name = "-strings")]
+        [Option<bool>(Name = "-strings")]
         public bool Strings { get; set; }
 
-        [Option(Name = "-stat", Aliases = new string[] { "-summary" })]
+        [Option<bool>(Name = "-stat", Aliases = new string[] { "-summary" })]
         public bool Stat { get; set; }
 
-        [Argument]
+        [Argument<string>]
         public string ObjectAddress { get; set; }
 
-        [Option(Name = "-mt")]
+        [Option<string>(Name = "-mt")]
         public string MethodTable { get; set; }
 
         public override void Invoke()

@@ -8,18 +8,23 @@ namespace SOS.Tests;
 
 public sealed class DbgEngHostingTests
 {
-    public static TheoryData<TestConfig> Matrix => TestConfig.BuildMatrix(
-        [TargetCatalog.Scenarios], host: Host.Cdb, liveness: Liveness.AllValid, dumpKind: DumpKind.All | DumpKind.Full);
+    public static TheoryData<TestConfig> ModulePathMatrix => TestConfig.BuildMatrix(
+        [TargetCatalog.Scenarios], Flavor.Core, Host.Cdb, coreVersion: CoreVersion.All, dac: Dac.Legacy);
 
     [WindowsTheory]
-    [MemberData(nameof(Matrix))]
-    public async Task Sos_ReusesCoreClrHost(TestConfig config)
+    [MemberData(nameof(ModulePathMatrix))]
+    public async Task EngineLoadsDebuggerModulesFromSelectedLayout(TestConfig config)
     {
         using Target target = await Targets.GetTargetAsync(config);
         target.GoToStopPoint(TargetCatalog.StopHeap);
 
-        target.Sos("sethostruntime").AssertContains("Using .NET Core runtime to host the managed SOS code");
-        target.Sos("sethostruntime -none").AssertContains("Using .NET Core runtime to host the managed SOS code");
-        target.ClrModules().SingleByName(TargetCatalog.Get(TargetCatalog.Scenarios).ModuleFor(config.Flavor));
+        Assert.Contains(
+            target.HostStartupDiagnostics,
+            diagnostic => diagnostic.Equals(
+                $"Loaded dbgeng.dll: {Path.Combine(ToolPaths.DbgEngDirectory, "dbgeng.dll")}",
+                StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(
+            target.HostStartupDiagnostics,
+            diagnostic => diagnostic.Equals($"Loaded sos.dll: {ToolPaths.SosPath}", StringComparison.OrdinalIgnoreCase));
     }
 }

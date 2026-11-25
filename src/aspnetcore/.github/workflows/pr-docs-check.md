@@ -1,4 +1,5 @@
 ---
+runs-on: ubuntu-26.04
 name: "PR Documentation Check"
 
 description: >
@@ -36,6 +37,7 @@ on:
           - skip
           - refresh
   roles: [admin, maintainer, write]
+  bots: ["dotnet-policy-service[bot]"]
   reaction: none
   status-comment: false
 
@@ -98,6 +100,8 @@ network:
     - github
 
 safe-outputs:
+  threat-detection:
+    runs-on: ubuntu-26.04
   needs: [docs_context]
   github-app:
     client-id: ${{ secrets.ASPNETCORE_DOCS_BOT_CLIENT_ID }}
@@ -109,12 +113,12 @@ safe-outputs:
     report-as-issue: false
   steps:
     - name: Download trusted draft context
-      uses: actions/download-artifact@v8.0.1
+      uses: actions/download-artifact@v8.0.2
       with:
         name: pr-docs-check-context-${{ github.run_attempt }}
         path: ${{ runner.temp }}/pr-docs-check-context
     - name: Download trusted workspace evidence
-      uses: actions/download-artifact@v8.0.1
+      uses: actions/download-artifact@v8.0.2
       with:
         name: pr-docs-check-workspace-${{ github.run_attempt }}
         path: ${{ runner.temp }}/pr-docs-check-workspace
@@ -193,7 +197,7 @@ safe-outputs:
         Report the conclusive documentation analysis on the source pull request. Emit exactly one `notify_source_pr` item after the create, update, or no-op output.
 
         Use `result: "restricted"` when the source PR is excluded by the security-concern rules. Use `result: "drafted"` when documentation confidence is at least 60 and you either emitted `create_pull_request`, updated the one trusted existing draft, or confirmed that draft already contains sufficient documentation with `noop` and `docs_pr_action: "unchanged"`. The notification job converts an unfulfilled creation request to a draft-failed notification. Use `result: "skipped"` when confidence is below 60 and no docs PR was requested. Use `result: "draft_failed"` only when confidence is at least 60 but you could not request a docs PR operation.
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-26.04
       needs: [safe_outputs]
       permissions:
         contents: read
@@ -260,18 +264,18 @@ safe-outputs:
               .github/workflows/pr-docs-check/author_body.cjs
             sparse-checkout-cone-mode: false
         - name: Download trusted draft context
-          uses: actions/download-artifact@v8.0.1
+          uses: actions/download-artifact@v8.0.2
           with:
             name: pr-docs-check-context-${{ github.run_attempt }}
             path: ${{ runner.temp }}/pr-docs-check-context
         - name: Download trusted workspace evidence
-          uses: actions/download-artifact@v8.0.1
+          uses: actions/download-artifact@v8.0.2
           with:
             name: pr-docs-check-workspace-${{ github.run_attempt }}
             path: ${{ runner.temp }}/pr-docs-check-workspace
         - name: Mint ASP.NET Core docs bot token
           id: docs-bot-token
-          uses: actions/create-github-app-token@v3.2.0
+          uses: actions/create-github-app-token@v3.3.0
           with:
             client-id: ${{ secrets.ASPNETCORE_DOCS_BOT_CLIENT_ID }}
             private-key: ${{ secrets.ASPNETCORE_DOCS_BOT_PRIVATE_KEY }}
@@ -522,7 +526,7 @@ jobs:
   docs_context:
     needs: [pre_activation]
     if: needs.pre_activation.outputs.activated == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       pull-requests: read
@@ -542,7 +546,7 @@ jobs:
           sparse-checkout-cone-mode: false
       - name: Mint ASP.NET Core docs bot token
         id: docs-bot-token
-        uses: actions/create-github-app-token@v3.2.0
+        uses: actions/create-github-app-token@v3.3.0
         with:
           client-id: ${{ secrets.ASPNETCORE_DOCS_BOT_CLIENT_ID }}
           private-key: ${{ secrets.ASPNETCORE_DOCS_BOT_PRIVATE_KEY }}
@@ -577,7 +581,7 @@ jobs:
             --release-branches "${CONTEXT_DIR}/source-branches.json" \
             --output "${CONTEXT_DIR}/target-version.json"
       - name: Preserve trusted draft context
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: pr-docs-check-context-${{ github.run_attempt }}
           path: ${{ runner.temp }}/pr-docs-check/
@@ -589,13 +593,13 @@ jobs:
 
 pre-agent-steps:
   - name: Download trusted analysis context
-    uses: actions/download-artifact@v8.0.1
+    uses: actions/download-artifact@v8.0.2
     with:
       name: pr-docs-check-context-${{ github.run_attempt }}
       path: /tmp/gh-aw/pr-docs-check
   - name: Mint ASP.NET Core docs bot token
     id: docs-bot-token
-    uses: actions/create-github-app-token@v3.2.0
+    uses: actions/create-github-app-token@v3.3.0
     with:
       client-id: ${{ secrets.ASPNETCORE_DOCS_BOT_CLIENT_ID }}
       private-key: ${{ secrets.ASPNETCORE_DOCS_BOT_PRIVATE_KEY }}
@@ -642,7 +646,7 @@ post-steps:
         --argjson clean "${CLEAN}" '{base_sha: $base_sha, head_sha: $head_sha, clean: $clean}' \
         > "${RUNNER_TEMP}/pr-docs-check-workspace/workspace-evidence.json"
   - name: Preserve trusted workspace evidence
-    uses: actions/upload-artifact@v7.0.1
+    uses: actions/upload-artifact@v7.0.2
     with:
       name: pr-docs-check-workspace-${{ github.run_attempt }}
       path: ${{ runner.temp }}/pr-docs-check-workspace/workspace-evidence.json

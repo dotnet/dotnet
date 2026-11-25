@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="TestIdsReportFile">
         <source>Test id report file : {0}</source>
-        <target state="new">Test id report file : {0}</target>
+        <target state="translated">Arquivo do relatório da ID de teste: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestIdsLoggerWriteFailed">
         <source>Failed to write the test id report to '{0}'. {1}</source>
-        <target state="new">Failed to write the test id report to '{0}'. {1}</target>
+        <target state="translated">Falha ao gravar o relatório de ID de teste em '{0}'. {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestIdsReportIncomplete">
         <source>The test run did not complete, so the test id report '{0}' covers only the tests that were reported before it stopped. Do not use an incomplete report to migrate stored test ids.</source>
-        <target state="new">The test run did not complete, so the test id report '{0}' covers only the tests that were reported before it stopped. Do not use an incomplete report to migrate stored test ids.</target>
+        <target state="translated">A execução de teste não foi concluída, portanto, o relatório de ID de teste '{0}' cobre apenas os testes que foram relatados antes de parar. Não use um relatório incompleto para migrar IDs de teste armazenadas.</target>
         <note />
       </trans-unit>
     </body>

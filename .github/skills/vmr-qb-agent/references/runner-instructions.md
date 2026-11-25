@@ -17,7 +17,7 @@ file is not permission to invent its contents. `model-issue-evidence.json` is be
 
 - `build-health`: use the pipeline-investigation skill, `triage.md`, and the Build Health section below. Title:
   `# Build Health Monitoring - <reportDate>`.
-- `code-flow`: use the flow-analysis skill and the Code Flow section below. Title: `# Code Flow Monitoring - <reportDate>`.
+- `code-flow`: use the flow-analysis skill, `triage.md` section 7, and the Code Flow section below. Title: `# Code Flow Monitoring - <reportDate>`.
 - `overall-summary`: read `report-contract.md`, `triage.md`, the current date's build-health/code-flow reports in
   `runContext.reportDirectory` (`build-health-<reportDate>.md` and `code-flow-<reportDate>.md`), and the issue evidence.
   Title: `# VMR QB Daily Overall Report - <reportDate>`.
@@ -209,5 +209,6 @@ observation cutoff, and label live Maestro and GitHub observations with the time
   has no product impact, so note it at most as dashboard noise, never as blocked product flow. Normal pending updates, or a
   bucket of many low-commit-lag subscriptions, are not one confirmed new incident.
 - List the open code-flow PRs with their CI status and a direct github.com link. Do not label a PR merge-ready without verified
-  checks, reviews, conflict state and branch gates. Note the Maestro dashboard (https://maestro.dot.net/codeflows?branch=main)
+  checks, reviews, conflict state and branch gates. A PR with Maestro's "did not match the source diff" note is not merge-ready
+  until each listed file is explained as `triage.md` section 7 describes. Note the Maestro dashboard (https://maestro.dot.net/codeflows?branch=main)
   as the visual reference.

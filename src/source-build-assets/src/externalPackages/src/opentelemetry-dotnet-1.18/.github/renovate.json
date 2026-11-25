@@ -1,0 +1,107 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "additionalBranchPrefix": "{{manager}}/",
+  "automerge": false,
+  "commitBodyTable": true,
+  "commitMessageAction": "Bump",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": ["Update GitHub runner labels in workflow fields and matrix values"],
+      "managerFilePatterns": [
+        "/(^|/)(workflow-templates|\\.(?:github|gitea|forgejo)/(?:workflows|actions))/.+\\.ya?ml$/",
+        "/(^|/)action\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "# renovate:\\s*datasource=(?<datasource>github-runners)(?:\\s+[A-Za-z][A-Za-z0-9_-]*=[^\\s]+)*?(?:\\s+versioning=(?<versioning>[^\\s]+))?(?:\\s+[A-Za-z][A-Za-z0-9_-]*=[^\\s]+)*\\s*\\r?\\n\\s*(?:-\\s*)?(?:[A-Za-z0-9_-]+:\\s*)?['\"]?(?<depName>[a-zA-Z]+)-(?<currentValue>[A-Za-z0-9._-]+)['\"]?"
+      ]
+    },
+    {
+      "customType": "regex",
+      "description": ["Update the W3C Trace Context test suite commit"],
+      "managerFilePatterns": [
+        "/^test/OpenTelemetry\\.Instrumentation\\.W3cTraceContext\\.Tests/Dockerfile$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>github-digest) depName=(?<depName>[^\\s]+) packageName=(?<packageName>[^\\s]+) currentValue=(?<currentValue>[^\\s]+)\\s+ENV W3C_TRACE_CONTEXT_SHA=['\"]?(?<currentDigest>[a-f0-9]{40})['\"]?"
+      ]
+    }
+  ],
+  "dependencyDashboard": false,
+  "extends": [
+    "config:best-practices",
+    "customManagers:dockerfileVersions",
+    "customManagers:githubActionsVersions",
+    "helpers:pinGitHubActionDigestsToSemver",
+    ":automergeRequireAllStatusChecks",
+    ":disableRateLimiting",
+    ":enableVulnerabilityAlerts",
+    ":gitSignOff",
+    ":ignoreUnstable"
+  ],
+  "ignorePresets": [
+    ":ignoreModulesAndTests"
+  ],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/vendor/**",
+    "**/__tests__/**",
+    "**/__fixtures__/**"
+  ],
+  "labels": ["dependencies", "infra"],
+  "minimumReleaseAge": "3 days",
+  "minimumReleaseAgeBehaviour": "timestamp-optional",
+  "packageRules": [
+    {
+      "matchManagers": ["dockerfile"],
+      "addLabels": ["docker"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "addLabels": ["github_actions"]
+    },
+    {
+      "matchManagers": ["nuget"],
+      "addLabels": [".NET"]
+    },
+    {
+      "matchManagers": ["pypi"],
+      "addLabels": ["python"]
+    },
+    {
+      "description": ["Workaround for https://github.com/renovatebot/renovate/discussions/43794"],
+      "matchManagers": ["nuget"],
+      "rangeStrategy": "bump"
+    },
+    {
+      "description": ["Skip pinned NuGet package versions"],
+      "matchManagers": ["nuget"],
+      "matchCurrentValue": "/^\\[[^,]+,\\)$/",
+      "enabled": false
+    },
+    {
+      "extends": ["monorepo:dotnet"],
+      "description": ["Cooldown on .NET updates to maximize batching"],
+      "matchManagers": ["nuget"],
+      "minimumReleaseAge": "6 hours"
+    },
+    {
+      "extends": ["monorepo:dotnet"],
+      "description": ["Disable major version updates for .NET"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "matchDepNames": ["xunit"],
+      "description": ["Disable major version updates for xunit"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    }
+  ],
+  "schedule": ["* 8-17 * * 3"],
+  "timezone": "Etc/UTC",
+  "vulnerabilityAlerts": {
+    "addLabels": ["security"]
+  }
+}

@@ -14,10 +14,15 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = "gcheapstat", Aliases = new[] { "GCHeapStat" }, Help = "Displays various GC heap stats.")]
     public class GCHeapStatCommand : ClrRuntimeCommandBase
     {
-        [ServiceImport]
-        public LiveObjectService LiveObjects { get; set; }
+        public GCHeapStatCommand(IServiceProvider services, LiveObjectService liveObjects)
+            : base(services)
+        {
+            LiveObjects = liveObjects;
+        }
 
-        [Option(Name = "-unreachable", Aliases = new string[] { "-inclUnrooted", "-iu" })]
+        public LiveObjectService LiveObjects { get; }
+
+        [Option<bool>(Name = "-unreachable", Aliases = new string[] { "-inclUnrooted", "-iu" })]
         public bool IncludeUnreachable { get; set; }
 
         public override void Invoke()

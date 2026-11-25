@@ -1,0 +1,262 @@
+name: Complete release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: true
+        description: 'Release tag'
+        type: string
+
+  release:
+    types:
+    - published
+
+  issue_comment:
+    types:
+    - created
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.issue.number || github.ref }}
+  cancel-in-progress: false
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_GENERATE_ASPNET_CERTIFICATE: false
+  DOTNET_NOLOGO: true
+  DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: 1
+  FORCE_COLOR: 3
+  TERM: xterm
+
+jobs:
+  automation:
+    uses: ./.github/workflows/automation.yml
+    secrets:
+      OTELBOT_DOTNET_PRIVATE_KEY: ${{ secrets.OTELBOT_DOTNET_PRIVATE_KEY }}
+
+  push-packages-and-publish-release:
+    name: Push packages and publish release
+    runs-on: ubuntu-24.04
+
+    needs: automation
+
+    permissions:
+      id-token: write # Publish NuGet packages with trusted GitHub OIDC
+
+    if: |
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request &&
+      github.event.issue.locked == true &&
+      github.event.comment.user.login != needs.automation.outputs.application-username &&
+      contains(github.event.comment.body, '/PushPackages') &&
+      startsWith(github.event.issue.title, '[release] Prepare release ') &&
+      github.event.issue.pull_request.merged_at &&
+      needs.automation.outputs.enabled
+
+    steps:
+    - name: Generate GitHub App token
+      uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+      id: otelbot-token
+      with:
+        client-id: ${{ vars.OTELBOT_DOTNET_CLIENT_ID }}
+        private-key: ${{ secrets.OTELBOT_DOTNET_PRIVATE_KEY }}
+        permission-contents: write
+        permission-pull-requests: write
+
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: true # zizmor: ignore[artipacked] Needed to push commits
+        token: ${{ steps.otelbot-token.outputs.token }}
+        ref: ${{ github.event.repository.default_branch }}
+        show-progress: false
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+
+    - name: NuGet log in
+      uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+      id: nuget-login
+      with:
+        user: ${{ secrets.NUGET_USER }}
+
+    - name: Push packages and publish release
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ steps.otelbot-token.outputs.token }}
+        EXPECTED_PR_AUTHOR_USER_NAME: ${{ needs.automation.outputs.application-name }}
+        EXPECTED_COMMENT_AUTHOR_USER_NAME: ${{ needs.automation.outputs.application-login }}
+        COMMENT_USER_NAME: ${{ github.event.comment.user.login }}
+        ISSUE_NUMBER: ${{ github.event.issue.number }}
+        NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+      run: |
+        Import-Module .\build\scripts\post-release.psm1
+
+        $HasToken = -Not [string]::IsNullOrEmpty($env:NUGET_API_KEY)
+        PushPackagesPublishReleaseUnlockAndPostNoticeOnPrepareReleasePullRequest `
+          -gitRepository ${env:GITHUB_REPOSITORY} `
+          -pullRequestNumber ${env:ISSUE_NUMBER} `
+          -expectedPrAuthorUserName ${env:EXPECTED_PR_AUTHOR_USER_NAME} `
+          -expectedCommentAuthorUserName ${env:EXPECTED_COMMENT_AUTHOR_USER_NAME} `
+          -commentUserName ${env:COMMENT_USER_NAME} `
+          -artifactDownloadPath "${env:GITHUB_WORKSPACE}/artifacts" `
+          -pushToNuget $HasToken
+
+  post-release-published:
+    name: Post release published notice
+    runs-on: ubuntu-24.04
+
+    needs:
+    - automation
+
+    outputs:
+      dotnet-sdk-version: ${{ steps.setup-dotnet.outputs.dotnet-version }}
+      pr-number: ${{ steps.post-notice.outputs.pr-number }}
+
+    if: |
+      needs.automation.outputs.enabled &&
+      (github.event_name == 'release' || github.event_name == 'workflow_dispatch')
+
+    steps:
+    - name: Generate GitHub App token
+      uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+      id: otelbot-token
+      with:
+        client-id: ${{ vars.OTELBOT_DOTNET_CLIENT_ID }}
+        private-key: ${{ secrets.OTELBOT_DOTNET_PRIVATE_KEY }}
+        permission-contents: write
+        permission-pull-requests: write
+
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        # Note: By default GitHub only fetches 1 commit. MinVer needs to find
+        # the version tag which is typically NOT on the first commit so we
+        # retrieve them all.
+        fetch-depth: 0
+        persist-credentials: true # zizmor: ignore[artipacked] Needed to push commits
+        ref: ${{ github.event.repository.default_branch }}
+        show-progress: false
+        token: ${{ steps.otelbot-token.outputs.token }}
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+      id: setup-dotnet
+
+    - name: Create GitHub Pull Request to update stable build version in props
+      if: |
+          (github.ref_type == 'tag' && startsWith(github.ref_name, 'core-') && !contains(github.ref_name, '-alpha') && !contains(github.ref_name, '-beta') && !contains(github.ref_name, '-rc'))
+          || (inputs.tag && startsWith(inputs.tag, 'core-') && !contains(inputs.tag, '-alpha') && !contains(inputs.tag, '-beta') && !contains(inputs.tag, '-rc'))
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ steps.otelbot-token.outputs.token }}
+        BOT_USER_EMAIL: ${{ needs.automation.outputs.email }}
+        BOT_USER_NAME: ${{ needs.automation.outputs.username }}
+        TAG: ${{ inputs.tag || github.ref_name }}
+        TARGET_BRANCH: ${{ github.event.repository.default_branch }}
+      run: |
+        Import-Module .\build\scripts\post-release.psm1
+
+        CreateStableVersionUpdatePullRequest `
+          -gitRepository ${env:GITHUB_REPOSITORY} `
+          -tag ${env:TAG} `
+          -targetBranch ${env:TARGET_BRANCH} `
+          -gitUserName ${env:BOT_USER_NAME} `
+          -gitUserEmail ${env:BOT_USER_EMAIL}
+
+    - name: Post notice when release is published
+      id: post-notice
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ steps.otelbot-token.outputs.token }}
+        EXPECTED_PR_AUTHOR_USER_NAME: ${{ needs.automation.outputs.application-name }}
+        EXPECTED_COMMENT_AUTHOR_USER_NAME: ${{ needs.automation.outputs.application-login }}
+        TAG: ${{ inputs.tag || github.ref_name }}
+      run: |
+        Import-Module .\build\scripts\post-release.psm1
+
+        $prNumber = TryPostReleasePublishedNoticeOnPrepareReleasePullRequest `
+          -gitRepository ${env:GITHUB_REPOSITORY} `
+          -expectedPrAuthorUserName ${env:EXPECTED_PR_AUTHOR_USER_NAME} `
+          -expectedCommentAuthorUserName ${env:EXPECTED_COMMENT_AUTHOR_USER_NAME} `
+          -tag ${env:TAG}
+
+        "pr-number=${prNumber}" >> ${env:GITHUB_OUTPUT}
+
+  wait-nuget:
+    name: Wait for NuGet package publishing
+    needs: [automation, post-release-published]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    if: needs.post-release-published.outputs.pr-number != ''
+
+    permissions:
+      contents: read # Download the published artifacts
+
+    steps:
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: ${{ needs.post-release-published.outputs.dotnet-sdk-version }}
+
+      - name: Install WaitForNuGetPackage tool
+        shell: pwsh
+        env:
+          # renovate: datasource=nuget depName=MartinCostello.WaitForNuGetPackage
+          WAIT_FOR_NUGET_PACKAGE_VERSION: '1.3.2'
+        run: |
+          dotnet tool install --global MartinCostello.WaitForNuGetPackage --version ${env:WAIT_FOR_NUGET_PACKAGE_VERSION} --allow-roll-forward
+
+      - name: Download NuGet packages
+        id: download-packages
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          $downloadDirectory = Join-Path ${env:GITHUB_WORKSPACE} "packages"
+          "download-path=${downloadDirectory}" >> ${env:GITHUB_OUTPUT}
+
+          gh release download ${env:RELEASE_TAG} --pattern "*.nupkg" --dir ${downloadDirectory} --repo ${env:GITHUB_REPOSITORY}
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to download NuGet packages from release ${env:RELEASE_TAG}."
+          }
+
+      - name: Wait for NuGet packages to be published
+        id: wait-for-publish
+        shell: pwsh
+        env:
+          PACKAGES_DIRECTORY: ${{ steps.download-packages.outputs.download-path }}
+          PUBLISH_TIMEOUT: '00:45:00'
+        run: |
+          dotnet wait-for-package --directory ${env:PACKAGES_DIRECTORY} --timeout ${env:PUBLISH_TIMEOUT}
+
+          if ($LASTEXITCODE -ne 0) {
+            Write-Output "::warning::Failed to wait for NuGet packages to be published and indexed."
+            exit 0
+          }
+
+          "published=true" >> ${env:GITHUB_OUTPUT}
+
+      - name: Generate GitHub App token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: otelbot-token
+        with:
+          client-id: ${{ vars.OTELBOT_DOTNET_CLIENT_ID }}
+          private-key: ${{ secrets.OTELBOT_DOTNET_PRIVATE_KEY }}
+          permission-pull-requests: write
+
+      - name: Post comment on release PR
+        if: steps.wait-for-publish.outputs.published == 'true'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ steps.otelbot-token.outputs.token }}
+          PR_NUMBER: ${{ needs.post-release-published.outputs.pr-number }}
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+          RELEASE_URL: ${{ format('{0}/{1}/releases/tag/{2}', github.server_url, github.repository, github.ref_name) }}
+        run: |
+          gh pr comment ${env:PR_NUMBER} --body "The packages for the [${env:RELEASE_TAG}](${env:RELEASE_URL}) release are now available from NuGet.org :package:" --repo ${env:GITHUB_REPOSITORY}

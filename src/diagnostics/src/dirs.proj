@@ -6,6 +6,9 @@
 
     <!-- SOS -->
     <ProjectReference Include="SOS/*/*.csproj" />
+    <ProjectReference Update="SOS/SOS.Extensions.NativeAot/SOS.Extensions.NativeAot.csproj"
+                      ReferenceOutputAssembly="false"
+                      Targets="Publish" />
 
     <ProjectReference Include="Microsoft.Diagnostics.DebugServices/Microsoft.Diagnostics.DebugServices.csproj" />
     <ProjectReference Include="Microsoft.Diagnostics.DebugServices.Implementation/Microsoft.Diagnostics.DebugServices.Implementation.csproj" />
@@ -19,6 +22,8 @@
     <ProjectReference Include="Microsoft.FileFormats/Microsoft.FileFormats.csproj" />
     <ProjectReference Include="Microsoft.SymbolManifestGenerator/Microsoft.SymbolManifestGenerator.csproj" />
     <ProjectReference Include="Microsoft.SymbolStore/Microsoft.SymbolStore.csproj" />
+
+    <ProjectReference Include="cdac/dirs.proj" />
   </ItemGroup>
 
   <!-- Native projects to view in Visual Studio -->

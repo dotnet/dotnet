@@ -129,7 +129,7 @@ public class DataCollectionTestEndResultSerializationTests
         Assert.HasCount(1, result);
         Assert.AreEqual(new Uri("datacollector://coverage"), result[0].Uri);
         Assert.AreEqual("Code Coverage", result[0].DisplayName);
-        Assert.HasCount(0, result[0].Attachments);
+        Assert.IsEmpty(result[0].Attachments);
     }
 
 }

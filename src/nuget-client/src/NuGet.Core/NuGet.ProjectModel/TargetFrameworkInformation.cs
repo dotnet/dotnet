@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -19,16 +17,17 @@ namespace NuGet.ProjectModel
     public class TargetFrameworkInformation : IEquatable<TargetFrameworkInformation>
     {
         // private fields to allow for validating initialization values
-        private IReadOnlyDictionary<string, CentralPackageVersion> _centralPackageVersions;
-        private ImmutableArray<LibraryDependency> _dependencies;
-        private ImmutableArray<DownloadDependency> _downloadDependencies;
-        private IReadOnlyCollection<FrameworkDependency> _frameworkReferences;
-        private ImmutableArray<NuGetFramework> _imports;
-        private IReadOnlyDictionary<string, PrunePackageReference> _packagesToPrune;
+        // Constructors initialize these through the public init accessors.
+        private readonly IReadOnlyDictionary<string, CentralPackageVersion> _centralPackageVersions = null!;
+        private readonly ImmutableArray<LibraryDependency> _dependencies;
+        private readonly ImmutableArray<DownloadDependency> _downloadDependencies;
+        private readonly IReadOnlyCollection<FrameworkDependency> _frameworkReferences = null!;
+        private readonly ImmutableArray<NuGetFramework> _imports;
+        private readonly IReadOnlyDictionary<string, PrunePackageReference> _packagesToPrune = null!;
 
         public string TargetAlias { get; init; } = string.Empty;
 
-        public required NuGetFramework FrameworkName { get; init; }
+        public required NuGetFramework? FrameworkName { get; init; }
 
         public ImmutableArray<LibraryDependency> Dependencies
         {
@@ -115,7 +114,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// The project provided runtime.json
         /// </summary>
-        public string RuntimeIdentifierGraphPath { get; init; }
+        public string? RuntimeIdentifierGraphPath { get; init; }
 
         [SetsRequiredMembers]
         public TargetFrameworkInformation()
@@ -132,6 +131,8 @@ namespace NuGet.ProjectModel
         [SetsRequiredMembers]
         public TargetFrameworkInformation(TargetFrameworkInformation cloneFrom)
         {
+            if (cloneFrom == null) throw new ArgumentNullException(nameof(cloneFrom));
+
             TargetAlias = cloneFrom.TargetAlias;
             FrameworkName = cloneFrom.FrameworkName;
             Dependencies = cloneFrom.Dependencies;
@@ -147,7 +148,8 @@ namespace NuGet.ProjectModel
 
         public override string ToString()
         {
-            return FrameworkName.GetShortFolderName();
+            return FrameworkName?.GetShortFolderName()
+                ?? throw new InvalidOperationException("A target framework must include its framework name.");
         }
 
         public override int GetHashCode()
@@ -171,12 +173,12 @@ namespace NuGet.ProjectModel
             return hashCode.CombinedHash;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as TargetFrameworkInformation);
         }
 
-        public bool Equals(TargetFrameworkInformation other)
+        public bool Equals(TargetFrameworkInformation? other)
         {
             if (other == null)
             {

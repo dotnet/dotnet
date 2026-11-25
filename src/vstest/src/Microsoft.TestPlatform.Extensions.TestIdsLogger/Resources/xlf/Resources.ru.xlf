@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="TestIdsReportFile">
         <source>Test id report file : {0}</source>
-        <target state="new">Test id report file : {0}</target>
+        <target state="translated">Идентификатор теста, файл отчета: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestIdsLoggerWriteFailed">
         <source>Failed to write the test id report to '{0}'. {1}</source>
-        <target state="new">Failed to write the test id report to '{0}'. {1}</target>
+        <target state="translated">Не удалось записать отчет об идентификаторе теста в '{0}'. {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestIdsReportIncomplete">
         <source>The test run did not complete, so the test id report '{0}' covers only the tests that were reported before it stopped. Do not use an incomplete report to migrate stored test ids.</source>
-        <target state="new">The test run did not complete, so the test id report '{0}' covers only the tests that were reported before it stopped. Do not use an incomplete report to migrate stored test ids.</target>
+        <target state="translated">Тестовый запуск не выполнен, поэтому отчет с идентификатором теста "{0}" охватывает только те тесты, о которых было сообщено до его остановки. Не используйте невыполненный отчет для переноса сохраненных идентификаторов тестов.</target>
         <note />
       </trans-unit>
     </body>

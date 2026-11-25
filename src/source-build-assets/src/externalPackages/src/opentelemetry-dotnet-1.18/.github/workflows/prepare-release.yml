@@ -1,0 +1,294 @@
+name: Prepare for a release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag-prefix:
+        type: choice
+        options:
+        - core-
+        - coreunstable-
+        description: 'Release tag prefix'
+        required: true
+      version:
+        type: string
+        description: 'Release version'
+        required: true
+
+  pull_request:
+    types:
+    - closed
+
+  issue_comment:
+    types:
+    - created
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.event.issue.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  automation:
+    uses: ./.github/workflows/automation.yml
+    secrets:
+      OTELBOT_DOTNET_PRIVATE_KEY: ${{ secrets.OTELBOT_DOTNET_PRIVATE_KEY }}
+
+  prepare-release-pr:
+    name: Prepare release pull request
+    runs-on: ubuntu-24.04
+
+    needs: automation
+
+    if: github.event_name == 'workflow_dispatch' && needs.automation.outputs.enabled
+
+    steps:
+    - name: Generate GitHub App token
+      uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+      id: otelbot-token
+      with:
+        client-id: ${{ vars.OTELBOT_DOTNET_CLIENT_ID }}
+        private-key: ${{ secrets.OTELBOT_DOTNET_PRIVATE_KEY }}
+        permission-contents: write
+        permission-pull-requests: write
+
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: true # zizmor: ignore[artipacked] Needed to push commits
+        show-progress: false
+        token: ${{ steps.otelbot-token.outputs.token }}
+
+    - name: Create GitHub Pull Request to prepare release
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ steps.otelbot-token.outputs.token }}
+        BOT_USER_EMAIL: ${{ needs.automation.outputs.email }}
+        BOT_USER_NAME: ${{ needs.automation.outputs.username }}
+        COMMENT_USER_NAME: ${{ github.event.sender.login }}
+        TAG_PREFIX: ${{ inputs.tag-prefix }}
+        VERSION: ${{ inputs.version }}
+      run: |
+        Import-Module .\build\scripts\prepare-release.psm1
+
+        CreatePullRequestToUpdateChangelogsAndPublicApis `
+          -gitRepository ${env:GITHUB_REPOSITORY} `
+          -minVerTagPrefix ${env:TAG_PREFIX} `
+          -version ${env:VERSION} `
+          -requestedByUserName ${env:COMMENT_USER_NAME} `
+          -targetBranch ${env:GITHUB_REF_NAME} `
+          -gitUserName ${env:BOT_USER_NAME} `
+          -gitUserEmail ${env:BOT_USER_EMAIL}
+
+  lock-pr-and-post-notice-to-create-release-tag:
+    name: Lock pull request and post release tag notice
+    runs-on: ubuntu-24.04
+
+    needs: automation
+
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.user.login == needs.automation.outputs.application-username &&
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.title, '[release] Prepare release ') &&
+      needs.automation.outputs.enabled
+
+    steps:
+    - name: Generate GitHub App token
+      uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+      id: otelbot-token
+      with:
+        client-id: ${{ vars.OTELBOT_DOTNET_CLIENT_ID }}
+        private-key: ${{ secrets.OTELBOT_DOTNET_PRIVATE_KEY }}
+        permission-contents: read
+        permission-pull-requests: write
+
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: true # zizmor: ignore[artipacked] Needed to push commits
+        show-progress: false
+        token: ${{ steps.otelbot-token.outputs.token }}
+
+    - name: Lock GitHub Pull Request to prepare release
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ steps.otelbot-token.outputs.token }}
+        EXPECTED_PR_AUTHOR_USER_NAME: ${{ needs.automation.outputs.application-name }}
+        ISSUE_NUMBER: ${{ github.event.pull_request.number }}
+      run: |
+        Import-Module .\build\scripts\prepare-release.psm1
+
+        LockPullRequestAndPostNoticeToCreateReleaseTag `
+          -gitRepository ${env:GITHUB_REPOSITORY} `
+          -pullRequestNumber ${env:ISSUE_NUMBER} `
+          -expectedPrAuthorUserName ${env:EXPECTED_PR_AUTHOR_USER_NAME}
+
+  create-release-tag-pr-post-notice:
+    name: Create release tag and post notice
+    runs-on: ubuntu-24.04
+
+    needs: automation
+
+    if: |
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request &&
+      github.event.issue.locked == true &&
+      github.event.comment.user.login != needs.automation.outputs.application-username &&
+      contains(github.event.comment.body, '/CreateReleaseTag') &&
+      startsWith(github.event.issue.title, '[release] Prepare release ') &&
+      github.event.issue.pull_request.merged_at &&
+      needs.automation.outputs.enabled
+
+    steps:
+    - name: Generate GitHub App token
+      uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+      id: otelbot-token
+      with:
+        client-id: ${{ vars.OTELBOT_DOTNET_CLIENT_ID }}
+        private-key: ${{ secrets.OTELBOT_DOTNET_PRIVATE_KEY }}
+        permission-contents: write
+        permission-pull-requests: write
+
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        # Note: By default GitHub only fetches 1 commit which fails the git tag operation below
+        fetch-depth: 0
+        persist-credentials: true # zizmor: ignore[artipacked] Needed to push commits
+        show-progress: false
+        token: ${{ steps.otelbot-token.outputs.token }}
+
+    - name: Create release tag
+      id: create-tag
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ steps.otelbot-token.outputs.token }}
+        BOT_USER_EMAIL: ${{ needs.automation.outputs.email }}
+        BOT_USER_NAME: ${{ needs.automation.outputs.username }}
+        EXPECTED_PR_AUTHOR_USER_NAME: ${{ needs.automation.outputs.application-name }}
+        ISSUE_NUMBER: ${{ github.event.issue.number }}
+      run: |
+        Import-Module .\build\scripts\prepare-release.psm1
+
+        CreateReleaseTagAndPostNoticeOnPullRequest `
+          -gitRepository ${env:GITHUB_REPOSITORY} `
+          -pullRequestNumber ${env:ISSUE_NUMBER} `
+          -expectedPrAuthorUserName ${env:EXPECTED_PR_AUTHOR_USER_NAME} `
+          -gitUserName ${env:BOT_USER_NAME} `
+          -gitUserEmail ${env:BOT_USER_EMAIL}
+
+  update-changelog-release-dates-on-prepare-pr-post-notice:
+    name: Update changelog release dates and post notice
+    runs-on: ubuntu-24.04
+
+    needs: automation
+
+    if: |
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request &&
+      github.event.issue.state == 'open' &&
+      github.event.comment.user.login != needs.automation.outputs.application-username &&
+      contains(github.event.comment.body, '/UpdateReleaseDates') &&
+      startsWith(github.event.issue.title, '[release] Prepare release ') &&
+      github.event.issue.pull_request.merged_at == null &&
+      needs.automation.outputs.enabled
+
+    steps:
+    - name: Generate GitHub App token
+      uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+      id: otelbot-token
+      with:
+        client-id: ${{ vars.OTELBOT_DOTNET_CLIENT_ID }}
+        private-key: ${{ secrets.OTELBOT_DOTNET_PRIVATE_KEY }}
+        permission-contents: write
+        permission-pull-requests: write
+
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        # Note: By default GitHub only fetches 1 commit which fails the git tag operation below
+        fetch-depth: 0
+        persist-credentials: true # zizmor: ignore[artipacked] Needed to push commits
+        show-progress: false
+        token: ${{ steps.otelbot-token.outputs.token }}
+
+    - name: Update release date
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ steps.otelbot-token.outputs.token }}
+        BOT_USER_EMAIL: ${{ needs.automation.outputs.email }}
+        BOT_USER_NAME: ${{ needs.automation.outputs.username }}
+        EXPECTED_PR_AUTHOR_USER_NAME: ${{ needs.automation.outputs.application-name }}
+        COMMENT_USER_NAME: ${{ github.event.comment.user.login }}
+        ISSUE_NUMBER: ${{ github.event.issue.number }}
+      run: |
+        Import-Module .\build\scripts\prepare-release.psm1
+
+        UpdateChangelogReleaseDatesAndPostNoticeOnPullRequest `
+          -gitRepository ${env:GITHUB_REPOSITORY} `
+          -pullRequestNumber ${env:ISSUE_NUMBER} `
+          -expectedPrAuthorUserName ${env:EXPECTED_PR_AUTHOR_USER_NAME} `
+          -commentUserName ${env:COMMENT_USER_NAME} `
+          -gitUserName ${env:BOT_USER_NAME} `
+          -gitUserEmail ${env:BOT_USER_EMAIL}
+
+  update-releasenotes-on-prepare-pr-post-notice:
+    name: Update release notes and post notice
+    runs-on: ubuntu-24.04
+
+    needs: automation
+
+    if: |
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request &&
+      github.event.issue.state == 'open' &&
+      github.event.comment.user.login != needs.automation.outputs.application-username &&
+      contains(github.event.comment.body, '/UpdateReleaseNotes') &&
+      startsWith(github.event.issue.title, '[release] Prepare release ') &&
+      github.event.issue.pull_request.merged_at == null &&
+      needs.automation.outputs.enabled
+
+    steps:
+    - name: Generate GitHub App token
+      uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+      id: otelbot-token
+      with:
+        client-id: ${{ vars.OTELBOT_DOTNET_CLIENT_ID }}
+        private-key: ${{ secrets.OTELBOT_DOTNET_PRIVATE_KEY }}
+        permission-contents: write
+        permission-pull-requests: write
+
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        # Note: By default GitHub only fetches 1 commit which fails the git tag operation below
+        fetch-depth: 0
+        persist-credentials: true # zizmor: ignore[artipacked] Needed to push commits
+        show-progress: false
+        token: ${{ steps.otelbot-token.outputs.token }}
+
+    - name: Update release notes
+      env:
+        GH_TOKEN: ${{ steps.otelbot-token.outputs.token }}
+        BOT_USER_EMAIL: ${{ needs.automation.outputs.email }}
+        BOT_USER_NAME: ${{ needs.automation.outputs.username }}
+        EXPECTED_PR_AUTHOR_USER_NAME: ${{ needs.automation.outputs.application-name }}
+        COMMENT_BODY: ${{ github.event.comment.body }}
+        COMMENT_USER_NAME: ${{ github.event.comment.user.login }}
+        ISSUE_NUMBER: ${{ github.event.issue.number }}
+      shell: pwsh
+      run: |
+        Import-Module .\build\scripts\prepare-release.psm1
+
+        UpdateReleaseNotesAndPostNoticeOnPullRequest `
+          -gitRepository ${env:GITHUB_REPOSITORY} `
+          -pullRequestNumber ${env:ISSUE_NUMBER} `
+          -expectedPrAuthorUserName ${env:EXPECTED_PR_AUTHOR_USER_NAME} `
+          -commentUserName ${env:COMMENT_USER_NAME} `
+          -commentBody $Env:COMMENT_BODY `
+          -gitUserName ${env:BOT_USER_NAME} `
+          -gitUserEmail ${env:BOT_USER_EMAIL}

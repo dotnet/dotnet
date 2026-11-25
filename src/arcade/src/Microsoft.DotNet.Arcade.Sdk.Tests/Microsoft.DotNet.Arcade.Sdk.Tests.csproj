@@ -45,6 +45,9 @@
     <Content Include="..\Microsoft.DotNet.Arcade.Sdk\tools\Microsoft.Testing.Platform\Microsoft.Testing.Platform.targets"
              Link="testassets\ArcadeSdkTools\Microsoft.Testing.Platform\Microsoft.Testing.Platform.targets"
              CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Microsoft.DotNet.Arcade.Sdk\toolset\VisualStudio.AcquireOptimizationData.targets"
+             Link="testassets\ArcadeSdkTools\VisualStudio.AcquireOptimizationData.targets"
+             CopyToOutputDirectory="PreserveNewest" />
     <Content Include="$(RepositoryEngineeringDir)common\**\*" LinkBase="testassets\boilerplate\eng\common\" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="$(RepoRoot)build.sh" LinkBase="testassets\boilerplate\" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="$(RepoRoot)Build.cmd" LinkBase="testassets\boilerplate\" CopyToOutputDirectory="PreserveNewest" />

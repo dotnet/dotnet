@@ -229,16 +229,22 @@
     <comment>0 - minimum publish age</comment>
   </data>
   <data name="ShowError_ConfigInvalidOperation" xml:space="preserve">
-    <value>NuGet.Config is malformed. Path: '{0}'.</value>
+    <value>NuGet.Config is malformed. Path: '{0}'. Reason: {1}</value>
+    <comment>0 - path to the config file
+1 - original exception message</comment>
   </data>
   <data name="ShowError_ConfigInvalidXml" xml:space="preserve">
-    <value>NuGet.Config is not valid XML. Path: '{0}'.</value>
+    <value>NuGet.Config is not valid XML. Path: '{0}'. Reason: {1}</value>
+    <comment>0 - path to the config file
+1 - original exception message</comment>
   </data>
   <data name="ShowError_ConfigRootInvalid" xml:space="preserve">
     <value>NuGet.Config does not contain the expected root element: 'configuration'. Path: '{0}'.</value>
   </data>
   <data name="ShowError_ConfigUnauthorizedAccess" xml:space="preserve">
-    <value>Failed to read NuGet.Config due to unauthorized access. Path: '{0}'.</value>
+    <value>Failed to read NuGet.Config due to unauthorized access. Path: '{0}'. Reason: {1}</value>
+    <comment>0 - path to the config file
+1 - original exception message</comment>
   </data>
   <data name="TextShouldNotBeEmpty" xml:space="preserve">
     <value>Text elements should not be empty.</value>
@@ -250,7 +256,9 @@
     <value>Unknown hash algorithm is not supported.</value>
   </data>
   <data name="Unknown_Config_Exception" xml:space="preserve">
-    <value>Unexpected failure reading NuGet.Config. Path: '{0}'.</value>
+    <value>Unexpected failure reading NuGet.Config. Path: '{0}'. Reason: {1}</value>
+    <comment>0 - path to the config file
+1 - original exception message</comment>
   </data>
   <data name="UnsupportedDecryptPassword" xml:space="preserve">
     <value>Password decryption is not supported on .NET Core for this platform. The following feed uses an encrypted password: '{0}'. You can use a clear text password as a workaround.</value>

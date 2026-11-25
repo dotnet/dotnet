@@ -4111,6 +4111,118 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
             });
 
     [Fact]
+    public void Add_deferrable_foreign_key()
+        => Execute(
+            common => common.Entity(
+                "Amoeba",
+                x =>
+                {
+                    x.ToTable("Amoeba", "dbo");
+                    x.Property<int>("Id");
+                    x.Property<int>("ParentId");
+                }),
+            _ => { },
+            target => target.Entity(
+                "Amoeba",
+                x => x.HasOne("Amoeba").WithMany().HasForeignKey("ParentId")
+                    .HasDeferrability(ConstraintDeferrability.DeferrableInitiallyDeferred)
+            ),
+            operations =>
+            {
+                Assert.Equal(2, operations.Count);
+                Assert.IsType<CreateIndexOperation>(operations[0]);
+
+                var addFkOperation = Assert.IsType<AddForeignKeyOperation>(operations[1]);
+                Assert.Equal("FK_Amoeba_Amoeba_ParentId", addFkOperation.Name);
+                Assert.Equal(ConstraintDeferrability.DeferrableInitiallyDeferred, addFkOperation.Deferrability);
+            });
+
+    [Fact]
+    public void Create_table_with_deferrable_foreign_key()
+        => Execute(
+            _ => { },
+            target => target.Entity(
+                "Amoeba",
+                x =>
+                {
+                    x.ToTable("Amoeba", "dbo");
+                    x.Property<int>("Id");
+                    x.Property<int>("ParentId");
+                    x.HasOne("Amoeba").WithMany().HasForeignKey("ParentId")
+                        .HasDeferrability(ConstraintDeferrability.DeferrableInitiallyImmediate);
+                }),
+            operations =>
+            {
+                var createTableOperation = Assert.Single(operations.OfType<CreateTableOperation>());
+                var addFkOperation = Assert.Single(createTableOperation.ForeignKeys);
+                Assert.Equal("FK_Amoeba_Amoeba_ParentId", addFkOperation.Name);
+                Assert.Equal(ConstraintDeferrability.DeferrableInitiallyImmediate, addFkOperation.Deferrability);
+            });
+
+    [Fact]
+    public void Alter_foreign_key_deferrability()
+        => Execute(
+            common => common.Entity(
+                "Amoeba",
+                x =>
+                {
+                    x.ToTable("Amoeba", "dbo");
+                    x.Property<int>("Id");
+                    x.Property<int>("ParentId");
+                }),
+            source => source.Entity(
+                "Amoeba",
+                x => x.HasOne("Amoeba").WithMany().HasForeignKey("ParentId").OnDelete(DeleteBehavior.Restrict)
+            ),
+            target => target.Entity(
+                "Amoeba",
+                x => x.HasOne("Amoeba").WithMany().HasForeignKey("ParentId").OnDelete(DeleteBehavior.Restrict)
+                    .HasDeferrability(ConstraintDeferrability.DeferrableInitiallyDeferred)
+            ),
+            upOps =>
+            {
+                Assert.Equal(2, upOps.Count);
+
+                var dropFkOperation = Assert.IsType<DropForeignKeyOperation>(upOps[0]);
+                Assert.Equal("dbo", dropFkOperation.Schema);
+                Assert.Equal("Amoeba", dropFkOperation.Table);
+                Assert.Equal("FK_Amoeba_Amoeba_ParentId", dropFkOperation.Name);
+
+                var addFkOperation = Assert.IsType<AddForeignKeyOperation>(upOps[1]);
+                Assert.Equal("FK_Amoeba_Amoeba_ParentId", addFkOperation.Name);
+                Assert.Equal(ReferentialAction.Restrict, addFkOperation.OnDelete);
+                Assert.Equal(ConstraintDeferrability.DeferrableInitiallyDeferred, addFkOperation.Deferrability);
+            },
+            downOps =>
+            {
+                Assert.Equal(2, downOps.Count);
+
+                Assert.IsType<DropForeignKeyOperation>(downOps[0]);
+
+                var addFkOperation = Assert.IsType<AddForeignKeyOperation>(downOps[1]);
+                Assert.Equal("FK_Amoeba_Amoeba_ParentId", addFkOperation.Name);
+                Assert.Equal(ReferentialAction.Restrict, addFkOperation.OnDelete);
+                Assert.Equal(ConstraintDeferrability.NotDeferrable, addFkOperation.Deferrability);
+            });
+
+    [Fact]
+    public void Deferrable_foreign_key_unchanged()
+        => Execute(
+            common => common.Entity(
+                "Amoeba",
+                x =>
+                {
+                    x.ToTable("Amoeba", "dbo");
+                    x.Property<int>("Id");
+                    x.Property<int>("ParentId");
+                    x.HasOne("Amoeba").WithMany().HasForeignKey("ParentId")
+                        .HasDeferrability(ConstraintDeferrability.DeferrableInitiallyDeferred);
+                }),
+            _ => { },
+            _ => { },
+            operations => Assert.Empty(operations));
+
+    [Fact]
     public void Add_optional_foreign_key()
         => Execute(
             source => source.Entity(
@@ -10507,6 +10619,41 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
             Assert.Empty);
 
     [Fact]
+    public virtual void Making_table_splitting_dependent_with_json_complex_property_optional_makes_json_column_nullable()
+        => Execute(
+            common =>
+            {
+                common.Entity<SplitJsonPrincipal>(b =>
+                {
+                    b.ToTable("Principals");
+                    b.HasOne(p => p.Dependent)
+                        .WithOne()
+                        .HasForeignKey<SplitJsonDependent>(d => d.Id);
+                });
+                common.Entity<SplitJsonDependent>(b =>
+                {
+                    b.ToTable("Principals");
+                    b.ComplexProperty(d => d.Data, cb => cb.ToJson("json_data"));
+                });
+            },
+            source => source.Entity<SplitJsonPrincipal>().Navigation(p => p.Dependent).IsRequired(),
+            target => { },
+            upOps =>
+            {
+                var operation = Assert.IsType<AlterColumnOperation>(Assert.Single(upOps));
+                Assert.Equal("Principals", operation.Table);
+                Assert.Equal("json_data", operation.Name);
+                Assert.True(operation.IsNullable);
+                Assert.False(operation.OldColumn.IsNullable);
+            },
+            downOps =>
+            {
+                var operation = Assert.IsType<AlterColumnOperation>(Assert.Single(downOps));
+                Assert.Equal("json_data", operation.Name);
+                Assert.False(operation.IsNullable);
+            });
+
+    [Fact]
     public virtual void Add_complex_collection_mapped_to_json_uses_empty_array_as_default_value()
         => Execute(
             _ => { },
@@ -10734,6 +10881,18 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
             },
             target => { },
             Assert.Empty);
+
+    protected class SplitJsonPrincipal
+    {
+        public int Id { get; set; }
+        public SplitJsonDependent? Dependent { get; set; }
+    }
+
+    protected class SplitJsonDependent
+    {
+        public int Id { get; set; }
+        public MyNestedComplex Data { get; set; } = null!;
+    }
 
     protected class MyJsonComplex
     {
@@ -12170,6 +12329,55 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
                 Assert.Equal("Order", operation.Table);
                 Assert.Equal("Shipping_AddressLine2", operation.Name);
             });
+
+    [Fact]
+    public void Add_complex_property_on_owned_type()
+        => Execute(
+            common => common.Entity(
+                "Owner", b =>
+                {
+                    b.Property<int>("Id");
+                    b.OwnsOne("Owned", "Owned", o => o.Property<string>("Name"));
+                }),
+            _ => { },
+            target => target.Entity("Owner").OwnsOne(
+                "Owned", "Owned", o => o.ComplexProperty<Address>(
+                    "Shipping", c =>
+                    {
+                        c.IsRequired();
+                        c.Ignore(a => a.AddressLine2);
+                    })),
+            upOperations =>
+            {
+                var operation = Assert.IsType<AddColumnOperation>(Assert.Single(upOperations));
+                Assert.Equal("Owner", operation.Table);
+                Assert.Equal("Owned_Shipping_AddressLine1", operation.Name);
+            },
+            downOperations =>
+            {
+                var operation = Assert.IsType<DropColumnOperation>(Assert.Single(downOperations));
+                Assert.Equal("Owner", operation.Table);
+                Assert.Equal("Owned_Shipping_AddressLine1", operation.Name);
+            });
+
+    [Fact]
+    public void Convert_nested_owned_type_to_complex_property_on_owned_type()
+        => Execute(
+            common => common.Entity("Owner").Property<int>("Id"),
+            source => source.Entity("Owner").OwnsOne(
+                "Owned", "Owned", o =>
+                {
+                    o.Property<string>("Name");
+                    o.OwnsOne("Address", "Shipping", n => n.Property<string>("AddressLine1"));
+                }),
+            target => target.Entity("Owner").OwnsOne(
+                "Owned", "Owned", o =>
+                {
+                    o.Property<string>("Name");
+                    o.ComplexProperty<Address>("Shipping", c => c.Ignore(a => a.AddressLine2));
+                }),
+            Assert.Empty,
+            Assert.Empty);
 
     [Fact]
     public void Add_ownership()

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksForLibraries)</TargetFrameworks>
+    <Description>OpenTelemetry Extensions Propagators</Description>
+    <PackageTags>$(PackageTags);distributed-tracing;AspNet;AspNetCore;B3</PackageTags>
+    <MinVerTagPrefix>core-</MinVerTagPrefix>
+    <IncludeInstrumentationHelpers>true</IncludeInstrumentationHelpers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(RepoRoot)\src\OpenTelemetry.Api\OpenTelemetry.Api.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn),CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="OpenTelemetry.Extensions.Propagators.Tests" PublicKey="$(StrongNamePublicKey)" />
+  </ItemGroup>
+
+</Project>

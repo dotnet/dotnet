@@ -49,6 +49,12 @@ public class RunTestsWithTestsTests
         _mockTestRunEventsHandler = new Mock<IInternalTestRunEventsHandler>();
     }
 
+    [TestCleanup]
+    public void Cleanup()
+    {
+        _runTestsInstance?.Dispose();
+    }
+
     [TestMethod]
     public void GetExecutorUriExtensionMapShouldReturnExecutorUrisMapForTestCasesWithSameExecutorUri()
     {
@@ -74,7 +80,7 @@ public class RunTestsWithTestsTests
                 Constants.UnspecifiedAdapterPath)
         };
 
-        CollectionAssert.AreEqual(expectedMap, map.ToList());
+        Assert.AreSequenceEqual(expectedMap, map.ToList());
     }
 
     [TestMethod]
@@ -104,7 +110,7 @@ public class RunTestsWithTestsTests
                 Constants.UnspecifiedAdapterPath)
         };
 
-        CollectionAssert.AreEqual(expectedMap, map.ToList());
+        Assert.AreSequenceEqual(expectedMap, map.ToList());
     }
 
     [TestMethod]
@@ -136,7 +142,7 @@ public class RunTestsWithTestsTests
         _runTestsInstance.CallInvokeExecutor(extension, executorUriExtensionTuple, null, null);
 
         Assert.IsNotNull(receivedTests);
-        CollectionAssert.AreEqual(tests, receivedTests.ToList());
+        Assert.AreSequenceEqual(tests, receivedTests.ToList());
     }
 
     [TestMethod]

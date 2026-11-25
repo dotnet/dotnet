@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="TestIdsReportFile">
         <source>Test id report file : {0}</source>
-        <target state="new">Test id report file : {0}</target>
+        <target state="translated">Test kimliği rapor dosyası: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestIdsLoggerWriteFailed">
         <source>Failed to write the test id report to '{0}'. {1}</source>
-        <target state="new">Failed to write the test id report to '{0}'. {1}</target>
+        <target state="translated">Test kimliği raporu '{0}' üzerine yazılamadı. {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestIdsReportIncomplete">
         <source>The test run did not complete, so the test id report '{0}' covers only the tests that were reported before it stopped. Do not use an incomplete report to migrate stored test ids.</source>
-        <target state="new">The test run did not complete, so the test id report '{0}' covers only the tests that were reported before it stopped. Do not use an incomplete report to migrate stored test ids.</target>
+        <target state="translated">Test çalıştırması tamamlanmadığı için '{0}' test kimliği raporu, yalnızca çalıştırma durmadan önce bildirilen testleri kapsar. Depolanan test kimliklerini geçirmek için eksik bir rapor kullanmayın.</target>
         <note />
       </trans-unit>
     </body>

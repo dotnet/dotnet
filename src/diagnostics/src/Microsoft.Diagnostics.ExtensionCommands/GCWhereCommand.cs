@@ -14,10 +14,15 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = "gcwhere", Aliases = new[] { "GCWhere" }, Help = "Displays the location in the GC heap of the specified address.")]
     public class GCWhereCommand : ClrRuntimeCommandBase
     {
-        [ServiceImport]
-        public IMemoryService MemoryService { get; set; }
+        public GCWhereCommand(IServiceProvider services, IMemoryService memoryService)
+            : base(services)
+        {
+            MemoryService = memoryService;
+        }
 
-        [Argument(Help = "The address on the GC heap to list near objects")]
+        public IMemoryService MemoryService { get; }
+
+        [Argument<string>(Help = "The address on the GC heap to list near objects")]
         public string Address { get; set; }
 
         public override void Invoke()
@@ -38,9 +43,9 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                 return;
             }
 
-            Column objectRangeColumn = Range.WithDml(Dml.DumpHeap).GetAppropriateWidth(segments.Select(r => r.ObjectRange));
-            Column committedColumn = Range.GetAppropriateWidth(segments.Select(r => r.CommittedMemory));
-            Column reservedColumn = Range.GetAppropriateWidth(segments.Select(r => r.ReservedMemory));
+            Column objectRangeColumn = ColumnKind.Range.WithDml(Dml.DumpHeap).GetAppropriateWidth(segments.Select(r => r.ObjectRange));
+            Column committedColumn = ColumnKind.Range.GetAppropriateWidth(segments.Select(r => r.CommittedMemory));
+            Column reservedColumn = ColumnKind.Range.GetAppropriateWidth(segments.Select(r => r.ReservedMemory));
             Table output = new(Console, Pointer, IntegerWithoutCommas.WithWidth(6).WithDml(Dml.DumpHeap), DumpHeap, Text.WithWidth(6), objectRangeColumn, committedColumn, reservedColumn);
             output.SetAlignment(Align.Left);
             output.WriteHeader("Address", "Heap", "Segment", "Generation", "Allocated", "Committed", "Reserved");

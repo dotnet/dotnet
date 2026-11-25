@@ -16,6 +16,231 @@ public abstract class AdHocPrecompiledQueryRelationalTestBase : NonSharedModelTe
         : base(fixture)
         => TestOutputHelper = testOutputHelper;
 
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(false, false, true)]
+    [InlineData(false, true, false)]
+    [InlineData(false, true, true)]
+    [InlineData(true, false, false)]
+    [InlineData(true, false, true)]
+    [InlineData(true, true, false)]
+    [InlineData(true, true, true)]
+    public virtual async Task ThenInclude(bool collection, bool multiple, bool async)
+    {
+        var contextFactory = await InitializeNonSharedTest<IncludeContext>();
+        await using (var context = contextFactory.CreateDbContext())
+        {
+            context.Nodes.Add(
+                new IncludeNode
+                {
+                    Name = "Root",
+                    Reference = new IncludeNode
+                    {
+                        Name = "Reference",
+                        Reference = new IncludeNode { Name = "Leaf", Reference = new IncludeNode { Name = "End" } }
+                    },
+                    Children =
+                    [
+                        new IncludeNode
+                        {
+                            Name = "Collection",
+                            Reference = new IncludeNode { Name = "Leaf", Reference = new IncludeNode { Name = "End" } }
+                        }
+                    ]
+                });
+            await context.SaveChangesAsync();
+        }
+
+        ClearLog();
+
+        await Test(
+            $$"""
+await using var context = new AdHocPrecompiledQueryRelationalTestBase.IncludeContext(dbContextOptions);
+var root = {{(async ? "await " : "")}}context.Nodes
+    .Include(e => e.{{(collection ? "Children" : "Reference")}})
+    .ThenInclude(e => e.Reference)
+    {{(multiple ? ".ThenInclude(e => e.Reference)" : "")}}
+    .AsNoTracking()
+    .{{(async ? "FirstOrDefaultAsync" : "FirstOrDefault")}}(e => e.Name == "Root");
+
+Assert.NotNull(root);
+var included = {{(collection ? "Assert.Single(root.Children)" : "root.Reference")}};
+Assert.NotNull(included);
+Assert.Equal("{{(collection ? "Collection" : "Reference")}}", included.Name);
+Assert.NotNull(included.Reference);
+Assert.Equal("Leaf", included.Reference.Name);
+{{(multiple ? """Assert.Equal("End", included.Reference.Reference!.Name);""" : "")}}
+Assert.Empty(context.ChangeTracker.Entries());
+""",
+            typeof(IncludeContext),
+            contextFactory.GetOptions());
+    }
+
+    public class IncludeContext(DbContextOptions options) : DbContext(options)
+    {
+        public DbSet<IncludeNode> Nodes { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<IncludeNode>().HasOne(e => e.Reference).WithMany().HasForeignKey("ReferenceId");
+            modelBuilder.Entity<IncludeNode>().HasMany(e => e.Children).WithOne().HasForeignKey("ParentId");
+        }
+    }
+
+    public class IncludeNode
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
+        public IncludeNode? Reference { get; set; }
+        public List<IncludeNode> Children { get; set; } = [];
+    }
+
+    [Fact]
+    public virtual async Task Coalesce_nullable_long_in_anonymous_projection()
+    {
+        var contextFactory = await InitializeNonSharedTest<NullableLongContext>(seed: async context =>
+        {
+            context.Records.AddRange(
+                new NullableLongRecord { SizeBytes = null },
+                new NullableLongRecord { SizeBytes = 8L });
+            await context.SaveChangesAsync();
+        });
+
+        await Test(
+            """
+await using var context = new AdHocPrecompiledQueryRelationalTestBase.NullableLongContext(dbContextOptions);
+
+var rows = await context.Records.OrderBy(r => r.Id).Select(r => new { SizeBytes = r.SizeBytes ?? 0L }).ToListAsync();
+Assert.Equal(new long[] { 0L, 8L }, rows.Select(r => r.SizeBytes));
+""",
+            typeof(NullableLongContext),
+            contextFactory.GetOptions());
+    }
+
+    public class NullableLongContext(DbContextOptions options) : DbContext(options)
+    {
+        public DbSet<NullableLongRecord> Records { get; set; } = null!;
+    }
+
+    public class NullableLongRecord
+    {
+        public int Id { get; set; }
+        public long? SizeBytes { get; set; }
+    }
+
+    [Fact]
+    public virtual async Task Decimal_projection_with_implicitly_converted_zero()
+    {
+        var contextFactory = await InitializeNonSharedTest<DecimalContext>();
+
+        await Test(
+            """
+await using var context = new AdHocPrecompiledQueryRelationalTestBase.DecimalContext(dbContextOptions);
+var id = 1;
+var amount = 2m;
+
+// Generate and compile the query without executing it.
+Func<Task<decimal>> query = () => context.Groups.Where(group => group.Id == id)
+    .Select(group => group.Balance + (amount > 0 ? amount : 0))
+    .SingleAsync();
+""",
+            typeof(DecimalContext),
+            contextFactory.GetOptions(),
+            interceptorCodeAsserter: code => Assert.Contains("InterceptsLocation", code));
+    }
+
+    public class DecimalContext(DbContextOptions options) : DbContext(options)
+    {
+        public DbSet<DecimalGroup> Groups { get; set; } = null!;
+    }
+
+    public class DecimalGroup
+    {
+        public int Id { get; set; }
+
+        [Precision(18, 2)]
+        public decimal Balance { get; set; }
+    }
+
+    [Fact]
+    public virtual async Task Implicit_conversions_in_binary_and_conditional_expressions()
+    {
+        var contextFactory = await InitializeNonSharedTest<ImplicitConversionContext>(seed: context => context.SeedAsync());
+
+        await Test(
+            """
+await using var context = new AdHocPrecompiledQueryRelationalTestBase.ImplicitConversionContext(dbContextOptions);
+var taskType = "generation";
+var since = new DateTime(2026, 1, 1);
+var metrics = await context.Tasks
+    .AsNoTracking()
+    .Where(task => task.Type == taskType && task.CreatedAt >= since)
+    .GroupBy(task => task.State)
+    .OrderBy(group => group.Key)
+    .Select(group => new AdHocPrecompiledQueryRelationalTestBase.ImplicitConversionContext.Metric(
+        group.Key,
+        group.Count(),
+        group.Where(task => task.CompletedAt.HasValue).Any()
+            ? group.Where(task => task.CompletedAt.HasValue).Average(task => task.Id)
+            : null))
+    .ToListAsync();
+
+Assert.Equal(
+    new[]
+    {
+        new AdHocPrecompiledQueryRelationalTestBase.ImplicitConversionContext.Metric(0, 2, 2.0),
+        new AdHocPrecompiledQueryRelationalTestBase.ImplicitConversionContext.Metric(1, 1, null)
+    },
+    metrics);
+""",
+            typeof(ImplicitConversionContext),
+            contextFactory.GetOptions());
+    }
+
+    public class ImplicitConversionContext(DbContextOptions options) : DbContext(options)
+    {
+        public DbSet<GenerationTask> Tasks { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<GenerationTask>().Property(task => task.Id).ValueGeneratedNever();
+            modelBuilder.Entity<GenerationTask>().Property(task => task.Type)
+                .HasConversion(type => (string)type, value => new TaskType(value));
+        }
+
+        public Task SeedAsync()
+        {
+            var createdAt = new DateTime(2026, 1, 1);
+            AddRange(
+                new GenerationTask { Id = 1, Type = new TaskType("generation"), CreatedAt = createdAt, CompletedAt = createdAt },
+                new GenerationTask { Id = 3, Type = new TaskType("generation"), CreatedAt = createdAt, CompletedAt = createdAt },
+                new GenerationTask { Id = 2, Type = new TaskType("generation"), State = 1, CreatedAt = createdAt },
+                new GenerationTask { Id = 4, Type = new TaskType("other"), CreatedAt = createdAt },
+                new GenerationTask { Id = 5, Type = new TaskType("generation"), CreatedAt = createdAt.AddDays(-1) });
+
+            return SaveChangesAsync();
+        }
+
+        public class GenerationTask
+        {
+            public int Id { get; set; }
+            public TaskType Type { get; set; } = null!;
+            public int State { get; set; }
+            public DateTime CreatedAt { get; set; }
+            public DateTime? CompletedAt { get; set; }
+        }
+
+        public class TaskType(string value)
+        {
+            private readonly string _value = value;
+
+            public static implicit operator string(TaskType type)
+                => type._value;
+        }
+
+        public sealed record Metric(int State, int Count, double? Average);
+    }
+
     [Fact]
     public virtual async Task Index_no_evaluatability()
     {
@@ -86,6 +311,133 @@ _ = context.JsonEntities.Where(b => b.JsonThing.StringProperty == "foo").ToList(
     public class JsonThing
     {
         public string StringProperty { get; set; } = null!;
+    }
+
+    [Fact]
+    public virtual async Task Complex_properties_on_owned_types()
+    {
+        var contextFactory = await InitializeNonSharedTest<OwnedComplexContext>(seed: OwnedComplexContext.SeedAsync);
+        var options = contextFactory.GetOptions();
+
+        await Test(
+            """
+await using var context = new AdHocPrecompiledQueryRelationalTestBase.OwnedComplexContext(dbContextOptions);
+
+var owners = await context.Owners.Where(o => o.Owned.Address.City == "Sydney").ToListAsync();
+var owner = Assert.Single(owners);
+Assert.Equal("AU", owner.Owned.Address.Country.Code);
+Assert.Equal("Melbourne", owner.Owned.JsonAddress.City);
+Assert.Equal(["Perth"], owner.OwnedCollection.Select(o => o.Address.City));
+Assert.Equal("Hobart", owner.JsonOwned.Address.City);
+""",
+            typeof(OwnedComplexContext),
+            options);
+    }
+
+    [Fact]
+    public virtual async Task Complex_properties_on_owned_types_projected()
+    {
+        var contextFactory = await InitializeNonSharedTest<OwnedComplexContext>(seed: OwnedComplexContext.SeedAsync);
+        var options = contextFactory.GetOptions();
+
+        await Test(
+            """
+await using var context = new AdHocPrecompiledQueryRelationalTestBase.OwnedComplexContext(dbContextOptions);
+
+var addresses = await context.Owners
+    .Select(o => new { o.Owned.Address, o.Owned.JsonAddress, JsonOwnedCity = o.JsonOwned.Address.City })
+    .ToListAsync();
+var address = Assert.Single(addresses);
+Assert.Equal("Sydney", address.Address.City);
+Assert.Equal("AU", address.Address.Country.Code);
+Assert.Equal("Melbourne", address.JsonAddress.City);
+Assert.Equal("Hobart", address.JsonOwnedCity);
+""",
+            typeof(OwnedComplexContext),
+            options);
+    }
+
+    public class OwnedComplexContext(DbContextOptions options) : DbContext(options)
+    {
+        public DbSet<OwnedComplexOwner> Owners { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+            => modelBuilder.Entity<OwnedComplexOwner>(b =>
+            {
+                b.Property(o => o.Id).ValueGeneratedNever();
+                b.OwnsOne(
+                    o => o.Owned, ob =>
+                    {
+                        ob.ComplexProperty(o => o.Address);
+                        ob.ComplexProperty(o => o.JsonAddress, cb => cb.ToJson());
+                    });
+                b.OwnsMany(
+                    o => o.OwnedCollection, ob =>
+                    {
+                        ob.HasKey("Id");
+                        ob.ComplexProperty(o => o.Address);
+                        ob.Ignore(o => o.JsonAddress);
+                    });
+                b.OwnsOne(
+                    o => o.JsonOwned, ob =>
+                    {
+                        ob.ToJson();
+                        ob.ComplexProperty(o => o.Address);
+                        ob.Ignore(o => o.JsonAddress);
+                    });
+            });
+
+        public static Task SeedAsync(OwnedComplexContext context)
+        {
+            context.Owners.Add(
+                new OwnedComplexOwner
+                {
+                    Id = 1,
+                    Owned = new OwnedWithAddress
+                    {
+                        Address = new OwnedAddress { City = "Sydney", Country = new OwnedCountry { Code = "AU" } },
+                        JsonAddress = new OwnedAddress { City = "Melbourne", Country = new OwnedCountry { Code = "AU" } }
+                    },
+                    OwnedCollection =
+                    [
+                        new OwnedWithAddress
+                        {
+                            Address = new OwnedAddress { City = "Perth", Country = new OwnedCountry { Code = "AU" } }
+                        }
+                    ],
+                    JsonOwned = new OwnedWithAddress
+                    {
+                        Address = new OwnedAddress { City = "Hobart", Country = new OwnedCountry { Code = "AU" } }
+                    }
+                });
+
+            return context.SaveChangesAsync();
+        }
+    }
+
+    public class OwnedComplexOwner
+    {
+        public int Id { get; set; }
+        public OwnedWithAddress Owned { get; set; } = null!;
+        public List<OwnedWithAddress> OwnedCollection { get; set; } = [];
+        public OwnedWithAddress JsonOwned { get; set; } = null!;
+    }
+
+    public class OwnedWithAddress
+    {
+        public OwnedAddress Address { get; set; } = null!;
+        public OwnedAddress JsonAddress { get; set; } = null!;
+    }
+
+    public class OwnedAddress
+    {
+        public string City { get; set; } = null!;
+        public OwnedCountry Country { get; set; } = null!;
+    }
+
+    public class OwnedCountry
+    {
+        public string Code { get; set; } = null!;
     }
 
     [Fact]
@@ -478,6 +830,71 @@ var posts = await context.Posts.ToListAsync();
             r => r.Value,
             v => new Rating(v));
     }
+
+    #region Window functions
+
+    [Fact]
+    public virtual async Task GroupBy_elements_and_aggregates_as_window_functions()
+    {
+        var contextFactory = await InitializeNonSharedTest<WindowFunctionContext>(
+            onConfiguring: o => UseWindowFunctionAggregates(o));
+        var options = contextFactory.GetOptions();
+
+        await Test(
+            """
+await using var context = new AdHocPrecompiledQueryRelationalTestBase.WindowFunctionContext(dbContextOptions);
+context.Employees.AddRange(
+    new AdHocPrecompiledQueryRelationalTestBase.WindowFunctionEmployee { DepartmentName = "Engineering", Salary = 100 },
+    new AdHocPrecompiledQueryRelationalTestBase.WindowFunctionEmployee { DepartmentName = "Engineering", Salary = 200 },
+    new AdHocPrecompiledQueryRelationalTestBase.WindowFunctionEmployee { DepartmentName = "Sales", Salary = 50 });
+await context.SaveChangesAsync();
+
+// With more nullable parameters than SQL is pregenerated for, the SQL tree itself is quoted into the generated code.
+string? excluded1 = "Finance", excluded2 = "Legal", excluded3 = "Marketing", excluded4 = "Support";
+var departments = await context.Employees
+    .Where(e => e.DepartmentName != excluded1 && e.DepartmentName != excluded2 && e.DepartmentName != excluded3 && e.DepartmentName != excluded4)
+    .GroupBy(e => e.DepartmentName)
+    .Select(g => new { Employees = g.ToList(), Total = g.Sum(e => e.Salary), Count = g.LongCount() })
+    .ToListAsync();
+
+Assert.Collection(
+    departments.OrderBy(d => d.Total),
+    sales =>
+    {
+        Assert.Single(sales.Employees);
+        Assert.Equal(50, sales.Total);
+        Assert.Equal(1L, sales.Count);
+    },
+    engineering =>
+    {
+        Assert.Equal(2, engineering.Employees.Count);
+        Assert.Equal(300, engineering.Total);
+        Assert.Equal(2L, engineering.Count);
+    });
+""",
+            typeof(WindowFunctionContext),
+            options,
+            interceptorCodeAsserter: code => Assert.Contains("new WindowFunctionExpression(", code));
+    }
+
+    /// <summary>
+    ///     Enables the window function translation on the given options, using the provider's own options builder.
+    /// </summary>
+    protected abstract DbContextOptionsBuilder UseWindowFunctionAggregates(DbContextOptionsBuilder optionsBuilder);
+
+    public class WindowFunctionContext(DbContextOptions options) : DbContext(options)
+    {
+        public DbSet<WindowFunctionEmployee> Employees { get; set; } = null!;
+    }
+
+    public class WindowFunctionEmployee
+    {
+        public int Id { get; set; }
+        public string DepartmentName { get; set; } = "";
+        public int Salary { get; set; }
+    }
+
+    #endregion
 
     #region Invalid runtime constant name
 

@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ESNext",
+    "outDir": "out",
+    "esModuleInterop": true,
+    "declaration": true,
+    "removeComments": true,
+    "types": ["node", "mocha"]
+  },
+  "include": ["src", "tests"],
+  "exclude": ["out"]
+}

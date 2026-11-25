@@ -5,7 +5,7 @@ In this walkthrough, you will learn how to create your first `DataCollector` and
 
 ## Extend DataCollector
 The very first thing you will need to create is a Class Library project and add reference to `Microsoft.TestPlatform.ObjectModel` nuget package.
-Class Library project can target .NET Framework (for example `net462`) or .NET (for example `net8.0`, `net9.0`, or `net10.0`), or multi-target both families when the collector needs to run in both environments.
+Class Library project can target .NET Framework (for example `net462`) or .NET (for example `net10.0`), or multi-target both families when the collector needs to run in both environments.
 
 > **DataCollector Assembly Naming Convention**
 >

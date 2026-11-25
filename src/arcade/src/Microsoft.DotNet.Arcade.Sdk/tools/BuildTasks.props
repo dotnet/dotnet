@@ -16,7 +16,6 @@
   </PropertyGroup>
 
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.CalculateAssemblyAndFileVersions" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
-  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.CheckRequiredDotNetVersion" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.CompareVersions" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />
   <!-- DownloadFile is intentionally not exposed here as it causes a conflict with msbuild's DownloadFile task -->
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.ExecWithRetries" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" />

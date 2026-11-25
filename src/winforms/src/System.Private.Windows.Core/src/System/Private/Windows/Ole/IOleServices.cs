@@ -11,6 +11,22 @@ namespace System.Private.Windows.Ole;
 internal unsafe interface IOleServices
 {
     /// <summary>
+    ///  Enables native text synthesis for clipboard results while retaining managed retrieval for other formats.
+    ///  Platforms must opt in so existing managed-object unwrapping behavior is preserved by default.
+    /// </summary>
+    /// <value>
+    ///  <see langword="true"/> to supplement an unwrapped managed clipboard object with Text, UnicodeText,
+    ///  and OEMText retrieved from its captured native proxy; <see langword="false"/> to return the managed
+    ///  object unchanged. WPF opts in to preserve its .NET 9 behavior; WinForms keeps the default of
+    ///  <see langword="false"/>.
+    /// </value>
+#if NET
+    static virtual bool UseNativeClipboardTextFallback => false;
+#else
+    bool UseNativeClipboardTextFallback { get; }
+#endif
+
+    /// <summary>
     ///  This method is called to validate that OLE is initialized and
     ///  that the current thread is a single-threaded apartment (STA).
     /// </summary>
@@ -34,6 +50,22 @@ internal unsafe interface IOleServices
     static abstract
 #endif
     HRESULT GetDataHere(string format, object data, FORMATETC* pformatetc, STGMEDIUM* pmedium);
+
+    /// <summary>
+    ///  The storage medium types that the platform can provide and request.
+    /// </summary>
+    /// <remarks>
+    ///  <para>
+    ///   Requests for any other <see cref="TYMED"/> are rejected with <see cref="HRESULT.DV_E_TYMED"/>. A platform
+    ///   that handles additional storage medium types in
+    ///   <see cref="GetDataHere(string, object, FORMATETC*, STGMEDIUM*)"/>, such as <see cref="TYMED.TYMED_ENHMF"/>,
+    ///   must include them here.
+    ///  </para>
+    /// </remarks>
+#if NET
+    static abstract
+#endif
+    TYMED AllowedTymeds { get; }
 
     /// <summary>
     ///  If the <typeparamref name="T"/> is a the requested format this method will attempt to extract it

@@ -817,6 +817,21 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                         collectionResult.Type);
                 }
 
+                // An identifier read as the database returned it, to compare as such; read where it's used, as it's only ever used once.
+                case ProviderValueProjectionBindingExpression providerValueProjectionBindingExpression:
+                {
+                    var projectionIndex = (int)GetProjectionIndex(providerValueProjectionBindingExpression.ProjectionBinding);
+                    var projection = _selectExpression.Projection[projectionIndex];
+
+                    return CreateGetValueExpression(
+                        _dataReaderParameter,
+                        projectionIndex,
+                        IsNullableProjection(projection),
+                        providerValueProjectionBindingExpression.TypeMapping,
+                        providerValueProjectionBindingExpression.Type,
+                        applyConverter: false);
+                }
+
                 case ProjectionBindingExpression projectionBindingExpression
                     when _inline:
                 {
@@ -1518,8 +1533,26 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                 == Infrastructure.ExpressionExtensions.ValueBufferTryReadValueMethod)
             {
                 var index = methodCallExpression.Arguments[1].GetConstantValue<int>();
-                var property = methodCallExpression.Arguments[2].GetConstantValue<IProperty?>();
+                var propertyBase = methodCallExpression.Arguments[2].GetConstantValue<IPropertyBase?>();
                 var mappingParameter = (ParameterExpression)((MethodCallExpression)methodCallExpression.Arguments[0]).Object!;
+
+                if (propertyBase is IComplexProperty complexProperty)
+                {
+                    // The JSON column of a complex property is only checked for null to find out whether an optional dependent
+                    // exists, so the document isn't read. Its JSON reader registers the column with a buffered reader.
+                    Expression jsonIndexExpression = Constant(_materializationContextBindings[mappingParameter][complexProperty]);
+                    if (_indexMapParameter != null)
+                    {
+                        jsonIndexExpression = ArrayIndex(_indexMapParameter, jsonIndexExpression);
+                    }
+
+                    return Condition(
+                        Call(_dataReaderParameter, IsDbNullMethod, jsonIndexExpression),
+                        Default(methodCallExpression.Type),
+                        Convert(Constant(true), methodCallExpression.Type));
+                }
+
+                var property = (IProperty?)propertyBase;
 
                 if (_jsonMaterializationContextToJsonReaderDataAndKeyValuesParameterMapping
                     .TryGetValue(mappingParameter, out var mappedParameter))
@@ -1823,6 +1856,11 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                             keyValuesParameter,
                             jsonReaderDataParameter,
                             includingEntityExpression,
+                            _parentVisitor.Dependencies.LiftableConstantFactory.CreateLiftableConstant(
+                                structuralProperty,
+                                LiftableConstantExpressionHelpers.BuildStructuralPropertyAccessLambda(structuralProperty),
+                                structuralProperty.Name + "StructuralProperty",
+                                typeof(IPropertyBase)),
                             shaperLambda,
                             GetOrCreateCollectionObjectLambda(declaringClrType, structuralProperty),
                             fixup,
@@ -2626,7 +2664,9 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
             {
                 var jsonColumnName = structuralType.GetContainerColumnName()!;
                 jsonColumn = structuralType.ContainingEntityType.GetQueryMappings()
-                        .Select(m => m.Table.FindColumn(jsonColumnName))
+                        .Select(m => structuralType is IComplexType complexType
+                            ? m.Table.FindColumn(complexType.ComplexProperty)
+                            : m.Table.FindColumn(jsonColumnName))
                         .FirstOrDefault(c => c is not null)
                     ?? throw new UnreachableException(
                         $"Could not find JSON container column '{jsonColumnName}' for entity type '{structuralType.DisplayName()}'.");
@@ -3050,7 +3090,8 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
             bool nullable,
             RelationalTypeMapping typeMapping,
             Type type,
-            IPropertyBase? property = null)
+            IPropertyBase? property = null,
+            bool applyConverter = true)
         {
             var getMethod = typeMapping.GetDataReaderMethod();
 
@@ -3110,7 +3151,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
 
             valueExpression = typeMapping.CustomizeDataReaderExpression(valueExpression);
 
-            var converter = typeMapping.Converter;
+            var converter = applyConverter ? typeMapping.Converter : null;
 
             var converterExpression = default(Expression);
             var primitiveCollectionJsonHandled = false;
@@ -3739,15 +3780,20 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
 
                     switch (entityProjection)
                     {
+                        // complex types are not tracked by the change tracker, so ordering is irrelevant
+                        case QueryableJsonProjectionInfo or JsonProjectionInfo
+                            when entityShaperExpression.StructuralType is not IEntityType:
+                            return base.VisitExtension(extensionExpression);
+
                         case QueryableJsonProjectionInfo:
                         case JsonProjectionInfo when _insideCollection && !_insideInclude:
                             throw new InvalidOperationException(
                                 RelationalStrings.JsonProjectingQueryableOperationNoTrackingWithIdentityResolution(
                                     nameof(QueryTrackingBehavior.NoTrackingWithIdentityResolution)));
 
-                        case JsonProjectionInfo jsonEntityProjectionInfo:
+                        case JsonProjectionInfo jsonEntityProjectionInfo
+                            when entityShaperExpression.StructuralType is IEntityType jsonEntityType:
                         {
-                            var jsonEntityType = (IEntityType)entityShaperExpression.StructuralType;
                             if (_insideInclude)
                             {
                                 if (!_includedJsonEntityTypes.Contains(jsonEntityType))
@@ -3778,6 +3824,11 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
 
                     switch (collectionProjection)
                     {
+                        // complex collections are not tracked by the change tracker, so ordering is irrelevant
+                        case QueryableJsonProjectionInfo or JsonProjectionInfo
+                            when collectionResultExpression.StructuralProperty is not INavigation:
+                            return base.VisitExtension(extensionExpression);
+
                         case QueryableJsonProjectionInfo:
                         case JsonProjectionInfo when _insideCollection && !_insideInclude:
                             throw new InvalidOperationException(

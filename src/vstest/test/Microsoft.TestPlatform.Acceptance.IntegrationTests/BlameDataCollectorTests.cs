@@ -39,7 +39,6 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
     [TestMatrix(testHost: Net)]
     public void BlameDataCollectorShouldGiveCorrectTestCaseName(RunnerInfo runnerInfo)
     {
@@ -54,7 +53,6 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
     [TestMatrix(console: NetFx, testHost: NetFx)]
     [TestMatrix(console: Net, testHost: Net)]
     public void BlameDataCollectorShouldOutputDumpFile(RunnerInfo runnerInfo)
@@ -78,7 +76,6 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
     [TestMatrix(console: Net, testHost: Net)]
     public void BlameDataCollectorShouldNotOutputDumpFileWhenNoCrashOccurs(RunnerInfo runnerInfo)
     {
@@ -101,7 +98,6 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
     // This tests .net runner and .net framework runner, together with .net framework testhost.
     [TestMatrix(testHost: NetFx)]
     public void BlameDataCollectorShouldOutputDumpFileWhenNoCrashOccursButCollectAlwaysIsEnabled(RunnerInfo runnerInfo)
@@ -125,7 +121,9 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestMatrix(console: Net)]
+    // Both consoles: the .NET Framework console ships in Microsoft.TestPlatform, the .NET console in Microsoft.TestPlatform.CLI.
+    // Both testhosts: .NET testhost uses Microsoft.Diagnostics.NETCore.Client, .NET Framework testhost uses MiniDumpWriteDump.
+    [TestMatrix]
     public void HangDumpOnTimeout(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -279,7 +277,6 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
     [DoNotParallelize] // Installs/uninstalls procdump as machine-wide postmortem debugger via HKLM registry.
     [TestMatrix(testHost: NetFx)]
     [TestMatrix(testHost: Net)]

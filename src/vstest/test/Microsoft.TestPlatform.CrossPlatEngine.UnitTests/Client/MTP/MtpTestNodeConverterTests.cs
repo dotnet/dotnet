@@ -345,14 +345,14 @@ public class MtpTestNodeConverterTests
     public void ToTestCaseDoesNotThrowOnMalformedTraits()
     {
         TestCase notACollection = MtpTestNodeConverter.ToTestCase(Node(("traits", "nonsense")), Source);
-        Assert.AreEqual(0, notACollection.Traits.Count());
+        Assert.IsEmpty(notACollection.Traits);
 
         TestCase notDictionaries = MtpTestNodeConverter.ToTestCase(
             Node(("traits", new List<object> { "nonsense", 42 })),
             Source);
-        Assert.AreEqual(0, notDictionaries.Traits.Count());
+        Assert.IsEmpty(notDictionaries.Traits);
 
         TestCase missing = MtpTestNodeConverter.ToTestCase(Node(), Source);
-        Assert.AreEqual(0, missing.Traits.Count());
+        Assert.IsEmpty(missing.Traits);
     }
 }

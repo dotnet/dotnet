@@ -1,0 +1,38 @@
+{
+  "name": "@microsoft/antissrf",
+  "version": "1.0.0",
+  "description": "A library to prevent SSRF vulnerabilities in Node.js applications",
+  "main": "./out/src/index.js",
+  "types": "./out/src/index.d.ts",
+  "files": [
+    "out/src/**/*",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc --project ./tsconfig.json",
+    "format": "prettier --write .",
+    "lint": "eslint src",
+    "test": "mocha --recursive --timeout 15000 --require ts-node/register --no-strip-types \"tests/{UnitTests,FunctionalTests}/**/*.test.ts\"",
+    "test:unit": "mocha --recursive --timeout 15000 --require ts-node/register --no-strip-types tests/UnitTests/**/*.test.ts",
+    "test:functional": "mocha --recursive --timeout 15000 --require ts-node/register --no-strip-types tests/FunctionalTests/**/*.test.ts",
+    "test:prepublish": "mocha --recursive --timeout 15000 tests/PrePublishTests/**/*.test.js"
+  },
+  "author": "Microsoft",
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "@types/follow-redirects": "^1.14.4",
+    "@types/mocha": "^10.0.10",
+    "@types/node-fetch": "^2.6.13",
+    "axios": "^1.12.2",
+    "eslint": "^9.20.0",
+    "eslint-plugin-security": "^3.0.1",
+    "follow-redirects": "^1.15.9",
+    "mocha": "^11.7.5",
+    "node-fetch": "^3.3.2",
+    "prettier": "^3.5.3",
+    "tar": "^7.4.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.59.1"
+  }
+}

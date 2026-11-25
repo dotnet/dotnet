@@ -42,6 +42,19 @@ SOSHARNESS_ONLY_COREVERSIONS=Net10 \
 
 ## Architecture
 
+### Testing installed tools
+
+Official builds run installed-tool SOS tests after `build`, in parallel with
+packaging/publishing, instead of the standard test jobs. `buildOnly` skips all
+tests; PR validation is unchanged.
+
+The Release jobs cover Windows x64/x86/ARM64, Linux x64/ARM64, Linux-musl x64,
+and macOS x64/ARM64 through the normal Helix platform matrix. Each worker
+installs unsigned same-build packages, not final signed shipping packages.
+
+Known limitation: Framework shards can report empty-theory errors only in their
+XML results; the console summary can still report success.
+
 The harness is split into four parts:
 
 - `SOS.Tests` contains command-oriented xUnit theories and structured parsers
@@ -249,9 +262,8 @@ Comma-separated matrix allow-lists are case-insensitive enum names:
 | `SOSHARNESS_ONLY_DUMPKIND` | Select `Heap`, `Mini`, and/or `Full`. |
 | `SOSHARNESS_ONLY_COREVERSIONS` | Select versions such as `Net8,Net11`; explicit selection also permits an out-of-support version. |
 | `SOSHARNESS_ONLY_DAC` | Select `Legacy` and/or `CDac`. |
-| `SOSHARNESS_ONLY_HOSTRUNTIME` | Select `Managed` and/or `None`. |
 | `SOSHARNESS_TEST_OUT_OF_SUPPORT_CORE` | Set to `1` to include every installed out-of-support runtime. |
-| `SOSHARNESS_HOST_RUNTIME_DIR` | Override the complete runtime layout used to host SOS's managed extension. |
+| `SOSHARNESS_CREATEDUMP_RUNTIME_DIR` | Override the runtime layout containing `createdump`. |
 | `SOSHARNESS_MAX_LIVE` | Set the positive maximum number of concurrent live sessions. |
 | `SOSHARNESS_LIVE_TIMEOUT` | Set the positive live LLDB command timeout in seconds. |
 | `SOSHARNESS_LLDB_LOAD_TIMEOUT` | Set the positive LLDB target-load timeout in seconds. |
@@ -327,9 +339,9 @@ work-item payload. Each shard includes its host and debuggee runtime versions in
 `RequiredRuntimeVersions` metadata returned by `CreateHelixPayload`.
 The shared sender gathers all work items and deduplicates
 their runtime requirements into the SDK's `AdditionalDotNetPackage` items.
-This also ensures the test-host runtime is
-available independently of the debuggee matrix. SOS retains its existing
-platform-specific host selection, including .NET 11 on macOS.
+This also ensures the test runtime and its `createdump` executable are available
+independently of the debuggee matrix. The NativeAOT SOS extension does not require
+a separately hosted runtime.
 
 `StageSOSHelixPayload` performs SOS staging without submitting; `CreateHelixPayload`
 also prepares the runtime shards, creates the on-disk ZIP, and returns complete

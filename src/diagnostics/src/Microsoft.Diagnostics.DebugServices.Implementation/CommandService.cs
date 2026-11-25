@@ -8,6 +8,7 @@ using System.CommandLine;
 using System.CommandLine.Help;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -21,7 +22,7 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
     /// </summary>
     public class CommandService : ICommandService
     {
-        private readonly List<CommandGroup> _commandGroups = new();
+        private readonly List<CommandGroup> _commandGroups = [];
         private readonly string _commandPrompt;
 
         /// <summary>
@@ -229,42 +230,38 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
         /// <summary>
         /// Add the commands and aliases attributes found in the type.
         /// </summary>
-        /// <param name="type">Command type to search</param>
-        public void AddCommands(Type type) => AddCommands(type, factory: null);
-
-        /// <summary>
-        /// Add the commands and aliases attributes found in the type.
-        /// </summary>
-        /// <param name="type">Command type to search</param>
+        /// <typeparam name="TCommand">Command implementation to register</typeparam>
         /// <param name="factory">function to create command instance</param>
-        public void AddCommands(Type type, Func<IServiceProvider, object> factory)
+        public void AddCommands<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods |
+            DynamicallyAccessedMemberTypes.PublicProperties)] TCommand>(
+            Func<IServiceProvider, TCommand> factory) where TCommand : class
         {
-            if (type.IsClass)
+            if (factory is null)
             {
-                factory ??= (services) => Utilities.CreateInstance(type, services);
-
-                // Only look at the actual type and not any the base types for command attributes
-                CommandAttribute[] commandAttributes = (CommandAttribute[])type.GetCustomAttributes(typeof(CommandAttribute), inherit: false);
-                foreach (CommandAttribute commandAttribute in commandAttributes)
+                throw new ArgumentNullException(nameof(factory));
+            }
+            Type type = typeof(TCommand);
+            // Only look at the actual type and not any the base types for command attributes
+            CommandAttribute[] commandAttributes = (CommandAttribute[])type.GetCustomAttributes(typeof(CommandAttribute), inherit: false);
+            foreach (CommandAttribute commandAttribute in commandAttributes)
+            {
+                bool dup = true;
+                foreach (CommandGroup group in _commandGroups)
                 {
-                    bool dup = true;
-                    foreach (CommandGroup group in _commandGroups)
+                    // If the group doesn't contain a duplicate command name, add it to that group
+                    if (!group.Contains(commandAttribute.Name))
                     {
-                        // If the group doesn't contain a duplicate command name, add it to that group
-                        if (!group.Contains(commandAttribute.Name))
-                        {
-                            group.CreateCommand(type, commandAttribute, factory);
-                            dup = false;
-                            break;
-                        }
-                    }
-                    // If this is a duplicate command, create a new group and add it to the beginning. The default group must be last.
-                    if (dup)
-                    {
-                        CommandGroup group = new(_commandPrompt);
-                        _commandGroups.Insert(0, group);
                         group.CreateCommand(type, commandAttribute, factory);
+                        dup = false;
+                        break;
                     }
+                }
+                // If this is a duplicate command, create a new group and add it to the beginning. The default group must be last.
+                if (dup)
+                {
+                    CommandGroup group = new(_commandPrompt);
+                    _commandGroups.Insert(0, group);
+                    group.CreateCommand(type, commandAttribute, factory);
                 }
             }
         }
@@ -272,7 +269,7 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
         /// <summary>
         /// This groups like commands that may have the same name as another group or the default one.
         /// </summary>
-        private sealed class CommandGroup
+        private sealed class CommandGroup : ICommandValueFactory
         {
             private Command _rootCommand;
             private readonly Dictionary<string, CommandHandler> _commandHandlers = new();
@@ -380,7 +377,9 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
             /// <param name="type">Command type to search</param>
             /// <param name="commandAttribute">command attribute</param>
             /// <param name="factory">function to create command instance</param>
-            internal void CreateCommand(Type type, CommandAttribute commandAttribute, Func<IServiceProvider, object> factory)
+            internal void CreateCommand(
+                [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicProperties)] Type type,
+                CommandAttribute commandAttribute, Func<IServiceProvider, object> factory)
             {
                 Command command = new(commandAttribute.Name, commandAttribute.Help);
                 List<(PropertyInfo, Argument)> arguments = new();
@@ -398,9 +397,10 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
                     {
                         ArgumentArity arity = property.PropertyType.IsArray ? ArgumentArity.ZeroOrMore : ArgumentArity.ZeroOrOne;
 
-                        Argument argument = (Argument)typeof(Argument<>).MakeGenericType(property.PropertyType)
-                            .GetConstructor([typeof(string)])
-                            .Invoke([argumentAttribute.Name ?? property.Name.ToLowerInvariant()]);
+                        Argument argument = (Argument)argumentAttribute.Create(
+                            this,
+                            property.PropertyType,
+                            argumentAttribute.Name ?? property.Name.ToLowerInvariant());
 
                         argument.Description = argumentAttribute.Help;
                         argument.Arity = arity;
@@ -413,9 +413,10 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
                         OptionAttribute optionAttribute = (OptionAttribute)property.GetCustomAttributes(typeof(OptionAttribute), inherit: false).SingleOrDefault();
                         if (optionAttribute != null)
                         {
-                            Option option = (Option)typeof(Option<>).MakeGenericType(property.PropertyType)
-                                .GetConstructor([typeof(string), typeof(string[])])
-                                .Invoke([optionAttribute.Name ?? BuildOptionAlias(property.Name), optionAttribute.Aliases]);
+                            Option option = (Option)optionAttribute.Create(
+                                this,
+                                property.PropertyType,
+                                optionAttribute.Name ?? BuildOptionAlias(property.Name));
 
                             option.Description = optionAttribute.Help;
 
@@ -431,6 +432,57 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
                 _rootCommand.Subcommands.Add(command);
 
                 // Build or re-build parser instance after this command is added
+            }
+
+            object ICommandValueFactory.CreateArgument<T>(string name) => new Argument<T>(name);
+
+            object ICommandValueFactory.CreateOption<T>(string name, string[] aliases) => new Option<T>(name, aliases);
+
+            [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Legacy attributes report a clear error when runtime generic instantiation is unavailable.")]
+            [UnconditionalSuppressMessage("Trimming", "IL2055", Justification = "Legacy attributes are supported only on JIT hosts where the constructed type is retained.")]
+            object ICommandValueFactory.CreateArgument(Type type, string name)
+            {
+                try
+                {
+                    Type argumentType = typeof(Argument<>).MakeGenericType(type);
+                    ConstructorInfo constructor = argumentType.GetConstructor([typeof(string)]);
+                    if (constructor is null)
+                    {
+                        throw CreateLegacyAttributeException(nameof(ArgumentAttribute), null);
+                    }
+                    return constructor.Invoke([name]);
+                }
+                catch (NotSupportedException ex)
+                {
+                    throw CreateLegacyAttributeException(nameof(ArgumentAttribute), ex);
+                }
+            }
+
+            [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Legacy attributes report a clear error when runtime generic instantiation is unavailable.")]
+            [UnconditionalSuppressMessage("Trimming", "IL2055", Justification = "Legacy attributes are supported only on JIT hosts where the constructed type is retained.")]
+            object ICommandValueFactory.CreateOption(Type type, string name, string[] aliases)
+            {
+                try
+                {
+                    Type optionType = typeof(Option<>).MakeGenericType(type);
+                    ConstructorInfo constructor = optionType.GetConstructor([typeof(string), typeof(string[])]);
+                    if (constructor is null)
+                    {
+                        throw CreateLegacyAttributeException(nameof(OptionAttribute), null);
+                    }
+                    return constructor.Invoke([name, aliases]);
+                }
+                catch (NotSupportedException ex)
+                {
+                    throw CreateLegacyAttributeException(nameof(OptionAttribute), ex);
+                }
+            }
+
+            private static NotSupportedException CreateLegacyAttributeException(string attributeName, Exception innerException)
+            {
+                return new NotSupportedException(
+                    $"The non-generic {attributeName} requires dynamic code. Recompile the command using {attributeName}<T>.",
+                    innerException);
             }
 
             internal string GetDetailedHelp(Command command, IServiceProvider services, int windowWidth)
@@ -484,7 +536,7 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
                 CommandAttribute commandAttribute,
                 IEnumerable<(PropertyInfo, Argument)> arguments,
                 IEnumerable<(PropertyInfo, Option)> options,
-                Type type,
+                [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] Type type,
                 Func<IServiceProvider, object> factory)
             {
                 _commandAttribute = commandAttribute;
@@ -528,6 +580,14 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
                         }
                         _filterInvokeAttribute = filterInvokeAttribute;
                         _methodInfoFilter = methodInfo;
+                    }
+                    if (methodInfo == _methodInfo || methodInfo == _methodInfoHelp || methodInfo == _methodInfoFilter)
+                    {
+                        if (methodInfo.ContainsGenericParameters ||
+                            methodInfo.GetParameters().Any(parameter => parameter.ParameterType.IsByRef || parameter.ParameterType.IsPointer))
+                        {
+                            throw new ArgumentException($"Command method {methodInfo.Name} in {type} must be non-generic and cannot take by-reference or pointer parameters.");
+                        }
                     }
                 }
                 if (_methodInfo == null)
@@ -636,10 +696,16 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
                 object instance = null;
                 if (!methodInfo.IsStatic)
                 {
-                    instance = _factory(services);
-                    SetProperties(context, parser, instance);
+                    instance = CreateCommand(context, parser, services);
                 }
                 return Utilities.Invoke(methodInfo, instance, services);
+            }
+
+            private object CreateCommand(ParseResult context, Command parser, IServiceProvider services)
+            {
+                object command = _factory(services) ?? throw new DiagnosticsException($"The factory for command {Name} returned null.");
+                SetProperties(context, parser, command);
+                return command;
             }
 
             private void SetProperties(ParseResult contextParseResult, Command parser, object instance)
@@ -655,7 +721,7 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
                     defaultParseResult = parser.Parse(commandLine);
                 }
 
-                // Now initialize the option and service properties from the default and command line options
+                // Now initialize the option properties from the default and command line options
                 foreach ((PropertyInfo Property, Option Option) option in _options)
                 {
                     object value = option.Property.GetValue(instance);

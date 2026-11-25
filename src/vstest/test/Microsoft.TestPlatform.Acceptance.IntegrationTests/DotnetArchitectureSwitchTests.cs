@@ -18,7 +18,7 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 // >= x64 6.0.2xx
 // x64 5.0.4xx for Mac
 // x64 3.1.4XX for Win
-// Manual test './tools/.../dotnet test ./test/Microsoft.TestPlatform.AcceptanceTests/bin/Debug/net8.0/Microsoft.TestPlatform.AcceptanceTests.dll --testcasefilter:"DotnetArchitectureSwitchTests"'
+// Manual test './tools/.../dotnet test ./test/Microsoft.TestPlatform.AcceptanceTests/bin/Debug/net11.0/Microsoft.TestPlatform.AcceptanceTests.dll --testcasefilter:"DotnetArchitectureSwitchTests"'
 [TestClass]
 [Ignore("Manual tests(for now). Tests in this class need some .NET SDK global installations")]
 public class DotnetArchitectureSwitchTests : AcceptanceTestBase

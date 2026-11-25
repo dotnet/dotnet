@@ -1,9 +1,11 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using FluentAssertions;
+using NuGet.Packaging.Core;
 using NuGet.Versioning;
 using Xunit;
 
@@ -108,6 +110,20 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Package
 
             // Assert
             result.Errors.Should().ContainSingle();
+        }
+
+        [Theory]
+        [InlineData("packageId@")]
+        [InlineData("packageId@one")]
+        [InlineData("packageId@1.0@2.0")]
+        [InlineData("invalid/id@1.2.3")]
+        public void Parse_InvalidInput_ReportsPackageIdentityParserError(string value)
+        {
+            var expected = Assert.Throws<ArgumentException>(() => PackageIdentity.Parse(value));
+
+            var result = _exactVersionCommand.Parse(value);
+
+            result.Errors.Should().ContainSingle().Which.Message.Should().Be(expected.Message);
         }
 
         [Fact]

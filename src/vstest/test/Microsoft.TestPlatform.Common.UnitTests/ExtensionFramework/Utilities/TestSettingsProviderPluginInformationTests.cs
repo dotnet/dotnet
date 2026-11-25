@@ -34,7 +34,7 @@ public class TestSettingsProviderPluginInformationTests
     public void MetadataShouldReturnSettingsProviderName()
     {
         _testPluginInformation = new TestSettingsProviderPluginInformation(typeof(DummySettingProviderWithSettingsName));
-        CollectionAssert.AreEqual(new object[] { DefaultSettingsName }, _testPluginInformation.Metadata.ToArray());
+        Assert.AreSequenceEqual(new object[] { DefaultSettingsName }, _testPluginInformation.Metadata.ToArray());
     }
 
     [TestMethod]

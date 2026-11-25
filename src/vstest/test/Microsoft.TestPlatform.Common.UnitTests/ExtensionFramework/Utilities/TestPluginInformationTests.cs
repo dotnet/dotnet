@@ -34,7 +34,7 @@ public class TestPluginInformationTests
     [TestMethod]
     public void MetadataShouldReturnTestExtensionTypesAssemblyQualifiedName()
     {
-        CollectionAssert.AreEqual(new object[] { typeof(TestPluginInformationTests).AssemblyQualifiedName! }, _testPluginInformation.Metadata.ToArray());
+        Assert.AreSequenceEqual(new object[] { typeof(TestPluginInformationTests).AssemblyQualifiedName! }, _testPluginInformation.Metadata.ToArray());
     }
 }
 

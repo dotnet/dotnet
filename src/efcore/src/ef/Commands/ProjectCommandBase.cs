@@ -25,6 +25,11 @@ internal abstract class ProjectCommandBase : EFCommandBase
     protected CommandOption? StartupAssembly { get; private set; }
     protected CommandOption? StartupProject { get; private set; }
     protected CommandOption? WorkingDir { get; private set; }
+
+    // Relative --output paths are resolved against the working directory (the directory the tool was invoked from),
+    // unlike --output-dir, which is resolved against the project directory.
+    internal static string ResolveOutputPath(string output, string? workingDir)
+        => Path.GetFullPath(string.IsNullOrEmpty(workingDir) ? output : Path.Combine(workingDir, output));
     protected CommandOption? Framework { get; private set; }
     protected CommandOption? Configuration { get; private set; }
 
@@ -47,6 +52,40 @@ internal abstract class ProjectCommandBase : EFCommandBase
         _designAssembly = command.Option("--design-assembly <PATH>", Resources.DesignAssemblyDescription);
 
         base.Configure(command);
+    }
+
+    protected IReadOnlyList<string> GetCommonProjectArgs()
+    {
+        var args = new List<string>();
+
+        void AddValue(CommandOption? option, string name)
+        {
+            if (option!.HasValue())
+            {
+                args.Add(name);
+                args.Add(option.Value()!);
+            }
+        }
+
+        AddValue(Assembly, "--assembly");
+        AddValue(StartupAssembly, "--startup-assembly");
+        AddValue(Project, "--project");
+        AddValue(StartupProject, "--startup-project");
+        AddValue(_dataDir, "--data-dir");
+        AddValue(_projectDir, "--project-dir");
+        AddValue(_rootNamespace, "--root-namespace");
+        AddValue(_language, "--language");
+        if (_nullable!.HasValue())
+        {
+            args.Add("--nullable");
+        }
+
+        AddValue(WorkingDir, "--working-dir");
+        AddValue(Framework, "--framework");
+        AddValue(Configuration, "--configuration");
+        AddValue(_designAssembly, "--design-assembly");
+
+        return args;
     }
 
     protected override void Validate()

@@ -379,6 +379,12 @@ FROM "Customer" AS "c0"
         AssertSql();
     }
 
+    public override async Task Union_complex_type_with_different_identifiers_in_collection_projection(bool async)
+        => Assert.Equal(
+            SqliteStrings.ApplyNotSupported,
+            (await Assert.ThrowsAsync<InvalidOperationException>(
+                () => base.Union_complex_type_with_different_identifiers_in_collection_projection(async))).Message);
+
     public override async Task Union_two_different_complex_type(bool async)
     {
         await base.Union_two_different_complex_type(async);
@@ -1478,7 +1484,145 @@ INNER JOIN "HookMetadata" AS "h0" ON "h"."Id" = "h0"."HookId"
             """);
     }
 
+    public override async Task Json_complex_properties_on_sibling_types_mapped_to_same_column()
+    {
+        await base.Json_complex_properties_on_sibling_types_mapped_to_same_column();
+
+        AssertSql(
+            """
+SELECT "a"."Id", "a"."Discriminator", "a"."Name", "a"."Details"
+FROM "Animal" AS "a"
+WHERE "a"."Discriminator" = 'Cat'
+LIMIT 2
+""",
+            //
+            """
+@p0='{"Lives":8}' (Nullable = false) (Size = 11)
+@p1='1'
+
+UPDATE "Animal" SET "Details" = @p0
+WHERE "Id" = @p1
+RETURNING 1;
+""",
+            //
+            """
+SELECT "a"."Id", "a"."Discriminator", "a"."Name", "a"."Details", "a"."Details"
+FROM "Animal" AS "a"
+ORDER BY "a"."Name"
+""",
+            //
+            """
+SELECT "a"."Id", "a"."Discriminator", "a"."Name", "a"."Details"
+FROM "Animal" AS "a"
+WHERE "a"."Discriminator" = 'Dog' AND "a"."Details" ->> 'Breed' = 'Collie'
+LIMIT 2
+""");
+    }
+
+    public override async Task Json_complex_properties_on_base_and_derived_types_mapped_to_same_column_with_TPT()
+    {
+        await base.Json_complex_properties_on_base_and_derived_types_mapped_to_same_column_with_TPT();
+
+        AssertSql(
+            """
+SELECT "a"."Id", "a"."Name", "a"."Details", "d"."Details"
+FROM "Animal" AS "a"
+INNER JOIN "Dog" AS "d" ON "a"."Id" = "d"."Id"
+LIMIT 2
+""",
+            //
+            """
+@p0='{"Weight":31}' (Nullable = false) (Size = 13)
+@p1='1'
+
+UPDATE "Animal" SET "Details" = @p0
+WHERE "Id" = @p1
+RETURNING 1;
+""",
+            //
+            """
+@p0='{"Breed":"Border Collie"}' (Nullable = false) (Size = 25)
+@p1='1'
+
+UPDATE "Dog" SET "Details" = @p0
+WHERE "Id" = @p1
+RETURNING 1;
+""",
+            //
+            """
+SELECT "a"."Id", "a"."Name", "a"."Details", "d"."Details"
+FROM "Animal" AS "a"
+INNER JOIN "Dog" AS "d" ON "a"."Id" = "d"."Id"
+LIMIT 2
+""");
+    }
+
     #endregion Non-shared test resources
+
+    public override async Task Distinct_over_entity_with_key_on_complex_property()
+    {
+        await base.Distinct_over_entity_with_key_on_complex_property();
+
+        AssertSql(
+            """
+SELECT "p0"."Id_Id", "p0"."Address_City", "p0"."Address_PostalCode"
+FROM (
+    SELECT DISTINCT "p"."Id_Id", "p"."Address_City", "p"."Address_PostalCode"
+    FROM "Person" AS "p"
+) AS "p0"
+ORDER BY "p0"."Id_Id"
+""");
+    }
+
+    public override async Task Union_over_entity_with_key_on_complex_property()
+    {
+        await base.Union_over_entity_with_key_on_complex_property();
+
+        AssertSql(
+            """
+SELECT "u"."Id_Id", "u"."Address_City", "u"."Address_PostalCode"
+FROM (
+    SELECT "p"."Id_Id", "p"."Address_City", "p"."Address_PostalCode"
+    FROM "Person" AS "p"
+    WHERE "p"."Address_City" = 'Seattle'
+    UNION
+    SELECT "p0"."Id_Id", "p0"."Address_City", "p0"."Address_PostalCode"
+    FROM "Person" AS "p0"
+    WHERE "p0"."Address_City" = 'Redmond'
+) AS "u"
+ORDER BY "u"."Id_Id"
+""");
+    }
+
+    public override async Task Entity_with_key_on_complex_property_equals_parameter()
+    {
+        await base.Entity_with_key_on_complex_property_equals_parameter();
+
+        AssertSql(
+            """
+@entity_equality_person_Id_Id='2' (Nullable = true)
+
+SELECT "p"."Id_Id", "p"."Address_City", "p"."Address_PostalCode"
+FROM "Person" AS "p"
+WHERE "p"."Id_Id" = @entity_equality_person_Id_Id
+LIMIT 2
+""");
+    }
+
+    public override async Task Entity_with_key_on_complex_property_in_local_collection()
+    {
+        await base.Entity_with_key_on_complex_property_in_local_collection();
+
+        AssertSql(
+            """
+@entity_equality_people_Id1='2'
+
+SELECT "p"."Id_Id", "p"."Address_City", "p"."Address_PostalCode"
+FROM "Person" AS "p"
+WHERE "p"."Id_Id" = @entity_equality_people_Id1
+LIMIT 2
+""");
+    }
 
     [Fact]
     public virtual void Check_all_tests_overridden()

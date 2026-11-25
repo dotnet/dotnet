@@ -56,7 +56,6 @@
     <Error Text="VisualStudioDropAccessToken property has to be specified when EnableNgenOptimization and OfficialBuild is true" Condition="'$(VisualStudioDropAccessToken)' == '' and '$(OfficialBuild)' == 'true'"/>
     <Error Text="VisualStudioIbcRepositoryName property has to be specified when EnableNgenOptimization is true and VisualStudioIbcDrop is not set" Condition="'$(VisualStudioIbcDrop)' == '' and '$(VisualStudioIbcRepositoryName)' == ''"/>
     <Error Text="VisualStudioIbcSourceBranchName property has to be specified when EnableNgenOptimization is true and VisualStudioIbcDrop is not set" Condition="'$(VisualStudioIbcDrop)' == '' and '$(VisualStudioIbcSourceBranchName)' == ''"/>
-    <Error Text="VisualStudioIbcSourceBranchName property cannot be specified when using the VisualStudioIbcDrop property" Condition="'$(VisualStudioIbcDrop)' != '' and '$(VisualStudioIbcSourceBranchName)' != ''" />
     <Error Text="VisualStudioIbcDropId property cannot be specified when using the VisualStudioIbcDrop property" Condition="'$(VisualStudioIbcDrop)' != '' and '$(VisualStudioIbcDropId)' != ''" />
 
     <PropertyGroup>

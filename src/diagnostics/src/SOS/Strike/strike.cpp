@@ -6830,24 +6830,28 @@ DECLARE_API(GCInfo)
         ExtOut("preJIT generated code\n");
     }
 
-    // Use GCInfoData abstraction (tries ISOSDacInterface18 first, then legacy)
+    taGCInfoAddr = TO_TADDR(codeHeaderData.GCInfo);
+    ExtOut("GC info %p\n", SOS_PTR(taGCInfoAddr));
+
+    // Use the DAC interfaces when available; only their absence permits legacy decoding.
     if (!useLegacy)
     {
         GCInfoData gcInfo;
         CLRDATA_ADDRESS methodIP = TO_CDADDR(codeHeaderData.MethodStart);
         HRESULT hr = GCInfoData::Create(methodIP, gcInfo);
-        if (SUCCEEDED(hr) && gcInfo.IsValid)
+        if (hr == S_OK && gcInfo.IsValid)
         {
             gcInfo.DumpToOutput(ExtOut);
             return Status;
         }
+        if (hr != S_FALSE)
+        {
+            ExtOut("Failed to retrieve GC info through DAC interfaces: %08x\n", hr);
+            return FAILED(hr) ? hr : E_FAIL;
+        }
     }
 
     // Final fallback: raw GC info blob + DumpGCInfo (for older runtimes without Interface18)
-    taGCInfoAddr = TO_TADDR(codeHeaderData.GCInfo);
-
-    ExtOut("GC info %p\n", SOS_PTR(taGCInfoAddr));
-
     // assume that GC encoding table is never more than
     // 40 + methodSize * 2
     int tableSize = 0;
@@ -7534,15 +7538,20 @@ HRESULT displayGcInfo(BOOL fWithGCInfo, const DacpCodeHeaderData& codeHeaderData
             return E_OUTOFMEMORY;
         }
 
-        // Try the GCInfoData abstraction first (ISOSDacInterface18, then legacy decoder)
+        // Use the DAC interfaces when available; only their absence permits legacy decoding.
         {
             GCInfoData gcInfo;
             CLRDATA_ADDRESS methodIP = TO_CDADDR(codeHeaderData.MethodStart);
             HRESULT hr = GCInfoData::Create(methodIP, gcInfo);
-            if (SUCCEEDED(hr) && gcInfo.IsValid)
+            if (hr == S_OK && gcInfo.IsValid)
             {
                 gcInfo.DumpToOutput(DecodeGCTableEntry);
                 return S_OK;
+            }
+            if (hr != S_FALSE)
+            {
+                ExtOut("Failed to retrieve GC info through DAC interfaces: %08x\n", hr);
+                return FAILED(hr) ? hr : E_FAIL;
             }
         }
 
@@ -13350,101 +13359,6 @@ _EFN_GetManagedThread(
     return E_INVALIDARG;
 }
 
-//
-// Sets the .NET Core runtime path to use to run the managed code within SOS/native debugger.
-//
-DECLARE_API(SetHostRuntime)
-{
-    INIT_API_EXT();
-
-    BOOL bNetFx = FALSE;
-    BOOL bNetCore = FALSE;
-    BOOL bNone = FALSE;
-    BOOL bClear = FALSE;
-    DWORD_PTR majorRuntimeVersion = 0;
-    CMDOption option[] =
-    {   // name, vptr, type, hasValue
-        {"-netfx", &bNetFx, COBOOL, FALSE},
-        {"-f", &bNetFx, COBOOL, FALSE},
-        {"-netcore", &bNetCore, COBOOL, FALSE},
-        {"-c", &bNetCore, COBOOL, FALSE},
-        {"-none", &bNone, COBOOL, FALSE},
-        {"-clear", &bClear, COBOOL, FALSE},
-        {"-major", &majorRuntimeVersion, COSIZE_T, TRUE},
-    };
-    StringHolder hostRuntimeDirectory;
-    CMDValue arg[] =
-    {
-        {&hostRuntimeDirectory.data, COSTRING},
-    };
-    size_t narg;
-    if (!GetCMDOption(args, option, ARRAY_SIZE(option), arg, ARRAY_SIZE(arg), &narg))
-    {
-        return E_INVALIDARG;
-    }
-    HostRuntimeFlavor flavor = HostRuntimeFlavor::NetCore;
-    int major = 0, minor = 0;
-    if (narg > 0 || majorRuntimeVersion > 0 || bClear || bNetCore || bNetFx || bNone)
-    {
-        if (IsHostingInitialized())
-        {
-            ExtErr("Runtime hosting already initialized\n");
-            goto exit;
-        }
-        if (bClear)
-        {
-            SetHostRuntime(HostRuntimeFlavor::NetCore, 0, 0, nullptr);
-        }
-        if (bNone)
-        {
-            flavor = HostRuntimeFlavor::None;
-        }
-        else if (bNetCore)
-        {
-            flavor = HostRuntimeFlavor::NetCore;
-        }
-        else if (bNetFx)
-        {
-            flavor = HostRuntimeFlavor::NetFx;
-        }
-        major = (int)majorRuntimeVersion;
-        if (!SetHostRuntime(flavor, major, minor, hostRuntimeDirectory.data))
-        {
-            ExtErr("Invalid host runtime path %s\n", hostRuntimeDirectory.data);
-            return E_FAIL;
-        }
-    }
-exit:
-    LPCSTR directory = nullptr;
-    GetHostRuntime(flavor, major, minor, directory);
-    switch (flavor)
-    {
-        case HostRuntimeFlavor::None:
-            ExtOut("Using no runtime to host the managed SOS code. Some commands are not availible.\n");
-            break;
-        case HostRuntimeFlavor::NetCore:
-            if (major == 0)
-            {
-                ExtOut("Using .NET Core runtime to host the managed SOS code\n");
-            }
-            else
-            {
-                ExtOut("Using .NET Core runtime (version %d.%d) to host the managed SOS code\n", major, minor);
-            }
-            break;
-        case HostRuntimeFlavor::NetFx:
-            ExtOut("Using desktop .NET Framework runtime to host the managed SOS code\n");
-            break;
-        default:
-            break;
-    }
-    if (directory != nullptr)
-    {
-        ExtOut("Host runtime path: %s\n", directory);
-    }
-    return S_OK;
-}
-
 DECLARE_API(processor)
 {
     INIT_API_EXT();
@@ -13487,11 +13401,21 @@ DECLARE_API(SetClrPath)
     }
     if (narg > 0)
     {
+        if (IsRemoteOrDevicePath(runtimeModulePath.data))
+        {
+            ExtErr("Runtime directory must be a local path: %s\n", runtimeModulePath.data);
+            return E_INVALIDARG;
+        }
         std::string fullPath;
         if (!GetAbsolutePath(runtimeModulePath.data, fullPath))
         {
             ExtErr("Invalid runtime directory %s\n", fullPath.c_str());
             return E_FAIL;
+        }
+        if (!IsSafeAbsoluteLocalPath(fullPath.c_str()))
+        {
+            ExtErr("Runtime directory must be a local path: %s\n", fullPath.c_str());
+            return E_INVALIDARG;
         }
         g_pRuntime->SetRuntimeDirectory(fullPath.c_str());
     }

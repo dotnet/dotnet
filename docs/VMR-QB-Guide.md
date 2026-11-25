@@ -18,7 +18,7 @@ Each morning:
 ## Before Your Shift
 
 - Make sure the previous QB has added you to the required [Teams channels](#communication-channels)
-- Make sure you're in the **".NET VMR Owners" security group (netvmr-lt)** — you'll need this to admin-merge PRs on release day. Join the group via [aka.ms/idweb](https://aka.ms/idweb)
+- Make sure you're in the **"dotnet/dotnet infra owners" security group (netvmr-infra)** — you'll need this to admin-merge PRs on release day. Join the group via [aka.ms/idweb](https://aka.ms/idweb)
 - Make sure the previous QB has scheduled a **handoff sync** with you before your shift starts
 
 ## Build Health Monitoring
@@ -187,7 +187,7 @@ On release day, monitor these automated PRs for servicing branches:
 
 Ensure they are merged or escalated if blocked.
 
-> **Note:** Internal → public merge PRs may fail the "Validate user changes in VMR / Run Validation Script" CI job because a user touched `Version.Details.props`, which normally only the code flow bot modifies. This is expected — **merge anyway** by elevating to admin at https://repos.opensource.microsoft.com/orgs/dotnet/repos/dotnet (requires netvmr-lt membership).
+> **Note:** Internal → public merge PRs may fail the "Validate user changes in VMR / Run Validation Script" CI job because a user touched `Version.Details.props`, which normally only the code flow bot modifies. This is expected — **merge anyway** by elevating to admin at https://repos.opensource.microsoft.com/orgs/dotnet/repos/dotnet (requires netvmr-infra membership).
 
 ## Communication Channels
 

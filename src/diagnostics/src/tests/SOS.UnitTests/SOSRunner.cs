@@ -590,8 +590,7 @@ public class SOSRunner : IDisposable
                     bool shouldVerifyDacSignature = !config.IsPrivateBuildTesting()
                                                     && !config.IsNightlyBuild()
                                                     && !config.IsDesktop
-                                                    && !information.DisableDacSignatureVerification
-                                                    && !"-none".Equals(config.SetHostRuntime(), StringComparison.OrdinalIgnoreCase);
+                                                    && !information.DisableDacSignatureVerification;
                     initialCommands.Add($"dx @Debugger.Settings.EngineInitialization.SecureLoadDotNetExtensions={(shouldVerifyDacSignature ? "true" : "false")}");
                     break;
 
@@ -771,13 +770,6 @@ public class SOSRunner : IDisposable
             // Disable W^E so that the bpmd command and the tests pass
             // Issue: https://github.com/dotnet/diagnostics/issues/3126
             processRunner.WithRuntimeConfiguration("EnableWriteXorExecute", "0");
-
-            // Setup the extension environment variable
-            string extensions = config.DotNetDiagnosticExtensions();
-            if (!string.IsNullOrEmpty(extensions))
-            {
-                processRunner.WithEnvironmentVariable("DOTNET_DIAGNOSTIC_EXTENSIONS", extensions);
-            }
 
             string gcServerMode = config.GetValue("GCServer");
             if (!string.IsNullOrEmpty(gcServerMode))
@@ -1027,28 +1019,9 @@ public class SOSRunner : IDisposable
     public async Task LoadSosExtension()
     {
         string runtimeSymbolsPath = _config.RuntimeSymbolsPath;
-        string setHostRuntime = _config.SetHostRuntime();
         string setSymbolServer = _config.SetSymbolServer();
         string sosPath = _config.SOSPath();
         List<string> commands = new();
-        bool isHostRuntimeNone = false;
-
-        if (!string.IsNullOrEmpty(setHostRuntime))
-        {
-            switch (setHostRuntime)
-            {
-                case "-none":
-                    isHostRuntimeNone = true;
-                    break;
-                case "-netfx":
-                case "-netcore":
-                case "-clear":
-                    break;
-                default:
-                    setHostRuntime = TestConfiguration.MakeCanonicalPath(setHostRuntime);
-                    break;
-            }
-        }
         switch (Debugger)
         {
             case NativeDebugger.Cdb:
@@ -1068,10 +1041,6 @@ public class SOSRunner : IDisposable
                 commands.Add($".load {sosPath}");
                 commands.Add(".reload");
                 commands.Add(".chain");
-                if (!string.IsNullOrEmpty(setHostRuntime))
-                {
-                    commands.Add($"!SetHostRuntime {setHostRuntime}");
-                }
                 // If a single-file app or a triage dump, add the path to runtime so SOS can find DAC/DBI locally.
                 if (_config.PublishSingleFile || (_dumpType.HasValue && _dumpType.Value == DumpType.Triage))
                 {
@@ -1080,29 +1049,22 @@ public class SOSRunner : IDisposable
                         commands.Add($"!SetClrPath {runtimeSymbolsPath}");
                     }
                 }
-                if (!isHostRuntimeNone)
+                // If single-file app, add the debuggee directory containing the PDBs and
+                // add the symbol server so SOS can find DAC/DBI for single file apps which
+                // may not have been built with the runtime pointed by RuntimeSymbolsPath
+                // since we use the arcade provided SDK (in .dotnet) to build them.
+                if (_config.PublishSingleFile)
                 {
-                    // If single-file app, add the debuggee directory containing the PDBs and
-                    // add the symbol server so SOS can find DAC/DBI for single file apps which
-                    // may not have been built with the runtime pointed by RuntimeSymbolsPath
-                    // since we use the arcade provided SDK (in .dotnet) to build them.
-                    if (_config.PublishSingleFile)
-                    {
-                        string appRootDir = ReplaceVariables(_variables, "%DEBUG_ROOT%");
-                        commands.Add($"!SetSymbolServer -ms -timeout 10 -directory {appRootDir}");
-                    }
-                    if (!string.IsNullOrEmpty(setSymbolServer))
-                    {
-                        commands.Add($"!SetSymbolServer {setSymbolServer}");
-                    }
+                    string appRootDir = ReplaceVariables(_variables, "%DEBUG_ROOT%");
+                    commands.Add($"!SetSymbolServer -ms -timeout 10 -directory {appRootDir}");
+                }
+                if (!string.IsNullOrEmpty(setSymbolServer))
+                {
+                    commands.Add($"!SetSymbolServer {setSymbolServer}");
                 }
                 break;
             case NativeDebugger.Lldb:
                 commands.Add($"plugin load {sosPath}");
-                if (!string.IsNullOrEmpty(setHostRuntime))
-                {
-                    commands.Add($"sethostruntime {setHostRuntime}");
-                }
                 // Disabled until https://github.com/dotnet/diagnostics/issues/3265 is fixed.
 #if DISABLED
                 // If a single-file app, add the path to runtime so SOS can find DAC/DBI locally.
@@ -1114,21 +1076,18 @@ public class SOSRunner : IDisposable
                     }
                 }
 #endif
-                if (!isHostRuntimeNone)
+                // If single-file app, add the debuggee directory containing the PDBs and
+                // add the symbol server so SOS can find DAC/DBI for single file apps which
+                // may not have been built with the runtime pointed by RuntimeSymbolsPath
+                // since we use the arcade provided SDK (in .dotnet) to build them.
+                if (_config.PublishSingleFile)
                 {
-                    // If single-file app, add the debuggee directory containing the PDBs and
-                    // add the symbol server so SOS can find DAC/DBI for single file apps which
-                    // may not have been built with the runtime pointed by RuntimeSymbolsPath
-                    // since we use the arcade provided SDK (in .dotnet) to build them.
-                    if (_config.PublishSingleFile)
-                    {
-                        string appRootDir = ReplaceVariables(_variables, "%DEBUG_ROOT%");
-                        commands.Add($"setsymbolserver -ms -timeout 10 -directory {appRootDir}");
-                    }
-                    if (!string.IsNullOrEmpty(setSymbolServer))
-                    {
-                        commands.Add($"setsymbolserver {setSymbolServer}");
-                    }
+                    string appRootDir = ReplaceVariables(_variables, "%DEBUG_ROOT%");
+                    commands.Add($"setsymbolserver -ms -timeout 10 -directory {appRootDir}");
+                }
+                if (!string.IsNullOrEmpty(setSymbolServer))
+                {
+                    commands.Add($"setsymbolserver {setSymbolServer}");
                 }
                 SwitchToExceptionThread();
                 break;
@@ -1640,11 +1599,6 @@ public class SOSRunner : IDisposable
         {
             defines.Add("CDAC_ONLY");
         }
-        string setHostRuntime = _config.SetHostRuntime();
-        if (!string.IsNullOrEmpty(setHostRuntime) && setHostRuntime == "-none")
-        {
-            defines.Add("HOST_RUNTIME_NONE");
-        }
         return defines;
     }
 
@@ -1891,19 +1845,9 @@ public static class TestConfigurationExtensions
         return TestConfiguration.MakeCanonicalPath(dotnetDumpPath);
     }
 
-    public static string DotNetDiagnosticExtensions(this TestConfiguration config)
-    {
-        return TestConfiguration.MakeCanonicalPath(config.GetValue("DotNetDiagnosticExtensions"));
-    }
-
     public static string SOSPath(this TestConfiguration config)
     {
         return TestConfiguration.MakeCanonicalPath(config.GetValue("SOSPath"));
-    }
-
-    public static string SetHostRuntime(this TestConfiguration config)
-    {
-        return config.GetValue("SetHostRuntime");
     }
 
     public static string SetSymbolServer(this TestConfiguration config)

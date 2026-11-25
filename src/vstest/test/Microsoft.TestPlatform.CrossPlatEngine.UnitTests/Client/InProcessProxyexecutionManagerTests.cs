@@ -58,7 +58,7 @@ public class InProcessProxyExecutionManagerTests
         var testRunCriteria = new TestRunCriteria(new List<string> { "source.dll" }, 10);
         _inProcessProxyExecutionManager.StartTestRun(testRunCriteria, null!);
 
-        CollectionAssert.AreEquivalent(expectedResult, TestPluginCache.Instance.GetExtensionPaths(string.Empty));
+        Assert.AreSequenceEqual(expectedResult, TestPluginCache.Instance.GetExtensionPaths(string.Empty), SequenceOrder.InAnyOrder);
     }
 
     [TestMethod]

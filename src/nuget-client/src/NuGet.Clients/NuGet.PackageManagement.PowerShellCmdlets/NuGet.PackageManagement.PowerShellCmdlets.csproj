@@ -27,6 +27,8 @@
   <ItemGroup Label="NuGet Shared">
     <Compile Include="$(SharedDirectory)\DeconstructionExtensions.cs" />
     <Compile Include="$(SharedDirectory)\TaskResult.cs" />
+    <Compile Include="$(SharedDirectory)\NuGetFeatureFlags.cs" />
+    <Compile Include="$(SharedDirectory)\AotCompatibilityAttributes.cs" />
   </ItemGroup>
 
   <ItemGroup>

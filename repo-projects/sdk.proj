@@ -1,9 +1,6 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <!-- Tests are only building on Windows - https://github.com/dotnet/source-build/issues/4882 -->
-    <DotNetBuildTestsOptOut Condition="'$(OS)' != 'Windows_NT'">true</DotNetBuildTestsOptOut>
-
     <!-- sdk always wants to build portable on FreeBSD etc. -->
     <BuildArgs Condition="('$(TargetOS)' == 'freebsd' or '$(TargetOS)' == 'solaris') and '$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) /p:PortableBuild=true</BuildArgs>
     <BuildArgs Condition="'$(TargetOS)' != 'windows'">$(BuildArgs) /p:NetRuntimeRid=$(TargetRid)</BuildArgs>
@@ -19,7 +16,7 @@
 
     <BuildArgs Condition="'$(BuildWorkloads)' == 'true'">$(BuildArgs) /p:BuildWorkloads=true</BuildArgs>
     <BuildArgs Condition="'$(BuildWorkloads)' == 'true' and '$(DotNetBuildSharedComponents)' != 'true'">$(BuildArgs) /p:DownloadWorkloadMsis=true</BuildArgs>
-    <BuildArgs Condition="'$(DotNetBuildSharedComponents)' != 'true'">$(BuildArgs) /p:DotNet1xxRuntimeVersion=$(MicrosoftNETCoreAppRefVersion) /p:DotNet1xxWorkloadManifestVersion=$(DotNet1xxWorkloadManifestVersion)</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildSharedComponents)' != 'true'">$(BuildArgs) /p:DotNet1xxRuntimeVersion=$(MicrosoftNETCoreAppRefVersion) /p:DotNet1xxWorkloadManifestVersion=$(DotNet1xxWorkloadManifestVersion) /p:DotNet1xxWorkloadManifestPackageIdSuffix=$(DotNet1xxWorkloadManifestPackageIdSuffix)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>

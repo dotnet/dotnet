@@ -12,6 +12,10 @@ Actions API access, by reading that embedded block directly. The snapshot is
 find only displayed candidates; no matching row does not establish that no
 matching PR exists.
 
+Successful scheduled and manually dispatched publications replace the issue
+body, so manual edits are temporary. Failed publication attempts leave the last
+accepted report in place.
+
 The existing `pulse-publication-evidence` Actions artifact still contains
 exactly:
 
@@ -83,7 +87,7 @@ nonzero inventory out of the display.
 | `filter` | `name`, `description`, `coverage`, `selection`, `allRepositoryPullRequests`; the resolved scope, not a request to run another query. |
 | `census` | `openPullRequests`, `matched`, `labelOnly`, `pathOnly`, `labelAndPath`, `incidentalPathExcluded`, `unresolvedMergeable`, and `byBucket`. |
 | `caps` | `reviewNow`, `reviewNowPerAuthor`, `needsRescue`, `readyToMerge`: configured display limits, not promised row counts. |
-| `overflow` | `reviewNow`, `needsRescue`, `readyToMerge`: legacy inventory-minus-displayed counts for those buckets. They can include verification-needed, unassessed, or excluded candidates; they are not another list of PRs. |
+| `overflow` | `reviewNow`, `needsRescue`, `readyToMerge`: legacy source counts derived from the producer's `shownInDigest` selection. They are preserved for compatibility and can differ from the final Pulse main lists after discussion or compatibility projection. |
 | `discussion` | `candidateLimit`, `assessedCandidateCount`, `verificationNeededCount`, `unassessedReviewNowCount`: bounded review-candidate assessment coverage. |
 | `mergeDiscussion` | Independent merge assessment `candidateLimit`, `assessedCandidateCount`, `eligibleCount`, `verificationNeededCount`, `unassessedCandidateCount`, `excludedCandidateCount`, and display `verificationLimit`. |
 | `warnings` | Ordered display strings describing limitations; keep them visible rather than replacing them with a success indicator. |
@@ -99,6 +103,12 @@ together account for the prospective merge inventory.
 The snapshot omits the producer's full `items` universe, raw discussion text,
 community/personal inboxes, and other nonprojected data. Census, overflow, and
 caps do not make the omitted PR records recoverable.
+
+The human-facing Review now, Needs rescue, and Ready to merge sections compute
+their "Inventory candidates not shown in this list" counts from each inventory
+census minus the final displayed rows. Those counts can include
+verification-needed, unassessed, or excluded candidates; they are not a claim
+that every omitted candidate is actionable.
 
 ### Views, ranks, and items
 
@@ -325,6 +335,19 @@ function Get-PublishedPulseSnapshot
     )
 
     $ErrorActionPreference = "Stop"
+    $publicationSuffixPattern = '(?s)(?<suffix>\n\n<!-- gh-aw-workflow-id: pr-attention-pulse -->\n\n' +
+        '<!-- gh-aw-agentic-workflow: ASP\.NET Core Scoped PR Attention Pulse(?:, engine: [^,\r\n]+, model: [^,\r\n]+)?, id: (?<agenticRun>[1-9][0-9]*), workflow_id: pr-attention-pulse, run: https://github\.com/dotnet/aspnetcore/actions/runs/\k<agenticRun> -->\n' +
+        '<!-- gh-aw-execution: (?<provenance>\{[^\r\n]+\}) -->)\n?\z'
+    $publicationSuffix = [regex]::Match($PublishedBody, $publicationSuffixPattern)
+    $canonicalBody = if ($publicationSuffix.Success)
+    {
+        $PublishedBody.Substring(0, $publicationSuffix.Index)
+    }
+    else
+    {
+        $PublishedBody
+    }
+
     $headerPattern = '(?m)^## Snapshot\n\n' +
         'Snapshot generated: `(?<time>[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{7}Z)`\. ' +
         '\[Producing workflow run\]\(https://github\.com/dotnet/aspnetcore/actions/runs/(?<run>[1-9][0-9]*)/attempts/(?<attempt>[1-9][0-9]*)\)\.\n' +
@@ -333,10 +356,10 @@ function Get-PublishedPulseSnapshot
         '<details>\n<summary>Snapshot identity</summary>\n\n' +
         'Repository: `dotnet/aspnetcore`; run ID: `\k<run>`; attempt: `\k<attempt>`\.\n' +
         'JSON SHA-256: `(?<hash>[0-9a-f]{64})`\.\n\n</details>'
-    $identity = [regex]::Match($PublishedBody, $headerPattern)
+    $identity = [regex]::Match($canonicalBody, $headerPattern)
     $time = [datetimeoffset]::MinValue
     if (-not $identity.Success -or
-        [regex]::Matches($PublishedBody, '(?m)^## Snapshot$').Count -ne 1 -or
+        [regex]::Matches($canonicalBody, '(?m)^## Snapshot$').Count -ne 1 -or
         -not [datetimeoffset]::TryParseExact(
             $identity.Groups["time"].Value, "yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'",
             [Globalization.CultureInfo]::InvariantCulture,
@@ -348,9 +371,20 @@ function Get-PublishedPulseSnapshot
     $runId = $identity.Groups["run"].Value
     $attempt = $identity.Groups["attempt"].Value
     $hash = $identity.Groups["hash"].Value
+    if ($publicationSuffix.Success)
+    {
+        $provenance = $publicationSuffix.Groups["provenance"].Value | ConvertFrom-Json -Depth 20
+        if ($publicationSuffix.Groups["agenticRun"].Value -cne $runId -or
+            [string]$provenance.repository -cne "dotnet/aspnetcore" -or
+            [string]$provenance.aw_workflow_id -cne "pr-attention-pulse" -or
+            [string]$provenance.run_id -cne $runId)
+        {
+            throw "Invalid published workflow provenance."
+        }
+    }
     $repositoryPath = "repos/dotnet/aspnetcore"
     $utf8 = [Text.UTF8Encoding]::new($false, $true)
-    $tail = $PublishedBody.Substring($identity.Index + $identity.Length)
+    $tail = $canonicalBody.Substring($identity.Index + $identity.Length)
 
     # The embedded fenced JSON block's backtick fence is at least three backticks and
     # widens automatically whenever the JSON contains a run of backticks, so it can
@@ -517,7 +551,7 @@ function Get-PublishedPulseSnapshot
                     }
                 }
                 $body = $utf8.GetString($files["pulse-body.md"])
-                if (-not [string]::Equals($body, $PublishedBody, [StringComparison]::Ordinal))
+                if (-not [string]::Equals($body, $canonicalBody, [StringComparison]::Ordinal))
                 {
                     $rejections.Add("$($artifact.id): Published body/identity mismatch.")
                     continue

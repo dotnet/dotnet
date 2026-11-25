@@ -13,7 +13,12 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = "token2ee", Aliases = new[] { "Token2EE" }, Help = "Displays the MethodTable structure and MethodDesc structure for the specified token and module.")]
     public class Token2EECommand : ClrRuntimeCommandBase
     {
-        [Argument(Name = "arguments", Help = "module_name mdToken")]
+        public Token2EECommand(IServiceProvider services)
+            : base(services)
+        {
+        }
+
+        [Argument<string[]>(Name = "arguments", Help = "module_name mdToken")]
         public string[] Arguments { get; set; }
 
         public override void Invoke()

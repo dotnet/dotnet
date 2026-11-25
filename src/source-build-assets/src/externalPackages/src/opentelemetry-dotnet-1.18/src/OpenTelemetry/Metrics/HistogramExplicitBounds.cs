@@ -1,0 +1,297 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+using System.Diagnostics;
+using System.Numerics;
+#if NET
+using System.Runtime.Intrinsics;
+#endif
+using System.Runtime.CompilerServices;
+
+namespace OpenTelemetry.Metrics;
+
+internal sealed class HistogramExplicitBounds
+{
+    internal const int DefaultBoundaryCountForBinarySearch = 32;
+
+    private const int RadixLookupBitCount = 12;
+    private const int RadixLinearSearchThreshold = 32;
+
+    private readonly RadixBucketLookup? radixBucketLookup;
+
+    public HistogramExplicitBounds(double[] bounds, double[]? displayBounds = null)
+    {
+        this.Bounds = CleanUpInfinitiesFromExplicitBounds(bounds);
+        this.DisplayBounds = displayBounds != null ? CleanUpInfinitiesFromExplicitBounds(displayBounds) : null;
+
+        if (this.Bounds.Length >= DefaultBoundaryCountForBinarySearch && !ContainsNaN(this.Bounds))
+        {
+            this.radixBucketLookup = new(this.Bounds);
+        }
+    }
+
+    public double[] Bounds { get; }
+
+    /// <summary>
+    /// Gets the cleaned display bounds for export/serialization.
+    /// When non-null, exporters should use these values instead of Bounds
+    /// for displaying bucket boundaries. This is used to fix float-to-double
+    /// precision artifacts (e.g., 0.025 instead of 0.02500000037252903).
+    /// </summary>
+    public double[]? DisplayBounds { get; }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public int FindBucketIndex(double value)
+    {
+        if (double.IsNaN(value))
+        {
+            return this.Bounds.Length;
+        }
+
+        if (this.Bounds.Length == 0)
+        {
+            return 0;
+        }
+
+        if (value <= this.Bounds[0])
+        {
+            return 0;
+        }
+
+        if (value > this.Bounds[this.Bounds.Length - 1])
+        {
+            return this.Bounds.Length;
+        }
+
+        if (this.radixBucketLookup != null)
+        {
+            (var start, var end) = this.radixBucketLookup.GetBucketSearchRange(value);
+
+            return start == end
+                ? start
+                : end - start > RadixLinearSearchThreshold
+                ? this.FindBucketIndexBinary(value, start, end)
+                : this.FindBucketIndexLinear(value, start, end);
+        }
+
+        return this.FindBucketIndexLinear(value, 0, this.Bounds.Length);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static double[] CleanUpInfinitiesFromExplicitBounds(double[] bounds)
+    {
+        for (var i = 0; i < bounds.Length; i++)
+        {
+            if (double.IsNegativeInfinity(bounds[i]) || double.IsPositiveInfinity(bounds[i]))
+            {
+                return [.. bounds.Where(b => !double.IsNegativeInfinity(b) && !double.IsPositiveInfinity(b))];
+            }
+        }
+
+        return bounds;
+    }
+
+    private static bool ContainsNaN(double[] bounds)
+    {
+        for (var i = 0; i < bounds.Length; i++)
+        {
+            if (double.IsNaN(bounds[i]))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+#if NET
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int FindBucketIndexLinearSimd(ReadOnlySpan<double> bounds, double value)
+    {
+        var index = 0;
+
+        if (Vector512.IsHardwareAccelerated && bounds.Length >= Vector512<double>.Count)
+        {
+            var valueVector = Vector512.Create(value);
+            var lastStart = bounds.Length - Vector512<double>.Count;
+
+            while (index <= lastStart)
+            {
+                var boundsVector = Vector512.Create(bounds.Slice(index));
+                var compare = Vector512.LessThanOrEqual(valueVector, boundsVector);
+                var mask = Vector512.ExtractMostSignificantBits(compare);
+
+                if (mask != 0)
+                {
+                    return index + BitOperations.TrailingZeroCount(mask);
+                }
+
+                index += Vector512<double>.Count;
+            }
+        }
+
+        if (Vector256.IsHardwareAccelerated && bounds.Length - index >= Vector256<double>.Count)
+        {
+            var valueVector = Vector256.Create(value);
+            var lastStart = bounds.Length - Vector256<double>.Count;
+
+            while (index <= lastStart)
+            {
+                var boundsVector = Vector256.Create(bounds.Slice(index));
+                var compare = Vector256.LessThanOrEqual(valueVector, boundsVector);
+                var mask = Vector256.ExtractMostSignificantBits(compare);
+
+                if (mask != 0)
+                {
+                    return index + BitOperations.TrailingZeroCount(mask);
+                }
+
+                index += Vector256<double>.Count;
+            }
+        }
+        else if (Vector128.IsHardwareAccelerated && bounds.Length - index >= Vector128<double>.Count)
+        {
+            var valueVector = Vector128.Create(value);
+            var lastStart = bounds.Length - Vector128<double>.Count;
+
+            while (index <= lastStart)
+            {
+                var boundsVector = Vector128.Create(bounds.Slice(index));
+                var compare = Vector128.LessThanOrEqual(valueVector, boundsVector);
+                var mask = Vector128.ExtractMostSignificantBits(compare);
+
+                if (mask != 0)
+                {
+                    return index + BitOperations.TrailingZeroCount(mask);
+                }
+
+                index += Vector128<double>.Count;
+            }
+        }
+
+        for (; index < bounds.Length; index++)
+        {
+            if (value <= bounds[index])
+            {
+                return index;
+            }
+        }
+
+        return -1;
+    }
+#endif
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static ulong ToSortableBits(double value)
+    {
+        var bits = (ulong)BitConverter.DoubleToInt64Bits(value);
+        return (bits & 0x8000_0000_0000_0000UL) == 0
+            ? bits ^ 0x8000_0000_0000_0000UL
+            : ~bits;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private int FindBucketIndexBinary(double value, int start, int end)
+    {
+        var bounds = this.Bounds;
+        var left = start;
+        var right = end - 1;
+
+        while (left <= right)
+        {
+            var middle = left + ((right - left) / 2);
+
+            if (value <= bounds[middle])
+            {
+                right = middle - 1;
+            }
+            else
+            {
+                left = middle + 1;
+            }
+        }
+
+        return left;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private int FindBucketIndexLinear(double value, int start, int end)
+    {
+#if NET
+        var index = FindBucketIndexLinearSimd(this.Bounds.AsSpan(start, end - start), value);
+        if (index >= 0)
+        {
+            return start + index;
+        }
+#endif
+
+        var bounds = this.Bounds;
+
+        for (var i = start; i < end; i++)
+        {
+            // Upper bound is inclusive
+            if (value <= bounds[i])
+            {
+                return i;
+            }
+        }
+
+        return end;
+    }
+
+    private sealed class RadixBucketLookup
+    {
+        private readonly int[] bucketSearchStarts;
+        private readonly int keyMask;
+        private readonly int shift;
+
+        public RadixBucketLookup(double[] bounds)
+        {
+            Debug.Assert(bounds.Length > 0, "bounds was empty");
+
+            var firstKey = ToSortableBits(bounds[0]);
+            var lastKey = ToSortableBits(bounds[bounds.Length - 1]);
+            var commonPrefixLength = BitOperations.LeadingZeroCount(firstKey ^ lastKey);
+            var radixBits = Math.Min(RadixLookupBitCount, 64 - commonPrefixLength);
+
+            if (radixBits == 0)
+            {
+                this.bucketSearchStarts = [0, bounds.Length];
+                this.keyMask = 0;
+                this.shift = 0;
+            }
+            else
+            {
+                var bucketCount = 1 << radixBits;
+                this.bucketSearchStarts = new int[bucketCount + 1];
+                this.keyMask = bucketCount - 1;
+                this.shift = 64 - commonPrefixLength - radixBits;
+
+                var boundaryIndex = 0;
+
+                for (var key = 0; key < bucketCount; key++)
+                {
+                    this.bucketSearchStarts[key] = boundaryIndex;
+
+                    while (boundaryIndex < bounds.Length && this.GetKey(ToSortableBits(bounds[boundaryIndex])) == key)
+                    {
+                        boundaryIndex++;
+                    }
+                }
+
+                this.bucketSearchStarts[bucketCount] = bounds.Length;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public (int Start, int End) GetBucketSearchRange(double value)
+        {
+            var key = this.GetKey(ToSortableBits(value));
+            return (this.bucketSearchStarts[key], this.bucketSearchStarts[key + 1]);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int GetKey(ulong sortableBits)
+            => this.keyMask == 0 ? 0 : (int)((sortableBits >> this.shift) & (uint)this.keyMask);
+    }
+}

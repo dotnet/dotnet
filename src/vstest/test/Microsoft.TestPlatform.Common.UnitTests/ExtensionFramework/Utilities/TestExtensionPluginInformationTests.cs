@@ -51,7 +51,7 @@ public class TestExtensionPluginInformationTests
     {
         _testPluginInformation = new TestableTestExtensionPluginInformation(typeof(DummyTestExtensionWithExtensionUri));
 
-        CollectionAssert.AreEqual(new object[] { DefaultExtensionUri }, _testPluginInformation.Metadata.ToArray());
+        Assert.AreSequenceEqual(new object[] { DefaultExtensionUri }, _testPluginInformation.Metadata.ToArray());
     }
 
     #region Implementation

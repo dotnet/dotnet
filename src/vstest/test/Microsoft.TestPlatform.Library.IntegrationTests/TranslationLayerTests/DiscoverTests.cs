@@ -83,7 +83,7 @@ public class DiscoverTests : AcceptanceTestBase
 
         // Assert.
         Assert.HasCount(6, _discoveryEventHandler2.DiscoveredTestCases);
-        Assert.HasCount(0, _discoveryEventHandler2.Metrics!);
+        Assert.IsEmpty(_discoveryEventHandler2.Metrics!);
     }
 
     [TestMethod]

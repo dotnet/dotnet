@@ -233,7 +233,7 @@ internal class MSBuildLogger : ITestLoggerWithParameters
     /// parameters. Each parameter is delimited by '||||', and special characters are
     /// escaped with '%' (see <see cref="Escape"/>).
     /// Such as:
-    ///  ||||run-start||||s:\t\mstest97\bin\Debug\net8.0\mstest97.dll
+    ///  ||||run-start||||s:\t\mstest97\bin\Debug\net10.0\mstest97.dll
     ///  ||||test-failed||||TestMethod5||||Assert.IsTrue failed. ||||   at mstest97.UnitTest1.TestMethod5() in s:\t\mstest97\UnitTest1.cs:line 27%r%n   at Syste...
     /// </summary>
     /// <param name="name"></param>

@@ -2910,7 +2910,7 @@ EndGlobal";
             using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource);
             pathContext.Settings.RemoveSource("source");
             pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "true");
-            string packageid = new string('a', 200);
+            string packageid = new string('a', 100);
             var packageA1 = new SimpleTestPackageContext()
             {
                 Id = packageid,
@@ -4288,7 +4288,7 @@ EndGlobal";
             assetsFile.LogMessages.Should().HaveCount(1);
             assetsFile.LogMessages[0].Level.Should().Be(LogLevel.Warning);
             assetsFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1701);
-            //assetsFile.LogMessages[0].TargetGraphs.Should().HaveCount(2);
+            assetsFile.LogMessages[0].TargetGraphs.Should().HaveCount(2);
 
             var buildResult = _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"build {projectFile} --no-restore", testOutputHelper: _testOutputHelper);
             buildResult.AllOutput.Should().Contain("NU1702");

@@ -380,6 +380,26 @@ FROM [Customer] AS [c0]
         AssertSql();
     }
 
+    public override async Task Union_complex_type_with_different_identifiers_in_collection_projection(bool async)
+    {
+        await base.Union_complex_type_with_different_identifiers_in_collection_projection(async);
+
+        AssertSql(
+            """
+SELECT [c].[Id], [u].[ShippingAddress_AddressLine1], [u].[ShippingAddress_AddressLine2], [u].[ShippingAddress_Tags], [u].[ShippingAddress_ZipCode], [u].[ShippingAddress_Country_Code], [u].[ShippingAddress_Country_FullName]
+FROM [CustomerGroup] AS [c]
+OUTER APPLY (
+    SELECT [c0].[ShippingAddress_AddressLine1], [c0].[ShippingAddress_AddressLine2], [c0].[ShippingAddress_Tags], [c0].[ShippingAddress_ZipCode], [c0].[ShippingAddress_Country_Code], [c0].[ShippingAddress_Country_FullName]
+    FROM [Customer] AS [c0]
+    UNION
+    SELECT [c1].[ShippingAddress_AddressLine1], [c1].[ShippingAddress_AddressLine2], [c1].[ShippingAddress_Tags], [c1].[ShippingAddress_ZipCode], [c1].[ShippingAddress_Country_Code], [c1].[ShippingAddress_Country_FullName]
+    FROM [Customer] AS [c1]
+    WHERE [c1].[Id] > 1
+) AS [u]
+ORDER BY [c].[Id], [u].[ShippingAddress_AddressLine1], [u].[ShippingAddress_AddressLine2], [u].[ShippingAddress_Tags], [u].[ShippingAddress_ZipCode], [u].[ShippingAddress_Country_Code]
+""");
+    }
+
     public override async Task Union_two_different_complex_type(bool async)
     {
         await base.Union_two_different_complex_type(async);
@@ -1650,7 +1670,138 @@ LEFT JOIN (
             """);
     }
 
+    public override async Task Json_complex_properties_on_sibling_types_mapped_to_same_column()
+    {
+        await base.Json_complex_properties_on_sibling_types_mapped_to_same_column();
+
+        AssertSql(
+            """
+SELECT TOP(2) [a].[Id], [a].[Discriminator], [a].[Name], [a].[Details]
+FROM [Animal] AS [a]
+WHERE [a].[Discriminator] = N'Cat'
+""",
+            //
+            """
+@p0='{"Lives":8}' (Nullable = false) (Size = 11)
+@p1='1'
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Animal] SET [Details] = @p0
+OUTPUT 1
+WHERE [Id] = @p1;
+""",
+            //
+            """
+SELECT [a].[Id], [a].[Discriminator], [a].[Name], [a].[Details], [a].[Details]
+FROM [Animal] AS [a]
+ORDER BY [a].[Name]
+""",
+            //
+            """
+SELECT TOP(2) [a].[Id], [a].[Discriminator], [a].[Name], [a].[Details]
+FROM [Animal] AS [a]
+WHERE [a].[Discriminator] = N'Dog' AND JSON_VALUE([a].[Details], '$.Breed') = N'Collie'
+""");
+    }
+
+    public override async Task Json_complex_properties_on_base_and_derived_types_mapped_to_same_column_with_TPT()
+    {
+        await base.Json_complex_properties_on_base_and_derived_types_mapped_to_same_column_with_TPT();
+
+        AssertSql(
+            """
+SELECT TOP(2) [a].[Id], [a].[Name], [a].[Details], [d].[Details]
+FROM [Animal] AS [a]
+INNER JOIN [Dog] AS [d] ON [a].[Id] = [d].[Id]
+""",
+            //
+            """
+@p0='{"Weight":31}' (Nullable = false) (Size = 13)
+@p1='1'
+@p2='{"Breed":"Border Collie"}' (Nullable = false) (Size = 25)
+@p3='1'
+
+SET NOCOUNT ON;
+UPDATE [Animal] SET [Details] = @p0
+OUTPUT 1
+WHERE [Id] = @p1;
+UPDATE [Dog] SET [Details] = @p2
+OUTPUT 1
+WHERE [Id] = @p3;
+""",
+            //
+            """
+SELECT TOP(2) [a].[Id], [a].[Name], [a].[Details], [d].[Details]
+FROM [Animal] AS [a]
+INNER JOIN [Dog] AS [d] ON [a].[Id] = [d].[Id]
+""");
+    }
+
     #endregion Non-shared test resources
+
+    public override async Task Distinct_over_entity_with_key_on_complex_property()
+    {
+        await base.Distinct_over_entity_with_key_on_complex_property();
+
+        AssertSql(
+            """
+SELECT [p0].[Id_Id], [p0].[Address_City], [p0].[Address_PostalCode]
+FROM (
+    SELECT DISTINCT [p].[Id_Id], [p].[Address_City], [p].[Address_PostalCode]
+    FROM [Person] AS [p]
+) AS [p0]
+ORDER BY [p0].[Id_Id]
+""");
+    }
+
+    public override async Task Union_over_entity_with_key_on_complex_property()
+    {
+        await base.Union_over_entity_with_key_on_complex_property();
+
+        AssertSql(
+            """
+SELECT [u].[Id_Id], [u].[Address_City], [u].[Address_PostalCode]
+FROM (
+    SELECT [p].[Id_Id], [p].[Address_City], [p].[Address_PostalCode]
+    FROM [Person] AS [p]
+    WHERE [p].[Address_City] = N'Seattle'
+    UNION
+    SELECT [p0].[Id_Id], [p0].[Address_City], [p0].[Address_PostalCode]
+    FROM [Person] AS [p0]
+    WHERE [p0].[Address_City] = N'Redmond'
+) AS [u]
+ORDER BY [u].[Id_Id]
+""");
+    }
+
+    public override async Task Entity_with_key_on_complex_property_equals_parameter()
+    {
+        await base.Entity_with_key_on_complex_property_equals_parameter();
+
+        AssertSql(
+            """
+@entity_equality_person_Id_Id='2' (Nullable = true)
+
+SELECT TOP(2) [p].[Id_Id], [p].[Address_City], [p].[Address_PostalCode]
+FROM [Person] AS [p]
+WHERE [p].[Id_Id] = @entity_equality_person_Id_Id
+""");
+    }
+
+    public override async Task Entity_with_key_on_complex_property_in_local_collection()
+    {
+        await base.Entity_with_key_on_complex_property_in_local_collection();
+
+        AssertSql(
+            """
+@entity_equality_people_Id1='2'
+
+SELECT TOP(2) [p].[Id_Id], [p].[Address_City], [p].[Address_PostalCode]
+FROM [Person] AS [p]
+WHERE [p].[Id_Id] = @entity_equality_people_Id1
+""");
+    }
 
     [Fact]
     public virtual void Check_all_tests_overridden()
@@ -1663,5 +1814,12 @@ LEFT JOIN (
     {
         protected override ITestStoreFactory TestStoreFactory
             => SqlServerTestStoreFactory.Instance;
+
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            base.ConfigureConventions(configurationBuilder);
+
+            configurationBuilder.Properties<List<string>>().HaveColumnType("nvarchar(max)");
+        }
     }
 }

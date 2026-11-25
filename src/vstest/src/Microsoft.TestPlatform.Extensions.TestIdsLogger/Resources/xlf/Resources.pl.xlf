@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="TestIdsReportFile">
         <source>Test id report file : {0}</source>
-        <target state="new">Test id report file : {0}</target>
+        <target state="translated">Plik raportu identyfikatora testu: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestIdsLoggerWriteFailed">
         <source>Failed to write the test id report to '{0}'. {1}</source>
-        <target state="new">Failed to write the test id report to '{0}'. {1}</target>
+        <target state="translated">Nie można zapisać raportu identyfikatora testu w „{0}”. {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="TestIdsReportIncomplete">
         <source>The test run did not complete, so the test id report '{0}' covers only the tests that were reported before it stopped. Do not use an incomplete report to migrate stored test ids.</source>
-        <target state="new">The test run did not complete, so the test id report '{0}' covers only the tests that were reported before it stopped. Do not use an incomplete report to migrate stored test ids.</target>
+        <target state="translated">Przebieg testu nie został ukończony, więc raport identyfikatora testu „{0}” obejmuje tylko testy, które zostały zgłoszone przed zatrzymaniem. Nie używaj niekompletnego raportu do migrowania przechowywanych identyfikatorów testów.</target>
         <note />
       </trans-unit>
     </body>

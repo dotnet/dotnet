@@ -1,0 +1,38 @@
+name: Lint - Spelling & Encoding
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  run-typos:
+    name: Check for typos
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        filter: 'tree:0'
+        persist-credentials: false
+        show-progress: false
+
+    - name: Check for typos
+      uses: crate-ci/typos@8a48f81b6c64dcfea44b3633223084c4be58ac5f # v1.49.0
+
+  run-sanitycheck:
+    name: Run sanity check
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        filter: 'tree:0'
+        persist-credentials: false
+        show-progress: false
+
+    - name: Detect non-ASCII encoding and trailing space
+      run: python3 ./build/scripts/sanitycheck.py

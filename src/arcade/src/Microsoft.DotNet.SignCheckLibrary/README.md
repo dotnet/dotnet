@@ -1,7 +1,7 @@
 SignCheck
 =========
 
-`SignCheck` is a tool that scans files, archives, and packages to ensure their contents have valid signatures.
+`SignCheck` is a standalone, test-only tool that checks whether arbitrary files, including files in archives and packages, are signed properly. It is typically used in build pipelines to verify that freshly built assets were signed properly. Its results must not be used to make trust decisions.
 
 ### Usage
 

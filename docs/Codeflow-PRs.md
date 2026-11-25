@@ -10,7 +10,7 @@ Source code changes can originate in either the repository or the VMR and are sy
 > [!IMPORTANT]
 > Opening PRs against the VMR is **not yet permitted** and will be allowed in the near future. For now, source code changes should only be made in the repositories, barring exceptional cases.
 
-For more details on code flow and the VMR, see [VMR Code and Build Workflow](https://github.com/dotnet/arcade/blob/main/Documentation/UnifiedBuild/VMR-Code-And-Build-Workflow.md).  
+For more details on code flow and the VMR, see [VMR Code and Build Workflow](VMR-Code-And-Build-Workflow.md).  
 
 ## Terminology
 
@@ -24,7 +24,7 @@ For more details on code flow and the VMR, see [VMR Code and Build Workflow](htt
 
 ## General Information
 
-This is part of the [Unified Build](https://github.com/dotnet/arcade/tree/main/Documentation/UnifiedBuild) - an effort that changes how .NET is built and shipped.
+This is part of the [Unified Build](README.md) - an effort that changes how .NET is built and shipped.
 If you're looking for an intro, a good source of information (though not public) are the .NET Platform Talks about [🎬 UB in general](https://microsoft-my.sharepoint.com/personal/tarekms_ntdev_microsoft_com/_layouts/15/stream.aspx?id=%2Fpersonal%2Ftarekms%5Fntdev%5Fmicrosoft%5Fcom%2FDocuments%2FRecordings%2F%2ENET%20platform%20talks%2D20250226%5F200258%2DMeeting%20Recording%2Emp4&referrer=StreamWebApp%2EWeb&referrerScenario=AddressBarCopied%2Eview%2E0f6357b7%2Db525%2D4eb3%2D9cb7%2D67297d6eaa23&mode=Edit) or a [🎬 more codeflow specific one](https://microsofteur-my.sharepoint.com/:v:/g/personal/prvysoky_microsoft_com/EdlGj6nIOWFFvMyF6izBAR8BkJI0ua_4rqgxQbcRrv2zRg?e=YXedHu).
 
 ## Codeflow PR Metadata

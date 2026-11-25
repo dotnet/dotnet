@@ -18,7 +18,7 @@ These 10 rules apply across all dimensions. Violations of these principles alway
 3. **Always include an automated test** for new behavior so the scenario cannot regress silently. Test platform bugs are only discovered when users' CI breaks, often weeks after the problematic change shipped.
 4. **Always make error messages actionable** — explain what failed AND what the user should do next. vstest runs in CI where users cannot interactively debug; the error message is often the only diagnostic available.
 5. **Always treat environment variable names and IPC protocol messages as stable contracts** once shipped. External tools, adapters, and older hosts depend on these contracts; breaking them causes silent failures across the ecosystem.
-6. **Always test changes on all targeted platforms** (Windows/Linux/macOS) and TFMs (net462/net8.0+). Platform-specific path handling, assembly loading, and runtime behavior differ significantly.
+6. **Always test changes on all targeted platforms** (Windows/Linux/macOS) and TFMs (net462/net10.0+). Platform-specific path handling, assembly loading, and runtime behavior differ significantly.
 7. **Always verify package contents** (DLL TFMs, file counts) after any change that modifies project references or packaging. Incorrect packages ship to millions of users and cannot be patched—only new versions can fix them.
 8. **Always minimize public API surface** — prefer internal visibility unless there is an explicit external consumer need. Public API is a permanent commitment; accidental exposure creates backward-compatibility obligations.
 9. **Always back performance claims with measurements** that separate platform overhead from adapter overhead. Unmeasured optimizations may not help or may introduce correctness regressions for negligible gain.
@@ -42,7 +42,7 @@ Ensuring dependency version changes don't break consumers, packaged content matc
 
 Correct multi-TFM builds, framework detection, binding redirects for net462 hosts, and ensuring features work across all targeted netstandard/net runtimes.
 
-- CHECK: Changes work on all targeted TFMs (net462, net8.0+)
+- CHECK: Changes work on all targeted TFMs (net462, net10.0+)
 - CHECK: Binding redirects added to all three app.configs when bumping netstandard2.0 packages
 - CHECK: `#if` guards or polyfills used for APIs unavailable on older frameworks
 - CHECK: netstandard2.0 dependencies don't pull in assemblies absent from net462 hosts
@@ -142,7 +142,7 @@ Changes must not break existing consumers on older TFMs or SDK versions. Mitigat
 
 - CHECK: New functionality has a disable flag for rollback if regression is discovered
 - CHECK: API changes don't break callers built against older ObjectModel versions
-- CHECK: Runtime assumptions are valid on all supported runtimes (net462, net8.0 through latest)
+- CHECK: Runtime assumptions are valid on all supported runtimes (net462, net10.0 through latest)
 - CHECK: Breaking changes have explicit migration documentation
 - CHECK: Version-specific behavior is guarded by capability checks, not version sniffing
 

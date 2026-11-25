@@ -8,6 +8,6 @@ namespace NuGet.Shared
     /// <typeparam name="T"></typeparam>
     internal interface IUtf8JsonStreamReaderConverter<T>
     {
-        T Read(ref Utf8JsonStreamReader reader);
+        T? Read(ref Utf8JsonStreamReader reader);
     }
 }

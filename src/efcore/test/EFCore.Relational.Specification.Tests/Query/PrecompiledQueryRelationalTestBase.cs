@@ -32,6 +32,31 @@ public abstract class PrecompiledQueryRelationalTestBase
     #region Expression types
 
     [Fact]
+    public virtual Task Class_constant_in_predicate()
+        => FullSourceTest(
+            """
+public static class TestContainer
+{
+    private const int BlogId = 8;
+
+    public static async Task Test(DbContextOptions dbContextOptions)
+    {
+        await using var context = new PrecompiledQueryContext(dbContextOptions);
+        var blog = await ExecuteAsync(context, CancellationToken.None);
+        Assert.NotNull(blog);
+        Assert.Equal(8, blog.Id);
+        Assert.Equal("Blog1", blog.Name);
+    }
+
+    private static Task<Blog?> ExecuteAsync(PrecompiledQueryContext suppliedContext, CancellationToken cancellationToken)
+    {
+        var context = suppliedContext;
+        return context.Blogs.SingleOrDefaultAsync(b => b.Id == BlogId, cancellationToken);
+    }
+}
+""");
+
+    [Fact]
     public virtual Task BinaryExpression()
         => Test(
             """
@@ -74,6 +99,61 @@ var blogs = await context.Blogs.Select(b => b.Id == 2 ? "yes" : "no").ToListAsyn
             """
 var yes = "yes";
 var blogs = await context.Blogs.Select(b => b.Id == 2 ? yes : "no").ToListAsync();
+""");
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public virtual Task Conditional_test_contains_captured_variable(bool async, bool fullyEvaluatable)
+        => Test(
+            $$"""
+foreach (var flag in new[] { false, true })
+{
+    var ids = {{(async ? "await " : "")}}context.Blogs
+        .Where(b => {{(fullyEvaluatable ? "b.Id == (flag ? 8 : 9)" : "flag ? b.Id == 8 : b.Id == 9")}})
+        .Select(b => b.Id).{{(async ? "ToListAsync" : "ToList")}}();
+
+    Assert.Equal(new[] { flag ? 8 : 9 }, ids);
+}
+""");
+
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(false, false, true)]
+    [InlineData(false, true, false)]
+    [InlineData(false, true, true)]
+    [InlineData(true, false, false)]
+    [InlineData(true, false, true)]
+    [InlineData(true, true, false)]
+    [InlineData(true, true, true)]
+    public virtual Task Logical_binary_contains_captured_variable(bool async, bool andAlso, bool capturedOnLeft)
+        => Test(
+            $$"""
+foreach (var flag in new[] { false, true })
+{
+    var ids = {{(async ? "await " : "")}}context.Blogs
+        .Where(b => {{(capturedOnLeft ? "flag" : "b.Id == 8")}} {{(andAlso ? "&&" : "||")}} {{(capturedOnLeft ? "b.Id == 8" : "flag")}})
+        .OrderBy(b => b.Id).Select(b => b.Id).{{(async ? "ToListAsync" : "ToList")}}();
+
+    Assert.Equal({{(andAlso ? "flag ? new[] { 8 } : Array.Empty<int>()" : "flag ? new[] { 8, 9 } : new[] { 8 }")}}, ids);
+}
+""");
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public virtual Task Coalesce_left_contains_captured_variable(bool async)
+        => Test(
+            $$"""
+foreach (var name in new string[] { null, "captured" })
+{
+    var names = {{(async ? "await " : "")}}context.Blogs.OrderBy(b => b.Id)
+        .Select(b => name ?? b.Name).{{(async ? "ToListAsync" : "ToList")}}();
+
+    Assert.Equal(name == null ? new[] { "Blog1", "Blog2" } : new[] { "captured", "captured" }, names);
+}
 """);
 
     // We do not support embedding Expression builder API calls into the query; this would require CSharpToLinqTranslator to actually
@@ -169,6 +249,28 @@ _ = await context.Blogs.Select(b => new Blog(i, b.Name)).ToListAsync();
         => Test("_ = await context.Blogs.Select(b => new Blog { Id = b.Id, Name = b.Name }).ToListAsync();");
 
     [Fact]
+    public virtual Task MemberInit_with_required_init_only_properties()
+        => Test(
+            """
+var id = 8;
+var blog = await context.Blogs.Where(b => b.Id == id)
+    .Select(b => new RequiredBlogDto
+    {
+        Id = b.Id,
+        Name = b.Name,
+        Details = new RequiredBlogDto { Id = b.Id, Name = b.Name }
+    })
+    .FirstOrDefaultAsync();
+
+Assert.NotNull(blog);
+Assert.Equal(8, blog.Id);
+Assert.Equal("Blog1", blog.Name);
+Assert.NotNull(blog.Details);
+Assert.Equal(8, blog.Details.Id);
+Assert.Equal("Blog1", blog.Details.Name);
+""");
+
+    [Fact]
     public virtual Task MemberInit_contains_captured_variable()
         => Test(
             """
@@ -250,6 +352,39 @@ _ = await context.Blogs.OrderBy(b => b.Name).Take(toTake).ToListAsync();
 """);
 
     [Fact]
+    public virtual Task Skip_Take_with_parameters()
+        => Test(
+            """
+foreach (var (skip, take, expected) in new[]
+{
+    (0, 3, new[] { 11, 12, 21 }),
+    (1, 2, new[] { 12, 21 }),
+    (1, 1, new[] { 12 }),
+    (5, 1, Array.Empty<int>())
+})
+{
+    var ids = context.Posts.OrderBy(p => p.Id).Skip(skip).Take(take).Select(p => p.Id).ToList();
+    Assert.Equal(expected, ids);
+}
+""");
+
+    [Fact]
+    public virtual Task Skip_Take_with_captured_parameters_in_local_function()
+        => Test(
+            """
+var skip = 1;
+var take = 2;
+await AssertPage();
+
+async Task AssertPage()
+{
+    var ids = await context.Posts.OrderBy(p => p.Id).Where(p => p.Id > 10)
+        .Skip(skip).Take(take).Select(p => p.Id).ToListAsync(CancellationToken.None);
+    Assert.Equal(new[] { 12, 21 }, ids);
+}
+""");
+
+    [Fact]
     public virtual Task Select_changes_type()
         => Test("_ = await context.Blogs.Select(b => b.Name).ToListAsync();");
 
@@ -276,6 +411,25 @@ _ = await context.Blogs.OrderBy(b => b.Name).Take(toTake).ToListAsync();
     [Fact]
     public virtual Task GroupBy_Select_first_grouping_element()
         => Test("""var blogs = await context.Blogs.GroupBy(b => b.Name).Select(g => g.OrderBy(b => b.Id).First()).ToListAsync();""");
+
+    // An aggregate over a grouping translated in a nested query falls back to a subquery over the grouping element (#27130).
+    [Fact]
+    public virtual Task GroupBy_aggregate_over_outer_grouping_in_subquery()
+        => Test(
+            """
+var blogs = await context.Blogs.GroupBy(b => b.Name)
+    .Select(g => new { g.Key, Count = context.Blogs.GroupBy(b => b.Id).OrderBy(g2 => g2.Key).Select(g2 => g.Count()).FirstOrDefault() })
+    .ToListAsync();
+""");
+
+    // An aggregate over a grouping translated for an inline collection is folded back into the grouped query once the
+    // collection becomes an IN list (#27130).
+    [Fact]
+    public virtual Task GroupBy_aggregate_as_element_of_inline_collection_Contains()
+        => Test(
+            """
+var blogs = await context.Blogs.GroupBy(b => b.Name).Where(g => new List<int> { g.Count(), -1 }.Contains(1)).Select(g => g.Key).ToListAsync();
+""");
 
     #endregion Regular operators
 
@@ -1124,6 +1278,73 @@ public static class TestContainer
 
     #region Captured variable handling
 
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task Captured_nullable_value_in_guarded_query(bool async)
+        => Test(
+            $$"""
+foreach (var suppliedId in new int?[] { 8, 9, null })
+{
+    var id = suppliedId;
+    var queryId = id;
+    var blogs = id.HasValue
+        ? {{(async ? "await " : "")}}context.Blogs.AsNoTracking()
+            .Where(b => b.Id == queryId.Value)
+            .Select(b => new { b.Id, b.Name })
+            .{{(async ? "ToListAsync()" : "ToList()")}}
+        : {{(async ? "await " : "")}}context.Blogs.AsNoTracking()
+            .Select(b => new { b.Id, b.Name })
+            .{{(async ? "ToListAsync()" : "ToList()")}};
+
+    Assert.Equal(
+        id.HasValue ? new[] { id.Value } : new[] { 8, 9 },
+        blogs.OrderBy(b => b.Id).Select(b => b.Id));
+    Assert.Equal(
+        id.HasValue ? new[] { id == 8 ? "Blog1" : "Blog2" } : new[] { "Blog1", "Blog2" },
+        blogs.OrderBy(b => b.Id).Select(b => b.Name));
+}
+""");
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task Captured_object_properties(bool async)
+        => Test(
+            $$"""
+var item = new Blog { Id = 8, Name = "Blog1" };
+var blog = {{(async ? "await context.Blogs.FirstOrDefaultAsync" : "context.Blogs.FirstOrDefault")}}(b => b.Id == item.Id && b.Name == item.Name);
+Assert.NotNull(blog);
+Assert.Equal(8, blog.Id);
+Assert.Equal("Blog1", blog.Name);
+""");
+
+    [Fact]
+    public virtual Task Captured_entity_property()
+        => Test(
+            """
+var item = await context.Blogs.SingleAsync(b => b.Id == 8);
+var blog = await context.Blogs.FirstOrDefaultAsync(b => b.Id == item.Id);
+Assert.Same(item, blog);
+""");
+
+    [Fact]
+    public virtual Task Captured_null_object_property_throws_at_runtime()
+        => Test(
+            """
+Blog item = null!;
+await Assert.ThrowsAsync<NullReferenceException>(() => context.Blogs.AnyAsync(b => b.Id == item.Id));
+""");
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task Captured_foreach_object_properties(bool async)
+        => Test(
+            $$"""
+var items = new[] { new Blog { Id = 8, Name = "Blog1" }, new Blog { Id = 9, Name = "Blog2" } };
+foreach (var item in items)
+{
+    var blog = {{(async ? "await context.Blogs.SingleAsync" : "context.Blogs.Single")}}(b => b.Id == item.Id && b.Name == item.Name);
+    Assert.Equal(item.Id, blog.Id);
+    Assert.Equal(item.Name, blog.Name);
+}
+""");
+
     [Fact]
     public virtual Task Captured_method_parameter_in_lambda()
         => Test(
@@ -1402,6 +1623,13 @@ await using var context = new PrecompiledQueryContext(dbContextOptions);
         public string? Text { get; set; }
 
         public JsonBranch Inner { get; set; } = null!;
+    }
+
+    public class RequiredBlogDto
+    {
+        public int Id { get; init; }
+        public required string? Name { get; init; }
+        public RequiredBlogDto? Details { get; init; }
     }
 
     public class JsonBranch

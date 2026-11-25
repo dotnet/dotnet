@@ -126,7 +126,7 @@ namespace NuGet.Protocol.Providers.Tests
             var exception = await Assert.ThrowsAsync<FatalProtocolException>(
                 () => provider.TryCreate(sourceRepository, CancellationToken.None));
 
-            Assert.Equal($"Repository Signatures resouce must be served over HTTPS. Source: {_packageSource.Source}", exception.Message);
+            Assert.Equal($"Repository Signatures resource must be served over HTTPS. Source: {_packageSource.Source}", exception.Message);
         }
 
         [Theory]

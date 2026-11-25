@@ -51,22 +51,24 @@ namespace NuGet.Packaging.Signing
 
         private static void SeekToEndOfCentralDirectoryRecord(BinaryReader reader)
         {
-            var length = reader.BaseStream.Length;
+            // Match ZipArchive: skip the 18 fixed bytes following the signature and search at most
+            // the maximum ZIP comment length plus the signature length backwards.
+            const int SizeOfRecordWithoutSignature = 18;
+            var searchEnd = reader.BaseStream.Length - SizeOfRecordWithoutSignature;
 
-            if (length < Signature.Count)
+            if (searchEnd < Signature.Count)
             {
                 ThrowByteSignatureNotFoundException(Signature);
             }
 
             const int DefaultBufferSize = 4096;
 
-            var bufferSize = (int)Math.Min(length, DefaultBufferSize);
+            var searchStart = Math.Max(0, searchEnd - ushort.MaxValue - Signature.Count);
+            var bufferSize = (int)Math.Min(searchEnd - searchStart, DefaultBufferSize);
             var matchingByteCount = 0;
 
-            // Read backwards from the end of stream in adjacent, non-overlapping chunks of size "bufferSize",
-            // and search backwards for the byte signature.
-            // Note:  position is 0-based, while bufferSize is 1-based.
-            for (var position = length - bufferSize; position >= 0; position -= bufferSize)
+            // Search backwards in adjacent, non-overlapping chunks, retaining partial matches between chunks.
+            for (var position = searchEnd - bufferSize; position >= searchStart; position -= bufferSize)
             {
                 reader.BaseStream.Position = position;
 
@@ -87,11 +89,11 @@ namespace NuGet.Packaging.Signing
                     }
                     else
                     {
-                        matchingByteCount = 0;
+                        matchingByteCount = buffer[i] == Signature[Signature.Count - 1] ? 1 : 0;
                     }
                 }
 
-                bufferSize = (int)Math.Min(position, bufferSize);
+                bufferSize = (int)Math.Min(position - searchStart, bufferSize);
 
                 if (bufferSize == 0)
                 {

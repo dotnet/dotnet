@@ -25,8 +25,6 @@
     <ShortStack Condition="'$(TargetOS)' == 'maccatalyst'">true</ShortStack>
     <ShortStack Condition="'$(TargetOS)' == 'android'">true</ShortStack>
     <ShortStack Condition="'$(TargetOS)' == 'linux-bionic'">true</ShortStack>
-    <!-- Mono LLVM builds are short -->
-    <ShortStack Condition="'$(MonoEnableLLVM)' == 'true' or '$(MonoAOTEnableLLVM)' == 'true'">true</ShortStack>
   </PropertyGroup>
 
   <!-- See https://github.com/dotnet/arcade/blob/main/Documentation/UnifiedBuild/Unified-Build-Controls.md#output-controls for
@@ -40,6 +38,11 @@
     <HostArchitecture Condition="'$(HostArchitecture)' == ''">$(TargetArchitecture)</HostArchitecture>
 
     <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
+  </PropertyGroup>
+
+  <PropertyGroup Label="RuntimeProductsOnly">
+    <!-- These platforms retain runtime products but no longer produce a native SDK. -->
+    <BuildRuntimeProductsOnly Condition="'$(ShortStack)' != 'true' and (('$(TargetOS)' == 'windows' and '$(TargetArchitecture)' == 'x86') or (('$(TargetOS)' == 'linux' or '$(TargetOS)' == 'linux-musl') and '$(TargetArchitecture)' == 'arm'))">true</BuildRuntimeProductsOnly>
   </PropertyGroup>
 
   <PropertyGroup Label="CalculateRID">

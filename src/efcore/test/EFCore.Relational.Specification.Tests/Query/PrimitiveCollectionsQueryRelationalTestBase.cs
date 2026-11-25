@@ -11,6 +11,53 @@ public abstract class PrimitiveCollectionsQueryRelationalTestBase<TFixture>(TFix
         DbContextOptionsBuilder optionsBuilder,
         ParameterTranslationMode parameterizedCollectionMode);
 
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task Project_collection_with_identity_select_split_query(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<PrimitiveCollectionsEntity>().AsSplitQuery().OrderBy(x => x.Id)
+                .Select(x => new { x.Id, Strings = x.Strings.Select(s => s) }),
+            assertOrder: true,
+            elementAsserter: (e, a) =>
+            {
+                Assert.Equal(e.Id, a.Id);
+                AssertCollection(e.Strings, a.Strings, ordered: true);
+            });
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual async Task Project_collection_with_identity_select_split_query_with_converter(bool async)
+    {
+        var contextFactory = await InitializeNonSharedTest<TestContext>(
+            onModelCreating: mb => mb.Entity<TestEntity>().PrimitiveCollection(e => e.Ints).ElementType()
+                .HasConversion<string>().HasMaxLength(10000),
+            seed: context =>
+            {
+                context.AddRange(
+                    new TestEntity { Id = 1, Ints = [1, 10, 1] },
+                    new TestEntity { Id = 2, Ints = [] });
+                return context.SaveChangesAsync();
+            });
+
+        await using var context = contextFactory.CreateDbContext();
+
+        var query = context.Set<TestEntity>().AsSplitQuery().OrderBy(x => x.Id)
+            .Select(x => new { x.Id, Ints = x.Ints!.Select(i => i) });
+        var results = async ? await query.ToListAsync() : query.ToList();
+
+        Assert.Collection(
+            results,
+            result =>
+            {
+                Assert.Equal(1, result.Id);
+                Assert.Equal([1, 10, 1], result.Ints);
+            },
+            result =>
+            {
+                Assert.Equal(2, result.Id);
+                Assert.Empty(result.Ints);
+            });
+    }
+
     [Fact]
     public override async Task Inline_collection_Count_with_zero_values()
     {
@@ -232,6 +279,47 @@ public abstract class PrimitiveCollectionsQueryRelationalTestBase<TFixture>(TFix
         Assert.Equivalent(new[] { "foo", "bar" }, result.Owned.Strings);
     }
 
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual async Task Column_collections_Contains_with_non_json_scalar_types(bool async)
+    {
+        var id = new Guid("12345678-1234-1234-1234-123456789abc");
+        var date = new DateTime(2026, 1, 2, 12, 30, 0);
+
+        var contextFactory = await InitializeNonSharedTest<TestContext>(
+            onModelCreating: mb =>
+            {
+                mb.Entity<ContainsOwner>().OwnsOne(e => e.Owned, b => b.ToJson());
+                mb.Entity<ContainsOwner>().Property(e => e.Id).ValueGeneratedNever();
+                mb.Entity<ContainsOwner>().PrimitiveCollection(e => e.ConvertedInts).ElementType().HasConversion<string>();
+            },
+            seed: context =>
+            {
+                context.AddRange(
+                    new ContainsOwner
+                    {
+                        Id = 1, Guids = [id], Dates = [date], ConvertedInts = [42],
+                        Owned = new ContainsOwned { Guids = [id], Dates = [date] }
+                    },
+                    new ContainsOwner
+                    {
+                        Id = 2, Guids = [], Dates = [], ConvertedInts = [],
+                        Owned = new ContainsOwned { Guids = [], Dates = [] }
+                    });
+                return context.SaveChangesAsync();
+            });
+
+        await using var context = contextFactory.CreateDbContext();
+
+        await AssertIds(context.Set<ContainsOwner>().Where(e => e.Guids.Contains(id)));
+        await AssertIds(context.Set<ContainsOwner>().Where(e => e.Dates.Contains(date)));
+        await AssertIds(context.Set<ContainsOwner>().Where(e => e.Owned.Guids.Contains(id)));
+        await AssertIds(context.Set<ContainsOwner>().Where(e => e.Owned.Dates.Any(d => d == date)));
+        await AssertIds(context.Set<ContainsOwner>().Where(e => e.ConvertedInts.Contains(42)));
+
+        async Task AssertIds(IQueryable<ContainsOwner> query)
+            => Assert.Equal([1], async ? await query.Select(e => e.Id).ToListAsync() : query.Select(e => e.Id).ToList());
+    }
+
     public override Task Column_collection_Concat_parameter_collection_equality_inline_collection()
         => AssertTranslationFailed(base.Column_collection_Concat_parameter_collection_equality_inline_collection);
 
@@ -333,5 +421,20 @@ public abstract class PrimitiveCollectionsQueryRelationalTestBase<TFixture>(TFix
     protected class TestOwned
     {
         public string[] Strings { get; set; } = null!;
+    }
+
+    protected class ContainsOwner
+    {
+        public int Id { get; set; }
+        public Guid[] Guids { get; set; } = null!;
+        public DateTime[] Dates { get; set; } = null!;
+        public int[] ConvertedInts { get; set; } = null!;
+        public ContainsOwned Owned { get; set; } = null!;
+    }
+
+    protected class ContainsOwned
+    {
+        public Guid[] Guids { get; set; } = null!;
+        public DateTime[] Dates { get; set; } = null!;
     }
 }

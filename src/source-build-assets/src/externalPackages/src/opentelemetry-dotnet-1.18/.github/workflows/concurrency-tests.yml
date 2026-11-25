@@ -1,0 +1,54 @@
+# Called by ci.yml to run coyote concurrency tests
+# See: https://docs.github.com/en/actions/using-workflows/reusing-workflows#creating-a-reusable-workflow
+name: Concurrency Tests
+
+on:
+  workflow_call:
+    inputs:
+      trigger:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  run-concurrency-tests:
+    name: run-concurrency-tests
+
+    strategy:
+      fail-fast: ${{ inputs.trigger == 'merge_group' }}
+      matrix:
+        os:
+          # renovate: datasource=github-runners depType=github-runner
+          - ubuntu-24.04
+          # renovate: datasource=github-runners depType=github-runner
+          - windows-2025
+        version: [ net8.0, net10.0 ]
+        project: [ OpenTelemetry.Tests, OpenTelemetry.Api.Tests ]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        filter: 'tree:0'
+        persist-credentials: false
+        show-progress: false
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+
+    - name: Run Coyote Tests
+      shell: pwsh
+      run: .\build\scripts\test-threadSafety.ps1 -testProjectName ${env:PROJECT_NAME} -targetFramework ${env:TARGET_FRAMEWORK}
+      env:
+        PROJECT_NAME: ${{ matrix.project }}
+        TARGET_FRAMEWORK: ${{ matrix.version }}
+
+    - name: Publish Artifacts
+      if: always() && !cancelled()
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: ${{ matrix.os }}-${{ matrix.project }}-${{ matrix.version }}-coyoteoutput
+        path: '**/*_CoyoteOutput.*'

@@ -21,7 +21,7 @@ imported through the `imports:` frontmatter field.
 
 ```bash
 # Install the gh-aw CLI extension (once per machine)
-gh extension install github/gh-aw --pin v0.92.1
+gh extension install github/gh-aw --pin v1.0.1
 
 # Compile a single workflow after editing its .md source. Strict mode is the
 # default — keep it that way. NEVER set `strict: false` in frontmatter.
@@ -38,7 +38,7 @@ gh aw logs <workflow-id>
 gh aw audit <run-id>
 ```
 
-Use gh-aw v0.92.1 to match the compiler recorded in the generated workflows.
+Use gh-aw v1.0.1 to match the compiler recorded in the generated workflows.
 When updating gh-aw actions, use the matching compiler, update
 `.github/aw/actions-lock.json`, and recompile all workflows so the generated
 steps and manifests keep the same action versions.
@@ -109,9 +109,9 @@ Set it up once (requires org admin to create/install the App):
 
 1. Create a GitHub App owned by the `microsoft` org (Settings → Developer settings →
    GitHub Apps). Grant the repository permissions the workflows need (Administration
-   read-only; Contents, Issues, and Pull requests read/write; and Security events
-   read/write for code-scanning alerts), generate a **private key** (`.pem`), and
-   **install** the App on `microsoft/vstest`.
+   read-only; Checks read-only; Contents, Issues, and Pull requests read/write; and
+   Security events read/write for code-scanning alerts), generate a **private key**
+   (`.pem`), and **install** the App on `microsoft/vstest`.
 2. Store the App **Client ID** as a repository **variable** and the private key as a
    **secret**. The variable remains named `APP_ID` to match the workflow sources, but its
    value must be the Client ID, not the numeric App ID:
@@ -133,7 +133,7 @@ Set it up once (requires org admin to create/install the App):
    ```
 
    Once `APP_ID`/`APP_PRIVATE_KEY` exist, the compiled locks use
-   [`actions/create-github-app-token@v3.2.0`][app-token] to mint the token; until then the
+   [`actions/create-github-app-token@v3.3.0`][app-token] to mint the token; until then the
    step is skipped and write-backs fall back through the compiler-generated
    `GH_AW_GITHUB_TOKEN || GITHUB_TOKEN` chain.
 
@@ -203,7 +203,7 @@ App above).
 | Workflow | Trigger | Description |
 | --- | --- | --- |
 | [`issue-repro-triage.md`](./issue-repro-triage.md) | Every 12h + manual + issues | Reproduces reported issues and opens auto-fix PRs. |
-| [`pr-iteration.md`](./pr-iteration.md) | PR review submitted + issue comment + daily + manual | Addresses PR review feedback and pushes fixes to the PR branch. |
+| [`pr-iteration.md`](./pr-iteration.md) | Same-repository PR review submitted + issue comment + daily + manual | Addresses PR review feedback and pushes fixes to the PR branch. Fork review events are skipped because GitHub does not grant them the required Copilot permission. |
 
 #### Continuous quality improvers (scheduled)
 
@@ -213,7 +213,6 @@ App above).
 | [`efficiency-improver.md`](./efficiency-improver.md) | Daily + manual + issues | Identifies and implements energy/compute efficiency improvements (capped at 8 open PRs). |
 | [`repository-quality-improver.md`](./repository-quality-improver.md) | Weekdays + manual | Rotating repository-quality analysis; opens tracking issues. |
 | [`daily-file-diet.md`](./daily-file-diet.md) | Weekdays + manual + issues | Identifies oversized source files and opens actionable refactoring issues. |
-| [`daily-qa.md`](./daily-qa.md) | Daily (04:00 UTC) + manual + issues | Daily maintenance digest — ad hoc, subjective quality assurance. |
 | [`malicious-code-scan.md`](./malicious-code-scan.md) | Daily + manual | Reviews recent code changes for suspicious patterns indicating malicious or agentic threats. |
 
 #### Docs & links
@@ -237,7 +236,6 @@ safe outputs reject agent writes to top-level dot-folders.
 | [`agentic_commands.yml`](./agentic_commands.yml) | PR / issue comments | Dispatches `/`-prefixed slash commands typed in comments to the right agentic workflow. |
 | [`agentics-maintenance.yml`](./agentics-maintenance.yml) | Schedule + manual | Maintains the agentic workflow ecosystem itself (re-compilation, dependency bumps, etc.). |
 | [`copilot-setup-steps.yml`](./copilot-setup-steps.yml) | PR + push + manual | Bootstraps a Copilot Coding Agent environment with the right .NET SDK and tooling. |
-| [`enable-auto-merge.yml`](./enable-auto-merge.yml) | `pull_request_target` | Enables auto-merge on eligible PRs. |
 
 ## Shared components
 

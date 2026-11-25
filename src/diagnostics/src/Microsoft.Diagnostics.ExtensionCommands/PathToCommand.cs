@@ -10,13 +10,18 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name ="pathto", Aliases = new[] { "PathTo" }, Help = "Displays the GC path from <root> to <target>.")]
     public class PathToCommand : ClrRuntimeCommandBase
     {
-        [ServiceImport]
-        public RootCacheService RootCache { get; set; }
+        public PathToCommand(IServiceProvider services, RootCacheService rootCache)
+            : base(services)
+        {
+            RootCache = rootCache;
+        }
 
-        [Argument(Name = "source")]
+        public RootCacheService RootCache { get; }
+
+        [Argument<string>(Name = "source")]
         public string SourceAddress { get; set; }
 
-        [Argument(Name = "target")]
+        [Argument<string>(Name = "target")]
         public string TargetAddress { get; set; }
 
         public override void Invoke()

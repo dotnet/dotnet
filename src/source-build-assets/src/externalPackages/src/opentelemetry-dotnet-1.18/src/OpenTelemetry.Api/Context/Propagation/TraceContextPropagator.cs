@@ -1,0 +1,976 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+#if NET
+using System.Buffers;
+using System.Collections.Immutable;
+#endif
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Text;
+using OpenTelemetry.Internal;
+
+namespace OpenTelemetry.Context.Propagation;
+
+/// <summary>
+/// A text map propagator for W3C trace context. See https://w3c.github.io/trace-context/.
+/// </summary>
+public class TraceContextPropagator : TextMapPropagator
+{
+    private const string TraceParent = "traceparent";
+    private const string TraceState = "tracestate";
+
+    // The following length limits are from Trace Context Level 2 https://www.w3.org/TR/trace-context-2/#key
+    private const int TraceStateKeyMaxLength = 256;
+    private const int TraceStateValueMaxLength = 256;
+
+    private const int TraceStateMaxCombinedLength = 512;
+    private const int TraceStateLargeEntryLength = 128;
+
+#if NET
+    private const int TraceIdSizeInBytes = 16;
+    private const int SpanIdSizeInBytes = 8;
+#endif
+
+    private static readonly int VersionPrefixIdLength = "00-".Length;
+    private static readonly int TraceIdLength = "0af7651916cd43dd8448eb211c80319c".Length;
+    private static readonly int VersionAndTraceIdLength = "00-0af7651916cd43dd8448eb211c80319c-".Length;
+    private static readonly int SpanIdLength = "00f067aa0ba902b7".Length;
+    private static readonly int VersionAndTraceIdAndSpanIdLength = "00-0af7651916cd43dd8448eb211c80319c-00f067aa0ba902b7-".Length;
+    private static readonly int OptionsLength = "00".Length;
+    private static readonly int TraceparentLengthV0 = "00-0af7651916cd43dd8448eb211c80319c-00f067aa0ba902b7-00".Length;
+
+#if NET
+    private static readonly SearchValues<char> TraceStateKeyFirstChars = SearchValues.Create("0123456789abcdefghijklmnopqrstuvwxyz");
+    private static readonly SearchValues<char> TraceStateKeyChars = SearchValues.Create("0123456789abcdefghijklmnopqrstuvwxyz_-*/@");
+    private static readonly SearchValues<char> TraceStateValueChars = CreateTraceStateValueChars(0x20);
+    private static readonly SearchValues<char> TraceStateValueLastChars = CreateTraceStateValueChars(0x21);
+    private static readonly ImmutableHashSet<string> AllFields = [TraceState, TraceParent];
+#else
+    private static readonly HashSet<string> AllFields = [TraceState, TraceParent];
+#endif
+
+    /// <inheritdoc/>
+    /// <remarks>
+    /// Callers should not modify the returned set.
+    /// </remarks>
+    public override ISet<string> Fields => AllFields;
+
+    /// <inheritdoc/>
+    public override PropagationContext Extract<T>(PropagationContext context, T carrier, Func<T, string, IEnumerable<string>?> getter)
+    {
+        if (context.ActivityContext.IsValid())
+        {
+            // If a valid context has already been extracted, perform a noop.
+            return context;
+        }
+
+        if (carrier == null)
+        {
+            OpenTelemetryApiEventSource.Log.FailedToExtractActivityContext(nameof(TraceContextPropagator), "null carrier");
+            return context;
+        }
+
+        if (getter == null)
+        {
+            OpenTelemetryApiEventSource.Log.FailedToExtractActivityContext(nameof(TraceContextPropagator), "null getter");
+            return context;
+        }
+
+        try
+        {
+            if (!TryGetSingleValue(getter(carrier, TraceParent), out var traceparent))
+            {
+                return context;
+            }
+
+            var traceparentParsed = TryExtractTraceparent(traceparent, out var traceId, out var spanId, out var traceoptions);
+
+            if (!traceparentParsed)
+            {
+                return context;
+            }
+
+            string? tracestate = null;
+            var extracted = TryExtractTracestate(getter(carrier, TraceState), out var extractedTracestate, out var hasTraceState);
+            if (hasTraceState && (!extracted || extractedTracestate.Length > 0))
+            {
+                tracestate = extractedTracestate;
+            }
+
+            return new PropagationContext(
+                new ActivityContext(traceId, spanId, traceoptions, tracestate, isRemote: true),
+                context.Baggage);
+        }
+        catch (Exception ex)
+        {
+            OpenTelemetryApiEventSource.Log.ActivityContextExtractException(nameof(TraceContextPropagator), ex);
+        }
+
+        // in case of exception indicate to upstream that there is no parseable context from the top
+        return context;
+    }
+
+    /// <inheritdoc/>
+    public override void Inject<T>(PropagationContext context, T carrier, Action<T, string, string> setter)
+    {
+        if (context.ActivityContext.TraceId == default || context.ActivityContext.SpanId == default)
+        {
+            OpenTelemetryApiEventSource.Log.FailedToInjectActivityContext(nameof(TraceContextPropagator), "Invalid context");
+            return;
+        }
+
+        if (carrier == null)
+        {
+            OpenTelemetryApiEventSource.Log.FailedToInjectActivityContext(nameof(TraceContextPropagator), "null carrier");
+            return;
+        }
+
+        if (setter == null)
+        {
+            OpenTelemetryApiEventSource.Log.FailedToInjectActivityContext(nameof(TraceContextPropagator), "null setter");
+            return;
+        }
+
+#if NET
+        var traceparent = string.Create(55, context.ActivityContext, WriteTraceParentIntoSpan);
+#else
+        var traceparent = string.Concat("00-", context.ActivityContext.TraceId.ToHexString(), "-", context.ActivityContext.SpanId.ToHexString());
+        var traceFlags = FormatActivityTraceFlags(context.ActivityContext.TraceFlags);
+        traceparent = string.Concat(traceparent, traceFlags);
+#endif
+
+        setter(carrier, TraceParent, traceparent);
+
+        var tracestateStr = context.ActivityContext.TraceState;
+        if (tracestateStr?.Length > 0 &&
+            TryExtractSingleTracestate(tracestateStr, out var normalizedTraceState) &&
+            normalizedTraceState.Length > 0)
+        {
+            if (normalizedTraceState.Length > TraceStateMaxCombinedLength)
+            {
+                normalizedTraceState = TruncateOversizedTracestate(normalizedTraceState);
+            }
+
+            if (normalizedTraceState.Length > 0)
+            {
+                setter(carrier, TraceState, normalizedTraceState);
+            }
+        }
+
+#if NET
+        static void WriteTraceParentIntoSpan(Span<char> destination, ActivityContext context)
+        {
+            "00-".CopyTo(destination);
+
+            context.TraceId.ToHexString().CopyTo(destination.Slice(3));
+
+            destination[35] = '-';
+
+            context.SpanId.ToHexString().CopyTo(destination.Slice(36));
+
+            // https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/3867
+            // will change this code to use ActivityTraceFlags.RandomTraceId instead of 2.
+            // If new enum values are added in the future the Fallback path will ensure
+            // that the handling is functionally correct, but the condition should be updated
+            // to include the new value(s) for better readability and performance where possible.
+            if (context.TraceFlags == ActivityTraceFlags.Recorded)
+            {
+                "-01".CopyTo(destination[52..]);
+            }
+            else if (context.TraceFlags == (ActivityTraceFlags)2)
+            {
+                "-02".CopyTo(destination[52..]);
+            }
+            else if (context.TraceFlags == (ActivityTraceFlags.Recorded | (ActivityTraceFlags)2))
+            {
+                "-03".CopyTo(destination[52..]);
+            }
+            else
+            {
+                var flags = (byte)context.TraceFlags;
+                destination[52] = '-';
+                destination[53] = GetHexChar(flags >> 4);
+                destination[54] = GetHexChar(flags & 0xF);
+            }
+        }
+#else
+        static string FormatActivityTraceFlags(ActivityTraceFlags flags)
+        {
+            // https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/3867
+            // will change this code to use ActivityTraceFlags.RandomTraceId instead of 2.
+            // If new enum values are added in the future the Fallback path will ensure
+            // that the handling is functionally correct, but the switch should be updated
+            // to include the new value(s) for better readability and performance where possible.
+            return flags switch
+            {
+                ActivityTraceFlags.None => "-00",
+                ActivityTraceFlags.Recorded => "-01",
+                (ActivityTraceFlags)2 => "-02",
+                ActivityTraceFlags.Recorded | (ActivityTraceFlags)2 => "-03",
+                _ => Fallback((byte)flags),
+            };
+
+            static string Fallback(byte flags)
+            {
+                Span<char> buffer = stackalloc char[3];
+
+                buffer[0] = '-';
+                buffer[1] = GetHexChar(flags >> 4);
+                buffer[2] = GetHexChar(flags & 0xF);
+
+                return buffer.ToString();
+            }
+        }
+#endif
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static char GetHexChar(int value)
+        {
+            return (char)(value + (value < 10 ? '0' : 'a' - 10));
+        }
+    }
+
+    internal static bool TryExtractTraceparent(string traceparent, out ActivityTraceId traceId, out ActivitySpanId spanId, out ActivityTraceFlags traceOptions)
+    {
+        // from https://github.com/w3c/distributed-tracing/blob/master/trace_context/HTTP_HEADER_FORMAT.md
+        // traceparent: 00-0af7651916cd43dd8448eb211c80319c-00f067aa0ba902b7-01
+
+        traceId = default;
+        spanId = default;
+        traceOptions = default;
+        var bestAttempt = false;
+
+        if (string.IsNullOrWhiteSpace(traceparent) || traceparent.Length < TraceparentLengthV0)
+        {
+            return false;
+        }
+
+        // if version does not end with delimiter
+        if (traceparent[VersionPrefixIdLength - 1] != '-')
+        {
+            return false;
+        }
+
+        // or version is not hex
+        if (!TryHexCharToByte(traceparent[0], out var version0) ||
+            !TryHexCharToByte(traceparent[1], out var version1))
+        {
+            return false;
+        }
+
+        if (version0 == 0xf && version1 == 0xf)
+        {
+            return false;
+        }
+
+        if (version0 > 0)
+        {
+            // expected version is 00
+            // for higher versions - best attempt parsing of trace id, span id, etc.
+            bestAttempt = true;
+        }
+
+        if (traceparent[VersionAndTraceIdLength - 1] != '-')
+        {
+            return false;
+        }
+
+#if NET
+        // Fast path for .NET that can benefit from SearchValues to avoid exceptions on invalid input
+        Span<byte> idBytes = stackalloc byte[TraceIdSizeInBytes];
+
+        if (!TryParseLowerCaseHex(traceparent.AsSpan(VersionPrefixIdLength, TraceIdLength), idBytes))
+        {
+            // it's ok to still parse tracestate
+            return false;
+        }
+
+        traceId = ActivityTraceId.CreateFromBytes(idBytes);
+#else
+        try
+        {
+            traceId = ActivityTraceId.CreateFromString(traceparent.AsSpan(VersionPrefixIdLength, TraceIdLength));
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            // it's ok to still parse tracestate
+            return false;
+        }
+#endif
+
+        if (traceparent[VersionAndTraceIdAndSpanIdLength - 1] != '-')
+        {
+            return false;
+        }
+
+#if NET
+        // Fast path for .NET that can benefit from SearchValues to avoid exceptions on invalid input
+        var spanIdBytes = idBytes.Slice(0, SpanIdSizeInBytes);
+
+        if (!TryParseLowerCaseHex(traceparent.AsSpan(VersionAndTraceIdLength, SpanIdLength), spanIdBytes))
+        {
+            // it's ok to still parse tracestate
+            return false;
+        }
+
+        spanId = ActivitySpanId.CreateFromBytes(spanIdBytes);
+#else
+        try
+        {
+            spanId = ActivitySpanId.CreateFromString(traceparent.AsSpan(VersionAndTraceIdLength, SpanIdLength));
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            // it's ok to still parse tracestate
+            return false;
+        }
+#endif
+
+        // The high nibble of the options is validated but not used
+        if (!TryHexCharToByte(traceparent[VersionAndTraceIdAndSpanIdLength], out _) ||
+            !TryHexCharToByte(traceparent[VersionAndTraceIdAndSpanIdLength + 1], out var optionsLowByte))
+        {
+            // it's ok to still parse tracestate
+            return false;
+        }
+
+        if ((optionsLowByte & 1) == 1)
+        {
+            traceOptions |= ActivityTraceFlags.Recorded;
+        }
+
+        if ((optionsLowByte & 2) == 2)
+        {
+            // https://github.com/open-telemetry/opentelemetry-dotnet/pull/6899
+            // will change this to use ActivityTraceFlags.RandomTraceId instead.
+            traceOptions |= (ActivityTraceFlags)2;
+        }
+
+        if ((!bestAttempt) && (traceparent.Length != VersionAndTraceIdAndSpanIdLength + OptionsLength))
+        {
+            return false;
+        }
+
+        if (bestAttempt)
+        {
+            if ((traceparent.Length > TraceparentLengthV0) && (traceparent[TraceparentLengthV0] != '-'))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    internal static bool TryExtractTracestate(string[]? tracestateCollection, out string tracestateResult)
+        => TryExtractTracestate((IEnumerable<string>?)tracestateCollection, out tracestateResult);
+
+    internal static bool TryExtractTracestate(IEnumerable<string>? tracestateCollection, out string tracestateResult)
+        => TryExtractTracestate(tracestateCollection, out tracestateResult, out _);
+
+    private static bool TryExtractTracestate(IEnumerable<string>? tracestateCollection, out string tracestateResult, out bool hasTraceState)
+    {
+        tracestateResult = string.Empty;
+        hasTraceState = false;
+
+        if (tracestateCollection == null)
+        {
+            return true;
+        }
+
+        if (tracestateCollection is IList<string> list)
+        {
+            if (list.Count == 0)
+            {
+                return true;
+            }
+
+            hasTraceState = true;
+
+            return list.Count == 1 ?
+                TryExtractSingleTracestate(list[0], out tracestateResult) :
+                TryExtractMultipleTracestate(list, out tracestateResult);
+        }
+
+        if (tracestateCollection is IReadOnlyList<string> readOnlyList)
+        {
+            if (readOnlyList.Count == 0)
+            {
+                return true;
+            }
+
+            hasTraceState = true;
+
+            return
+                readOnlyList.Count == 1 ?
+                TryExtractSingleTracestate(readOnlyList[0], out tracestateResult) :
+                TryExtractMultipleTracestate(readOnlyList, out tracestateResult);
+        }
+
+        using var enumerator = tracestateCollection.GetEnumerator();
+        if (!enumerator.MoveNext())
+        {
+            return true;
+        }
+
+        hasTraceState = true;
+        var singleTraceState = enumerator.Current;
+
+        return enumerator.MoveNext() ?
+            TryExtractMultipleTracestate(EnumerateFrom(singleTraceState, enumerator), out tracestateResult) :
+            TryExtractSingleTracestate(singleTraceState, out tracestateResult);
+    }
+
+    private static IEnumerable<string> EnumerateFrom(string first, IEnumerator<string> enumerator)
+    {
+        yield return first;
+
+        do
+        {
+            yield return enumerator.Current;
+        }
+        while (enumerator.MoveNext());
+    }
+
+    private static bool TryExtractMultipleTracestate(IEnumerable<string> tracestateCollection, out string tracestateResult)
+    {
+        var keySet = new HashSet<string>();
+        var result = new StringBuilder();
+
+        foreach (var tracestateEntry in tracestateCollection)
+        {
+            if (tracestateEntry is not { Length: > 0 })
+            {
+                continue;
+            }
+
+            var tracestate = tracestateEntry.AsSpan();
+            while (!tracestate.IsEmpty)
+            {
+                ReadOnlySpan<char> listMember;
+
+                var length = tracestate.IndexOf(',');
+                if (length != -1)
+                {
+                    listMember = tracestate.Slice(0, length).Trim();
+                    tracestate = tracestate.Slice(length + 1);
+                }
+                else
+                {
+                    listMember = tracestate.Trim();
+                    tracestate = [];
+                }
+
+                // https://github.com/w3c/trace-context/blob/master/spec/20-http_request_header_format.md#tracestate-header-field-values
+                if (listMember.IsEmpty)
+                {
+                    // Empty and whitespace - only list members are allowed.
+                    // Vendors MUST accept empty tracestate headers but SHOULD avoid sending them.
+                    continue;
+                }
+
+                if (keySet.Count >= 32)
+                {
+                    // https://github.com/w3c/trace-context/blob/master/spec/20-http_request_header_format.md#list
+                    // test_tracestate_member_count_limit
+                    tracestateResult = string.Empty;
+                    return false;
+                }
+
+                var keyLength = listMember.IndexOf('=');
+                if (keyLength == listMember.Length || keyLength == -1)
+                {
+                    // Missing key or value in tracestate
+                    tracestateResult = string.Empty;
+                    return false;
+                }
+
+                var key = listMember.Slice(0, keyLength);
+                if (!ValidateKey(key))
+                {
+                    // test_tracestate_key_illegal_characters in https://github.com/w3c/trace-context/blob/master/test/test.py
+                    // test_tracestate_key_length_limit
+                    // test_tracestate_key_illegal_vendor_format
+                    tracestateResult = string.Empty;
+                    return false;
+                }
+
+                var value = listMember.Slice(keyLength + 1);
+                if (!ValidateValue(value))
+                {
+                    // test_tracestate_value_illegal_characters
+                    tracestateResult = string.Empty;
+                    return false;
+                }
+
+                // ValidateKey() call above has ensured the key does not contain upper case letters.
+                if (!keySet.Add(key.ToString()))
+                {
+                    // test_tracestate_duplicated_keys
+                    continue;
+                }
+
+                if (result.Length > 0)
+                {
+                    result.Append(',');
+                }
+
+#if NET
+                result.Append(listMember);
+#else
+                result.Append(listMember.ToString());
+#endif
+            }
+        }
+
+        tracestateResult = result.ToString();
+        return true;
+    }
+
+    private static bool TryExtractSingleTracestate(string? tracestate, out string tracestateResult)
+    {
+        tracestateResult = string.Empty;
+
+        if (tracestate is not { Length: > 0 })
+        {
+            return true;
+        }
+
+        var tracestateSpan = tracestate.AsSpan();
+
+        const int Limit = 32;
+
+        Span<int> memberStarts = stackalloc int[Limit];
+        Span<int> memberLengths = stackalloc int[Limit];
+        Span<int> keyLengths = stackalloc int[Limit];
+        Span<int> keyHashes = stackalloc int[Limit];
+
+        var memberCount = 0;
+        var totalLength = 0;
+        var normalized = false;
+        var begin = 0;
+
+        while (begin < tracestateSpan.Length)
+        {
+            var end = begin;
+            while (end < tracestateSpan.Length && tracestateSpan[end] != ',')
+            {
+                end++;
+            }
+
+            var memberStart = begin;
+            var memberEnd = end;
+
+            while (memberStart < memberEnd && char.IsWhiteSpace(tracestateSpan[memberStart]))
+            {
+                memberStart++;
+            }
+
+            while (memberEnd > memberStart && char.IsWhiteSpace(tracestateSpan[memberEnd - 1]))
+            {
+                memberEnd--;
+            }
+
+            if (memberStart != begin || memberEnd != end)
+            {
+                normalized = true;
+            }
+
+            var memberLength = memberEnd - memberStart;
+            if (memberLength > 0)
+            {
+                if (memberCount >= Limit)
+                {
+                    return false;
+                }
+
+                var listMember = tracestateSpan.Slice(memberStart, memberLength);
+                var keyLength = listMember.IndexOf('=');
+                if (keyLength == listMember.Length || keyLength == -1)
+                {
+                    return false;
+                }
+
+                var key = listMember.Slice(0, keyLength);
+                if (!ValidateKey(key))
+                {
+                    return false;
+                }
+
+                var value = listMember.Slice(keyLength + 1);
+                if (!ValidateValue(value))
+                {
+                    return false;
+                }
+
+                var duplicateKey = false;
+                var useHashedDuplicateCheck = keyLength <= Limit;
+                var keyHash = 0;
+                if (useHashedDuplicateCheck)
+                {
+                    keyHash = GetKeyHashCode(key);
+                    for (var i = 0; i < memberCount; i++)
+                    {
+                        if (keyHashes[i] != keyHash || keyLengths[i] != keyLength)
+                        {
+                            continue;
+                        }
+
+                        if (key.SequenceEqual(tracestateSpan.Slice(memberStarts[i], keyLength)))
+                        {
+                            duplicateKey = true;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    for (var i = 0; i < memberCount; i++)
+                    {
+                        if (keyLengths[i] == keyLength &&
+                            key.SequenceEqual(tracestateSpan.Slice(memberStarts[i], keyLength)))
+                        {
+                            duplicateKey = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (duplicateKey)
+                {
+                    normalized = true;
+                    begin = end + 1;
+                    continue;
+                }
+
+                memberStarts[memberCount] = memberStart;
+                memberLengths[memberCount] = memberLength;
+                keyLengths[memberCount] = keyLength;
+                keyHashes[memberCount] = keyHash;
+
+                memberCount++;
+                totalLength += memberLength;
+            }
+            else
+            {
+                normalized = true;
+            }
+
+            begin = end + 1;
+        }
+
+        if (!normalized && memberCount > 0 && totalLength + memberCount - 1 == tracestate.Length)
+        {
+            tracestateResult = tracestate;
+            return true;
+        }
+
+        if (memberCount == 0)
+        {
+            return true;
+        }
+
+        var result = new StringBuilder(totalLength + memberCount - 1);
+        for (var i = 0; i < memberCount; i++)
+        {
+            if (i > 0)
+            {
+                result.Append(',');
+            }
+
+#if NET
+            result.Append(tracestateSpan.Slice(memberStarts[i], memberLengths[i]));
+#else
+            result.Append(tracestate.Substring(memberStarts[i], memberLengths[i]));
+#endif
+        }
+
+        tracestateResult = result.ToString();
+        return true;
+    }
+
+    private static string TruncateOversizedTracestate(string tracestate)
+    {
+        // Rare, cold path: only reached when a validated/deduplicated tracestate still exceeds
+        // the combined length limit. Drop large (>128 char) members first, scanning from the end,
+        // then drop remaining members from the end until under the limit.
+        string?[] members = tracestate.Split(',');
+        var combinedLength = tracestate.Length;
+
+        for (var i = members.Length - 1; i >= 0 && combinedLength > TraceStateMaxCombinedLength; i--)
+        {
+            if (members[i] is { Length: > TraceStateLargeEntryLength } member)
+            {
+                combinedLength -= member.Length + 1;
+                members[i] = null;
+            }
+        }
+
+        for (var i = members.Length - 1; i >= 0 && combinedLength > TraceStateMaxCombinedLength; i--)
+        {
+            if (members[i] is { } member)
+            {
+                combinedLength -= member.Length + 1;
+                members[i] = null;
+            }
+        }
+
+        var result = new StringBuilder(TraceStateMaxCombinedLength);
+
+        foreach (var member in members)
+        {
+            if (member == null)
+            {
+                continue;
+            }
+
+            if (result.Length > 0)
+            {
+                result.Append(',');
+            }
+
+            result.Append(member);
+        }
+
+        return result.ToString();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool TryHexCharToByte(char c, out byte value)
+    {
+        if (char.IsAsciiDigit(c))
+        {
+            value = (byte)(c - '0');
+            return true;
+        }
+
+        if (c is >= 'a' and <= 'f')
+        {
+            value = (byte)(c - 'a' + 10);
+            return true;
+        }
+
+        value = 0;
+        return false;
+    }
+
+#if NET
+    /// <summary>
+    /// Parses lower-case hexadecimal characters into bytes, rejecting any other character
+    /// and rejecting an all-zero result. These are the same constraints
+    /// <see cref="ActivityTraceId.CreateFromString"/> and
+    /// <see cref="ActivitySpanId.CreateFromString"/> enforce by throwing.
+    /// </summary>
+    /// <param name="source">The characters to parse. Must be twice the length of <paramref name="destination"/>.</param>
+    /// <param name="destination">Receives the parsed bytes.</param>
+    /// <returns><see langword="true"/> if the characters form a valid, non-zero id; otherwise, <see langword="false"/>.</returns>
+    private static bool TryParseLowerCaseHex(ReadOnlySpan<char> source, Span<byte> destination)
+    {
+        Debug.Assert(source.Length == destination.Length * 2, "source was not twice the length of destination");
+
+        var allZero = true;
+
+        for (var i = 0; i < destination.Length; i++)
+        {
+            var high = HexCharToNibble(source[i * 2]);
+            var low = HexCharToNibble(source[(i * 2) + 1]);
+
+            // A non-hex character yields -1, so the sign bit of either nibble marks failure.
+            if ((high | low) < 0)
+            {
+                return false;
+            }
+
+            var value = (byte)((high << 4) | low);
+
+            destination[i] = value;
+            allZero &= value == 0;
+        }
+
+        return !allZero;
+    }
+
+    /// <summary>
+    /// Converts a lower-case hexadecimal character to its value, or -1 when the character
+    /// is not lower-case hexadecimal.
+    /// </summary>
+    /// <param name="c">The character to convert.</param>
+    /// <returns>The value of the character, or -1.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int HexCharToNibble(char c)
+    {
+        var digit = (uint)(c - '0');
+
+        if (digit <= 9)
+        {
+            return (int)digit;
+        }
+
+        var letter = (uint)(c - 'a');
+
+        return letter <= 5 ? (int)letter + 10 : -1;
+    }
+#else
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool IsAsciiLetterOrDigitLower(char c)
+        => char.IsAsciiDigit(c) || char.IsAsciiLetterLower(c);
+#endif
+
+    private static int GetKeyHashCode(ReadOnlySpan<char> key)
+    {
+#if NET
+        HashCode hash = default;
+
+        for (var i = 0; i < key.Length; i++)
+        {
+            hash.Add(key[i]);
+        }
+
+        return hash.ToHashCode();
+#else
+        unchecked
+        {
+            var hash = (int)2166136261;
+            for (var i = 0; i < key.Length; i++)
+            {
+                hash = (hash ^ key[i]) * 16777619;
+            }
+
+            return hash;
+        }
+#endif
+    }
+
+#if NET
+    private static SearchValues<char> CreateTraceStateValueChars(int firstCharacter)
+    {
+        // chr = %x20 / nblk-chr and nblk-chr = %x21-2B / %x2D-3C / %x3E-7E, so the set is the
+        // printable ASCII range excluding ',' and '='. The last character of a value may not
+        // be a space, which is expressed by starting at 0x21 instead of 0x20.
+        const int LastCharacter = 0x7E;
+        Span<char> characters = stackalloc char[LastCharacter - firstCharacter + 1];
+        var count = 0;
+
+        for (var c = firstCharacter; c <= LastCharacter; c++)
+        {
+            // Exclude ',' and '=' from the set of valid characters.
+            if (c is 0x2C or 0x3D)
+            {
+                continue;
+            }
+
+            characters[count++] = (char)c;
+        }
+
+        return SearchValues.Create(characters.Slice(0, count));
+    }
+#endif
+
+    private static bool TryGetSingleValue(IEnumerable<string>? values, out string value)
+    {
+        value = string.Empty;
+
+        if (values == null)
+        {
+            return false;
+        }
+
+        if (values is IList<string> list)
+        {
+            if (list.Count != 1)
+            {
+                return false;
+            }
+
+            value = list[0];
+            return true;
+        }
+
+        if (values is IReadOnlyList<string> readOnlyList)
+        {
+            if (readOnlyList.Count != 1)
+            {
+                return false;
+            }
+
+            value = readOnlyList[0];
+            return true;
+        }
+
+        using var enumerator = values.GetEnumerator();
+        if (!enumerator.MoveNext())
+        {
+            return false;
+        }
+
+        value = enumerator.Current;
+        return !enumerator.MoveNext();
+    }
+
+    private static bool ValidateKey(ReadOnlySpan<char> key)
+    {
+        // https://www.w3.org/TR/trace-context-2/#key
+        // key = (lcalpha / DIGIT) 0*255(keychar)
+        // keychar = lcalpha / DIGIT / "_" / "-" / "*" / "/" / "@"
+        if (key.Length is <= 0 or > TraceStateKeyMaxLength)
+        {
+            return false;
+        }
+
+#if NET
+        return TraceStateKeyFirstChars.Contains(key[0]) &&
+               !key.Slice(1).ContainsAnyExcept(TraceStateKeyChars);
+#else
+        if (!IsAsciiLetterOrDigitLower(key[0]))
+        {
+            return false;
+        }
+
+        for (var i = 1; i < key.Length; ++i)
+        {
+            var ch = key[i];
+            if (!(IsAsciiLetterOrDigitLower(ch)
+                || ch == '_'
+                || ch == '-'
+                || ch == '*'
+                || ch == '/'
+                || ch == '@'))
+            {
+                return false;
+            }
+        }
+
+        return true;
+#endif
+    }
+
+    private static bool ValidateValue(ReadOnlySpan<char> value)
+    {
+        // https://github.com/w3c/trace-context/blob/master/spec/20-http_request_header_format.md#value
+        // value      = 0*255(chr) nblk-chr
+        // nblk - chr = % x21 - 2B / % x2D - 3C / % x3E - 7E
+        // chr        = % x20 / nblk - chr
+        if (value.Length is <= 0 or > TraceStateValueMaxLength)
+        {
+            return false;
+        }
+
+#if NET
+        return !value.Slice(0, value.Length - 1).ContainsAnyExcept(TraceStateValueChars) &&
+               TraceStateValueLastChars.Contains(value[value.Length - 1]);
+#else
+        for (var i = 0; i < value.Length - 1; ++i)
+        {
+            var c = value[i];
+            if (c is not (>= (char)0x20 and <= (char)0x7E and not (char)0x2C and not (char)0x3D))
+            {
+                return false;
+            }
+        }
+
+        var last = value[value.Length - 1];
+        return last is >= (char)0x21 and <= (char)0x7E and not (char)0x2C and not (char)0x3D;
+#endif
+    }
+}

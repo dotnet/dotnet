@@ -44,7 +44,7 @@ public class TestExtensionsTests
         _testExtensions.AddExtension(testDiscoverers);
 
         Assert.IsNotNull(_testExtensions.TestDiscoverers);
-        CollectionAssert.AreEqual(_testExtensions.TestDiscoverers, testDiscoverers);
+        Assert.AreSequenceEqual(_testExtensions.TestDiscoverers, testDiscoverers);
 
         // Validate that the others remain same.
         Assert.IsNull(_testExtensions.TestExecutors);
@@ -77,7 +77,7 @@ public class TestExtensionsTests
             { "td2", new TestDiscovererPluginInformation(typeof(TestExtensionsTests)) }
         };
 
-        CollectionAssert.AreEqual(_testExtensions.TestDiscoverers.Keys, expectedTestExtensions.Keys);
+        Assert.AreSequenceEqual(_testExtensions.TestDiscoverers.Keys, expectedTestExtensions.Keys);
 
         // Validate that the others remain same.
         Assert.IsNull(_testExtensions.TestExecutors);
@@ -102,7 +102,7 @@ public class TestExtensionsTests
         _testExtensions.AddExtension(testDiscoverers);
 
         // Validate.
-        CollectionAssert.AreEqual(_testExtensions.TestDiscoverers.Keys, testDiscoverers.Keys);
+        Assert.AreSequenceEqual(_testExtensions.TestDiscoverers.Keys, testDiscoverers.Keys);
 
         // Validate that the others remain same.
         Assert.IsNull(_testExtensions.TestExecutors);
@@ -146,7 +146,7 @@ public class TestExtensionsTests
         {
             { "td", new TestDiscovererPluginInformation(typeof(TestExtensionsTests)) }
         };
-        CollectionAssert.AreEqual(expectedExtensions.Keys, extensions!.TestDiscoverers!.Keys);
+        Assert.AreSequenceEqual(expectedExtensions.Keys, extensions!.TestDiscoverers!.Keys);
     }
 
     [TestMethod]
@@ -166,7 +166,7 @@ public class TestExtensionsTests
         {
             { "te", new TestExecutorPluginInformation(typeof(TestExtensionsTests)) }
         };
-        CollectionAssert.AreEqual(expectedExtensions.Keys, extensions!.TestExecutors!.Keys);
+        Assert.AreSequenceEqual(expectedExtensions.Keys, extensions!.TestExecutors!.Keys);
     }
 
     [TestMethod]
@@ -186,7 +186,7 @@ public class TestExtensionsTests
         {
             { "tsp", new TestSettingsProviderPluginInformation(typeof(TestExtensionsTests)) }
         };
-        CollectionAssert.AreEqual(expectedExtensions.Keys, extensions!.TestSettingsProviders!.Keys);
+        Assert.AreSequenceEqual(expectedExtensions.Keys, extensions!.TestSettingsProviders!.Keys);
     }
 
     [TestMethod]
@@ -206,7 +206,7 @@ public class TestExtensionsTests
         {
             { "tl", new TestLoggerPluginInformation(typeof(TestExtensionsTests)) }
         };
-        CollectionAssert.AreEqual(expectedExtensions.Keys, extensions!.TestLoggers!.Keys);
+        Assert.AreSequenceEqual(expectedExtensions.Keys, extensions!.TestLoggers!.Keys);
     }
 
     [TestMethod]
@@ -230,13 +230,13 @@ public class TestExtensionsTests
         {
             { "td", new TestDiscovererPluginInformation(typeof(TestExtensionsTests)) }
         };
-        CollectionAssert.AreEqual(expectedDiscoverers.Keys, extensions!.TestDiscoverers!.Keys);
+        Assert.AreSequenceEqual(expectedDiscoverers.Keys, extensions!.TestDiscoverers!.Keys);
 
         var expectedLoggers = new Dictionary<string, TestLoggerPluginInformation>
         {
             { "tl", new TestLoggerPluginInformation(typeof(TestExtensionsTests)) }
         };
-        CollectionAssert.AreEqual(expectedLoggers.Keys, extensions.TestLoggers!.Keys);
+        Assert.AreSequenceEqual(expectedLoggers.Keys, extensions.TestLoggers!.Keys);
     }
 
     [TestMethod]

@@ -1,0 +1,358 @@
+# Release Notes
+
+This file contains highlights and announcements covering all components.
+For more details see `CHANGELOG.md` files maintained in the root source
+directory of each individual package.
+
+## 1.18.0
+
+Release details: [1.18.0](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.18.0)
+
+* **Breaking change:** The maximum size of a single OTLP export request is now
+  64 MiB by default instead of 128 MiB to conform with the OpenTelemetry specification.
+  Raise the value of the new `OtlpExporterOptions.MaxRequestSizeBytes` property
+  to increase the capacity.
+* Added `OtlpExporterOptions.MaxRequestSizeBytes` to configure the maximum OTLP
+  request size limit, as required by the OpenTelemetry specification. The default
+  is the recommended 64 MiB. A batch whose serialized payload exceeds the limit
+  is not sent and is dropped in its entirety. The maximum supported value is
+  256 MiB.
+* Added `OtlpExporterOptions.MaxResponseSizeBytes` to configure the maximum size
+  of a response the exporter will accept, as required by the OpenTelemetry
+  specification. The default is the recommended 4 MiB. A response exceeding the
+  limit is discarded and treated as a non-retryable failure.
+* Added the `otel.sdk.processor.log.processed` and  `otel.sdk.processor.span.processed`
+  SDK self-observability metrics.
+* Added support for serializing attribute values that are key/value lists in
+  the OTLP, console and Zipkin exporters.
+* The OTLP exporter will now export the logger version, if it was specified.
+* Add new `ITelemetryHostInitializer` interface for applications that do not
+  support hosted services, such as Blazor, to use to manually initialize the
+  OpenTelemetry SDK as part of application startup.
+* `BatchActivityExportProcessor` and `SimpleActivityExportProcessor` no longer
+  forward spans to the exporter once Shutdown has been called, and
+  `BatchActivityExportProcessor.Shutdown` now waits for in-flight `OnEnd` calls
+  to finish enqueueing before flushing.
+* Fixed self-diagnostics log lines being silently dropped when an event message
+  was too long to fit in the internal buffer. Such content is now truncated.
+* Fixed activity creation throwing when multiple tracer providers returned a
+  sampler attribute with the same key.
+* Fixed logger, meter and tracer providers leaking background threads if an
+  exception is thrown by their constructor after resource creation.
+* Avoid formatting exceptions and creating exception attributes when
+  `RecordException` is called on a span that is not recorded.
+* Fixed `UseOtlpExporter` to respect options configured with
+  `services.Configure<OtlpExporterOptions>(...)`.
+* Clamped the server-supplied OTLP/gRPC retry delay (`RetryInfo.retry_delay`) to
+  a minimum value of 100 milliseconds.
+* Fixed serialization failures leaving failed trace, metric, and log batches in
+  the serializer's per-thread state.
+* Fixed the persistent-storage retry thread terminating permanently on an
+  unexpected exception.
+* Fixed the OTLP exporter from retrying certain non-transient HTTP failures.
+* Improved OTLP log attribute serialization performance by avoiding unnecessary
+  boxing.
+* Improved OTLP histogram serialization performance by avoiding a redundant
+  scan of explicit bucket bounds.
+* Fixed persistent storage allowing a blob write to exceed the configured
+  maximum storage size.
+* Improved OTLP/gRPC response status handling performance by avoiding unnecessary
+  header enumeration on .NET 8+.
+* Fixed the Zipkin exporter to read responses with `HttpCompletionOption.ResponseHeadersRead`
+  for the .NET Framework and .NET Standard targets.
+* Fixed inefficient parsing of the Jaeger `uber-trace-id` header when targeting
+  `net462` or `netstandard2.0`.
+
+## 1.17.0
+
+Release details: [1.17.0](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.17.0)
+
+* Added support for a Schema URL on Resource instances.
+* The Resource Schema URL is now printed alongside the resource attributes
+  when using the Console and OTLP exporters.
+* Added `ExcludedTagKeys` property to `MetricStreamConfiguration` to support
+  excluding specific tag keys from metric streams.
+* Updated `tracestate` key validation to comply with the W3C Trace Context
+  Level 2 grammar.
+* The SDK now depends on Microsoft.Extensions.Configuration.EnvironmentVariables
+  instead of using a vendored implementation.
+* All libraries are now marked as trim and AOT compatible.
+* Fixed a metric storage leak that occurred when meters and instruments were
+  repeatedly created and disposed.
+* Fixed `TraceContextPropagator` to normalize empty `tracestate` header values
+  to `null` when extracting trace context.
+* Fixed `OtlpLogExporter` so `OtlpExporterOptions.ExportProcessorType` and
+  `OtlpExporterOptions.BatchExportProcessorOptions` are respected when
+  `LogRecordExportProcessorOptions` are not configured.
+* Fixed the OTLP exporter dropping retryable data instead of saving it to disk
+  when persistent storage retry is enabled and an export exceeds the configured
+  timeout.
+* Fixed the OTLP/HTTP exporter silently dropping data when an export timed out.
+* Fixed the OTLP/gRPC exporter logging incorrectly when an export timed out.
+* Performance and memory improvements for the OTLP exporter when exporting logs
+  and metrics.
+
+## 1.16.0
+
+Release details: [1.16.0](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.16.0)
+
+* **Breaking Change** Explicit histogram boundaries no longer allow more than
+  10 million values.
+* Fix `BaggagePropagator` to correctly follow Key and Value Encoding rules.
+* Add support for the W3C randomness flag.
+* Fixed `TraceContextPropagator` to deduplicate duplicate `tracestate` keys.
+* `ObservedTimestamp` will now be exported for logs in the console exporter.
+* Fixed `NullReferenceException` when exporting OTLP logs if the scope key is
+  null.
+* Added opt-in support for gzip compression to the OTLP exporter.
+* Fixed OTLP disk retry data being stored incorrectly when using persistent
+  storage retry.
+* Fixed `OtlpLogExporter` integration with `IHttpClientFactory`.
+* Do not enable the OTLP integration with `IHttpClientFactory` when mTLS is
+  enabled.
+* Handle `Retry-After` response headers that specify a date instead of a delay.
+* `observed_time_unix_nano` will no longer always be identical to `time_unix_nano`
+  when using the logs bridge API.
+* Stop validating View-provided metric stream `Name` against the instrument name
+  syntax.
+* Fix incorrect validation of `OTEL_BSP_*` and `OTEL_BLRP_*` environment variables.
+* Fix observable instrument callbacks running once per reader instead of once per
+  collection cycle.
+* Added exception safety for user-supplied `ExemplarReservoir` implementations.
+* Fixed a circular reference which could cause a `LoggerProvider` to fail to
+  resolve when one of its dependencies depends on `ILogger` or `ILoggerFactory`.
+
+## 1.15.3
+
+Release details: [1.15.3](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.15.3)
+
+* **Breaking change:** Fixed `tracestate` parsing to reject keys that do not
+  begin with a lowercase letter, including keys beginning with digits, to
+  align with the W3C Trace Context specification.
+* **Breaking change:** Fixed an insecure disk retry default for OTLP export.
+  Disk retry now requires `OTEL_DOTNET_EXPERIMENTAL_OTLP_DISK_RETRY_DIRECTORY_PATH`
+  when `OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY=disk` is configured.
+* Improve efficiency of parsing of baggage and B3 propagation headers.
+* `OtlpLogExporter` now uses `IHttpClientFactory` on .NET 8+.
+* Fixed an issue in OTLP/gRPC retry handling when parsing gRPC statuses.
+* Fixed `OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT` not being applied.
+* Fixed baggage and trace headers not respecting the maximum length in some cases.
+* Fixed `BaggagePropagator` to trim optional whitespace (OWS) around `=`
+  separators when parsing the `baggage` header.
+* Fixed `BaggagePropagator` to strip baggage properties from values when
+  parsing the `baggage` header.
+* Fixed OTLP persistent storage clean-up handling for malformed filenames.
+* Fixed resource leak in batch and periodic exporting task workers for Blazor/WASM.
+* Fixed `LogRecord.LogLevel` to preserve `LogLevel.None`.
+* Fixed `OTEL_TRACES_SAMPLER_ARG` handling for out-of-range values.
+* Fixed an issue with OTLP disk retry storage where metrics and logs used the
+  traces storage directory.
+* Fixed full OTLP endpoint being logged by internal diagnostics.
+* Improve efficiency of parsing of baggage, B3 and Jaeger propagation headers.
+* Hardened Zipkin exporter memory usage for endpoint caching and array tag
+  serialization.
+
+## 1.15.2
+
+Release details: [1.15.2](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.15.2)
+
+* Limit how much of the response body is read by the OTLP exporter when
+  export fails and error logging is enabled.
+* Added Task-based worker support for `BatchExportProcessor` and
+  `PeriodicExportingMetricReader` to enable the OpenTelemetry SDK to work
+  in single-threaded WebAssembly environments such as Blazor and
+  Uno Platform.
+
+## 1.15.1
+
+Release details: [1.15.1](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.15.1)
+
+* **Breaking change:** The Baggage API now disallows empty baggage names and
+  treats baggage names and values as case sensitive, aligning with the latest
+  [Baggage API specification](https://github.com/open-telemetry/opentelemetry-specification/blob/v1.36.0/specification/baggage/api.md).
+* Various bug fixes across `OpenTelemetry.Api` and `OpenTelemetry` SDK,
+  including fixes for thread-safety, sampler edge cases, metrics precision,
+  and observable instrument lifecycle handling.
+
+## 1.15.0
+
+Release details: [1.15.0](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.15.0)
+
+* Added support for `ActivitySource.TelemetrySchemaUrl`
+  and `Meter.TelemetrySchemaUrl` properties across exporters.
+* Improved performance and reduced memory consumption for metrics histograms.
+* Added mTLS configuration support for the OTLP exporter (client cert/key and
+  CA certificate options).
+* `OpenTelemetry.Exporter.Zipkin` is deprecated and will stop receiving updates
+  in December 2026. Zipkin already supports OTLP ingestion.
+  Migrate to `OpenTelemetry.Exporter.OpenTelemetryProtocol` as stated
+  in the [Deprecating Zipkin Exporter blog post](https://opentelemetry.io/blog/2025/deprecating-zipkin-exporters/).
+
+## 1.14.0
+
+Release details: [1.14.0](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.14.0)
+
+* Add support for .NET 10.0.
+* **Breaking Change** When targeting `net8.0`, the package now depends on version
+  `8.0.0` of the `Microsoft.Extensions.DependencyInjection.Abstractions`,
+  `Microsoft.Extensions.Diagnostics.Abstractions`,
+  `Microsoft.Extensions.Hosting.Abstractions` and
+  `Microsoft.Extensions.Logging.Configuration` NuGet packages.
+* Update `System.Diagnostics.DiagnosticSource` dependency to `10.0.0`
+  for all target frameworks.
+* Update `Microsoft.Extensions.*` dependencies to `10.0.0`
+  for .NET Framework and .NET Standard.
+* **Breaking Change** NuGet packages now use the Sigstore bundle format
+  (`.sigstore.json`) for digital signatures instead of separate signature
+  (`.sig`) and certificate (`.pem`) files. This requires cosign 3.0 or later
+  for verification. See the [Digital signing
+  section](./README.md#digital-signing) for updated verification instructions.
+
+## 1.13.1
+
+Release details: [1.13.1](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.13.1)
+
+* In version `1.13.0`, the digital signature (`.dll-keyless.sig`) and
+  certificate (`.dll-keyless.pem`) files were unintentionally omitted from the
+  published NuGet packages.
+* This hotfix restores the Sigstore signing artifacts for all target frameworks
+  (`net462`, `netstandard2.0`, `netstandard2.1`, `net8.0`, `net9.0`), ensuring
+  the integrity of DLL verification using Sigstore cosign.
+
+## 1.13.0
+
+Release details: [1.13.0](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.13.0)
+
+* gRPC calls to export traces, logs, and metrics using `OtlpExportProtocol.Grpc`
+  now set the `TE=trailers` HTTP request header to improve interoperability.
+* `EventName` is now exported by default as `EventName` instead of
+  `logrecord.event.name` when specified through `ILogger` or the experimental
+  log bridge API.
+
+## 1.12.0
+
+Release details: [1.12.0](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.12.0)
+
+* **Breaking Change**: `OpenTelemetry.Exporter.OpenTelemetryProtocol` now
+  defaults to using OTLP/HTTP instead of OTLP/gRPC when targeting .NET Framework
+  and .NET Standard. This change may cause telemetry export to fail unless
+  appropriate adjustments are made. Explicitly setting OTLP/gRPC may result in a
+  `NotSupportedException` unless further configuration is applied. See
+  [#6209](https://github.com/open-telemetry/opentelemetry-dotnet/issues/6209) for
+  full details and mitigation guidance. [#6229](https://github.com/open-telemetry/opentelemetry-dotnet/pull/6229)
+
+## 1.11.1
+
+Release details: [1.11.1](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.11.1)
+
+* Fixed a bug preventing `OpenTelemetry.Exporter.OpenTelemetryProtocol` from
+  exporting telemetry on .NET Framework.
+
+## 1.11.0
+
+Release details: [1.11.0](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.11.0)
+
+* `OpenTelemetry.Exporter.OpenTelemetryProtocol` no longer depends on the
+  `Google.Protobuf`, `Grpc`, or `Grpc.Net.Client` packages. Serialization and
+  transmission of outgoing data is now performed manually to improve the overall
+  performance.
+
+## 1.10.0
+
+Release details: [1.10.0](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.10.0)
+
+* Bumped the package versions of `System.Diagnostic.DiagnosticSource` and other
+  Microsoft.Extensions.* packages to `9.0.0`.
+
+* Added support for new APIs introduced in `System.Diagnostics.DiagnosticSource`
+  `9.0.0`:
+
+  * [InstrumentAdvice&lt;T&gt;](https://learn.microsoft.com/dotnet/api/system.diagnostics.metrics.instrumentadvice-1)
+
+    For details see: [Explicit bucket histogram
+    aggregation](./docs/metrics/customizing-the-sdk/README.md#explicit-bucket-histogram-aggregation).
+
+  * [Gauge&lt;T&gt;](https://learn.microsoft.com/dotnet/api/system.diagnostics.metrics.gauge-1)
+
+  * [ActivitySource.Tags](https://learn.microsoft.com/dotnet/api/system.diagnostics.activitysource.tags)
+    (supported in OtlpExporter & ConsoleExporter)
+
+* Experimental features promoted to stable:
+
+  * `CardinalityLimit` can now be managed for individual metrics via the View
+    API. For details see: [Changing cardinality limit for a
+    Metric](./docs/metrics/customizing-the-sdk/README.md#changing-the-cardinality-limit-for-a-metric).
+
+  * The [overflow
+    attribute](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#overflow-attribute)
+    (`otel.metric.overflow`) behavior is now enabled by default. The
+    `OTEL_DOTNET_EXPERIMENTAL_METRICS_EMIT_OVERFLOW_ATTRIBUTE` environment
+    variable is no longer required. For details see: [Cardinality
+    Limits](./docs/metrics/README.md#cardinality-limits).
+
+  * The MetricPoint reclaim behavior is now enabled by default when Delta
+    aggregation temporality is used. The
+    `OTEL_DOTNET_EXPERIMENTAL_METRICS_RECLAIM_UNUSED_METRIC_POINTS` environment
+    variable is no longer required. For details see: [Cardinality
+    Limits](./docs/metrics/README.md#cardinality-limits).
+
+* Added `OpenTelemetrySdk.Create` API for configuring OpenTelemetry .NET signals
+  (logging, tracing, and metrics) via a single builder. This new API simplifies
+  bootstrap and teardown, and supports cross-cutting extensions targeting
+  `IOpenTelemetryBuilder`.
+
+* Removed out of support `net6.0` target and added `net9.0` target.
+
+## 1.9.0
+
+Release details: [1.9.0](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.9.0)
+
+* `Exemplars` are now part of the stable API! For details see: [customizing
+  exemplars
+  collection](https://github.com/open-telemetry/opentelemetry-dotnet/tree/main/docs/metrics/customizing-the-sdk#exemplars).
+
+* `WithLogging` is now part of the stable API! Logging, Metrics, and Tracing can
+  now all be configured using the `With` style and the builders finally have
+  parity in their APIs.
+
+## 1.8.0
+
+Release details: [1.8.0](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.8.0)
+
+* `TracerProvider` sampler can now be configured via the `OTEL_TRACES_SAMPLER` &
+  `OTEL_TRACES_SAMPLER_ARG` envvars.
+
+* A new `UseOtlpExporter` cross-cutting extension has been added to register the
+  `OtlpExporter` and enable all signals in a single call.
+
+* `exception.type`, `exception.message`, `exception.stacktrace` will now
+  automatically be included by the `OtlpLogExporter` when logging exceptions.
+  Previously an experimental environment variable had to be set.
+
+## 1.7.0
+
+Release details: [1.7.0](https://github.com/open-telemetry/opentelemetry-dotnet/releases/tag/core-1.7.0)
+
+* Bumped the package versions of System.Diagnostic.DiagnosticSource and other
+  Microsoft.Extensions.* packages to `8.0.0`.
+
+* Added `net8.0` targets to all the components.
+
+* OTLP Exporter
+  * Updated to use `ILogger` `CategoryName` as the instrumentation scope for
+    logs.
+  * Added named options support for OTLP Log Exporter.
+  * Added support for instrumentation scope attributes in metrics.
+  * Added support under an experimental flag to emit log exception attributes.
+  * Added support under an experimental flag to emit log eventId and eventName.
+    attributes.
+
+* Added support for the
+  [IMetricsBuilder](https://learn.microsoft.com/dotnet/api/microsoft.extensions.diagnostics.metrics.imetricsbuilder)
+  API.
+
+* Added an experimental opt-in metrics feature to reclaim unused MetricPoints
+  which enables a higher number of unique dimension combinations to be emitted.
+  See [reclaim unused metric
+  points](https://github.com/open-telemetry/opentelemetry-dotnet/blob/32c64d04defb5c92d056fd8817638151168b10da/docs/metrics/README.md#cardinality-limits)
+  for more details.

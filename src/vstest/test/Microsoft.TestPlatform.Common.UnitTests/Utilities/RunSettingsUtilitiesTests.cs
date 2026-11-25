@@ -99,7 +99,7 @@ public class RunSettingsUtilitiesTests
 
         string[] result = (string[])RunSettingsUtilities.GetTestAdaptersPaths(settingXml);
 
-        CollectionAssert.AreEqual(expectedResult, result);
+        Assert.AreSequenceEqual(expectedResult, result);
     }
 }
 

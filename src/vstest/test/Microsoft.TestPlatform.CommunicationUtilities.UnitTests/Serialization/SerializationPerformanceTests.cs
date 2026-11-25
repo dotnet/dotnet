@@ -434,7 +434,7 @@ public class SerializationPerformanceTests
         var result = JsonDataSerializer.Instance.DeserializePayload<TestRunStatsPayload>(msg);
 
         Assert.IsNotNull(result?.TestRunChangedArgs);
-        Assert.AreEqual(1000, result.TestRunChangedArgs.NewTestResults!.Count());
+        Assert.HasCount(1000, result.TestRunChangedArgs.NewTestResults!);
         Assert.AreEqual(900L, result.TestRunChangedArgs.TestRunStatistics!.Stats![TestOutcome.Passed]);
         Assert.AreEqual(100L, result.TestRunChangedArgs.TestRunStatistics.Stats[TestOutcome.Failed]);
 

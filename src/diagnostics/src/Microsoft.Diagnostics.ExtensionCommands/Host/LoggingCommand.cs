@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using Microsoft.Diagnostics.DebugServices;
 
 namespace Microsoft.Diagnostics.ExtensionCommands
@@ -8,16 +9,21 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = "logging", Help = "Enables/disables internal diagnostic logging.")]
     public class LoggingCommand : CommandBase
     {
-        [ServiceImport(Optional = true)]
-        public IDiagnosticLoggingService DiagnosticLoggingService { get; set; }
+        public LoggingCommand(IServiceProvider services, IDiagnosticLoggingService diagnosticLoggingService = null)
+            : base(services)
+        {
+            DiagnosticLoggingService = diagnosticLoggingService;
+        }
 
-        [Argument(Name = "path", Help = "Log file path.")]
+        public IDiagnosticLoggingService DiagnosticLoggingService { get; }
+
+        [Argument<string>(Name = "path", Help = "Log file path.")]
         public string FilePath { get; set; }
 
-        [Option(Name = "--enable", Aliases = new string[] { "enable", "-e" }, Help = "Enable internal logging.")]
+        [Option<bool>(Name = "--enable", Aliases = new string[] { "enable", "-e" }, Help = "Enable internal logging.")]
         public bool Enable { get; set; }
 
-        [Option(Name = "--disable", Aliases = new string[] { "disable", "-d" }, Help = "Disable internal logging.")]
+        [Option<bool>(Name = "--disable", Aliases = new string[] { "disable", "-d" }, Help = "Disable internal logging.")]
         public bool Disable { get; set; }
 
         public override void Invoke()

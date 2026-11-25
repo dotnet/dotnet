@@ -491,7 +491,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
             var dbDataReader = dataReaderContext.DataReader.DbDataReader;
             if (splitQueryCollectionContext.Parent is TIncludingEntity entity)
             {
-                while (dataReaderContext.HasNext ?? dbDataReader.Read())
+                while (dataReaderContext.HasNext ?? dataReaderContext.DataReader.Read())
                 {
                     if (!CompareIdentifiers(
                             identifierValueComparers,
@@ -590,7 +590,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
             var dbDataReader = dataReaderContext.DataReader.DbDataReader;
             if (splitQueryCollectionContext.Parent is TIncludingEntity entity)
             {
-                while (dataReaderContext.HasNext ?? await dbDataReader.ReadAsync(queryContext.CancellationToken).ConfigureAwait(false))
+                while (dataReaderContext.HasNext ?? await dataReaderContext.DataReader.ReadAsync(queryContext.CancellationToken).ConfigureAwait(false))
                 {
                     if (!CompareIdentifiers(
                             identifierValueComparers,
@@ -860,7 +860,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                 return;
             }
 
-            while (dataReaderContext.HasNext ?? dbDataReader.Read())
+            while (dataReaderContext.HasNext ?? dataReaderContext.DataReader.Read())
             {
                 if (!CompareIdentifiers(
                         identifierValueComparers,
@@ -954,7 +954,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                 return;
             }
 
-            while (dataReaderContext.HasNext ?? await dbDataReader.ReadAsync(queryContext.CancellationToken).ConfigureAwait(false))
+            while (dataReaderContext.HasNext ?? await dataReaderContext.DataReader.ReadAsync(queryContext.CancellationToken).ConfigureAwait(false))
             {
                 if (!CompareIdentifiers(
                         identifierValueComparers,
@@ -1056,7 +1056,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
 
                 case not JsonTokenType.StartObject:
                     throw new InvalidOperationException(
-                        CoreStrings.JsonReaderInvalidTokenType(tokenType.ToString()));
+                        RelationalStrings.JsonStructuralTypeExpectedObject(typeof(TStructural).Name, tokenType));
             }
 
             manager.CaptureState();
@@ -1101,7 +1101,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
 
                 case not JsonTokenType.StartObject:
                     throw new InvalidOperationException(
-                        CoreStrings.JsonReaderInvalidTokenType(tokenType.ToString()));
+                        RelationalStrings.JsonStructuralTypeExpectedObject(typeof(TStructural).Name, tokenType));
             }
 
             manager.CaptureState();
@@ -1144,7 +1144,11 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                     return default;
 
                 case not JsonTokenType.StartArray:
-                    throw new InvalidOperationException(CoreStrings.JsonReaderInvalidTokenType(tokenType.ToString()));
+                    throw new InvalidOperationException(
+                        RelationalStrings.JsonEntityCollectionExpectedArray(
+                            structuralProperty.DeclaringType.DisplayName(),
+                            structuralProperty.Name,
+                            tokenType));
             }
 
             var collectionAccessor = structuralProperty.GetCollectionAccessor();
@@ -1175,15 +1179,24 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                     if (manager.CurrentReader.TokenType != JsonTokenType.EndObject)
                     {
                         throw new InvalidOperationException(
-                            CoreStrings.JsonReaderInvalidTokenType(tokenType.ToString()));
+                            CoreStrings.JsonReaderInvalidTokenType(manager.CurrentReader.TokenType.ToString()));
                     }
 
                     tokenType = manager.MoveNext();
                 }
+                else if (tokenType == JsonTokenType.Null)
+                {
+                    throw new InvalidOperationException(
+                        RelationalStrings.JsonEntityCollectionNullElement(
+                            structuralProperty.DeclaringType.DisplayName(),
+                            structuralProperty.Name));
+                }
                 else
                 {
                     throw new InvalidOperationException(
-                        CoreStrings.JsonReaderInvalidTokenType(tokenType.ToString()));
+                        RelationalStrings.JsonEntityCollectionExpectedObject(
+                            structuralProperty.DeclaringType.DisplayName(),
+                            structuralProperty.Name));
                 }
             }
 
@@ -1223,7 +1236,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
 
                 case not JsonTokenType.StartObject:
                     throw new InvalidOperationException(
-                        CoreStrings.JsonReaderInvalidTokenType(tokenType.ToString()));
+                        RelationalStrings.JsonStructuralTypeExpectedObject(typeof(TRelatedStructural).Name, tokenType));
             }
 
             var included = innerShaper(queryContext, keyPropertyValues, jsonReaderData);
@@ -1246,6 +1259,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
             object[]? keyPropertyValues,
             JsonReaderData? jsonReaderData,
             TIncludingEntity entity,
+            IPropertyBase structuralProperty,
             Func<QueryContext, object[]?, JsonReaderData, TIncludedCollectionElement> innerShaper,
             Action<TIncludingEntity> getOrCreateCollectionObject,
             Action<TIncludingEntity, TIncludedCollectionElement> fixup,
@@ -1268,7 +1282,10 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
 
                 case not JsonTokenType.StartArray:
                     throw new InvalidOperationException(
-                        CoreStrings.JsonReaderInvalidTokenType(tokenType.ToString()));
+                        RelationalStrings.JsonEntityCollectionExpectedArray(
+                            structuralProperty.DeclaringType.DisplayName(),
+                            structuralProperty.Name,
+                            tokenType));
             }
 
             getOrCreateCollectionObject(entity);
@@ -1302,15 +1319,24 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                     if (manager.CurrentReader.TokenType != JsonTokenType.EndObject)
                     {
                         throw new InvalidOperationException(
-                            CoreStrings.JsonReaderInvalidTokenType(tokenType.ToString()));
+                            CoreStrings.JsonReaderInvalidTokenType(manager.CurrentReader.TokenType.ToString()));
                     }
 
                     tokenType = manager.MoveNext();
                 }
+                else if (tokenType == JsonTokenType.Null)
+                {
+                    throw new InvalidOperationException(
+                        RelationalStrings.JsonEntityCollectionNullElement(
+                            structuralProperty.DeclaringType.DisplayName(),
+                            structuralProperty.Name));
+                }
                 else
                 {
                     throw new InvalidOperationException(
-                        CoreStrings.JsonReaderInvalidTokenType(tokenType.ToString()));
+                        RelationalStrings.JsonEntityCollectionExpectedObject(
+                            structuralProperty.DeclaringType.DisplayName(),
+                            structuralProperty.Name));
                 }
             }
 

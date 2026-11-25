@@ -1,0 +1,74 @@
+{
+    "azureKeyVault": {
+        "domains": [
+            "vault.azure.net",
+            "managedhsm.azure.net",
+            "vault.azure.cn",
+            "managedhsm.azure.cn",
+            "vault.usgovcloudapi.net",
+            "managedhsm.usgovcloudapi.net"
+        ],
+        "_sources": {
+            "keyVault": {
+                "title": "Azure Key Vault keys, secrets, and certificates overview",
+                "url": "https://learn.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates",
+                "last_updated": "2026-04-09"
+            }
+        }
+    },
+    "azureStorage": {
+        "domains": [
+            "blob.core.windows.net",
+            "web.core.windows.net",
+            "dfs.core.windows.net",
+            "file.core.windows.net",
+            "queue.core.windows.net",
+            "table.core.windows.net",
+            "blob.storage.azure.net",
+            "web.storage.azure.net",
+            "dfs.storage.azure.net",
+            "file.storage.azure.net",
+            "queue.storage.azure.net",
+            "table.storage.azure.net",
+            "blob.core.usgovcloudapi.net",
+            "web.core.usgovcloudapi.net",
+            "dfs.core.usgovcloudapi.net",
+            "file.core.usgovcloudapi.net",
+            "queue.core.usgovcloudapi.net",
+            "table.core.usgovcloudapi.net",
+            "blob.core.chinacloudapi.cn",
+            "web.core.chinacloudapi.cn",
+            "dfs.core.chinacloudapi.cn",
+            "file.core.chinacloudapi.cn",
+            "queue.core.chinacloudapi.cn",
+            "table.core.chinacloudapi.cn"
+        ],
+        "_sources": {
+            "storageAccounts": {
+                "title": "Overview of storage accounts",
+                "url": "https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview",
+                "last_updated": "2026-02-03"
+            },
+            "privateEndpoints": {
+                "title": "Use private endpoints for Azure Storage",
+                "url": "https://learn.microsoft.com/en-us/azure/storage/common/storage-private-endpoints",
+                "last_updated": "2025-07-16"
+            },
+            "staticWebsite": {
+                "title": "Static website hosting in Azure Storage",
+                "url": "https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website",
+                "last_updated": "2025-04-14"
+            },
+            "azureGovernment": {
+                "title": "Develop with Storage API on Azure Government",
+                "url": "https://learn.microsoft.com/en-us/azure/azure-government/documentation-government-get-started-connect-to-storage",
+                "last_updated": "2024-10-16"
+            },
+            "azureChina": {
+                "title": "Overview of storage accounts",
+                "url": "https://docs.azure.cn/en-us/storage/common/storage-account-overview",
+                "last_updated": "2026-02-26"
+            }
+        }
+    }
+}

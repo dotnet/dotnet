@@ -176,7 +176,8 @@ namespace NuGet.Commands.Restore.Utility
                 restoreMetadata.OriginalTargetFrameworks.Add(
                         !string.IsNullOrEmpty(tfi.TargetAlias) ?
                             tfi.TargetAlias :
-                            tfi.FrameworkName.GetShortFolderName()));
+                            tfi.FrameworkName?.GetShortFolderName()
+                                ?? throw new InvalidOperationException("A target framework must include its framework name.")));
             restoreMetadata.PackagesPath = GetPackagesPath(project, settings);
             restoreMetadata.ProjectName = projectName;
             restoreMetadata.ProjectPath = project.FullPath;
@@ -259,12 +260,12 @@ namespace NuGet.Commands.Restore.Utility
                 var targetFrameworkInformation = new TargetFrameworkInformation()
                 {
                     AssetTargetFallback = assetTargetFallback,
-                    CentralPackageVersions = centralPackageVersions,
+                    CentralPackageVersions = centralPackageVersions ?? ImmutableDictionary<string, CentralPackageVersion>.Empty,
                     Dependencies = dependencies,
                     DownloadDependencies = GetPackageDownloads(msBuildProjectInstance).ToImmutableArray(),
                     FrameworkName = targetFramework,
                     Imports = imports,
-                    FrameworkReferences = GetFrameworkReferences(msBuildProjectInstance),
+                    FrameworkReferences = GetFrameworkReferences(msBuildProjectInstance) ?? ImmutableHashSet<FrameworkDependency>.Empty,
                     PackagesToPrune = prunedReferences,
                     RuntimeIdentifierGraphPath = msBuildProjectInstance.GetProperty(nameof(TargetFrameworkInformation.RuntimeIdentifierGraphPath)),
                     TargetAlias = targetAlias,
@@ -589,7 +590,8 @@ namespace NuGet.Commands.Restore.Utility
             foreach (var targetFrameworkInfo in targetFrameworkInfos)
             {
                 var project = projects[targetFrameworkInfo.TargetAlias];
-                projectRestoreMetadataFrameworkInfos.Add(new ProjectRestoreMetadataFrameworkInfo(targetFrameworkInfo.FrameworkName)
+                projectRestoreMetadataFrameworkInfos.Add(new ProjectRestoreMetadataFrameworkInfo(targetFrameworkInfo.FrameworkName
+                    ?? throw new InvalidOperationException("A target framework must include its framework name."))
                 {
                     TargetAlias = targetFrameworkInfo.TargetAlias,
                     ProjectReferences = GetProjectReferences(project)

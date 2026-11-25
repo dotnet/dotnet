@@ -1416,8 +1416,13 @@ namespace NuGet.Commands
             return resolvedDependencyGraphItems;
         }
 
-        private static bool IsNewerThanNET10(NuGetFramework frameworkName)
+        private static bool IsNewerThanNET10(NuGetFramework? frameworkName)
         {
+            if (frameworkName is null)
+            {
+                return false;
+            }
+
             if (StringComparer.OrdinalIgnoreCase.Equals(frameworkName.Framework, FrameworkConstants.FrameworkIdentifiers.NetCoreApp))
             {
                 return frameworkName.Version.Major >= 10;

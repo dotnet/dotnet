@@ -449,6 +449,17 @@ We include `tools/dotnet` to install the SDK version requested and `sdk` to ensu
 }
 ```
 
+Alternatively, omit `tools/dotnet` to install the SDK version specified in `sdk/version`. This avoids duplicating the version and allows tools that only understand the `sdk` section (e.g. Dependabot) to keep the SDK up-to-date. When both are specified, `tools/dotnet` is installed. Note that Maestro dependency flow only updates the SDK version in repositories that specify `tools/dotnet`.
+
+```json
+{
+  "sdk": {
+    "version": "7.0.116",
+    "rollForward": "latestFeature"
+  }
+}
+```
+
 ### /NuGet.config
 
 `/NuGet.config` file is present and specifies the MyGet feed to retrieve Arcade SDK from and other feeds required by the repository like so:
@@ -1021,6 +1032,8 @@ msbuild Project.UnitTests.csproj /t:Test /p:TestTargetFrameworks=net472 /p:TestR
 ### `TestRunnerAdditionalArguments` (string)
 
 Additional command line arguments passed to the test runner (e.g. `xunit.console.exe`).
+
+The Microsoft.Testing.Platform runner uses `--progress off` and requires Microsoft.Testing.Platform 2.3.0 or later. When overriding `MSTestVersion`, use an MSTest release with a compatible platform dependency.
 
 ### `TestRuntimeAdditionalArguments` (string)
 

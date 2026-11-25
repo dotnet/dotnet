@@ -35,7 +35,7 @@ FROM "Orders" AS "o"
 
         AssertSql(
             """
-SELECT CAST(strftime('%Y', "o"."OrderDate", CAST(1 AS TEXT) || ' years') AS INTEGER)
+SELECT CAST(strftime('%Y', "o"."OrderDate", CAST(1 AS TEXT) || ' years', 'floor') AS INTEGER)
 FROM "Orders" AS "o"
 """);
     }
@@ -123,7 +123,7 @@ FROM "Orders" AS "o"
 
         AssertSql(
             """
-SELECT CAST(CAST(strftime('%w', "o"."OrderDate") AS INTEGER) AS INTEGER)
+SELECT CAST(strftime('%w', "o"."OrderDate") AS INTEGER)
 FROM "Orders" AS "o"
 """);
     }

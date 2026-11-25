@@ -22,7 +22,7 @@
   <ItemGroup>
     <!-- ObjectModel dependency is brought by MSTest.TestAdapter (specifically by the VSTestBridge). We don't want to include its compile assets -->
     <!-- Otherwise, FilterHelper (public API) conflicts with the one added to Compile item above. -->
-    <PackageReference Include="Microsoft.TestPlatform.ObjectModel" ExcludeAssets="compile" Version="18.0.1" />
+    <PackageReference Include="Microsoft.TestPlatform.ObjectModel" ExcludeAssets="compile" Version="18.10.2" />
   </ItemGroup>
 
 </Project>

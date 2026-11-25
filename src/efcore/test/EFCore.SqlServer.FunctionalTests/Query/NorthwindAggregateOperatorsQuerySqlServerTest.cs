@@ -444,6 +444,7 @@ ORDER BY COALESCE([p].[UnitPrice], 0.0)
             """
 SELECT TOP(1) [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
+WHERE [c].[CustomerID] IN (N'FISSA', N'CENTC')
 ORDER BY (
     SELECT ISNULL(SUM([o].[OrderID]), 0)
     FROM [Orders] AS [o]
@@ -1479,6 +1480,17 @@ WHERE [p].[ProductID] < 40
 """);
     }
 
+    public override async Task Min_over_constant_DateTime(bool async)
+    {
+        await base.Min_over_constant_DateTime(async);
+
+        AssertSql(
+            """
+SELECT MIN(CAST('0001-01-01T00:00:00.0000000' AS datetime2))
+FROM [Orders] AS [o]
+""");
+    }
+
     public override async Task Min_over_subquery(bool async)
     {
         await base.Min_over_subquery(async);
@@ -1585,6 +1597,17 @@ FROM [Orders] AS [o]
 SELECT MAX(COALESCE([p].[UnitPrice], 0.0))
 FROM [Products] AS [p]
 WHERE [p].[ProductID] < 40
+""");
+    }
+
+    public override async Task Max_over_constant_DateTime(bool async)
+    {
+        await base.Max_over_constant_DateTime(async);
+
+        AssertSql(
+            """
+SELECT MAX(CAST('9999-12-31T23:59:59.9999999' AS datetime2))
+FROM [Orders] AS [o]
 """);
     }
 
@@ -2599,6 +2622,72 @@ END
         AssertSql();
     }
 
+    public override async Task Contains_on_inline_collection_with_nullable_subquery_value(bool async)
+    {
+        await base.Contains_on_inline_collection_with_nullable_subquery_value(async);
+
+        AssertSql(
+            """
+SELECT [o].[OrderID], CASE
+    WHEN 2 IN (0) OR (2 = (
+        SELECT COUNT(*)
+        FROM [Orders] AS [o0]
+        WHERE [o0].[CustomerID] = [o].[CustomerID] OR ([o0].[CustomerID] IS NULL AND [o].[CustomerID] IS NULL)) AND (
+        SELECT COUNT(*)
+        FROM [Orders] AS [o0]
+        WHERE [o0].[CustomerID] = [o].[CustomerID] OR ([o0].[CustomerID] IS NULL AND [o].[CustomerID] IS NULL)) IS NOT NULL) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END AS [HasTwo]
+FROM [Orders] AS [o]
+""");
+    }
+
+    public override async Task Contains_on_inline_collection_with_single_nullable_subquery_value_and_null(bool async)
+    {
+        await base.Contains_on_inline_collection_with_single_nullable_subquery_value_and_null(async);
+
+        AssertSql(
+            """
+SELECT [o].[OrderID], CASE
+    WHEN [o].[EmployeeID] IS NULL OR ([o].[EmployeeID] = (
+        SELECT MAX([o0].[EmployeeID])
+        FROM [Orders] AS [o0]
+        WHERE [o0].[CustomerID] = [o].[CustomerID] OR ([o0].[CustomerID] IS NULL AND [o].[CustomerID] IS NULL)) AND (
+        SELECT MAX([o0].[EmployeeID])
+        FROM [Orders] AS [o0]
+        WHERE [o0].[CustomerID] = [o].[CustomerID] OR ([o0].[CustomerID] IS NULL AND [o].[CustomerID] IS NULL)) IS NOT NULL) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END AS [IsMax]
+FROM [Orders] AS [o]
+""");
+    }
+
+    public override async Task Contains_on_nested_inline_collections_with_null(bool async)
+    {
+        await base.Contains_on_nested_inline_collections_with_null(async);
+
+        AssertSql(
+            """
+SELECT [o].[OrderID], [o].[CustomerID], [o].[EmployeeID], [o].[OrderDate]
+FROM [Orders] AS [o]
+WHERE [o].[EmployeeID] = 5 AND [o].[EmployeeID] IS NOT NULL
+""");
+    }
+
+    public override async Task Contains_on_nested_inline_collections_with_null_in_projection(bool async)
+    {
+        await base.Contains_on_nested_inline_collections_with_null_in_projection(async);
+
+        AssertSql(
+            """
+SELECT [o].[OrderID], CASE
+    WHEN [o].[EmployeeID] = 5 AND [o].[EmployeeID] IS NOT NULL THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END AS [Nested]
+FROM [Orders] AS [o]
+""");
+    }
+
     public override async Task OfType_Select(bool async)
     {
         await base.OfType_Select(async);
@@ -3534,6 +3623,40 @@ SELECT [c].[CustomerID], (
         SELECT [o6].[OrderID] * CAST(LEN([c].[CustomerID]) AS int) AS [value]
     ) AS [s0]
     WHERE [c].[CustomerID] = [o3].[CustomerID]) AS [TotalOrders]
+FROM [Customers] AS [c]
+""");
+    }
+
+    public override async Task Sum_over_correlated_collection_with_selector_on_outer_entity_only(bool async)
+    {
+        await base.Sum_over_correlated_collection_with_selector_on_outer_entity_only(async);
+
+        AssertSql(
+            """
+SELECT [c].[CustomerID], (
+    SELECT ISNULL(SUM([o0].[c]), 0)
+    FROM (
+        SELECT CAST(LEN([c].[CustomerID]) AS int) AS [c]
+        FROM [Orders] AS [o]
+        WHERE [c].[CustomerID] = [o].[CustomerID]
+    ) AS [o0]) AS [Total]
+FROM [Customers] AS [c]
+""");
+    }
+
+    public override async Task Max_over_correlated_collection_with_selector_on_outer_entity_only(bool async)
+    {
+        await base.Max_over_correlated_collection_with_selector_on_outer_entity_only(async);
+
+        AssertSql(
+            """
+SELECT [c].[CustomerID], (
+    SELECT MAX([o0].[c])
+    FROM (
+        SELECT CAST(LEN([c].[CustomerID]) AS int) AS [c]
+        FROM [Orders] AS [o]
+        WHERE [c].[CustomerID] = [o].[CustomerID]
+    ) AS [o0]) AS [Max]
 FROM [Customers] AS [c]
 """);
     }

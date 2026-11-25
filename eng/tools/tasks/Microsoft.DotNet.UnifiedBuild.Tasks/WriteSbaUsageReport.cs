@@ -292,7 +292,7 @@ public partial class WriteSbaUsageReport : Task
         {
             foreach (var frameworkRef in targetFramework.FrameworkReferences)
             {
-                string? targetingPackVersion = InferTargetingPackVersion(targetFramework.FrameworkName.GetShortFolderName());
+                string? targetingPackVersion = InferTargetingPackVersion(targetFramework.FrameworkName!.GetShortFolderName());
                 if (targetingPackVersion != null)
                 {
                     string targetingPackName = $"{frameworkRef.Name}.Ref";

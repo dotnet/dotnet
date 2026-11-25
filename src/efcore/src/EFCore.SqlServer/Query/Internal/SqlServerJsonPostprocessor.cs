@@ -17,6 +17,7 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 ///     * When the column type in the WITH clause is a SQL Server "CLR type" - these are incompatible with WITH (e.g. hierarchy id).
 ///     2. Rewrite JsonScalarExpression (JSON_VALUE()) to OPENJSON for when JSON_VALUE() isn't compatible with the type (e.g. binary data
 ///     which needs to be base64-decoded).
+///     3. Restore native json inputs to JSON operations when OPENJSON's WITH clause only supports nvarchar(max).
 /// </summary>
 /// <remarks>
 ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -32,8 +33,9 @@ public sealed class SqlServerJsonPostprocessor(
 {
     private readonly List<OuterApplyExpression> _openjsonOuterAppliesToAdd = [];
     private readonly Dictionary<(string, string), ColumnInfo> _columnsToRewrite = [];
-
-    private RelationalTypeMapping? _nvarcharMaxTypeMapping;
+    private readonly HashSet<(string, string)> _jsonColumnsToCast = [];
+    private bool _supportsJsonTypeInOpenJson;
+    private readonly RelationalTypeMapping _nvarcharMaxTypeMapping = typeMappingSource.FindMapping("nvarchar(max)")!;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -42,8 +44,19 @@ public sealed class SqlServerJsonPostprocessor(
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     public Expression Process(Expression expression)
+        => Process(expression, supportsJsonTypeInOpenJson: true);
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    internal Expression Process(Expression expression, bool supportsJsonTypeInOpenJson)
     {
         _columnsToRewrite.Clear();
+        _jsonColumnsToCast.Clear();
+        _supportsJsonTypeInOpenJson = supportsJsonTypeInOpenJson;
 
         return Visit(expression);
     }
@@ -73,6 +86,18 @@ public sealed class SqlServerJsonPostprocessor(
                 for (var i = 0; i < selectExpression.Tables.Count; i++)
                 {
                     var table = selectExpression.Tables[i];
+
+                    if (!_supportsJsonTypeInOpenJson
+                        && table.UnwrapJoin() is SqlServerOpenJsonExpression { ColumnInfos: { } jsonColumnInfos } jsonTable)
+                    {
+                        foreach (var columnInfo in jsonColumnInfos)
+                        {
+                            if (columnInfo is { AsJson: true, TypeMapping.StoreType: "json" })
+                            {
+                                _jsonColumnsToCast.Add((jsonTable.Alias, columnInfo.Name));
+                            }
+                        }
+                    }
 
                     if (table.UnwrapJoin() is SqlServerOpenJsonExpression { ColumnInfos: { } columnInfos } openJsonExpression
                         // Condition 1: an ordering/projection still refers to the OPENJSON's [key] column - it needs to be preserved.
@@ -172,6 +197,19 @@ public sealed class SqlServerJsonPostprocessor(
                     _openjsonOuterAppliesToAdd.Clear();
                 }
 
+                if (!_supportsJsonTypeInOpenJson
+                    && result.Alias is { } selectAlias)
+                {
+                    foreach (var projection in result.Projection)
+                    {
+                        if (projection.Expression is ColumnExpression column
+                            && _jsonColumnsToCast.Contains((column.TableAlias, column.Name)))
+                        {
+                            _jsonColumnsToCast.Add((selectAlias, projection.Alias));
+                        }
+                    }
+                }
+
                 return result;
             }
 
@@ -252,6 +290,23 @@ public sealed class SqlServerJsonPostprocessor(
                     jsonScalar.IsNullable);
             }
 
+            case JsonScalarExpression
+                {
+                    Json: ColumnExpression { TypeMapping: { StoreType: "json" } jsonTypeMapping } columnExpression,
+                    Path.Count: > 0
+                } jsonScalar
+                when jsonScalar.TypeMapping is not SqlServerStructuralJsonTypeMapping
+                && jsonScalar.TypeMapping?.ElementTypeMapping is null
+                && _jsonColumnsToCast.Contains((columnExpression.TableAlias, columnExpression.Name)):
+            {
+                var visited = (JsonScalarExpression)base.Visit(jsonScalar);
+
+                return visited.Update(sqlExpressionFactory.Convert(
+                    columnExpression.ApplyTypeMapping(jsonTypeMapping.WithStoreTypeAndSize("nvarchar(max)", null)),
+                    columnExpression.Type,
+                    jsonTypeMapping));
+            }
+
             // The SQL Server json type cannot be compared ("The JSON data type cannot be compared or sorted, except when using the
             // IS NULL operator"). So we find comparisons that involve the json type, and apply a conversion to string (nvarchar(max))
             // to both sides. We exempt this when one of the sides is a constant null (not required).
@@ -315,7 +370,11 @@ public sealed class SqlServerJsonPostprocessor(
             // The new OPENJSON (without WITH) always projects a `value` column, instead of a properly named column for individual
             // values inside; create a new ColumnExpression with that name.
             SqlExpression rewrittenColumn = new ColumnExpression(
-                "value", columnExpression.TableAlias, columnExpression.Type, _nvarcharMaxTypeMapping, columnExpression.IsNullable);
+                "value",
+                columnExpression.TableAlias,
+                columnExpression.Type,
+                columnInfo.TypeMapping.StoreType == "nvarchar(max)" ? columnInfo.TypeMapping : _nvarcharMaxTypeMapping,
+                columnExpression.IsNullable);
 
             Check.DebugAssert(columnInfo.Path is not null, "Path shouldn't be null in OPENJSON WITH");
             //Check.DebugAssert(
@@ -329,8 +388,6 @@ public sealed class SqlServerJsonPostprocessor(
                 // nvarchar(max); add a CAST to convert.
                 if (columnInfo.TypeMapping.StoreType != "nvarchar(max)")
                 {
-                    _nvarcharMaxTypeMapping ??= typeMappingSource.FindMapping("nvarchar(max)");
-
                     rewrittenColumn = sqlExpressionFactory.Convert(
                         rewrittenColumn,
                         columnExpression.Type,

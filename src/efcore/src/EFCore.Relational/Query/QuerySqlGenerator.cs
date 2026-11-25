@@ -77,11 +77,25 @@ public class QuerySqlGenerator(QuerySqlGeneratorDependencies dependencies) : Exp
                 VisitDelete(deleteExpression);
                 break;
 
+            case MergeExpression mergeExpression:
+                GenerateTagsHeaderComment(mergeExpression.Tags);
+                VisitMerge(mergeExpression);
+                break;
+
             default:
                 base.Visit(queryExpression);
                 break;
         }
     }
+
+    /// <summary>
+    ///     Generates SQL for a <see cref="MergeExpression" /> (an upsert). The base implementation throws; providers that support merge
+    ///     override this to emit provider-specific SQL.
+    /// </summary>
+    /// <param name="mergeExpression">The merge expression to generate SQL for.</param>
+    [Experimental(EFDiagnostics.ExecuteMergeExperimental)]
+    protected virtual void VisitMerge(MergeExpression mergeExpression)
+        => throw new InvalidOperationException(RelationalStrings.ExecuteMergeNotSupportedByProvider);
 
     /// <summary>
     ///     The default alias separator.
@@ -120,6 +134,7 @@ public class QuerySqlGenerator(QuerySqlGeneratorDependencies dependencies) : Exp
             AggregateFunctionExpression e => VisitAggregateFunction(e),
             AtTimeZoneExpression e => VisitAtTimeZone(e),
             CaseExpression e => VisitCase(e),
+            ClrTypeChangeExpression e => VisitClrTypeChange(e),
             CollateExpression e => VisitCollate(e),
             ColumnExpression e => VisitColumn(e),
             CrossApplyExpression e => VisitCrossApply(e),
@@ -156,10 +171,25 @@ public class QuerySqlGenerator(QuerySqlGeneratorDependencies dependencies) : Exp
             UpdateExpression e => VisitUpdate(e),
             JsonScalarExpression e => VisitJsonScalar(e),
             ValuesExpression e => VisitValues(e),
+#pragma warning disable EF9001 // Window function support is experimental
+            WindowFunctionExpression e => VisitWindowFunction(e),
+#pragma warning restore EF9001
 
             _ => throw new InvalidOperationException(
                 RelationalStrings.UnhandledExpressionInVisitor(expression, expression.GetType(), nameof(QuerySqlGenerator))),
         };
+
+    /// <summary>
+    ///     Generates SQL for a CLR type change expression. The type change has no SQL representation,
+    ///     so only the operand is generated.
+    /// </summary>
+    /// <param name="clrTypeChangeExpression">The expression for which to generate SQL.</param>
+    protected virtual Expression VisitClrTypeChange(ClrTypeChangeExpression clrTypeChangeExpression)
+    {
+        Visit(clrTypeChangeExpression.Operand);
+
+        return clrTypeChangeExpression;
+    }
 
     /// <summary>
     ///     Generates SQL for an arbitrary fragment.
@@ -359,8 +389,15 @@ public class QuerySqlGenerator(QuerySqlGeneratorDependencies dependencies) : Exp
     {
         Visit(projectionExpression.Expression);
 
+        // ClrTypeChangeExpression doesn't affect the generated SQL, so look through it when checking whether the alias is redundant
+        var projectedExpression = projectionExpression.Expression;
+        while (projectedExpression is ClrTypeChangeExpression clrTypeChangeExpression)
+        {
+            projectedExpression = clrTypeChangeExpression.Operand;
+        }
+
         if (projectionExpression.Alias != string.Empty
-            && !(projectionExpression.Expression is ColumnExpression column && column.Name == projectionExpression.Alias))
+            && !(projectedExpression is ColumnExpression column && column.Name == projectionExpression.Alias))
         {
             _relationalCommandBuilder
                 .Append(AliasSeparator)
@@ -1384,17 +1421,8 @@ public class QuerySqlGenerator(QuerySqlGeneratorDependencies dependencies) : Exp
     /// <param name="rowNumberExpression">The <see cref="RowNumberExpression" /> for which to generate SQL.</param>
     protected virtual Expression VisitRowNumber(RowNumberExpression rowNumberExpression)
     {
-        _relationalCommandBuilder.Append("ROW_NUMBER() OVER(");
-        if (rowNumberExpression.Partitions.Any())
-        {
-            _relationalCommandBuilder.Append("PARTITION BY ");
-            GenerateList(rowNumberExpression.Partitions, e => Visit(e));
-            _relationalCommandBuilder.Append(" ");
-        }
-
-        _relationalCommandBuilder.Append("ORDER BY ");
-        GenerateList(rowNumberExpression.Orderings, e => Visit(e));
-        _relationalCommandBuilder.Append(")");
+        _relationalCommandBuilder.Append("ROW_NUMBER()");
+        GenerateOver(rowNumberExpression.Partitions, rowNumberExpression.Orderings);
 
         return rowNumberExpression;
     }
@@ -1406,6 +1434,42 @@ public class QuerySqlGenerator(QuerySqlGeneratorDependencies dependencies) : Exp
         _relationalCommandBuilder.Append(")");
 
         return denseRankExpression;
+    }
+
+    /// <summary>
+    ///     Generates SQL for a window function expression.
+    /// </summary>
+    /// <param name="windowFunctionExpression">The <see cref="WindowFunctionExpression" /> for which to generate SQL.</param>
+    [Experimental(EFDiagnostics.ExperimentalApi)]
+    protected virtual Expression VisitWindowFunction(WindowFunctionExpression windowFunctionExpression)
+    {
+        Visit(windowFunctionExpression.Function);
+        GenerateOver(windowFunctionExpression.Partitions, windowFunctionExpression.Orderings);
+
+        return windowFunctionExpression;
+    }
+
+    private void GenerateOver(IReadOnlyList<SqlExpression> partitions, IReadOnlyList<OrderingExpression> orderings)
+    {
+        _relationalCommandBuilder.Append(" OVER(");
+        if (partitions.Count > 0)
+        {
+            _relationalCommandBuilder.Append("PARTITION BY ");
+            GenerateList(partitions, e => Visit(e));
+
+            if (orderings.Count > 0)
+            {
+                _relationalCommandBuilder.Append(" ");
+            }
+        }
+
+        if (orderings.Count > 0)
+        {
+            _relationalCommandBuilder.Append("ORDER BY ");
+            GenerateList(orderings, e => Visit(e));
+        }
+
+        _relationalCommandBuilder.Append(")");
     }
 
     /// <summary>
@@ -1738,6 +1802,11 @@ public class QuerySqlGenerator(QuerySqlGeneratorDependencies dependencies) : Exp
     /// <returns>A bool value indicating that parenthesis is required or not. </returns>
     protected virtual bool RequiresParentheses(SqlExpression outerExpression, SqlExpression innerExpression)
     {
+        while (innerExpression is ClrTypeChangeExpression clrTypeChangeExpression)
+        {
+            innerExpression = clrTypeChangeExpression.Operand;
+        }
+
         int outerPrecedence, innerPrecedence;
 
         // Convert is rendered as a function (CAST()) and not as an operator, so we never need to add parentheses around the inner

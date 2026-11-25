@@ -21,12 +21,6 @@ public class DotNetFormatTests : SdkTests
     [Fact]
     public void FormatProject()
     {
-        if (DotNetHelper.IsMonoRuntime)
-        {
-            // TODO: Temporarily disabled due to https://github.com/dotnet/sdk/issues/37774
-            return;
-        }
-
         string unformattedCsFilePath = BaselineHelper.GetBaselineFilePath(UnformattedFileName, BaselineSubDir);
 
         string projectDirectory = DotNetHelper.ExecuteNew("console", nameof(FormatProject), "C#");
