@@ -444,6 +444,7 @@ ORDER BY COALESCE([p].[UnitPrice], 0.0)
             """
 SELECT TOP(1) [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
+WHERE [c].[CustomerID] IN (N'FISSA', N'CENTC')
 ORDER BY (
     SELECT ISNULL(SUM([o].[OrderID]), 0)
     FROM [Orders] AS [o]
@@ -3622,6 +3623,40 @@ SELECT [c].[CustomerID], (
         SELECT [o6].[OrderID] * CAST(LEN([c].[CustomerID]) AS int) AS [value]
     ) AS [s0]
     WHERE [c].[CustomerID] = [o3].[CustomerID]) AS [TotalOrders]
+FROM [Customers] AS [c]
+""");
+    }
+
+    public override async Task Sum_over_correlated_collection_with_selector_on_outer_entity_only(bool async)
+    {
+        await base.Sum_over_correlated_collection_with_selector_on_outer_entity_only(async);
+
+        AssertSql(
+            """
+SELECT [c].[CustomerID], (
+    SELECT ISNULL(SUM([o0].[c]), 0)
+    FROM (
+        SELECT CAST(LEN([c].[CustomerID]) AS int) AS [c]
+        FROM [Orders] AS [o]
+        WHERE [c].[CustomerID] = [o].[CustomerID]
+    ) AS [o0]) AS [Total]
+FROM [Customers] AS [c]
+""");
+    }
+
+    public override async Task Max_over_correlated_collection_with_selector_on_outer_entity_only(bool async)
+    {
+        await base.Max_over_correlated_collection_with_selector_on_outer_entity_only(async);
+
+        AssertSql(
+            """
+SELECT [c].[CustomerID], (
+    SELECT MAX([o0].[c])
+    FROM (
+        SELECT CAST(LEN([c].[CustomerID]) AS int) AS [c]
+        FROM [Orders] AS [o]
+        WHERE [c].[CustomerID] = [o].[CustomerID]
+    ) AS [o0]) AS [Max]
 FROM [Customers] AS [c]
 """);
     }
