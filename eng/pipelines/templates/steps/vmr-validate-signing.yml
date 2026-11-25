@@ -28,6 +28,13 @@ parameters:
   default: '$(Build.ArtifactStagingDirectory)/SignCheckPackages'
 
 steps:
+- checkout: self
+  fetchDepth: 1
+  fetchTags: false
+  retryCountOnTaskFailure: 5
+  fetchFilter: blob:none
+  sparseCheckoutDirectories: eng .config # Reduce checkout time by excluding unused directories
+
 - ${{ if eq(parameters.OS, 'Darwin') }}:
   - script: |
       xcrun simctl runtime delete all
