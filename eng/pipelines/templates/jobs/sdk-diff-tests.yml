@@ -34,6 +34,13 @@ jobs:
       targetPath: '$(Build.StagingDirectory)/BuildLogs'
       artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
   steps:
+  - checkout: self
+    fetchDepth: 1
+    fetchTags: false
+    retryCountOnTaskFailure: 5
+    fetchFilter: blob:none
+    sparseCheckoutDirectories: eng .config test # Reduce checkout time by excluding unused directories
+
   - script: |
       # Pre-install the Azure DevOps extension using the dnceng PyPI feed under network isolation
       export PIP_INDEX_URL=https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public-pypi/pypi/simple/
