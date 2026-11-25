@@ -63,6 +63,12 @@ concurrency:
 
 timeout-minutes: 30
 
+# Include the OpenAI apply_patch replay-ID fix for the default model.
+sandbox:
+  agent:
+    id: awf
+    version: "v0.29.11"
+
 network:
   allowed:
     - defaults
