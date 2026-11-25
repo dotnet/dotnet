@@ -55,7 +55,7 @@ public sealed class CodeCoveragePublishTests : AcceptanceTestBase
         File.WriteAllText(projectPath, $"""
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
-                <TargetFramework>{Core11TargetFramework}</TargetFramework>
+                <TargetFramework>{Core12TargetFramework}</TargetFramework>
                 <EnableDefaultItems>false</EnableDefaultItems>
                 <DisableMsCoverageReferencedPathMaps>true</DisableMsCoverageReferencedPathMaps>
               </PropertyGroup>

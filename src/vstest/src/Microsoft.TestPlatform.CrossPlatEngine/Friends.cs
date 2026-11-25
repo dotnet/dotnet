@@ -3,6 +3,13 @@
 
 using System.Runtime.CompilerServices;
 
+// The testhost.* entries below (one per distinct testhost assembly name) must be kept in sync with
+// src/Microsoft.TestPlatform.CoreUtilities/Friends.cs, which grants the same access to the same set of
+// testhost outputs. Each TFM in TestHostAllTargetFrameworks (Directory.Build.props) is built for
+// neutral/x86/arm64. The minimum .NET Framework TFM and the .NET TFM share the unsuffixed names
+// (testhost, testhost.x86, testhost.arm64); the other .NET Framework TFMs get TFM-qualified names
+// (e.g. testhost.net48), see TargetName in src/testhost*/testhost*.csproj. If that property or those
+// TargetName rules change, update both files together.
 [assembly: InternalsVisibleTo("Microsoft.TestPlatform.CrossPlatEngine.UnitTests, PublicKey=002400000480000094000000060200000024000052534131000400000100010007d1fa57c4aed9f0a32e84aa0faefd0de9e8fd6aec8f87fb03766c834c99921eb23be79ad9d5dcc1dd9ad236132102900b723cf980957fc4e177108fc607774f29e8320e92ea05ece4e821c0a5efe8f1645c4c0c93c1ab99285d622caa652c1dfad63d745d6f2de5f17e5eaf0fc4963d261c8a12436518206dc093344d5ad293")]
 [assembly: InternalsVisibleTo("Microsoft.TestPlatform.Client.UnitTests, PublicKey=002400000480000094000000060200000024000052534131000400000100010007d1fa57c4aed9f0a32e84aa0faefd0de9e8fd6aec8f87fb03766c834c99921eb23be79ad9d5dcc1dd9ad236132102900b723cf980957fc4e177108fc607774f29e8320e92ea05ece4e821c0a5efe8f1645c4c0c93c1ab99285d622caa652c1dfad63d745d6f2de5f17e5eaf0fc4963d261c8a12436518206dc093344d5ad293")]
 [assembly: InternalsVisibleTo("vstest.console.UnitTests, PublicKey=002400000480000094000000060200000024000052534131000400000100010007d1fa57c4aed9f0a32e84aa0faefd0de9e8fd6aec8f87fb03766c834c99921eb23be79ad9d5dcc1dd9ad236132102900b723cf980957fc4e177108fc607774f29e8320e92ea05ece4e821c0a5efe8f1645c4c0c93c1ab99285d622caa652c1dfad63d745d6f2de5f17e5eaf0fc4963d261c8a12436518206dc093344d5ad293")]

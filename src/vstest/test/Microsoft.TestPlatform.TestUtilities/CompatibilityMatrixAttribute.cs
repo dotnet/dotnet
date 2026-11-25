@@ -53,6 +53,8 @@ public sealed class CompatibilityMatrixAttribute : CompatibilityDataSourceAttrib
             _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, null),
         };
 
+        RunnerVersions = runnerVersions;
+
         _builder = new CompatibilityRowsBuilder(
             runnerVersions, runnerFrameworks,
             hostVersions, hostFrameworks,
@@ -75,6 +77,8 @@ public sealed class CompatibilityMatrixAttribute : CompatibilityDataSourceAttrib
 
     public string? BeforeAdapterFeature { get; set; }
     public string? AfterAdapterFeature { get; set; }
+
+    internal string RunnerVersions { get; }
 
     public override void CreateData(MethodInfo methodInfo)
     {

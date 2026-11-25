@@ -147,7 +147,7 @@ steps:
       path: /tmp/
 
   - name: Setup .NET (for NuGet MCP Server)
-    uses: actions/setup-dotnet@v6.0.0
+    uses: actions/setup-dotnet@v6.1.0
     with:
       dotnet-version: '9.0.x'
 

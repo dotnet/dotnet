@@ -21,7 +21,7 @@ imported through the `imports:` frontmatter field.
 
 ```bash
 # Install the gh-aw CLI extension (once per machine)
-gh extension install github/gh-aw --pin v1.0.1
+gh extension install github/gh-aw --pin v1.2.2
 
 # Compile a single workflow after editing its .md source. Strict mode is the
 # default — keep it that way. NEVER set `strict: false` in frontmatter.
@@ -38,7 +38,7 @@ gh aw logs <workflow-id>
 gh aw audit <run-id>
 ```
 
-Use gh-aw v1.0.1 to match the compiler recorded in the generated workflows.
+Use gh-aw v1.2.2 to match the compiler recorded in the generated workflows.
 When updating gh-aw actions, use the matching compiler, update
 `.github/aw/actions-lock.json`, and recompile all workflows so the generated
 steps and manifests keep the same action versions.
@@ -235,6 +235,7 @@ safe outputs reject agent writes to top-level dot-folders.
 | --- | --- | --- |
 | [`agentic_commands.yml`](./agentic_commands.yml) | PR / issue comments | Dispatches `/`-prefixed slash commands typed in comments to the right agentic workflow. |
 | [`agentics-maintenance.yml`](./agentics-maintenance.yml) | Schedule + manual | Maintains the agentic workflow ecosystem itself (re-compilation, dependency bumps, etc.). |
+| [`backport.yml`](./backport.yml) | PR comments | Comment `/backport to <branch>` (e.g. `/backport to rel/18.0`) on a PR to open a cherry-pick PR against that branch, via Arcade's [`backport-base.yml`](https://github.com/dotnet/arcade/blob/main/.github/workflows/backport-base.yml). |
 | [`copilot-setup-steps.yml`](./copilot-setup-steps.yml) | PR + push + manual | Bootstraps a Copilot Coding Agent environment with the right .NET SDK and tooling. |
 
 ## Shared components

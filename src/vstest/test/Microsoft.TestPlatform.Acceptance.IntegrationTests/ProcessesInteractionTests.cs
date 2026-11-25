@@ -25,7 +25,7 @@ public class ProcessesInteractionTests : AcceptanceTestBase
         // Arrange
         SetTestEnvironment(_testEnvironment, runnerInfo);
         const string testAssetProjectName = "SimpleTestProjectMessedUpTargetFramework";
-        var assemblyPath = GetTestDllForFramework(testAssetProjectName + ".dll", Core11TargetFramework);
+        var assemblyPath = GetTestDllForFramework(testAssetProjectName + ".dll", Core12TargetFramework);
 
         // On the contrary to other tests, we need to modify the test asset we are using to replace
         // the target framework with an invalid framework. This is why we have a specific test asset
