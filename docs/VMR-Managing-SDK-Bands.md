@@ -261,6 +261,7 @@ To create a new band, the snap is performed in the VMR and then flowed to indivi
 2. **Remove shared component sources** in the new branch
    - Remove sources of shared components (runtime, arcade, etc.)
    - Adjust package versions to point to build output packages from the last release
+   - Add `CoherentParentDependency="Microsoft.NETCore.App.Ref"` to `Microsoft.NET.Runtime.Emscripten.Internal` in `src/sdk/eng/Version.Details.xml`. emsdk is built outside the VMR and only flows into the 1xx band, so this keeps the new band's emsdk version in sync with the 1xx build it consumes. Otherwise the version silently stays at its value from the snap.
 
 3. **Configure Maestro subscriptions** between new VMR bands and their individual repository counterparts
 
