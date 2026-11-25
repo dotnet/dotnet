@@ -113,7 +113,6 @@
     <SharedRepositoryReference Include="deployment-tools" />
     <SharedRepositoryReference Include="diagnostics" />
     <SharedRepositoryReference Include="efcore" />
-    <SharedRepositoryReference Include="emsdk" />
     <SharedRepositoryReference Include="runtime" />
     <SharedRepositoryReference Include="symreader" />
     <SharedRepositoryReference Include="windowsdesktop" />

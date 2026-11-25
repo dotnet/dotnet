@@ -1,5 +1,14 @@
 <Dependencies>
   <ProductDependencies>
+    <!-- Not consumed by the VMR build. Later SDK bands must use the same emsdk version as the
+         1xx build whose workload packs/MSIs they reuse. When snapping a new band, add
+         CoherentParentDependency="Microsoft.NETCore.App.Ref" to this dependency in the band's
+         src/sdk/eng/Version.Details.xml; darc resolves it from this file at the 1xx commit.
+         See docs/VMR-Managing-SDK-Bands.md. -->
+    <Dependency Name="Microsoft.NET.Runtime.Emscripten.Internal" Version="12.0.0-alpha.1.26480.102">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>a2f466a2ccc2851d3c665f764a36b0cb59dd18b8</Sha>
+    </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="12.0.0-beta.26571.102">
