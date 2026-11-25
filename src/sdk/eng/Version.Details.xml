@@ -28,9 +28,9 @@
       <Uri>https://github.com/dotnet/core-setup</Uri>
       <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Runtime.Emscripten.Internal" Version="12.0.0-alpha.1.26528.111">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>539e5050b0f98330b0ed3889255802daf3725d01</Sha>
+    <Dependency Name="Microsoft.NET.Runtime.Emscripten.Internal" Version="12.0.0-alpha.1.26575.1">
+      <Uri>https://github.com/dotnet/emsdk</Uri>
+      <Sha>60635abfeb24c06e22b0e1009bc78ca97ed3f65a</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Build" Version="18.13.0-1.26528.111">
       <Uri>https://github.com/dotnet/dotnet</Uri>
