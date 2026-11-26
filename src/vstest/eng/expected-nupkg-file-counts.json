@@ -1,7 +1,7 @@
 {
   "Microsoft.CodeCoverage": 83,
   "Microsoft.NET.Test.Sdk": 26,
-  "Microsoft.TestPlatform": 556,
+  "Microsoft.TestPlatform": 582,
   "Microsoft.TestPlatform.AdapterUtilities": 51,
   "Microsoft.TestPlatform.Build": 22,
   "Microsoft.TestPlatform.CLI": 484,
@@ -11,5 +11,5 @@
   "Microsoft.TestPlatform.Portable": 638,
   "Microsoft.TestPlatform.TestHost": 65,
   "Microsoft.TestPlatform.TranslationLayer": 175,
-  "Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI": 403
+  "Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI": 429
 }
