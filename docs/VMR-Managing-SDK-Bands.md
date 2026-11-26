@@ -52,6 +52,8 @@ The VMR uses SDK branches to manage different bands, similar to how individual r
 - Shared components (runtime, arcade) exist as sources only in the 1xx branch
 - Non-1xx branches reference shared components as build output packages from the 1xx branch
 
+When initializing a non-1xx branch, use `darc add-dependency` to add `Microsoft.NET.Sdk` and `Microsoft.NETCore.App.Ref` toolset dependencies in the root `eng/Version.Details.xml`, using the versions and source commit of the chosen 1xx build. Darc also generates the matching `MicrosoftNETSdk*Version` and `MicrosoftNETCoreAppRef*Version` properties in `eng/Version.Details.props`. Set `DotNet1xxWorkloadManifestVersion` in `eng/Versions.props` to the exact version of workload manifest packages produced by that 1xx build; it can differ from the SDK package version when the producer uses preview, release, or servicing branding. Source-build prep and CI use the SDK dependency to select the 1xx shared-components archive, and the workload build uses these inputs to download the matching 1xx workload manifests and runtime packs. Changing `VersionSDKMinor` and removing the shared source trees alone is not sufficient.
+
 ### Shared vs band-specific components
 
 A shared component is a component that is shared between multiple SDK bands. For instance, the .NET runtime is a good example of a shared component while the Roslyn compiler would typically differ between bands.
@@ -261,6 +263,7 @@ To create a new band, the snap is performed in the VMR and then flowed to indivi
 2. **Remove shared component sources** in the new branch
    - Remove sources of shared components (runtime, arcade, etc.)
    - Adjust package versions to point to build output packages from the last release
+   - Add `CoherentParentDependency="Microsoft.NETCore.App.Ref"` to `Microsoft.NET.Runtime.Emscripten.Internal` in `src/sdk/eng/Version.Details.xml`. emsdk is built outside the VMR and only flows into the 1xx band, so this keeps the new band's emsdk version in sync with the 1xx build it consumes. Otherwise the version silently stays at its value from the snap.
 
 3. **Configure Maestro subscriptions** between new VMR bands and their individual repository counterparts
 
