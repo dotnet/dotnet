@@ -13,14 +13,14 @@ public class AcceptanceTestBase : IntegrationTestBase
     // Target framework constants for test assets.
     public const string Net462TargetFramework = "net462";
     public const string Net481TargetFramework = "net481";
-    public const string Core11TargetFramework = "net11.0";
+    public const string Core12TargetFramework = "net12.0";
 
     public const string DesktopTargetFramework = Net481TargetFramework;
 
     // Framework argument values for vstest.console --framework parameter.
     public const string Net462FrameworkArgValue = ".NETFramework,Version=v4.6.2";
     public const string Net481FrameworkArgValue = ".NETFramework,Version=v4.8.1";
-    public const string Core11FrameworkArgValue = ".NETCoreApp,Version=v11.0";
+    public const string Core12FrameworkArgValue = ".NETCoreApp,Version=v12.0";
 
     public const string DesktopFrameworkArgValue = Net481FrameworkArgValue;
 
@@ -30,17 +30,17 @@ public class AcceptanceTestBase : IntegrationTestBase
 
     // Test asset target framework lists.
     public const string NETFX = Net481TargetFramework;
-    public const string NETFX_AND_NET = "net481;net11.0";
+    public const string NETFX_AND_NET = "net481;net12.0";
 
     // Runner frameworks.
     public const string RUNNER_NETFX = Net481TargetFramework;
-    public const string RUNNER_NET = Core11TargetFramework;
-    public const string RUNNER_NETFX_AND_NET = "net481;net11.0";
+    public const string RUNNER_NET = Core12TargetFramework;
+    public const string RUNNER_NETFX_AND_NET = "net481;net12.0";
 
     // Host frameworks (test asset TFMs).
     public const string HOST_NETFX = Net481TargetFramework;
-    public const string HOST_NET = Core11TargetFramework;
-    public const string HOST_NETFX_AND_NET = "net481;net11.0";
+    public const string HOST_NET = Core12TargetFramework;
+    public const string HOST_NETFX_AND_NET = "net481;net12.0";
 
     public const string LATEST_TO_LEGACY = "Latest;LatestPreview;LatestStable;RecentStable;MostDownloaded;PreviousStable;LegacyStable";
     public const string LATEST_TO_RECENT_STABLE = "Latest;LatestPreview;LatestStable;RecentStable";
@@ -73,7 +73,7 @@ public class AcceptanceTestBase : IntegrationTestBase
     protected static string DeriveFrameworkArgValue(IntegrationTestEnvironment testEnvironment)
         => testEnvironment.TargetFramework switch
         {
-            Core11TargetFramework => Core11FrameworkArgValue,
+            Core12TargetFramework => Core12FrameworkArgValue,
             Net462TargetFramework => Net462FrameworkArgValue,
             Net481TargetFramework => Net481FrameworkArgValue,
             _ => throw new NotSupportedException($"{testEnvironment.TargetFramework} is not supported TargetFramework value."),

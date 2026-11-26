@@ -31,9 +31,9 @@
   <PropertyGroup>
     <!-- The TFMs to build and test against. -->
     <NetFrameworkMinimum>net481</NetFrameworkMinimum>
-    <NetCoreAppMinimum>net11.0</NetCoreAppMinimum>
+    <NetCoreAppMinimum>net12.0</NetCoreAppMinimum>
     <NetFrameworkTargetFrameworks>net481</NetFrameworkTargetFrameworks>
-    <NetCoreAppTargetFrameworks>net11.0</NetCoreAppTargetFrameworks>
+    <NetCoreAppTargetFrameworks>net12.0</NetCoreAppTargetFrameworks>
     <TestProjectTargetFrameworks>$(NetFrameworkTargetFrameworks);$(NetCoreAppTargetFrameworks)</TestProjectTargetFrameworks>
     <LangVersion>Latest</LangVersion>
   </PropertyGroup>

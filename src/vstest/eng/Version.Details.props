@@ -6,7 +6,7 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet-arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>12.0.0-beta.26556.2</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>12.0.0-beta.26569.6</MicrosoftDotNetArcadeSdkPackageVersion>
     <!-- dotnet-core-setup dependencies -->
     <MicrosoftExtensionsFileSystemGlobbingPackageVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
     <!-- dotnet-dotnet dependencies -->
@@ -18,7 +18,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDiaSymReaderConverterPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterPackageVersion>
     <MicrosoftDiaSymReaderPdb2PdbPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbPackageVersion>
     <!-- vs-code-coverage dependencies -->
-    <MicrosoftInternalCodeCoveragePackageVersion>18.13.0-preview.26563.2</MicrosoftInternalCodeCoveragePackageVersion>
+    <MicrosoftInternalCodeCoveragePackageVersion>18.14.0-preview.26570.4</MicrosoftInternalCodeCoveragePackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>

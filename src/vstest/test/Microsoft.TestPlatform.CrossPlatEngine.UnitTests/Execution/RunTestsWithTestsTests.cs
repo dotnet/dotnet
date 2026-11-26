@@ -49,12 +49,6 @@ public class RunTestsWithTestsTests
         _mockTestRunEventsHandler = new Mock<IInternalTestRunEventsHandler>();
     }
 
-    [TestCleanup]
-    public void Cleanup()
-    {
-        _runTestsInstance?.Dispose();
-    }
-
     [TestMethod]
     public void GetExecutorUriExtensionMapShouldReturnExecutorUrisMapForTestCasesWithSameExecutorUri()
     {

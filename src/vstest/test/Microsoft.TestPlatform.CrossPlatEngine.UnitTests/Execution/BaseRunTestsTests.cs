@@ -98,7 +98,6 @@ public class BaseRunTestsTests
     [TestCleanup]
     public void Cleanup()
     {
-        _runTestsInstance.Dispose();
         TestExecutorExtensionManager.Destroy();
         TestPluginCacheHelper.ResetExtensionsCache();
     }
@@ -585,6 +584,16 @@ public class BaseRunTestsTests
         // Executor Uris
         var expectedUris = new string[] { BadBaseRunTestsExecutorUri.ToLower(CultureInfo.InvariantCulture), BaseRunTestsExecutorUri.ToLower(CultureInfo.InvariantCulture) };
         Assert.AreSequenceEqual(expectedUris, _receivedExecutorUris!.ToArray());
+    }
+
+    [TestMethod]
+    public void RunTestsShouldDisposeFrameworkHandle()
+    {
+        SetUpTestRunEvents();
+
+        _runTestsInstance.RunTests();
+
+        Assert.ThrowsExactly<ObjectDisposedException>(() => _runTestsInstance.GetFrameworkHandle.LaunchProcessWithDebuggerAttached(null!, null, null, null));
     }
 
     [TestMethod]

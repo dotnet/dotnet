@@ -195,6 +195,45 @@
       <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\x64\dbghelp.dll">
         <VSIXSubPath>Extensions\Cpp\x64</VSIXSubPath>
       </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\cs\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll;$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\cs\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.resources.dll">
+        <VSIXSubPath>Extensions\Cpp\cs</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\de\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll;$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\de\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.resources.dll">
+        <VSIXSubPath>Extensions\Cpp\de</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\es\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll;$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\es\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.resources.dll">
+        <VSIXSubPath>Extensions\Cpp\es</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\fr\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll;$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\fr\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.resources.dll">
+        <VSIXSubPath>Extensions\Cpp\fr</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\it\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll;$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\it\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.resources.dll">
+        <VSIXSubPath>Extensions\Cpp\it</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\ja\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll;$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\ja\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.resources.dll">
+        <VSIXSubPath>Extensions\Cpp\ja</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\ko\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll;$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\ko\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.resources.dll">
+        <VSIXSubPath>Extensions\Cpp\ko</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\pl\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll;$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\pl\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.resources.dll">
+        <VSIXSubPath>Extensions\Cpp\pl</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\pt-BR\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll;$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\pt-BR\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.resources.dll">
+        <VSIXSubPath>Extensions\Cpp\pt-BR</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\ru\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll;$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\ru\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.resources.dll">
+        <VSIXSubPath>Extensions\Cpp\ru</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\tr\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll;$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\tr\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.resources.dll">
+        <VSIXSubPath>Extensions\Cpp\tr</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\zh-Hans\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll;$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\zh-Hans\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.resources.dll">
+        <VSIXSubPath>Extensions\Cpp\zh-Hans</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\zh-Hant\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll;$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\zh-Hant\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.resources.dll">
+        <VSIXSubPath>Extensions\Cpp\zh-Hant</VSIXSubPath>
+      </VsixSourceItem>
     </ItemGroup>
 
     <!-- msdia -->

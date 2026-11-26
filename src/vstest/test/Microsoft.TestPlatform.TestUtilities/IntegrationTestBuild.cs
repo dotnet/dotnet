@@ -283,8 +283,7 @@ public class IntegrationTestBuild : IntegrationTestBase
 
         var cacheId = new OrderedDictionary();
 
-        // Restore previous versions of TestPlatform (for vstest.console.exe), and TestPlatform.CLI (for vstest.console.dll).
-        // These properties are coming from TestPlatform.Dependencies.props.
+        // Test project versions include older testhosts than the versions used as console runners.
         var vstestConsoleVersionProperties = new[] {
             "VSTestConsoleLatestVersion",
             "VSTestConsoleLatestPreviewVersion",
@@ -312,6 +311,10 @@ public class IntegrationTestBuild : IntegrationTestBase
 
         var nugetFeeds = GetNugetSourceParameters(Root);
 
+        var runnerVersionProperties = new HashSet<string>(Enum.GetValues(typeof(CompatScenario)).Cast<CompatScenario>()
+            .SelectMany(scenario => new CompatibilityMatrixAttribute(scenario).RunnerVersions.Split(';'))
+            .Select(version => $"VSTestConsole{version}Version"));
+
         // We use the same version properties for NET.Test.Sdk as for VSTestConsole, for now.
         foreach (var sdkPropertyName in vstestConsoleVersionProperties)
         {
@@ -332,8 +335,16 @@ public class IntegrationTestBuild : IntegrationTestBase
 
             cacheId[sdkPropertyName] = netTestSdkVersion;
 
+            // Restore console packages only for runner versions selected by the compatibility scenarios.
+            // All testhost versions still participate in the generated test projects below.
+            if (!runnerVersionProperties.Contains(sdkPropertyName))
+            {
+                continue;
+            }
+
             var netTestSdkVersionDir = netTestSdkVersion.TrimStart('[').TrimEnd(']');
-            if (Directory.Exists(Path.Combine(nugetCache, "microsoft.testplatform", netTestSdkVersionDir)) && Directory.Exists(Path.Combine(nugetCache, "microsoft.testplatform.cli", netTestSdkVersionDir)))
+            if (Directory.Exists(Path.Combine(nugetCache, "microsoft.testplatform", netTestSdkVersionDir))
+                && Directory.Exists(Path.Combine(nugetCache, "microsoft.testplatform.cli", netTestSdkVersionDir)))
             {
                 continue;
             }

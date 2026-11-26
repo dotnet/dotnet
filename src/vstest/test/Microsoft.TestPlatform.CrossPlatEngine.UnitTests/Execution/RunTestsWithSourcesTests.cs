@@ -66,7 +66,6 @@ public class RunTestsWithSourcesTests
     [TestCleanup]
     public void TestCleanup()
     {
-        _runTestsInstance?.Dispose();
         RunTestWithSourcesExecutor.RunTestsWithSourcesCallback = null;
         TestPluginCacheHelper.ResetExtensionsCache();
     }

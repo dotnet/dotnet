@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework;
@@ -28,7 +27,6 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Execution;
 /// <summary>
 /// Orchestrates test execution related functionality for the engine communicating with the test host process.
 /// </summary>
-[SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable", Justification = "The active test run is disposed in StartTestRun's finally blocks.")]
 public class ExecutionManager : IExecutionManager
 {
     private readonly ITestPlatformEventSource _testPlatformEventSource;
@@ -121,7 +119,6 @@ public class ExecutionManager : IExecutionManager
         }
         finally
         {
-            _activeTestRun?.Dispose();
             _activeTestRun = null;
         }
     }
@@ -157,7 +154,6 @@ public class ExecutionManager : IExecutionManager
         }
         finally
         {
-            _activeTestRun?.Dispose();
             _activeTestRun = null;
         }
     }

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework Condition="'$(SingleTargetFramework)' != ''">$(SingleTargetFramework)</TargetFramework>
-    <TargetFrameworks Condition="'$(SingleTargetFramework)' == ''">net11.0;net11.0-android;net11.0-windows</TargetFrameworks>
+    <TargetFrameworks Condition="'$(SingleTargetFramework)' == ''">net12.0;net12.0-android;net12.0-windows</TargetFrameworks>
     <EnableDefaultItems>false</EnableDefaultItems>
   </PropertyGroup>
 
