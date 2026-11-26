@@ -6,11 +6,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Xml.Linq;
 using AwesomeAssertions;
 using Microsoft.Arcade.Test.Common;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
+using NuGet.Packaging;
+using NuGet.Versioning;
 using WixToolset.Dtf.WindowsInstaller;
 using Xunit;
 
@@ -223,6 +226,72 @@ public class CreateVisualStudioWorkloadTests : TestBase
         Assert.All(swixComponentProjects, c => Assert.True(c.ItemSpec.Contains(".pre.") && c.GetMetadata(Metadata.IsPreview) == "true" ||
             !c.ItemSpec.Contains(".pre.") && c.GetMetadata(Metadata.IsPreview) == "false"));
     }
+
+    [WindowsOnlyFact]
+    public void ItUsesPrebuiltPackMsis()
+    {
+        static bool IsPythonX64(ITaskItem item) =>
+            item.GetMetadata(Metadata.Platform) == "x64" && item.GetMetadata(Metadata.SwixPackageId).Contains("Python");
+
+        // Build the workload once to produce an MSI for the x64 Python pack.
+        CreateVisualStudioWorkload initialTask = CreateEmscriptenWorkloadTask(GetTestCaseDirectory(), prebuiltPackMsiPackages: null);
+        Assert.True(initialTask.Execute());
+        string pythonMsi = initialTask.Msis.Single(IsPythonX64).ItemSpec;
+
+        // Wrap the MSI in a payload package, similar to the ones previously published for CLI installs.
+        string testCaseDirectory = GetTestCaseDirectory();
+        string prebuiltMsiPackage = Path.Combine(testCaseDirectory, "prebuilt", "Microsoft.NET.Runtime.Emscripten.2.0.23.Python.win-x64.Msi.x64.6.0.4.nupkg");
+        Directory.CreateDirectory(Path.GetDirectoryName(prebuiltMsiPackage));
+        PackageBuilder builder = new()
+        {
+            Id = "Microsoft.NET.Runtime.Emscripten.2.0.23.Python.win-x64.Msi.x64",
+            Version = NuGetVersion.Parse("6.0.4"),
+            Description = "test"
+        };
+        builder.Authors.Add("test");
+        builder.Files.Add(new PhysicalPackageFile { SourcePath = pythonMsi, TargetPath = $"data/{Path.GetFileName(pythonMsi)}" });
+        using (FileStream fs = File.Create(prebuiltMsiPackage))
+        {
+            builder.Save(fs);
+        }
+
+        CreateVisualStudioWorkload createWorkloadTask = CreateEmscriptenWorkloadTask(testCaseDirectory, [new TaskItem(prebuiltMsiPackage)]);
+        Assert.True(createWorkloadTask.Execute());
+
+        // No MSI should be built (and hence packaged) for the prebuilt pack, but other packs are still built.
+        createWorkloadTask.Msis.Where(IsPythonX64).Should().BeEmpty();
+        createWorkloadTask.Msis.Should().Contain(m => m.GetMetadata(Metadata.PackageType) == DefaultValues.WorkloadPackMsi &&
+            m.GetMetadata(Metadata.SwixPackageId).Contains("Node"));
+
+        // The SWIX project should still be generated and use the MSI from the prebuilt package as its payload.
+        ITaskItem pythonPackSwixItem = createWorkloadTask.SwixProjects.Single(s =>
+            s.GetMetadata(Metadata.PackageType) == DefaultValues.PackageTypeMsiPack && IsPythonX64(s));
+        Assert.Equal("Microsoft.Emscripten.Python.6.0.4", pythonPackSwixItem.GetMetadata(Metadata.SwixPackageId));
+        string payloadSource = XDocument.Load(pythonPackSwixItem.ItemSpec).Descendants().Single(e => e.Name.LocalName == "PayloadSource").Value;
+        Assert.Equal(Path.GetFileName(pythonMsi), Path.GetFileName(payloadSource));
+        Assert.Equal(File.ReadAllBytes(pythonMsi), File.ReadAllBytes(payloadSource));
+    }
+
+    private static CreateVisualStudioWorkload CreateEmscriptenWorkloadTask(string testCaseDirectory, ITaskItem[] prebuiltPackMsiPackages) =>
+        new()
+        {
+            AllowMissingPacks = true,
+            BaseOutputPath = Path.Combine(testCaseDirectory, "bin"),
+            BaseIntermediateOutputPath = testCaseDirectory,
+            BuildEngine = new MockBuildEngine(),
+            ComponentResources = Array.Empty<ITaskItem>(),
+            PackageSource = TestAssetsPath,
+            PrebuiltPackMsiPackages = prebuiltPackMsiPackages,
+            ShortNames = [new TaskItem("Microsoft.NET.Runtime").WithMetadata("Replacement", "Microsoft")],
+            WixExe = ToolsetInfo.WixExePath,
+            HeatExe = ToolsetInfo.HeatExePath,
+            WixExtensions = WixExtensions,
+            WorkloadManifestPackageFiles =
+            [
+                new TaskItem(Path.Combine(TestAssetsPath, "microsoft.net.workload.emscripten.manifest-6.0.200.6.0.4.nupkg"))
+                .WithMetadata(Metadata.MsiVersion, "6.33.28")
+            ]
+        };
 
     [WindowsOnlyFact]
     public void ItCanCreateWorkloadsThatSupportArm64InVisualStudio()

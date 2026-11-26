@@ -21,6 +21,7 @@ Installer platforms are selected from each package's SDK feature band. .NET 12 a
 | `SkipRedundantMsiCreation` | `bool` | No | When `true`, skips creating MSIs for workload packs that are part of a pack group. |
 | `DisableParallelPackageGroupProcessing` | `bool` | No | When `true`, workload pack groups are built sequentially instead of in parallel. |
 | `AllowMissingPacks` | `bool` | No | When `true`, allows VS workload generation to proceed if any nupkgs declared in the manifest are not found on disk. Default: `false`. |
+| `PrebuiltPackMsiPackages` | `ITaskItem[]` | No | Previously published MSI payload packages (`<pack id>.Msi.<platform>`). For matching packs and platforms, the MSI in the package is used for the SWIX project instead of building a new one, and it is not included in `Msis`. Not supported with `CreateWorkloadPackGroups`. |
 
 #### Inherited from VisualStudioWorkloadTaskBase
 
