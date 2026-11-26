@@ -119,12 +119,11 @@
           DependsOnTargets="ResolveProjectReferences;WritePrebuiltUsageData"
           AfterTargets="Build">
     <ItemGroup>
-      <PackageVersionPropsSavedSnapshotFile Include="$(PackageVersionsDir)PackageVersions.*.Snapshot.props" />
+      <PackageVersionPropsProducedFile Include="$(PackageVersionsDir)PackageVersions.*.Produced.props" />
     </ItemGroup>
-    <Copy SourceFiles="@(PackageVersionPropsSnapshotFiles)" DestinationFolder="$(ArtifactsLogDir)snapshots/" />
 
     <WriteAnnotatedUsageReport DataFile="$(PrebuiltUsageReportFile)"
-                               PackageVersionPropsSnapshots="@(PackageVersionPropsSavedSnapshotFile)"
+                               PackageVersionPropsProducedFiles="@(PackageVersionPropsProducedFile)"
                                PoisonedReportFile="$(PoisonedReportFile)"
                                PrebuiltAnnotatedUsageReportFile="$(PrebuiltAnnotatedUsageReportFile)"
                                VersionPropertySuffix="$(PackageVersionPropertySuffix)" />
