@@ -8,6 +8,9 @@ using Xunit.Sdk;
 
 namespace Xunit;
 
+/// <summary>
+/// Skips the test when running in CI, optionally only on the given platforms.
+/// </summary>
 #if !USES_XUNIT_3
 [TraitDiscoverer("Microsoft.DotNet.XUnitExtensions.SkipOnCIDiscoverer", "Microsoft.DotNet.XUnitExtensions")]
 #endif
@@ -16,17 +19,23 @@ public sealed class SkipOnCIAttribute : Attribute, ITraitAttribute
 {
     public string Reason { get; private set; }
 
+    public TestPlatforms Platforms { get; private set; }
+
     public SkipOnCIAttribute(string reason)
+        : this(reason, TestPlatforms.Any)
+    {
+    }
+
+    public SkipOnCIAttribute(string reason, TestPlatforms platforms)
     {
         Reason = reason;
+        Platforms = platforms;
     }
 
 #if USES_XUNIT_3
     public IReadOnlyCollection<KeyValuePair<string, string>> GetTraits()
     {
-        if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_CI")) ||
-            !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("HELIX_WORKITEM_ROOT")) ||
-            !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AGENT_OS")))
+        if (DiscovererHelpers.IsRunningInCI && DiscovererHelpers.TestPlatformApplies(Platforms))
         {
             return [new KeyValuePair<string, string>(XunitConstants.Category, XunitConstants.Failing)];
         }

@@ -36,6 +36,11 @@ internal static class DiscovererHelpers
             (platforms.HasFlag(TestPlatforms.Haiku) && RuntimeInformation.IsOSPlatform(OSPlatform.Create("HAIKU"))) ||
             (platforms.HasFlag(TestPlatforms.Windows) && RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
 
+    public static bool IsRunningInCI =>
+            !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_CI")) ||
+            !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("HELIX_WORKITEM_ROOT")) ||
+            !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AGENT_OS"));
+
     public static bool TestRuntimeApplies(TestRuntimes runtimes) =>
             (runtimes.HasFlag(TestRuntimes.Mono) && IsMonoRuntime) ||
             (runtimes.HasFlag(TestRuntimes.CoreCLR) && !IsMonoRuntime); // assume CoreCLR if it's not Mono
