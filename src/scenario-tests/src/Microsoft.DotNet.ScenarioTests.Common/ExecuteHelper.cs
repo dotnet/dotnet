@@ -64,7 +64,24 @@ public static class ExecuteHelper
         process.Start();
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
-        process.WaitForExit(millisecondTimeout);
+        ProcessHangDiagnostics.WaitForExit(
+            process,
+            millisecondTimeout,
+            () =>
+            {
+                lock (stdOutput)
+                lock (stdError)
+                {
+                    return stdOutput + "--- stderr ---" + Environment.NewLine + stdError;
+                }
+            },
+            message =>
+            {
+                // Test output is only reported when the test finishes, so also write to the console, which the
+                // CI log shows live; a hung test never finishes.
+                Console.WriteLine(message);
+                outputHelper.WriteLine(message);
+            });
 
         if (!process.HasExited)
         {
