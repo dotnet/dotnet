@@ -173,7 +173,7 @@ namespace Microsoft.Build.TaskAuthoring.Analyzer
             if (referencedSymbol is IMethodSymbol calleeMethod)
             {
                 var calleeKey = calleeMethod.OriginalDefinition;
-                callGraph.GetOrAdd(callerKey, _ => new ConcurrentBag<ISymbol>()).Add(calleeKey);
+                callGraph.GetOrAdd(callerKey, static _ => new ConcurrentBag<ISymbol>()).Add(calleeKey);
             }
             else if (referencedSymbol is IPropertySymbol property)
             {

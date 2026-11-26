@@ -148,10 +148,10 @@ namespace Microsoft.NET.StringTools
 
                 IEnumerable<string> topInternedStrings =
                     _internCallCountsByString
-                    .OrderByDescending(kv => kv.Value * kv.Key.Length)
-                    .Where(kv => kv.Value > 1)
+                    .OrderByDescending(static kv => kv.Value * kv.Key.Length)
+                    .Where(static kv => kv.Value > 1)
                     .Take(15)
-                    .Select(kv => string.Format(CultureInfo.InvariantCulture, "({1} instances x each {2} chars)\n{0}", kv.Key, kv.Value, kv.Key.Length));
+                    .Select(static kv => string.Format(CultureInfo.InvariantCulture, "({1} instances x each {2} chars)\n{0}", kv.Key, kv.Value, kv.Key.Length));
 
                 result.AppendLine(string.Format("##########Top Top Interned Strings:  \n{0} ", string.Join("\n==============\n", topInternedStrings.ToArray())));
                 result.AppendLine();
