@@ -415,6 +415,9 @@ dotnet_diagnostic.IDE0301.severity = suggestion
 dotnet_diagnostic.IDE0305.severity = suggestion
 dotnet_diagnostic.IDE0306.severity = suggestion
 
+# Anonymous function can be made static
+dotnet_diagnostic.IDE0320.severity = suggestion
+
 # Remove unnecessary nullable warning suppression
 dotnet_diagnostic.IDE0370.severity = suggestion
 
