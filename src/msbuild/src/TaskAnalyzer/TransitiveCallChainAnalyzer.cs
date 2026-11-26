@@ -173,19 +173,19 @@ namespace Microsoft.Build.TaskAuthoring.Analyzer
             if (referencedSymbol is IMethodSymbol calleeMethod)
             {
                 var calleeKey = calleeMethod.OriginalDefinition;
-                callGraph.GetOrAdd(callerKey, static _ => new ConcurrentBag<ISymbol>()).Add(calleeKey);
+                callGraph.GetOrAdd(callerKey, _ => new ConcurrentBag<ISymbol>()).Add(calleeKey);
             }
             else if (referencedSymbol is IPropertySymbol property)
             {
                 // Record edges to property getter and setter methods
                 if (property.GetMethod is not null)
                 {
-                    callGraph.GetOrAdd(callerKey, static _ => new ConcurrentBag<ISymbol>()).Add(property.GetMethod.OriginalDefinition);
+                    callGraph.GetOrAdd(callerKey, _ => new ConcurrentBag<ISymbol>()).Add(property.GetMethod.OriginalDefinition);
                 }
 
                 if (property.SetMethod is not null)
                 {
-                    callGraph.GetOrAdd(callerKey, static _ => new ConcurrentBag<ISymbol>()).Add(property.SetMethod.OriginalDefinition);
+                    callGraph.GetOrAdd(callerKey, _ => new ConcurrentBag<ISymbol>()).Add(property.SetMethod.OriginalDefinition);
                 }
             }
 
@@ -204,7 +204,7 @@ namespace Microsoft.Build.TaskAuthoring.Analyzer
 
                 var displayName = referencedSymbol.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat);
                 var violation = new ViolationInfo(entry.Category, displayName, entry.Message, context.Operation.Syntax.GetLocation());
-                directViolations.GetOrAdd(callerKey, static _ => new ConcurrentBag<ViolationInfo>()).Add(violation);
+                directViolations.GetOrAdd(callerKey, _ => new ConcurrentBag<ViolationInfo>()).Add(violation);
                 return;
             }
 
@@ -227,7 +227,7 @@ namespace Microsoft.Build.TaskAuthoring.Analyzer
                         ? "may cause deadlocks in automated builds"
                         : "interferes with build logging; use Log.LogMessage instead";
                     var violation = new ViolationInfo(BannedApiDefinitions.ApiCategory.CriticalError, displayName, message, context.Operation.Syntax.GetLocation());
-                    directViolations.GetOrAdd(callerKey, static _ => new ConcurrentBag<ViolationInfo>()).Add(violation);
+                    directViolations.GetOrAdd(callerKey, _ => new ConcurrentBag<ViolationInfo>()).Add(violation);
                     return;
                 }
             }
@@ -251,7 +251,7 @@ namespace Microsoft.Build.TaskAuthoring.Analyzer
                         var displayName = referencedSymbol.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat);
                         var violation = new ViolationInfo(BannedApiDefinitions.ApiCategory.FilePathRequiresAbsolute, displayName,
                             "may resolve relative paths against the process working directory", context.Operation.Syntax.GetLocation());
-                        directViolations.GetOrAdd(callerKey, static _ => new ConcurrentBag<ViolationInfo>()).Add(violation);
+                        directViolations.GetOrAdd(callerKey, _ => new ConcurrentBag<ViolationInfo>()).Add(violation);
                     }
                 }
             }

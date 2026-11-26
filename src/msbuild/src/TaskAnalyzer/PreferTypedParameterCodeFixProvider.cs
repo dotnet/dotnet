@@ -344,7 +344,7 @@ namespace Microsoft.Build.TaskAuthoring.Analyzer
         {
             for (INamedTypeSymbol? type = taskType; type is not null; type = type.BaseType)
             {
-                if (type.GetMembers("TaskEnvironment").Any(static m => m is IPropertySymbol or IFieldSymbol))
+                if (type.GetMembers("TaskEnvironment").Any(m => m is IPropertySymbol or IFieldSymbol))
                 {
                     return true;
                 }
