@@ -8,9 +8,11 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-arcade-services dependencies -->
     <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.26559.2</MicrosoftDotNetDarcLibPackageVersion>
     <!-- dotnet-dotnet dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>12.0.0-beta.26557.102</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetBuildManifestPackageVersion>12.0.0-beta.26557.102</MicrosoftDotNetBuildManifestPackageVersion>
-    <MicrosoftDotNetSignCheckTaskPackageVersion>12.0.0-beta.26557.102</MicrosoftDotNetSignCheckTaskPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>12.0.0-beta.26571.102</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetBuildManifestPackageVersion>12.0.0-beta.26571.102</MicrosoftDotNetBuildManifestPackageVersion>
+    <MicrosoftDotNetSignCheckTaskPackageVersion>12.0.0-beta.26571.102</MicrosoftDotNetSignCheckTaskPackageVersion>
+    <!-- dotnet-emsdk dependencies -->
+    <MicrosoftNETRuntimeEmscriptenInternalPackageVersion>12.0.0-alpha.1.26575.1</MicrosoftNETRuntimeEmscriptenInternalPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
@@ -20,5 +22,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <MicrosoftDotNetBuildManifestVersion>$(MicrosoftDotNetBuildManifestPackageVersion)</MicrosoftDotNetBuildManifestVersion>
     <MicrosoftDotNetSignCheckTaskVersion>$(MicrosoftDotNetSignCheckTaskPackageVersion)</MicrosoftDotNetSignCheckTaskVersion>
+    <!-- dotnet-emsdk dependencies -->
+    <MicrosoftNETRuntimeEmscriptenInternalVersion>$(MicrosoftNETRuntimeEmscriptenInternalPackageVersion)</MicrosoftNETRuntimeEmscriptenInternalVersion>
   </PropertyGroup>
 </Project>

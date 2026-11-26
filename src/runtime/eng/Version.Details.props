@@ -36,7 +36,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetXUnitConsoleRunnerPackageVersion>2.9.3-beta.26561.116</MicrosoftDotNetXUnitConsoleRunnerPackageVersion>
     <MicrosoftDotNetXUnitExtensionsPackageVersion>12.0.0-beta.26561.116</MicrosoftDotNetXUnitExtensionsPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>5.14.0-1.26561.116</MicrosoftNetCompilersToolsetPackageVersion>
-    <MicrosoftNETRuntimeEmscriptenInternalPackageVersion>12.0.0-alpha.1.26561.116</MicrosoftNETRuntimeEmscriptenInternalPackageVersion>
     <MicrosoftNETSdkILPackageVersion>12.0.0-alpha.1.26561.116</MicrosoftNETSdkILPackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>12.0.0-alpha.1.26561.116</MicrosoftNETCoreAppRefPackageVersion>
     <MicrosoftNETCoreILAsmPackageVersion>12.0.0-alpha.1.26561.116</MicrosoftNETCoreILAsmPackageVersion>
@@ -49,6 +48,8 @@ This file should be imported by eng/Versions.props
     <SystemReflectionMetadataPackageVersion>12.0.0-alpha.1.26561.116</SystemReflectionMetadataPackageVersion>
     <SystemReflectionMetadataLoadContextPackageVersion>12.0.0-alpha.1.26561.116</SystemReflectionMetadataLoadContextPackageVersion>
     <SystemTextJsonPackageVersion>12.0.0-alpha.1.26561.116</SystemTextJsonPackageVersion>
+    <!-- dotnet-emsdk dependencies -->
+    <MicrosoftNETRuntimeEmscriptenInternalPackageVersion>12.0.0-alpha.1.26575.1</MicrosoftNETRuntimeEmscriptenInternalPackageVersion>
     <!-- dotnet-icu dependencies -->
     <MicrosoftNETCoreRuntimeICUTransportPackageVersion>12.0.0-alpha.1.26569.1</MicrosoftNETCoreRuntimeICUTransportPackageVersion>
     <!-- dotnet-llvm-project dependencies -->
@@ -153,7 +154,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetXUnitConsoleRunnerVersion>$(MicrosoftDotNetXUnitConsoleRunnerPackageVersion)</MicrosoftDotNetXUnitConsoleRunnerVersion>
     <MicrosoftDotNetXUnitExtensionsVersion>$(MicrosoftDotNetXUnitExtensionsPackageVersion)</MicrosoftDotNetXUnitExtensionsVersion>
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNetCompilersToolsetPackageVersion)</MicrosoftNetCompilersToolsetVersion>
-    <MicrosoftNETRuntimeEmscriptenInternalVersion>$(MicrosoftNETRuntimeEmscriptenInternalPackageVersion)</MicrosoftNETRuntimeEmscriptenInternalVersion>
     <MicrosoftNETSdkILVersion>$(MicrosoftNETSdkILPackageVersion)</MicrosoftNETSdkILVersion>
     <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>
     <MicrosoftNETCoreILAsmVersion>$(MicrosoftNETCoreILAsmPackageVersion)</MicrosoftNETCoreILAsmVersion>
@@ -166,6 +166,8 @@ This file should be imported by eng/Versions.props
     <SystemReflectionMetadataVersion>$(SystemReflectionMetadataPackageVersion)</SystemReflectionMetadataVersion>
     <SystemReflectionMetadataLoadContextVersion>$(SystemReflectionMetadataLoadContextPackageVersion)</SystemReflectionMetadataLoadContextVersion>
     <SystemTextJsonVersion>$(SystemTextJsonPackageVersion)</SystemTextJsonVersion>
+    <!-- dotnet-emsdk dependencies -->
+    <MicrosoftNETRuntimeEmscriptenInternalVersion>$(MicrosoftNETRuntimeEmscriptenInternalPackageVersion)</MicrosoftNETRuntimeEmscriptenInternalVersion>
     <!-- dotnet-icu dependencies -->
     <MicrosoftNETCoreRuntimeICUTransportVersion>$(MicrosoftNETCoreRuntimeICUTransportPackageVersion)</MicrosoftNETCoreRuntimeICUTransportVersion>
     <!-- dotnet-llvm-project dependencies -->

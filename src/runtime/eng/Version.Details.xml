@@ -45,9 +45,9 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>60864f1c9f7bc774d1c191ef6f1630e81607cd62</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Runtime.Emscripten.Internal" Version="12.0.0-alpha.1.26561.116">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>60864f1c9f7bc774d1c191ef6f1630e81607cd62</Sha>
+    <Dependency Name="Microsoft.NET.Runtime.Emscripten.Internal" Version="12.0.0-alpha.1.26575.1">
+      <Uri>https://github.com/dotnet/emsdk</Uri>
+      <Sha>60635abfeb24c06e22b0e1009bc78ca97ed3f65a</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
