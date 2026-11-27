@@ -50,7 +50,7 @@ Windows SDK and Runtime installers are complete packages and do not require sepa
 
 #### SDK Packages
 
-Download the appropriate SDK package for your distribution:
+Download the appropriate SDK package for your distribution from the builds table above:
 - **Debian/Ubuntu:** `dotnet-sdk-<version>-x64.deb`
 - **Red Hat/Fedora/CentOS:** `dotnet-sdk-<version>-x64.rpm`
 
@@ -88,22 +88,24 @@ These packages can be downloaded from:
 
 **Runtime packages:**
 ```
-https://ci.dot.net/public/Runtime/<version>/dotnet-host-<version>-x64.<ext>
-https://ci.dot.net/public/Runtime/<version>/dotnet-targeting-pack-<version>-x64.<ext>
-https://ci.dot.net/public/Runtime/<version>/dotnet-hostfxr-<version>-x64.<ext>
-https://ci.dot.net/public/Runtime/<version>/dotnet-apphost-pack-<version>-x64.<ext>
-https://ci.dot.net/public/Runtime/<version>/dotnet-runtime-deps-<version>-x64.<ext>
-https://ci.dot.net/public/Runtime/<version>/dotnet-runtime-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<runtime_version>/dotnet-host-<runtime_version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<runtime_version>/dotnet-targeting-pack-<runtime_version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<runtime_version>/dotnet-hostfxr-<runtime_version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<runtime_version>/dotnet-apphost-pack-<runtime_version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<runtime_version>/dotnet-runtime-deps-<runtime_version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<runtime_version>/dotnet-runtime-<runtime_version>-x64.<ext>
 ```
 
 **ASP.NET Core packages:**
 ```
-https://ci.dot.net/public/aspnetcore/Runtime/<version>/aspnetcore-targeting-pack-<version>-x64.<ext>
-https://ci.dot.net/public/aspnetcore/Runtime/<version>/aspnetcore-runtime-<version>-x64.<ext>
+https://ci.dot.net/public/aspnetcore/Runtime/<runtime_version>/aspnetcore-targeting-pack-<runtime_version>-x64.<ext>
+https://ci.dot.net/public/aspnetcore/Runtime/<runtime_version>/aspnetcore-runtime-<runtime_version>-x64.<ext>
 ```
 
 Where:
-- `<version>` is the same for both SDK and runtime (can be obtained from the version badge links or productCommit files in the table above). ASP.NET Core packages use runtime version numbering (single or double digit build number). If you are not sure what version to use, you can obtain it by observing Dependencies section of SDK package using `dpkg-deb -I dotnet-sdk-x64.deb` or `rpm -qRp dotnet-sdk-x64.rpm`.
+- `<runtime_version>` can be obtained from downloaded SDK package:
+  - **For Debian/Ubuntu (.deb)**: by observing `dotnet-runtime` package version in `Depends` section of `dpkg-deb -I dotnet-sdk-<version>-x64.deb | tr '~' '-'` command output.
+  - **For Red Hat/Fedora/CentOS (.rpm)**: by observing `dotnet-runtime` package version in `rpm -qRp dotnet-sdk-<version>-x64.rpm | tr '~' '-'` command output
 - `<ext>` is either `deb` for Debian/Ubuntu or `rpm` for Red Hat/Fedora/CentOS
 
 #### Installation Order
