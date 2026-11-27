@@ -88,24 +88,22 @@ These packages can be downloaded from:
 
 **Runtime packages:**
 ```
-https://ci.dot.net/public/Runtime/<runtime_version>/dotnet-host-<runtime_version>-x64.<ext>
-https://ci.dot.net/public/Runtime/<runtime_version>/dotnet-targeting-pack-<runtime_version>-x64.<ext>
-https://ci.dot.net/public/Runtime/<runtime_version>/dotnet-hostfxr-<runtime_version>-x64.<ext>
-https://ci.dot.net/public/Runtime/<runtime_version>/dotnet-apphost-pack-<runtime_version>-x64.<ext>
-https://ci.dot.net/public/Runtime/<runtime_version>/dotnet-runtime-deps-<runtime_version>-x64.<ext>
-https://ci.dot.net/public/Runtime/<runtime_version>/dotnet-runtime-<runtime_version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-host-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-targeting-pack-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-hostfxr-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-apphost-pack-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-runtime-deps-<version>-x64.<ext>
+https://ci.dot.net/public/Runtime/<version>/dotnet-runtime-<version>-x64.<ext>
 ```
 
 **ASP.NET Core packages:**
 ```
-https://ci.dot.net/public/aspnetcore/Runtime/<runtime_version>/aspnetcore-targeting-pack-<runtime_version>-x64.<ext>
-https://ci.dot.net/public/aspnetcore/Runtime/<runtime_version>/aspnetcore-runtime-<runtime_version>-x64.<ext>
+https://ci.dot.net/public/aspnetcore/Runtime/<version>/aspnetcore-targeting-pack-<version>-x64.<ext>
+https://ci.dot.net/public/aspnetcore/Runtime/<version>/aspnetcore-runtime-<version>-x64.<ext>
 ```
 
 Where:
-- `<runtime_version>` can be obtained from downloaded SDK package:
-  - **For Debian/Ubuntu (.deb)**: by observing `dotnet-runtime` package version in `Depends` section of `dpkg-deb -I dotnet-sdk-<version>-x64.deb | tr '~' '-'` command output.
-  - **For Red Hat/Fedora/CentOS (.rpm)**: by observing `dotnet-runtime` package version in `rpm -qRp dotnet-sdk-<version>-x64.rpm | tr '~' '-'` command output
+- `<version>` can be obtained from productCommit files downloadable by clicking badge in the builds table above
 - `<ext>` is either `deb` for Debian/Ubuntu or `rpm` for Red Hat/Fedora/CentOS
 
 #### Installation Order
