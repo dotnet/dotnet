@@ -50,7 +50,7 @@ Windows SDK and Runtime installers are complete packages and do not require sepa
 
 #### SDK Packages
 
-Download the appropriate SDK package for your distribution:
+Download the appropriate SDK package for your distribution from the builds table above:
 - **Debian/Ubuntu:** `dotnet-sdk-<version>-x64.deb`
 - **Red Hat/Fedora/CentOS:** `dotnet-sdk-<version>-x64.rpm`
 
@@ -103,7 +103,7 @@ https://ci.dot.net/public/aspnetcore/Runtime/<version>/aspnetcore-runtime-<versi
 ```
 
 Where:
-- `<version>` is the same for both SDK and runtime (can be obtained from the version badge links or productCommit files in the table above)
+- `<version>` can be obtained from productCommit files downloadable by clicking badge in the builds table above
 - `<ext>` is either `deb` for Debian/Ubuntu or `rpm` for Red Hat/Fedora/CentOS
 
 #### Installation Order
