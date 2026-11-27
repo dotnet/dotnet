@@ -1,17 +1,32 @@
 <!--
   Helper project used by workloads.csproj (_GetPublishedEmsdkWorkloadMsis) to download the emsdk workload MSI packages
-  if they were already published by a previous build. It is restored out of proc so a missing package isn't a build error.
-  The repo's Directory.Build.* and Directory.Packages.props imports are disabled via global properties by the caller.
+  if they were already published by a previous build. The repo's Directory.Build.* and Directory.Packages.props imports
+  are disabled via global properties by the caller.
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <NuGetAudit>false</NuGetAudit>
+    <!-- Package not found (i.e. not published yet) isn't an error, any other restore failure is. -->
+    <MSBuildTreatWarningsAsErrors>true</MSBuildTreatWarningsAsErrors>
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);NU1101;NU1102</MSBuildWarningsAsMessages>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- The package IDs are passed '|'-separated since ';' and ',' separate properties on the MSBuild command line. -->
+    <!-- The package IDs are passed '|'-separated since ';' separates global properties. -->
     <PackageDownload Include="$([MSBuild]::Unescape($(EmsdkMsiPackageIds.Replace('|', ';'))))" Version="[$(EmsdkMsiPackageVersion)]" />
   </ItemGroup>
+
+  <!--
+    Same as NuGet's Restore target, but with ContinueOnError so that the errors logged by the RestoreTask are converted to
+    warnings, which lets us turn NU1101/NU1102 into messages above.
+  -->
+  <Target Name="TryRestore" DependsOnTargets="_GenerateRestoreGraph">
+    <RestoreTask RestoreGraphItems="@(_RestoreGraphEntry)"
+                 RestoreIgnoreFailedSources="$(RestoreIgnoreFailedSources)"
+                 Interactive="$(NuGetInteractive)"
+                 ContinueOnError="WarnAndContinue" />
+  </Target>
 
 </Project>
