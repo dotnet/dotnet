@@ -35,7 +35,7 @@ jobs:
           rm libmsquic*
 
       - name: Restore solution
-        run: ./build.sh --restore --excludecibinarylog --warnaserror false /p:BuildAllConfigurations=true /p:DotNetBuildAllRuntimePacks=true /p:DotNetBuildTests=true
+        run: ./build.sh --restore --excludecibinarylog --warnaserror false /p:BuildAllConfigurations=true /p:DotNetBuildTests=true
 
       - name: Put dotnet on the path
         run: echo "PATH=$PWD/.dotnet:$PATH" >> $GITHUB_ENV

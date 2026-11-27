@@ -79,8 +79,8 @@ public class FrameworkTests : AcceptanceTestBase
 
         InvokeVsTest(arguments);
 
-        // When this test runs it provides an incorrect desired framework for the run. E.g. the dll is actually net11.0
-        // but we request to run as .NET Framework 4.0. On windows this has predictable results, for net11.0 dll we fail
+        // When this test runs it provides an incorrect desired framework for the run. E.g. the dll is actually net12.0
+        // but we request to run as .NET Framework 4.0. On windows this has predictable results, for net12.0 dll we fail
         // to load it into .NET Framework testhost.exe, and fail with "No test is available". For .NET Framework dll, we
         // just log a warning saying that we provided .NET Framework 481 dlls (or whatever the current tfm for test dlls is),
         // but the settings requested .NET Framework 4.0. The test will still run because .NET Framework is compatible, and in reality
@@ -93,7 +93,7 @@ public class FrameworkTests : AcceptanceTestBase
         {
             StdErrorContains("Running .NET Framework tests is supported on Windows only");
         }
-        else if (runnerInfo.TargetFramework.Contains("net11"))
+        else if (runnerInfo.TargetFramework.Contains("net12"))
         {
             StdOutputContains("No test is available");
         }

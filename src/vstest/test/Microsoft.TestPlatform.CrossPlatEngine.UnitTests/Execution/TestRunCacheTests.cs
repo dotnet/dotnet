@@ -27,7 +27,7 @@ public class TestRunCacheBehaviors
         var tr = GetTestResult(0);
         cache.OnTestStarted(tr.TestCase);
 
-        CollectionAssert.Contains(cache.InProgressTests.ToList(), tr.TestCase);
+        Assert.Contains(tr.TestCase, cache.InProgressTests);
     }
 
     [TestMethod]
@@ -113,7 +113,7 @@ public class TestRunCacheBehaviors
         {
             var tr = GetTestResult(i);
             cache.OnNewTestResult(tr);
-            CollectionAssert.Contains(cache.TestResults.ToList(), tr);
+            Assert.Contains(tr, cache.TestResults);
         }
     }
 
@@ -314,7 +314,7 @@ public class TestRunCacheBehaviors
         }
 
         var testResultsInCache = cache.GetLastChunk();
-        CollectionAssert.AreEqual(pushedTestResults, testResultsInCache.ToList());
+        Assert.AreSequenceEqual(pushedTestResults, testResultsInCache.ToList());
     }
 
     [TestMethod]

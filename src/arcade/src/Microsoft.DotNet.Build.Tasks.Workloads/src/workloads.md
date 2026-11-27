@@ -4,6 +4,8 @@
 
 An MSBuild task used to create workload artifacts including MSIs and SWIX projects for Visual Studio Installer. It processes workload manifest packages to produce per-platform MSI installers for workload packs and manifests, NuGet package wrapper projects, and SWIX authoring for Visual Studio insertion.
 
+Installer platforms are selected from each package's SDK feature band. .NET 12 and later generate x64 and ARM64 installers only; earlier feature bands also generate x86 installers. This applies to manifests, workload sets, packs, pack groups, and their Visual Studio insertion authoring. It does not remove support for targeting x86 applications from a supported SDK host.
+
 ### Input Parameters
 
 | Parameter | Type | Required | Description |
@@ -19,6 +21,7 @@ An MSBuild task used to create workload artifacts including MSIs and SWIX projec
 | `SkipRedundantMsiCreation` | `bool` | No | When `true`, skips creating MSIs for workload packs that are part of a pack group. |
 | `DisableParallelPackageGroupProcessing` | `bool` | No | When `true`, workload pack groups are built sequentially instead of in parallel. |
 | `AllowMissingPacks` | `bool` | No | When `true`, allows VS workload generation to proceed if any nupkgs declared in the manifest are not found on disk. Default: `false`. |
+| `PrebuiltPackMsiPackages` | `ITaskItem[]` | No | Previously published MSI payload packages (`<pack id>.Msi.<platform>`). For matching packs and platforms, the MSI in the package is used for the SWIX project instead of building a new one, and it is not included in `Msis`. Not supported with `CreateWorkloadPackGroups`. |
 
 #### Inherited from VisualStudioWorkloadTaskBase
 

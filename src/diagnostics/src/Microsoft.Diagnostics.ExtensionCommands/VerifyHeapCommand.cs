@@ -13,26 +13,31 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = CommandName, Aliases = new[] { "VerifyHeap" }, Help = "Searches the managed heap for memory corruption..")]
     public class VerifyHeapCommand : ClrRuntimeCommandBase
     {
+        public VerifyHeapCommand(IServiceProvider services, IMemoryService memoryService)
+            : base(services)
+        {
+            MemoryService = memoryService;
+        }
+
         private const string CommandName = "verifyheap";
 
         private int _totalObjects;
 
-        [ServiceImport]
-        public IMemoryService MemoryService { get; set; }
+        public IMemoryService MemoryService { get; }
 
-        [Option(Name = "-heap")]
+        [Option<int>(Name = "-heap")]
         public int GCHeap { get; set; } = -1;
 
-        [Option(Name = "-segment")]
+        [Option<string>(Name = "-segment")]
         public string Segment { get; set; }
 
-        [Option(Name = "-ignoreGCState", Help = "Ignore the GC's marker that the heap is not walkable (will generate lots of false positive errors).")]
+        [Option<bool>(Name = "-ignoreGCState", Help = "Ignore the GC's marker that the heap is not walkable (will generate lots of false positive errors).")]
         public bool IgnoreGCState { get; set; }
 
-        [Option(Name = "-noprogress", Help = "Suppress periodic progress output during heap scanning.")]
+        [Option<bool>(Name = "-noprogress", Help = "Suppress periodic progress output during heap scanning.")]
         public bool NoProgress { get; set; }
 
-        [Argument(Help ="Optional memory ranges in the form of: [Start [End]]")]
+        [Argument<string[]>(Help ="Optional memory ranges in the form of: [Start [End]]")]
         public string[] MemoryRange { get; set; }
 
         public override void Invoke()

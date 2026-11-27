@@ -167,7 +167,7 @@ public class RunTests : AcceptanceTestBase
 
         // Assert
         Assert.HasCount(6, _runEventHandler.TestResults, _runEventHandler.ToString());
-        Assert.HasCount(0, _runEventHandler.Metrics!, _runEventHandler.ToString());
+        Assert.IsEmpty(_runEventHandler.Metrics!, _runEventHandler.ToString());
     }
 
     [TestMethod]

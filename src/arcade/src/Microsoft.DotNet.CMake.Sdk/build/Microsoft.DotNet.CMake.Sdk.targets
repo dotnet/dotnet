@@ -8,6 +8,7 @@
 
   <UsingTask TaskName="Microsoft.DotNet.CMake.Sdk.CreateCMakeFileApiQuery" AssemblyFile="$(MicrosoftDotNetCMakeSdkTaskAssembly)" Runtime="NET" />
   <UsingTask TaskName="Microsoft.DotNet.CMake.Sdk.GetCMakeArtifactsFromFileApi" AssemblyFile="$(MicrosoftDotNetCMakeSdkTaskAssembly)" Runtime="NET" />
+  <UsingTask TaskName="Microsoft.DotNet.CMake.Sdk.ExecWithMutex" AssemblyFile="$(MicrosoftDotNetCMakeSdkTaskAssembly)" Runtime="NET" />
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
@@ -203,10 +204,13 @@
       <CMakeBuildTarget Condition="'$(CMakeBuildTarget)' == ''">install</CMakeBuildTarget>
       <_CMakeParallelizationArgument Condition="'$(CMakeParallelization)' != ''">-g $(CMakeParallelization)</_CMakeParallelizationArgument>
     </PropertyGroup>
+    <ItemGroup>
+      <_CMakeBuildTargets Include="$(CMakeBuildTarget)" />
+    </ItemGroup>
 
     <PropertyGroup>
       <CMakeBuildScript>
-      cmake --build &quot;$(CMakeOutputDir)&quot; --target $(CMakeBuildTarget) $(_CMakeParallelizationArgument) --config $(Configuration) -- @(CMakeNativeToolArguments->'%(Identity)',' ')
+      cmake --build &quot;$(CMakeOutputDir)&quot; --target @(_CMakeBuildTargets->'%(Identity)',' ') $(_CMakeParallelizationArgument) --config $(Configuration) -- @(CMakeNativeToolArguments->'%(Identity)',' ')
       </CMakeBuildScript>
     </PropertyGroup>
   </Target>
@@ -219,9 +223,17 @@
 
   <Target Name="Configure"
     DependsOnTargets="GetConfigScript;CreateFileApiQuery">
-    <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="
+    <Hash ItemsToHash="@(CMakeDefines->'-D%(Identity)=%(Value)');@(CMakeArguments)" IgnoreCase="false">
+      <Output TaskParameter="HashResult" PropertyName="_CMakeConfigureFingerprint" />
+    </Hash>
+    <ExecWithMutex WorkingDirectory="$(MSBuildProjectDirectory)"
+      MutexName="$(CMakeOutputDir)"
+      Command="
       $(CMakeCompilerSearchScript)
       $(CMakeConfigScript)" />
+    <WriteLinesToFile File="$(CMakeOutputDir)\.cmake\configure.fingerprint"
+                      Lines="$(_CMakeConfigureFingerprint)"
+                      Overwrite="true" />
   </Target>
 
   <Target Name="CoreCompile" DependsOnTargets="Configure;GetBuildScript">
@@ -229,7 +241,19 @@
       <!-- Don't set IntermediateAssembly since this is not produced -->
       <IntermediateAssembly Remove="@(IntermediateAssembly)" />
     </ItemGroup>
-    <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="
+    <Hash ItemsToHash="@(CMakeDefines->'-D%(Identity)=%(Value)');@(CMakeArguments)" IgnoreCase="false">
+      <Output TaskParameter="HashResult" PropertyName="_CMakeBuildFingerprint" />
+    </Hash>
+    <Error Condition="!Exists('$(CMakeOutputDir)\.cmake\configure.fingerprint')"
+           Text="The CMake configure fingerprint is missing. Run Configure before building." />
+    <ReadLinesFromFile File="$(CMakeOutputDir)\.cmake\configure.fingerprint">
+      <Output TaskParameter="Lines" PropertyName="_CMakeStoredConfigureFingerprint" />
+    </ReadLinesFromFile>
+    <Error Condition="'$(_CMakeStoredConfigureFingerprint)' != '$(_CMakeBuildFingerprint)'"
+           Text="CMakeDefines or CMakeArguments differ from the configured build tree. Use a separate CMakeOutputDir for different CMake configurations." />
+    <ExecWithMutex WorkingDirectory="$(MSBuildProjectDirectory)"
+      MutexName="$(CMakeOutputDir)"
+      Command="
       $(CMakeCompilerSearchScript)
       $(CMakeBuildScript)" />
   </Target>

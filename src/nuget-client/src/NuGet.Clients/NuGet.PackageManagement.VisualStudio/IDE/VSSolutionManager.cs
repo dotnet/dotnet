@@ -66,7 +66,7 @@ namespace NuGet.PackageManagement.VisualStudio
         private readonly IVsProjectAdapterProvider _vsProjectAdapterProvider;
         private readonly ILogger _logger;
         private readonly Lazy<ISettings> _settings;
-        private readonly INuGetFeatureFlagService _featureFlagService;
+        private readonly INuGetFeatureFlagInitializer _featureFlagInitializer;
         private readonly Microsoft.VisualStudio.Threading.AsyncLazy<DTE> _dte;
         private readonly Microsoft.VisualStudio.Threading.AsyncLazy<IVsSolution> _asyncVSSolution;
 
@@ -140,7 +140,7 @@ namespace NuGet.PackageManagement.VisualStudio
             [Import("VisualStudioActivityLogger")]
             Common.ILogger logger,
             Lazy<ISettings> settings,
-            INuGetFeatureFlagService featureFlagService,
+            INuGetFeatureFlagInitializer featureFlagInitializer,
             JoinableTaskContext joinableTaskContext,
             Lazy<IProjectJsonToPackageReferenceMigratorExt> projectJsonMigrator,
             Lazy<INuGetUILogger> outputConsoleLogger)
@@ -151,7 +151,7 @@ namespace NuGet.PackageManagement.VisualStudio
                    vsProjectAdapterProvider,
                    logger,
                    settings,
-                   featureFlagService,
+                   featureFlagInitializer,
                    joinableTaskContext,
                    projectJsonMigrator,
                    outputConsoleLogger)
@@ -166,7 +166,7 @@ namespace NuGet.PackageManagement.VisualStudio
             IVsProjectAdapterProvider vsProjectAdapterProvider,
             ILogger logger,
             Lazy<ISettings> settings,
-            INuGetFeatureFlagService featureFlagService,
+            INuGetFeatureFlagInitializer featureFlagInitializer,
             JoinableTaskContext joinableTaskContext,
             Lazy<IProjectJsonToPackageReferenceMigratorExt> projectJsonMigrator,
             Lazy<INuGetUILogger> outputConsoleLogger)
@@ -178,7 +178,7 @@ namespace NuGet.PackageManagement.VisualStudio
             Assumes.Present(vsProjectAdapterProvider);
             Assumes.Present(logger);
             Assumes.Present(settings);
-            Assumes.Present(featureFlagService);
+            Assumes.Present(featureFlagInitializer);
             Assumes.Present(joinableTaskContext);
             Assumes.Present(projectJsonMigrator);
             Assumes.Present(outputConsoleLogger);
@@ -190,7 +190,7 @@ namespace NuGet.PackageManagement.VisualStudio
             _vsProjectAdapterProvider = vsProjectAdapterProvider;
             _logger = logger;
             _settings = settings;
-            _featureFlagService = featureFlagService;
+            _featureFlagInitializer = featureFlagInitializer;
             _initLock = new NuGetLockService(joinableTaskContext);
             _projectJsonMigrator = projectJsonMigrator;
             _outputConsoleLogger = outputConsoleLogger;
@@ -925,6 +925,10 @@ namespace NuGet.PackageManagement.VisualStudio
                     await EnsureNuGetAndVsProjectAdapterCacheAsync();
                     return;
                 }
+
+                // MEF package installation APIs can use projects without loading NuGetPackage.
+                // Wait until shared feature switches have been resolved before continuing.
+                await _featureFlagInitializer.InitializeAsync();
 
                 // Ensure all initialization finished when needed, it still runs as async and prevents _initialized set true too early.
                 // Setting '_initialized = true' too early caused random timing bug.

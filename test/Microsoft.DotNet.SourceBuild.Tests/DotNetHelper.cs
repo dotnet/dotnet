@@ -298,7 +298,8 @@ internal partial class DotNetHelper
                 {
                     _outputHelper.WriteLine("Detected app has started. Sending web request to validate...");
 
-                    using HttpClient httpClient = new();
+                    // This runs on the thread that reads the app's output, so bound it well below ExecuteWeb's timeout.
+                    using HttpClient httpClient = new() { Timeout = TimeSpan.FromSeconds(15) };
                     string url = $"http://localhost:{_port}";
                     if (_template == DotNetTemplate.WebApi)
                     {

@@ -22,8 +22,8 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 [TestCategory("Windows-Review")]
 public class BlameDataCollectorTests : AcceptanceTestBase
 {
-    public const string NETCOREANDFX = "net481;net11.0";
-    public const string NET = "net11.0";
+    public const string NETCOREANDFX = "net481;net12.0";
+    public const string NET = "net12.0";
     private readonly string _procDumpPath;
 
     public BlameDataCollectorTests()
@@ -39,7 +39,6 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
     [TestMatrix(testHost: Net)]
     public void BlameDataCollectorShouldGiveCorrectTestCaseName(RunnerInfo runnerInfo)
     {
@@ -54,7 +53,6 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
     [TestMatrix(console: NetFx, testHost: NetFx)]
     [TestMatrix(console: Net, testHost: Net)]
     public void BlameDataCollectorShouldOutputDumpFile(RunnerInfo runnerInfo)
@@ -78,7 +76,6 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
     [TestMatrix(console: Net, testHost: Net)]
     public void BlameDataCollectorShouldNotOutputDumpFileWhenNoCrashOccurs(RunnerInfo runnerInfo)
     {
@@ -101,7 +98,6 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
     // This tests .net runner and .net framework runner, together with .net framework testhost.
     [TestMatrix(testHost: NetFx)]
     public void BlameDataCollectorShouldOutputDumpFileWhenNoCrashOccursButCollectAlwaysIsEnabled(RunnerInfo runnerInfo)
@@ -250,7 +246,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
         // after TestHostLaunched, which never fires here.
         SetTestEnvironment(_testEnvironment, runnerInfo);
         const string testAssetProjectName = "SimpleTestProjectMessedUpTargetFramework";
-        var assemblyPath = GetTestDllForFramework(testAssetProjectName + ".dll", Core11TargetFramework);
+        var assemblyPath = GetTestDllForFramework(testAssetProjectName + ".dll", Core12TargetFramework);
 
         // Make testhost fail immediately by targeting a non-existent runtime.
         var runtimeConfigJson = Path.Combine(Path.GetDirectoryName(assemblyPath)!, testAssetProjectName + ".runtimeconfig.json");
@@ -281,7 +277,6 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
     [DoNotParallelize] // Installs/uninstalls procdump as machine-wide postmortem debugger via HKLM registry.
     [TestMatrix(testHost: NetFx)]
     [TestMatrix(testHost: Net)]

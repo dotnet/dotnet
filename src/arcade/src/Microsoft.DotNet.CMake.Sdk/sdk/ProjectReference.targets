@@ -11,10 +11,18 @@
     <NativeProjectReference>
       <CMakeProject></CMakeProject>
     </NativeProjectReference>
+    <CMakeProjectReference>
+      <CMakeTargets></CMakeTargets>
+      <AdditionalProperties></AdditionalProperties>
+    </CMakeProjectReference>
   </ItemDefinitionGroup>
   
   <Target Name="_RestoreNativeProjectReferences" DependsOnTargets="NormalizeNativeProjectReferences" BeforeTargets="_GenerateRestoreGraphProjectEntry">
     <MSBuild Projects="%(NativeProjectReferenceNormalized.CMakeProject)" Targets="Restore" RemoveProperties="RestoreGraphProjectInput" />
+  </Target>
+
+  <Target Name="_RestoreCMakeProjectReferences" DependsOnTargets="NormalizeCMakeProjectReferences" BeforeTargets="_GenerateRestoreGraphProjectEntry">
+    <MSBuild Projects="@(CMakeProjectReferenceNormalized)" Targets="Restore" RemoveProperties="RestoreGraphProjectInput" />
   </Target>
 
   <Target Name="NormalizeNativeProjectReferences"
@@ -45,20 +53,46 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="ConsolidateNativeProjectReference"
-          BeforeTargets="Build" >
-
+  <Target Name="NormalizeCMakeProjectReferences"
+          Condition="'@(CMakeProjectReference)' != ''"
+          BeforeTargets="ConsolidateNativeProjectReference">
     <ItemGroup>
-      <_NativeProjectReferenceToBuild Include="%(NativeProjectReferenceNormalized.CMakeProject)"
-                                      Condition="'%(NativeProjectReferenceNormalized.BuildNative)' == 'true'"
-                                      AdditionalProperties="%(NativeProjectReferenceNormalized.AdditionalProperties)" />
+      <CMakeProjectReferenceNormalized Include="@(CMakeProjectReference -> '%(FullPath)')"
+                                       CMakeTargets="%(CMakeProjectReference.CMakeTargets)"
+                                       AdditionalProperties="%(CMakeProjectReference.AdditionalProperties)" />
     </ItemGroup>
 
-    <RemoveDuplicates Inputs="@(_NativeProjectReferenceToBuild)">
-      <Output TaskParameter="Filtered" ItemName="_UniqueNativeProjectReferenceToBuild" />
+    <Error Condition="!Exists('%(CMakeProjectReferenceNormalized.Identity)')"
+           Text="The CMake SDK project at '%(CMakeProjectReferenceNormalized.Identity)' does not exist." />
+    <Error Condition="'%(CMakeProjectReferenceNormalized.CMakeTargets)' == ''"
+           Text="The CMakeTargets metadata must specify at least one target for the CMake project reference to '%(CMakeProjectReferenceNormalized.Identity)'." />
+  </Target>
+
+  <Target Name="ConsolidateNativeProjectReference"
+          DependsOnTargets="NormalizeCMakeProjectReferences"
+          BeforeTargets="Build">
+
+    <ItemGroup>
+      <_NativeProjectsToBuild Include="%(NativeProjectReferenceNormalized.CMakeProject)"
+                              Condition="'%(NativeProjectReferenceNormalized.BuildNative)' == 'true'">
+        <AdditionalProperties>%(NativeProjectReferenceNormalized.AdditionalProperties)</AdditionalProperties>
+      </_NativeProjectsToBuild>
+      <_CMakeProjectsToBuild Include="%(CMakeProjectReferenceNormalized.Identity)">
+        <CMakeBuildTarget>%(CMakeProjectReferenceNormalized.CMakeTargets)</CMakeBuildTarget>
+        <AdditionalProperties>%(CMakeProjectReferenceNormalized.AdditionalProperties)</AdditionalProperties>
+      </_CMakeProjectsToBuild>
+    </ItemGroup>
+
+    <RemoveDuplicates Inputs="@(_NativeProjectsToBuild)">
+      <Output TaskParameter="Filtered" ItemName="_UniqueNativeProjectsToBuild" />
     </RemoveDuplicates>
-    
-    <MSBuild Projects="@(_UniqueNativeProjectReferenceToBuild)" />
+
+    <MSBuild Projects="@(_UniqueNativeProjectsToBuild)"
+             Properties="%(AdditionalProperties)"
+             BuildInParallel="false" />
+    <MSBuild Projects="@(_CMakeProjectsToBuild)"
+             Properties="CMakeBuildTarget=$([MSBuild]::Escape('%(_CMakeProjectsToBuild.CMakeBuildTarget)'));%(_CMakeProjectsToBuild.AdditionalProperties)"
+             BuildInParallel="false" />
 
     <Message Text= "Full native project references are :%(NativeProjectReferenceNormalized.Identity)" />
 
@@ -66,8 +100,16 @@
              Targets="CopyNativeProjectBinariesFromFileApi"
              Properties="ReferencedCMakeLists=%(NativeProjectReferenceNormalized.Identity);
                          ReferencedCMakeProject=%(NativeProjectReferenceNormalized.CMakeProject);
+                         ReferencedNativeBuild=%(NativeProjectReferenceNormalized.BuildNative);
                          %(NativeProjectReferenceNormalized.AdditionalProperties)"
              Condition="'@(NativeProjectReference)' != ''" />
+
+    <MSBuild Projects="$(MSBuildProjectFile)"
+             Targets="CopyNativeProjectBinariesFromFileApi"
+             Properties="ReferencedCMakeProject=%(CMakeProjectReferenceNormalized.Identity);
+                         ReferencedCMakeTargets=$([MSBuild]::Escape('%(CMakeProjectReferenceNormalized.CMakeTargets)'));
+                         %(CMakeProjectReferenceNormalized.AdditionalProperties)"
+             Condition="'@(CMakeProjectReference)' != ''" />
 
   </Target>
 
@@ -86,12 +128,16 @@
 
     <PropertyGroup>
       <_SourceDirectory>$([System.IO.Path]::GetDirectoryName($(ReferencedCMakeLists)))</_SourceDirectory>
+      <_SynchronizeCMakeFileApi>false</_SynchronizeCMakeFileApi>
+      <_SynchronizeCMakeFileApi Condition="'$(ReferencedCMakeTargets)' != '' or '$(ReferencedNativeBuild)' == 'true'">true</_SynchronizeCMakeFileApi>
     </PropertyGroup>
 
     <!-- Get artifacts from File API -->
     <GetCMakeArtifactsFromFileApi 
       CMakeOutputDir="$(_CMakeOutputDir)"
       SourceDirectory="$(_SourceDirectory)"
+      CMakeTargets="$(ReferencedCMakeTargets)"
+      SynchronizeWithCMakeBuild="$(_SynchronizeCMakeFileApi)"
       Configuration="$(_Configuration)">
       <Output TaskParameter="Artifacts" ItemName="NativeProjectBinaries" />
     </GetCMakeArtifactsFromFileApi>

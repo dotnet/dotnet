@@ -98,7 +98,6 @@ public class BaseRunTestsTests
     [TestCleanup]
     public void Cleanup()
     {
-        _runTestsInstance.Dispose();
         TestExecutorExtensionManager.Destroy();
         TestPluginCacheHelper.ResetExtensionsCache();
     }
@@ -465,7 +464,7 @@ public class BaseRunTestsTests
         _runTestsInstance.RunTests();
 
         var expectedUris = new string[] { BaseRunTestsExecutorUri.ToLower(CultureInfo.InvariantCulture) };
-        CollectionAssert.AreEqual(expectedUris, _runTestsInstance.GetExecutorUrisThatRanTests.ToArray());
+        Assert.AreSequenceEqual(expectedUris, _runTestsInstance.GetExecutorUrisThatRanTests.ToArray());
     }
 
     [TestMethod]
@@ -529,7 +528,7 @@ public class BaseRunTestsTests
         _runTestsInstance.RunTests();
 
         var expectedUris = new string[] { BaseRunTestsExecutorUri.ToLower(CultureInfo.InvariantCulture) };
-        CollectionAssert.AreEqual(expectedUris, _runTestsInstance.GetExecutorUrisThatRanTests.ToArray());
+        Assert.AreSequenceEqual(expectedUris, _runTestsInstance.GetExecutorUrisThatRanTests.ToArray());
     }
 
     [TestMethod]
@@ -555,7 +554,7 @@ public class BaseRunTestsTests
         _runTestsInstance.RunTests();
 
         var expectedUris = new string[] { BadBaseRunTestsExecutorUri.ToLower(CultureInfo.InvariantCulture), BaseRunTestsExecutorUri.ToLower(CultureInfo.InvariantCulture) };
-        CollectionAssert.AreEqual(expectedUris, _runTestsInstance.GetExecutorUrisThatRanTests.ToArray());
+        Assert.AreSequenceEqual(expectedUris, _runTestsInstance.GetExecutorUrisThatRanTests.ToArray());
     }
 
     [TestMethod]
@@ -576,7 +575,7 @@ public class BaseRunTestsTests
         Assert.IsNotNull(_receivedRunStatusArgs);
         Assert.AreEqual(_runTestsInstance.GetTestRunCache.TestRunStatistics.ExecutedTests, _receivedRunStatusArgs.TestRunStatistics!.ExecutedTests);
         Assert.IsNotNull(_receivedRunStatusArgs.NewTestResults);
-        Assert.IsTrue(_receivedRunStatusArgs.NewTestResults.Any());
+        Assert.IsNotEmpty(_receivedRunStatusArgs.NewTestResults);
         Assert.IsTrue(_receivedRunStatusArgs.ActiveTests == null || !_receivedRunStatusArgs.ActiveTests.Any());
 
         // Attachments
@@ -584,7 +583,17 @@ public class BaseRunTestsTests
 
         // Executor Uris
         var expectedUris = new string[] { BadBaseRunTestsExecutorUri.ToLower(CultureInfo.InvariantCulture), BaseRunTestsExecutorUri.ToLower(CultureInfo.InvariantCulture) };
-        CollectionAssert.AreEqual(expectedUris, _receivedExecutorUris!.ToArray());
+        Assert.AreSequenceEqual(expectedUris, _receivedExecutorUris!.ToArray());
+    }
+
+    [TestMethod]
+    public void RunTestsShouldDisposeFrameworkHandle()
+    {
+        SetUpTestRunEvents();
+
+        _runTestsInstance.RunTests();
+
+        Assert.ThrowsExactly<ObjectDisposedException>(() => _runTestsInstance.GetFrameworkHandle.LaunchProcessWithDebuggerAttached(null!, null, null, null));
     }
 
     [TestMethod]
@@ -609,7 +618,7 @@ public class BaseRunTestsTests
 
         // Test run changed event assertions
         Assert.IsNotNull(_receivedRunStatusArgs?.NewTestResults);
-        Assert.IsTrue(_receivedRunStatusArgs.NewTestResults.Any());
+        Assert.IsNotEmpty(_receivedRunStatusArgs.NewTestResults);
 
         // verify TC.Source is updated with package
         foreach (var tr in _receivedRunStatusArgs.NewTestResults)
@@ -630,7 +639,7 @@ public class BaseRunTestsTests
         _runTestsInstance.RunTests();
 
         Assert.IsNotNull(_receivedRunStatusArgs?.ActiveTests);
-        Assert.AreEqual(1, _receivedRunStatusArgs.ActiveTests.Count());
+        Assert.HasCount(1, _receivedRunStatusArgs.ActiveTests);
 
         foreach (var tc in _receivedRunStatusArgs.ActiveTests)
         {
@@ -649,7 +658,7 @@ public class BaseRunTestsTests
         _runTestsInstance.RunTests();
 
         Assert.IsNotNull(_receivedRunStatusArgs?.ActiveTests);
-        Assert.AreEqual(1, _receivedRunStatusArgs.ActiveTests.Count());
+        Assert.HasCount(1, _receivedRunStatusArgs.ActiveTests);
 
         _mockDataSerializer.Verify(d => d.Clone(It.IsAny<TestCase>()), Times.Exactly(2));
     }
@@ -665,7 +674,7 @@ public class BaseRunTestsTests
         _runTestsInstance.RunTests();
 
         Assert.IsNotNull(_receivedRunStatusArgs?.NewTestResults);
-        Assert.AreEqual(1, _receivedRunStatusArgs.ActiveTests!.Count());
+        Assert.HasCount(1, _receivedRunStatusArgs.ActiveTests!);
 
         _mockDataSerializer.Verify(d => d.Clone(It.IsAny<OMTestResult>()), Times.Exactly(2));
     }
@@ -750,7 +759,7 @@ public class BaseRunTestsTests
 
         // Assert.
         Assert.IsNotNull(receivedRunCompleteArgs?.Metrics);
-        Assert.IsTrue(receivedRunCompleteArgs.Metrics.Any());
+        Assert.IsNotEmpty(receivedRunCompleteArgs.Metrics);
         Assert.IsTrue(receivedRunCompleteArgs.Metrics.ContainsKey("DummyMessage"));
     }
 

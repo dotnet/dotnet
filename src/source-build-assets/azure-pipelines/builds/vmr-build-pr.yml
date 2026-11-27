@@ -16,7 +16,14 @@ resources:
     type: github
     name: dotnet/dotnet
     endpoint: public
-    ref: refs/heads/main # Set to whatever VMR branch the PR build should insert into
+    # AzDO pipeline names must follow source-build-assets-unified-build-<main|N>:
+    # -main selects VMR main; a major version suffix (e.g. -11) selects release/N.0.1xx.
+    ref: >-
+      ${{ iif(
+        eq(variables['Build.DefinitionName'], 'source-build-assets-unified-build-main'),
+        'refs/heads/main',
+        format('refs/heads/release/{0}.0.1xx', replace(variables['Build.DefinitionName'], 'source-build-assets-unified-build-', ''))
+      ) }}
 
 stages:
 - template: /eng/pipelines/templates/stages/vmr-build.yml@vmr

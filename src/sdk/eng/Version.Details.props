@@ -83,7 +83,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETHostModelPackageVersion>12.0.0-alpha.1.26528.111</MicrosoftNETHostModelPackageVersion>
     <MicrosoftNETILLinkTasksPackageVersion>12.0.0-alpha.1.26528.111</MicrosoftNETILLinkTasksPackageVersion>
     <MicrosoftNETProjectDataTasksPackageVersion>5.14.0-1.26528.111</MicrosoftNETProjectDataTasksPackageVersion>
-    <MicrosoftNETRuntimeEmscriptenInternalPackageVersion>12.0.0-alpha.1.26528.111</MicrosoftNETRuntimeEmscriptenInternalPackageVersion>
     <MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>11.2.0-preview.26528.111</MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>
     <MicrosoftNETSdkWindowsDesktopPackageVersion>12.0.0-alpha.1.26528.111</MicrosoftNETSdkWindowsDesktopPackageVersion>
     <MicrosoftNETTestSdkPackageVersion>18.13.0-preview-26528-111</MicrosoftNETTestSdkPackageVersion>
@@ -138,6 +137,8 @@ This file should be imported by eng/Versions.props
     <SystemTextEncodingCodePagesPackageVersion>12.0.0-alpha.1.26528.111</SystemTextEncodingCodePagesPackageVersion>
     <SystemTextJsonPackageVersion>12.0.0-alpha.1.26528.111</SystemTextJsonPackageVersion>
     <SystemWindowsExtensionsPackageVersion>12.0.0-alpha.1.26528.111</SystemWindowsExtensionsPackageVersion>
+    <!-- dotnet-emsdk dependencies -->
+    <MicrosoftNETRuntimeEmscriptenInternalPackageVersion>12.0.0-alpha.1.26575.1</MicrosoftNETRuntimeEmscriptenInternalPackageVersion>
     <!-- microsoft-testfx dependencies -->
     <MicrosoftTestingPlatformPackageVersion>3.0.0-preview.26559.7</MicrosoftTestingPlatformPackageVersion>
     <MicrosoftTestingPlatformInternalDotnetTestPackageVersion>2.3.0-preview.26330.8</MicrosoftTestingPlatformInternalDotnetTestPackageVersion>
@@ -224,7 +225,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETHostModelVersion>$(MicrosoftNETHostModelPackageVersion)</MicrosoftNETHostModelVersion>
     <MicrosoftNETILLinkTasksVersion>$(MicrosoftNETILLinkTasksPackageVersion)</MicrosoftNETILLinkTasksVersion>
     <MicrosoftNETProjectDataTasksVersion>$(MicrosoftNETProjectDataTasksPackageVersion)</MicrosoftNETProjectDataTasksVersion>
-    <MicrosoftNETRuntimeEmscriptenInternalVersion>$(MicrosoftNETRuntimeEmscriptenInternalPackageVersion)</MicrosoftNETRuntimeEmscriptenInternalVersion>
     <MicrosoftNETSdkRazorSourceGeneratorsTransportVersion>$(MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion)</MicrosoftNETSdkRazorSourceGeneratorsTransportVersion>
     <MicrosoftNETSdkWindowsDesktopVersion>$(MicrosoftNETSdkWindowsDesktopPackageVersion)</MicrosoftNETSdkWindowsDesktopVersion>
     <MicrosoftNETTestSdkVersion>$(MicrosoftNETTestSdkPackageVersion)</MicrosoftNETTestSdkVersion>
@@ -279,6 +279,8 @@ This file should be imported by eng/Versions.props
     <SystemTextEncodingCodePagesVersion>$(SystemTextEncodingCodePagesPackageVersion)</SystemTextEncodingCodePagesVersion>
     <SystemTextJsonVersion>$(SystemTextJsonPackageVersion)</SystemTextJsonVersion>
     <SystemWindowsExtensionsVersion>$(SystemWindowsExtensionsPackageVersion)</SystemWindowsExtensionsVersion>
+    <!-- dotnet-emsdk dependencies -->
+    <MicrosoftNETRuntimeEmscriptenInternalVersion>$(MicrosoftNETRuntimeEmscriptenInternalPackageVersion)</MicrosoftNETRuntimeEmscriptenInternalVersion>
     <!-- microsoft-testfx dependencies -->
     <MicrosoftTestingPlatformVersion>$(MicrosoftTestingPlatformPackageVersion)</MicrosoftTestingPlatformVersion>
     <MicrosoftTestingPlatformInternalDotnetTestVersion>$(MicrosoftTestingPlatformInternalDotnetTestPackageVersion)</MicrosoftTestingPlatformInternalDotnetTestVersion>

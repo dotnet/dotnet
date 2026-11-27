@@ -130,6 +130,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 complexProperty, columnName, propertyName);
 
         /// <summary>
+        ///     Complex property '{complexProperty}' cannot be declared on '{entityType}', which is mapped to JSON as part of an owned collection. Complex properties on owned types in JSON collections aren't supported; map the collection with 'ComplexCollection(...).ToJson()' instead.
+        /// </summary>
+        public static string ComplexPropertyInJsonOwnedCollection(object? complexProperty, object? entityType)
+            => string.Format(
+                GetString("ComplexPropertyInJsonOwnedCollection", nameof(complexProperty), nameof(entityType)),
+                complexProperty, entityType);
+
+        /// <summary>
         ///     Complex property '{property1}' and '{property2}' are both configured to use the same JSON property name '{jsonPropertyName}'. Each property within a JSON-mapped type must have a unique JSON property name.
         /// </summary>
         public static string ComplexPropertyJsonPropertyNameConflict(object? property1, object? property2, object? jsonPropertyName)
@@ -594,6 +602,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("DuplicateForeignKeyDeleteBehaviorMismatch", nameof(foreignKeyProperties1), nameof(entityType1), nameof(foreignKeyProperties2), nameof(entityType2), nameof(table), nameof(foreignKeyName), nameof(deleteBehavior1), nameof(deleteBehavior2)),
                 foreignKeyProperties1, entityType1, foreignKeyProperties2, entityType2, table, foreignKeyName, deleteBehavior1, deleteBehavior2);
+
+        /// <summary>
+        ///     The foreign keys {foreignKeyProperties1} on '{entityType1}' and {foreignKeyProperties2} on '{entityType2}' are both mapped to '{table}.{foreignKeyName}', but with different deferrability ('{deferrability1}' and '{deferrability2}').
+        /// </summary>
+        public static string DuplicateForeignKeyDeferrabilityMismatch(object? foreignKeyProperties1, object? entityType1, object? foreignKeyProperties2, object? entityType2, object? table, object? foreignKeyName, object? deferrability1, object? deferrability2)
+            => string.Format(
+                GetString("DuplicateForeignKeyDeferrabilityMismatch", nameof(foreignKeyProperties1), nameof(entityType1), nameof(foreignKeyProperties2), nameof(entityType2), nameof(table), nameof(foreignKeyName), nameof(deferrability1), nameof(deferrability2)),
+                foreignKeyProperties1, entityType1, foreignKeyProperties2, entityType2, table, foreignKeyName, deferrability1, deferrability2);
 
         /// <summary>
         ///     The foreign keys {foreignKeyProperties1} on '{entityType1}' and {foreignKeyProperties2} on '{entityType2}' are both mapped to '{table}.{foreignKeyName}', but with different migration exclusion configurations.
@@ -1484,6 +1500,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => GetString("JsonEmptyString");
 
         /// <summary>
+        ///     The JSON for '{entityType}.{navigation}' contains a '{tokenType}' token when a JSON array was expected.
+        /// </summary>
+        public static string JsonEntityCollectionExpectedArray(object? entityType, object? navigation, object? tokenType)
+            => string.Format(
+                GetString("JsonEntityCollectionExpectedArray", nameof(entityType), nameof(navigation), nameof(tokenType)),
+                entityType, navigation, tokenType);
+
+        /// <summary>
         ///     The JSON array for '{entityType}.{navigation}' contains a non-object element when a JSON object was expected.
         /// </summary>
         public static string JsonEntityCollectionExpectedObject(object? entityType, object? navigation)
@@ -1718,6 +1742,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("JsonRequiredEntityWithNullJson", nameof(entity)),
                 entity);
+
+        /// <summary>
+        ///     The JSON for '{structuralType}' contains a '{tokenType}' token when a JSON object was expected.
+        /// </summary>
+        public static string JsonStructuralTypeExpectedObject(object? structuralType, object? tokenType)
+            => string.Format(
+                GetString("JsonStructuralTypeExpectedObject", nameof(structuralType), nameof(tokenType)),
+                structuralType, tokenType);
 
         /// <summary>
         ///     Type mapping type '{typeMapping}', which is being used on property '{property}' on entity type '{entityType}' in a JSON document, has not defined a JsonValueReaderWriter.

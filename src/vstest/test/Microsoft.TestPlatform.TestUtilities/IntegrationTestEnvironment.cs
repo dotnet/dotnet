@@ -109,7 +109,7 @@ public class IntegrationTestEnvironment
 
     /// <summary>
     /// Gets the target framework.
-    /// Supported values = <c>net462</c>, <c>net8.0</c>.
+    /// Supported values = <c>net462</c>, <c>net10.0</c>.
     /// </summary>
     [NotNull]
     public string? TargetFramework { get; set; }

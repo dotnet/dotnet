@@ -9,6 +9,14 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine;
 
 internal interface IArtifactProcessingManager
 {
-    void CollectArtifacts(TestRunCompleteEventArgs testRunCompleteEventArgs, string runSettingsXml);
+    /// <summary>
+    /// Collects the test session artifacts for post processing.
+    /// </summary>
+    /// <returns>
+    /// A warning to surface to the user when the artifacts directory could not be verified (so nothing was
+    /// collected), or when attachments were saved to the user-private fallback directory because
+    /// VSTEST_ARTIFACTS_DIRECTORY was missing or unusable; otherwise <see langword="null"/>.
+    /// </returns>
+    string? CollectArtifacts(TestRunCompleteEventArgs testRunCompleteEventArgs, string runSettingsXml);
     Task PostProcessArtifactsAsync();
 }

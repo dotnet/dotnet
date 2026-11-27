@@ -3,8 +3,9 @@
 
 #if !USES_XUNIT_3
 
-using System;
 using System.Collections.Generic;
+using System.Linq;
+using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -18,9 +19,15 @@ public class SkipOnCIDiscoverer : ITraitDiscoverer
 {
     public IEnumerable<KeyValuePair<string, string>> GetTraits(IAttributeInfo traitAttribute)
     {
-        if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_CI")) ||
-            !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("HELIX_WORKITEM_ROOT")) ||
-            !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AGENT_OS")))
+        TestPlatforms platforms = TestPlatforms.Any;
+
+        // The optional second constructor argument restricts skipping to the given platforms.
+        if (traitAttribute.GetConstructorArguments().Skip(1).FirstOrDefault() is TestPlatforms tp)
+        {
+            platforms = tp;
+        }
+
+        if (DiscovererHelpers.IsRunningInCI && DiscovererHelpers.TestPlatformApplies(platforms))
         {
             yield return new KeyValuePair<string, string>(XunitConstants.Category, XunitConstants.Failing);
         }

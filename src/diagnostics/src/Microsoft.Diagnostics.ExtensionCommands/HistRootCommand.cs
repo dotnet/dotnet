@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using Microsoft.Diagnostics.DebugServices;
 using Microsoft.Diagnostics.ExtensionCommands.Output;
 
@@ -9,10 +10,15 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = "histroot", Aliases = new[] { "HistRoot" }, Help = "Displays information related to both promotions and relocations of the specified root.")]
     public sealed class HistRootCommand : ClrRuntimeCommandBase
     {
-        [ServiceImport]
-        public GCHistory History { get; set; }
+        public HistRootCommand(IServiceProvider services, GCHistory history)
+            : base(services)
+        {
+            History = history;
+        }
 
-        [Argument(Name = "root", Help = "The root address to track (as reported by HistObjFind).")]
+        public GCHistory History { get; }
+
+        [Argument<string>(Name = "root", Help = "The root address to track (as reported by HistObjFind).")]
         public string RootAddress { get; set; }
 
         public override void Invoke()

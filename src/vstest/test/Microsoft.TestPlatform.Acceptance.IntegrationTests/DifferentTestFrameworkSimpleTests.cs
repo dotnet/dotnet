@@ -45,7 +45,6 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
 
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
     // vstest.console is 64-bit now, run in process to test the 64-bit native dll
     // Skip .NET (Core) tests because we test them below.
     [TestMatrix(console: NetFx, testHost: NetFx, inProcess: true)]

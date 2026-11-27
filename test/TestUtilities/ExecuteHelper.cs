@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Microsoft.DotNet.ScenarioTests.Common;
 using Xunit;
 
 namespace TestUtilities;
@@ -23,7 +24,8 @@ public static class ExecuteHelper
         bool excludeInfo = false,
         Action<Process>? configureCallback = null,
         int millisecondTimeout = DefaultTimeoutMilliseconds,
-        Action<Process, ProcessOutputLine>? outputLineCallback = null)
+        Action<Process, ProcessOutputLine>? outputLineCallback = null,
+        bool isTimeoutExpected = false)
     {
         if (!excludeInfo)
         {
@@ -69,12 +71,29 @@ public static class ExecuteHelper
 
         if (timedOut || !process.WaitForExit(millisecondTimeout))
         {
-            outputHelper.WriteLine($"Process did not exit. Killing {fileName} {args} after waiting {millisecondTimeout} milliseconds.");
+            if (!isTimeoutExpected)
+            {
+                ProcessHangDiagnostics.CollectOnTimeout(
+                    process,
+                    millisecondTimeout,
+                    () => stdOutput + "--- stderr ---" + Environment.NewLine + stdError,
+                    outputHelper.WriteLine);
+            }
+
+            // An exited process whose stdout/stderr is still held open by a descendant would otherwise report its own exit code.
+            bool exitedBeforeKill = process.HasExited;
+            outputHelper.WriteLine($"Process did not complete. Killing {fileName} {args} after waiting {millisecondTimeout} milliseconds.");
             process.Kill(true);
             if (!process.WaitForExit(KillGraceMilliseconds))
             {
                 throw new InvalidOperationException(
                     $"Process tree did not exit within {KillGraceMilliseconds} milliseconds after it was killed.");
+            }
+
+            if (exitedBeforeKill)
+            {
+                throw new TimeoutException(
+                    $"'{fileName} {args}' exited with code {process.ExitCode}, but a descendant process kept its output open for {millisecondTimeout} milliseconds.");
             }
         }
 

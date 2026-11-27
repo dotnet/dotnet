@@ -49,7 +49,7 @@ extends:
           - wasi_wasm
           jobParameters:
             templatePath: 'templates-official'
-            buildArgs: -c $(_BuildConfig) -restore -build -pack /p:DotNetBuildAllRuntimePacks=true
+            buildArgs: -c $(_BuildConfig) -restore -build -pack
             nameSuffix: CodeQL
             isOfficialBuild: false
             timeoutInMinutes: 360
@@ -86,7 +86,7 @@ extends:
           - ios_arm64
           jobParameters:
             templatePath: 'templates-official'
-            buildArgs: -c $(_BuildConfig) -restore -build -pack /p:DotNetBuildAllRuntimePacks=true
+            buildArgs: -c $(_BuildConfig) -restore -build -pack
             isOfficialBuild: false
             timeoutInMinutes: 120
             postBuildSteps:

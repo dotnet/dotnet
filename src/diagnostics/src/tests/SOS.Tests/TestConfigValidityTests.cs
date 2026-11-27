@@ -45,14 +45,12 @@ public sealed class TestConfigValidityTests
     }
 
     [Fact]
-    public void HostRuntimeDefaultsAndValidityAreCorrect()
+    public void Net12RequiresCDac()
     {
-        TestConfig config = Config();
+        TestConfig config = Config() with { CoreVersion = CoreVersion.Net12 };
 
-        Assert.Equal(HostRuntime.Managed, config.HostRuntime);
-        Assert.True(TestConfig.IsValid(config with { HostRuntime = HostRuntime.None }));
-        Assert.False(TestConfig.IsValid(config with { Host = Host.DotnetDump, HostRuntime = HostRuntime.None }));
-        Assert.EndsWith("/nohost", (config with { HostRuntime = HostRuntime.None }).ToString());
+        Assert.False(TestConfig.IsValid(config));
+        Assert.True(TestConfig.IsValid(config with { Dac = Dac.CDac }));
     }
 
     [Theory]

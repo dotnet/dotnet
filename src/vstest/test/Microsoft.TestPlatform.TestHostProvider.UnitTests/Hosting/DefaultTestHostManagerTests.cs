@@ -150,7 +150,7 @@ public class DefaultTestHostManagerTests
 
         var info = _testHostManager.GetTestHostProcessStartInfo([], environmentVariables, default);
 
-        Assert.AreEqual(environmentVariables, info.EnvironmentVariables);
+        Assert.AreSame(environmentVariables, info.EnvironmentVariables);
     }
 
     [TestMethod]
@@ -203,7 +203,7 @@ public class DefaultTestHostManagerTests
         var resultExtensions = _testHostManager.GetTestPlatformExtensions(new List<string>(), currentList).ToList();
 
         // Verify
-        CollectionAssert.AreEqual(currentList, resultExtensions);
+        Assert.AreSequenceEqual(currentList, resultExtensions);
     }
 
     [TestMethod]
@@ -216,7 +216,7 @@ public class DefaultTestHostManagerTests
         var resultExtensions = _testHostManager.GetTestPlatformExtensions(null, currentList).ToList();
 
         // Verify
-        CollectionAssert.AreEqual(currentList, resultExtensions);
+        Assert.AreSequenceEqual(currentList, resultExtensions);
     }
 
     [TestMethod]
@@ -238,7 +238,7 @@ public class DefaultTestHostManagerTests
         var resultExtensions = _testHostManager.GetTestPlatformExtensions(sources, currentList).ToList();
 
         // Verify
-        CollectionAssert.AreEqual(currentList, resultExtensions);
+        Assert.AreSequenceEqual(currentList, resultExtensions);
     }
 
     [TestMethod]
@@ -266,7 +266,7 @@ public class DefaultTestHostManagerTests
 
         // Verify
         List<string> expectedList = [@"C:\Source2\ext1.TestAdapter.dll", @"C:\Source1\ext2.TestAdapter.dll"];
-        CollectionAssert.AreEqual(expectedList, resultExtensions);
+        Assert.AreSequenceEqual(expectedList, resultExtensions);
         _mockMessageLogger.Verify(ml => ml.SendMessage(TestMessageLevel.Warning, "Multiple versions of same extension found. Selecting the highest version." + Environment.NewLine + "  ext1.TestAdapter : 2.2\n  ext2.TestAdapter : 5.5"), Times.Once);
     }
 
@@ -292,7 +292,7 @@ public class DefaultTestHostManagerTests
         var resultExtensions = _testHostManager.GetTestPlatformExtensions(sources, new List<string>()).ToList();
 
         // Verify
-        CollectionAssert.AreEqual(extensionsList2, resultExtensions);
+        Assert.AreSequenceEqual(extensionsList2, resultExtensions);
         _mockMessageLogger.Verify(ml => ml.SendMessage(TestMessageLevel.Warning, "Multiple versions of same extension found. Selecting the highest version." + Environment.NewLine + "  ext1.TestAdapter : 2.2"), Times.Once);
     }
 
@@ -318,7 +318,7 @@ public class DefaultTestHostManagerTests
         var resultExtensions = _testHostManager.GetTestPlatformExtensions(sources, new List<string>()).ToList();
 
         // Verify
-        CollectionAssert.AreEqual(extensionsList1, resultExtensions);
+        Assert.AreSequenceEqual(extensionsList1, resultExtensions);
         _mockMessageLogger.Verify(ml => ml.SendMessage(TestMessageLevel.Warning, It.IsAny<string>()), Times.Never);
     }
 
@@ -435,7 +435,7 @@ public class DefaultTestHostManagerTests
     {
         var sourcePath = Path.Combine(Path.GetDirectoryName(typeof(TestableTestHostManager).Assembly.GetAssemblyLocation())!, @"..\..\..\..\..\test\TestAssets\UWPTestAssets\UnitTestApp8.build.appxrecipe");
         IEnumerable<string> sources = _testHostManager.GetTestSources(new List<string> { sourcePath });
-        Assert.IsTrue(sources.Any());
+        Assert.IsNotEmpty(sources);
         Assert.IsTrue(sources.First().EndsWith(".exe", StringComparison.OrdinalIgnoreCase));
     }
 

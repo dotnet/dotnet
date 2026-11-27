@@ -11,11 +11,16 @@ namespace Microsoft.Diagnostics.ExtensionCommands
     [Command(Name = "dumpconcurrentdictionary", Aliases = new string[] { "dcd" }, Help = "Displays concurrent dictionary content.")]
     public class DumpConcurrentDictionaryCommand : ClrMDHelperCommandBase
     {
-        [Argument(Help = "The address of a ConcurrentDictionary object.")]
+        public DumpConcurrentDictionaryCommand(IServiceProvider services, ClrRuntime runtime = null)
+            : base(services)
+        {
+            Runtime = runtime;
+        }
+
+        [Argument<string>(Help = "The address of a ConcurrentDictionary object.")]
         public string Address { get; set; }
 
-        [ServiceImport(Optional = true)]
-        public ClrRuntime Runtime { get; set; }
+        public ClrRuntime Runtime { get; }
 
         public override void Invoke()
         {

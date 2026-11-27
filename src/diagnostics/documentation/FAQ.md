@@ -17,23 +17,20 @@ Frequently Asked Questions
 
     and then re-run command with the issue.
 
+* On macOS, debugger-hosted SOS defaults `PAL_MachExceptionMode` to `7` before
+  loading its NativeAOT extension library so the embedded runtime does not replace
+  LLDB's guarded Mach exception ports. An existing value is preserved. If LLDB is
+  killed when SOS starts, remove any explicit value other than `7`.
+
+  This applies to SOS loaded by native debuggers such as LLDB. `dotnet-dump analyze`
+  hosts the managed SOS implementation directly in its .NET 8+ process and does not
+  load the NativeAOT extension library.
+
 * On MacOS if you see any of the following errors:
     ```
     (lldb) plugin load libsosplugin.so
     error: this file does not represent a loadable dylib
     ```
-    or if the sos plugin loads correctly but you see this error on any command:
-    ```
-    (lldb) setsymbolserver -ms
-    Error: Fail to initialize coreclr 80070008
-    ```
-    or something like this error:
-    ```
-    (lldb) setsymbolserver -ms
-    SOS_HOSTING: Fail to initialize hosting runtime '/usr/local/share/dotnet/shared/Microsoft.NETCore.App/6.0.29/libcoreclr.dylib' 80004005
-    Unrecognized command 'setsymbolserver' because managed hosting failed or was disabled. See sethostruntime command for details.
-    ```
-
     Try the following workaround for Apple's standard lldb installation:
     ```
     $ sudo cp /Applications/Xcode.app/Contents/Developer/usr/bin/lldb /usr/local/bin

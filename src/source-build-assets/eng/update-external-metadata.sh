@@ -13,7 +13,7 @@ set -euo pipefail
 
 component_name="${1:?Usage: $0 <component-name>}"
 
-repo_root="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd -P "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 dotnet_tool="$repo_root/.dotnet/dotnet"
 if [ ! -x "$dotnet_tool" ]; then

@@ -41,7 +41,7 @@ public class PostProcessingTests : AcceptanceTestBase
 
         // Create and build a single test project once, then reuse it for all parallel vstest runs.
         string projectFolder = Path.Combine(TempDirectory.Path, "testproject");
-        ExecuteApplication(GetConsoleRunnerPath(), $"new mstest -o {projectFolder}", out string setupStdOut, out string setupStdError, out int setupExitCode);
+        ExecuteApplication(GetConsoleRunnerPath(), $"new mstest --framework {Core12TargetFramework} -o {projectFolder}", out string setupStdOut, out string setupStdError, out int setupExitCode);
         Assert.AreEqual(0, setupExitCode);
         ExecuteApplication(GetConsoleRunnerPath(), $"build {projectFolder} -c release", out setupStdOut, out setupStdError, out setupExitCode);
         Assert.AreEqual(0, setupExitCode);
@@ -76,7 +76,7 @@ public class PostProcessingTests : AcceptanceTestBase
             fileContent.Add(line);
         }
 
-        Assert.AreEqual(2, fileContent.Distinct().Count());
+        Assert.HasCount(2, fileContent.Distinct());
     }
 
     private static string GetRunsettingsFilePath(string resultsDir)

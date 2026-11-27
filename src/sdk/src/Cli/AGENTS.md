@@ -124,6 +124,12 @@ directory so relative arguments and logs retain their meaning. Keep one coherent
 target-produced project state, and the session's success/failure cleanup. Cover these boundaries in
 [`GivenDotnetTestProducesBinaryLog`](../../test/dotnet.Tests/CommandTests/Test/GivenDotnetTestProducesBinaryLog.cs).
 
+In `--solution` runs,
+[`device selection`](dotnet/Commands/Test/MTP/SolutionAndProjectUtility.cs) applies only to
+test projects (`IsTestProject` or `IsTestingPlatformApplication`). App and library projects, such as
+MAUI heads, can import `ComputeAvailableDevices` in their inner builds and must not prompt for a device. The single-project
+path evaluates before restore, so it must not apply this NuGet-dependent gate.
+
 Parent-process operations must also use the captured invocation directory: pass it through background
 workload updates to both `global.json` discovery and NuGet configuration, and initialize absolute MTP
 trace paths before starting the session. Changing only a child process's directory is insufficient.
@@ -147,6 +153,29 @@ aggregate exit code from
 including session failures and ignored-exit policies, instead of upstream's in-process
 failure callback. A successful run with zero tests uses neutral "Zero tests ran" wording,
 not a green "Passed!" verdict.
+
+## MTP module identity
+
+Keep the assembly target framework separate from its executing runtime.
+[`TestApplicationHandler`](dotnet/Commands/Test/MTP/TestApplicationHandler.cs) prefers
+the evaluated project's `TargetFramework`, then optional handshake `TargetFramework`
+metadata (field 21). Missing target metadata stays unknown; never infer it from the
+runtime or output directory. Handshake `Framework` (field 2) remains runtime information,
+and `Architecture` identifies the executing process, not the assembly's AnyCPU setting.
+
+The shared
+[`TestFrameworkDisplay`](dotnet/Commands/Test/MTP/Terminal/TestFrameworkDisplay.cs)
+keeps matching runs compact (`net481|x64`) and labels a differing runtime separately
+(`net472|x64, runtime: net481`). Ignore modern .NET servicing patches and target platform
+suffixes only for comparison; preserve the full target in output and distinguish
+`net48` from `net481`. Unknown targets use an explicit runtime annotation, not a
+runtime-derived target. Keep start, results, completion, recaps and progress consistent,
+and omit secondary runtime information before primary identity in narrow cursor frames.
+
+[`ArtifactPostProcessingManager`](dotnet/Commands/Test/MTP/ArtifactPostProcessingManager.cs)
+can learn capabilities from a controller before the target is known. Fill only a missing
+target when later handshake metadata arrives, even if capabilities are not repeated;
+preserve an already known target.
 
 ## MTP coverage summaries
 

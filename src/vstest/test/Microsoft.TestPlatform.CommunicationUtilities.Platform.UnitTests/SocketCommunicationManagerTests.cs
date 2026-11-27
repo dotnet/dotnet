@@ -139,6 +139,17 @@ public class SocketCommunicationManagerTests : IDisposable
     }
 
     [TestMethod]
+    public async Task SetupClientAsyncShouldUseIPv4SocketForIPv4Endpoint()
+    {
+        var port = StartServer();
+        _ = _communicationManager.SetupClientAsync(new IPEndPoint(IPAddress.Loopback, port));
+        await _tcpListener.AcceptTcpClientAsync();
+
+        // A default TcpClient is a dual-mode IPv6 socket, which loopback-only macOS sandboxes reject.
+        Assert.AreEqual(AddressFamily.InterNetwork, _communicationManager.Socket!.AddressFamily);
+    }
+
+    [TestMethod]
     public async Task WaitForServerConnectionShouldWaitUntilClientIsConnected()
     {
         var port = StartServer();
@@ -280,24 +291,36 @@ public class SocketCommunicationManagerTests : IDisposable
         var server = new SocketCommunicationManager();
         var client = new SocketCommunicationManager();
 
-        int port = server.HostServer(new IPEndPoint(IPAddress.Loopback, 0)).Port;
-        client.SetupClientAsync(new IPEndPoint(IPAddress.Loopback, port)).Wait(TestContext.CancellationToken);
-        server.AcceptClientAsync().Wait(TestContext.CancellationToken);
-
-        server.WaitForClientConnection(1000);
-        client.WaitForServerConnection(1000);
-
-        var clientThread = new Thread(() => SendData(client));
-        clientThread.Start();
-
-        var dataReceived = 0;
-        while (dataReceived < 2048 * 5)
+        // Stop both endpoints explicitly. Once the sender thread completes, nothing else keeps the client alive;
+        // if it is garbage collected, finalizing its socket resets the connection before the server reads all data.
+        try
         {
-            dataReceived += server.ReceiveRawMessageAsync(CancellationToken.None).Result!.Length;
-            Task.Delay(1000, TestContext.CancellationToken).Wait(TestContext.CancellationToken);
-        }
+            int port = server.HostServer(new IPEndPoint(IPAddress.Loopback, 0)).Port;
+            client.SetupClientAsync(new IPEndPoint(IPAddress.Loopback, port)).Wait(TestContext.CancellationToken);
+            server.AcceptClientAsync().Wait(TestContext.CancellationToken);
 
-        clientThread.Join();
+            server.WaitForClientConnection(1000);
+            client.WaitForServerConnection(1000);
+
+            var clientThread = new Thread(() => SendData(client));
+            clientThread.Start();
+
+            var dataReceived = 0;
+            while (dataReceived < 2048 * 5)
+            {
+                var message = server.ReceiveRawMessageAsync(CancellationToken.None).Result;
+                Assert.IsNotNull(message, $"The connection was closed after receiving {dataReceived} bytes.");
+                dataReceived += message!.Length;
+                Task.Delay(1000, TestContext.CancellationToken).Wait(TestContext.CancellationToken);
+            }
+
+            clientThread.Join();
+        }
+        finally
+        {
+            client.StopClient();
+            server.StopServer();
+        }
     }
 
     [TestMethod]

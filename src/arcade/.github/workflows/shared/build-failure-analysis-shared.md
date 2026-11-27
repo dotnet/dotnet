@@ -24,14 +24,15 @@ imports:
       environment: copilot-pat-pool
 
 # Resolve each phase's model override first, then the shared default, then
-# GPT-5.5. The agentic-workflows integrator no longer offers Sonnet 4.6.
+# GPT-6.1 Sol. The agentic-workflows integrator does not offer GPT-5.5.
 # Overrides must also name an available model; they take precedence over this
 # fallback. Keep the analysis and threat-detection fallbacks in sync.
-model: ${{ vars.GH_AW_MODEL_AGENT_COPILOT || vars.GH_AW_DEFAULT_MODEL_COPILOT || 'gpt-5.5' }}
+model: ${{ vars.GH_AW_MODEL_AGENT_COPILOT || vars.GH_AW_DEFAULT_MODEL_COPILOT || 'gpt-6.1-sol' }}
 
 engine:
   id: copilot
   env: &copilot-pool-auth
+    COPILOT_PROVIDER_WIRE_API: ${{ startsWith(vars.GH_AW_MODEL_AGENT_COPILOT || vars.GH_AW_DEFAULT_MODEL_COPILOT || 'gpt-6.1-sol', 'gpt-6') && 'responses' || '' }}
     COPILOT_GITHUB_TOKEN: |
       ${{ case(
         needs.pat_pool.outputs.pat_number == '0', secrets.COPILOT_PAT_0,
@@ -53,9 +54,11 @@ safe-outputs:
   threat-detection:
     engine:
       id: copilot
-      model: ${{ vars.GH_AW_MODEL_DETECTION_COPILOT || vars.GH_AW_DEFAULT_MODEL_COPILOT || 'gpt-5.5' }}
+      model: ${{ vars.GH_AW_MODEL_DETECTION_COPILOT || vars.GH_AW_DEFAULT_MODEL_COPILOT || 'gpt-6.1-sol' }}
       # An explicit detection engine must also receive the credential override.
-      env: *copilot-pool-auth
+      env:
+        <<: *copilot-pool-auth
+        COPILOT_PROVIDER_WIRE_API: ${{ startsWith(vars.GH_AW_MODEL_DETECTION_COPILOT || vars.GH_AW_DEFAULT_MODEL_COPILOT || 'gpt-6.1-sol', 'gpt-6') && 'responses' || '' }}
 
 jobs:
   # Activation cannot see environment secrets. Validate before either consumer;

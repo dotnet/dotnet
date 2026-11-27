@@ -730,7 +730,6 @@ public class SerializationGoldenTests
     #region TestCase Golden Tests
 
     [TestMethod]
-    [TestCategory("Serialization")]
     public void TestCaseSerializationV1ShouldMatchGoldenJson()
     {
         var json = Serialize(GoldenTestCase, 1);
@@ -739,7 +738,6 @@ public class SerializationGoldenTests
     }
 
     [TestMethod]
-    [TestCategory("Serialization")]
     public void TestCaseSerializationV2ShouldMatchGoldenJson()
     {
         var json = Serialize(GoldenTestCase, 2);
@@ -748,7 +746,6 @@ public class SerializationGoldenTests
     }
 
     [TestMethod]
-    [TestCategory("Serialization")]
     public void TestCaseRoundTripV1ShouldPreserveKeyProperties()
     {
         var deserialized = Deserialize<TestCase>(TestCaseV1Json, 1);
@@ -767,7 +764,6 @@ public class SerializationGoldenTests
     }
 
     [TestMethod]
-    [TestCategory("Serialization")]
     public void TestCaseRoundTripV2ShouldPreserveKeyProperties()
     {
         var deserialized = Deserialize<TestCase>(TestCaseV2Json, 2);
@@ -790,7 +786,6 @@ public class SerializationGoldenTests
     #region TestResult Golden Tests
 
     [TestMethod]
-    [TestCategory("Serialization")]
     public void TestResultSerializationV1ShouldMatchGoldenJson()
     {
         var json = Serialize(GoldenTestResult, 1);
@@ -799,7 +794,6 @@ public class SerializationGoldenTests
     }
 
     [TestMethod]
-    [TestCategory("Serialization")]
     public void TestResultSerializationV2ShouldMatchGoldenJson()
     {
         var json = Serialize(GoldenTestResult, 2);
@@ -808,7 +802,6 @@ public class SerializationGoldenTests
     }
 
     [TestMethod]
-    [TestCategory("Serialization")]
     public void TestResultRoundTripV1ShouldPreserveKeyProperties()
     {
         var deserialized = Deserialize<TestResult>(TestResultV1Json, 1);
@@ -833,7 +826,6 @@ public class SerializationGoldenTests
     }
 
     [TestMethod]
-    [TestCategory("Serialization")]
     public void TestResultRoundTripV2ShouldPreserveKeyProperties()
     {
         var deserialized = Deserialize<TestResult>(TestResultV2Json, 2);
@@ -859,7 +851,6 @@ public class SerializationGoldenTests
     #region TestRunCriteriaWithTests Golden Tests
 
     [TestMethod]
-    [TestCategory("Serialization")]
     public void TestRunCriteriaWithTestsSerializationV1ShouldMatchGoldenJson()
     {
         var json = Serialize(GoldenTestRunCriteriaWithTests, 1);
@@ -868,7 +859,6 @@ public class SerializationGoldenTests
     }
 
     [TestMethod]
-    [TestCategory("Serialization")]
     public void TestRunCriteriaWithTestsSerializationV2ShouldMatchGoldenJson()
     {
         var json = Serialize(GoldenTestRunCriteriaWithTests, 2);
@@ -877,7 +867,6 @@ public class SerializationGoldenTests
     }
 
     [TestMethod]
-    [TestCategory("Serialization")]
     public void TestRunCriteriaWithTestsRoundTripV1ShouldPreserveKeyProperties()
     {
         var deserialized = Deserialize<TestRunCriteriaWithTests>(TestRunCriteriaWithTestsV1Json, 1);
@@ -896,7 +885,6 @@ public class SerializationGoldenTests
     }
 
     [TestMethod]
-    [TestCategory("Serialization")]
     public void TestRunCriteriaWithTestsRoundTripV2ShouldPreserveKeyProperties()
     {
         var deserialized = Deserialize<TestRunCriteriaWithTests>(TestRunCriteriaWithTestsV2Json, 2);
@@ -919,7 +907,6 @@ public class SerializationGoldenTests
     #region TestRunCriteriaWithSources Golden Tests
 
     [TestMethod]
-    [TestCategory("Serialization")]
     [DataRow(1)]
     [DataRow(2)]
     public void TestRunCriteriaWithSourcesSerializationShouldMatchGoldenJson(int version)
@@ -930,7 +917,6 @@ public class SerializationGoldenTests
     }
 
     [TestMethod]
-    [TestCategory("Serialization")]
     [DataRow(1)]
     [DataRow(2)]
     public void TestRunCriteriaWithSourcesRoundTripShouldPreserveKeyProperties(int version)

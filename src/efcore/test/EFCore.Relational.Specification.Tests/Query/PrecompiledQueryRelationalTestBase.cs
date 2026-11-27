@@ -101,6 +101,61 @@ var yes = "yes";
 var blogs = await context.Blogs.Select(b => b.Id == 2 ? yes : "no").ToListAsync();
 """);
 
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public virtual Task Conditional_test_contains_captured_variable(bool async, bool fullyEvaluatable)
+        => Test(
+            $$"""
+foreach (var flag in new[] { false, true })
+{
+    var ids = {{(async ? "await " : "")}}context.Blogs
+        .Where(b => {{(fullyEvaluatable ? "b.Id == (flag ? 8 : 9)" : "flag ? b.Id == 8 : b.Id == 9")}})
+        .Select(b => b.Id).{{(async ? "ToListAsync" : "ToList")}}();
+
+    Assert.Equal(new[] { flag ? 8 : 9 }, ids);
+}
+""");
+
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(false, false, true)]
+    [InlineData(false, true, false)]
+    [InlineData(false, true, true)]
+    [InlineData(true, false, false)]
+    [InlineData(true, false, true)]
+    [InlineData(true, true, false)]
+    [InlineData(true, true, true)]
+    public virtual Task Logical_binary_contains_captured_variable(bool async, bool andAlso, bool capturedOnLeft)
+        => Test(
+            $$"""
+foreach (var flag in new[] { false, true })
+{
+    var ids = {{(async ? "await " : "")}}context.Blogs
+        .Where(b => {{(capturedOnLeft ? "flag" : "b.Id == 8")}} {{(andAlso ? "&&" : "||")}} {{(capturedOnLeft ? "b.Id == 8" : "flag")}})
+        .OrderBy(b => b.Id).Select(b => b.Id).{{(async ? "ToListAsync" : "ToList")}}();
+
+    Assert.Equal({{(andAlso ? "flag ? new[] { 8 } : Array.Empty<int>()" : "flag ? new[] { 8, 9 } : new[] { 8 }")}}, ids);
+}
+""");
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public virtual Task Coalesce_left_contains_captured_variable(bool async)
+        => Test(
+            $$"""
+foreach (var name in new string[] { null, "captured" })
+{
+    var names = {{(async ? "await " : "")}}context.Blogs.OrderBy(b => b.Id)
+        .Select(b => name ?? b.Name).{{(async ? "ToListAsync" : "ToList")}}();
+
+    Assert.Equal(name == null ? new[] { "Blog1", "Blog2" } : new[] { "captured", "captured" }, names);
+}
+""");
+
     // We do not support embedding Expression builder API calls into the query; this would require CSharpToLinqTranslator to actually
     // evaluate those APIs and embed the results into the tree. It's (at least potentially) a form of dynamic query, unsupported for now.
     [Fact]
@@ -194,6 +249,28 @@ _ = await context.Blogs.Select(b => new Blog(i, b.Name)).ToListAsync();
         => Test("_ = await context.Blogs.Select(b => new Blog { Id = b.Id, Name = b.Name }).ToListAsync();");
 
     [Fact]
+    public virtual Task MemberInit_with_required_init_only_properties()
+        => Test(
+            """
+var id = 8;
+var blog = await context.Blogs.Where(b => b.Id == id)
+    .Select(b => new RequiredBlogDto
+    {
+        Id = b.Id,
+        Name = b.Name,
+        Details = new RequiredBlogDto { Id = b.Id, Name = b.Name }
+    })
+    .FirstOrDefaultAsync();
+
+Assert.NotNull(blog);
+Assert.Equal(8, blog.Id);
+Assert.Equal("Blog1", blog.Name);
+Assert.NotNull(blog.Details);
+Assert.Equal(8, blog.Details.Id);
+Assert.Equal("Blog1", blog.Details.Name);
+""");
+
+    [Fact]
     public virtual Task MemberInit_contains_captured_variable()
         => Test(
             """
@@ -275,6 +352,39 @@ _ = await context.Blogs.OrderBy(b => b.Name).Take(toTake).ToListAsync();
 """);
 
     [Fact]
+    public virtual Task Skip_Take_with_parameters()
+        => Test(
+            """
+foreach (var (skip, take, expected) in new[]
+{
+    (0, 3, new[] { 11, 12, 21 }),
+    (1, 2, new[] { 12, 21 }),
+    (1, 1, new[] { 12 }),
+    (5, 1, Array.Empty<int>())
+})
+{
+    var ids = context.Posts.OrderBy(p => p.Id).Skip(skip).Take(take).Select(p => p.Id).ToList();
+    Assert.Equal(expected, ids);
+}
+""");
+
+    [Fact]
+    public virtual Task Skip_Take_with_captured_parameters_in_local_function()
+        => Test(
+            """
+var skip = 1;
+var take = 2;
+await AssertPage();
+
+async Task AssertPage()
+{
+    var ids = await context.Posts.OrderBy(p => p.Id).Where(p => p.Id > 10)
+        .Skip(skip).Take(take).Select(p => p.Id).ToListAsync(CancellationToken.None);
+    Assert.Equal(new[] { 12, 21 }, ids);
+}
+""");
+
+    [Fact]
     public virtual Task Select_changes_type()
         => Test("_ = await context.Blogs.Select(b => b.Name).ToListAsync();");
 
@@ -301,6 +411,25 @@ _ = await context.Blogs.OrderBy(b => b.Name).Take(toTake).ToListAsync();
     [Fact]
     public virtual Task GroupBy_Select_first_grouping_element()
         => Test("""var blogs = await context.Blogs.GroupBy(b => b.Name).Select(g => g.OrderBy(b => b.Id).First()).ToListAsync();""");
+
+    // An aggregate over a grouping translated in a nested query falls back to a subquery over the grouping element (#27130).
+    [Fact]
+    public virtual Task GroupBy_aggregate_over_outer_grouping_in_subquery()
+        => Test(
+            """
+var blogs = await context.Blogs.GroupBy(b => b.Name)
+    .Select(g => new { g.Key, Count = context.Blogs.GroupBy(b => b.Id).OrderBy(g2 => g2.Key).Select(g2 => g.Count()).FirstOrDefault() })
+    .ToListAsync();
+""");
+
+    // An aggregate over a grouping translated for an inline collection is folded back into the grouped query once the
+    // collection becomes an IN list (#27130).
+    [Fact]
+    public virtual Task GroupBy_aggregate_as_element_of_inline_collection_Contains()
+        => Test(
+            """
+var blogs = await context.Blogs.GroupBy(b => b.Name).Where(g => new List<int> { g.Count(), -1 }.Contains(1)).Select(g => g.Key).ToListAsync();
+""");
 
     #endregion Regular operators
 
@@ -954,6 +1083,23 @@ Assert.Collection(posts,
     b => Assert.Equal(23, b.Id));
 """);
 
+    [Fact]
+    public virtual Task MinMaxBy_nullable_keys()
+        => Test(
+            """
+var minimumBlog = context.Blogs.OrderBy(b => b.Id).MinBy(b => b.Name);
+Assert.Equal(8, minimumBlog!.Id);
+var maximumBlog = context.Blogs.OrderBy(b => b.Id).MaxBy(b => b.Name);
+Assert.Equal(9, maximumBlog!.Id);
+Assert.Equal(2, maximumBlog.Json.Count);
+var minimumPost = context.Posts.OrderBy(p => p.Id).MinBy(p => p.Title);
+Assert.Equal(11, minimumPost!.Id);
+var maximumPost = context.Posts.OrderBy(p => p.Id).MaxBy(p => p.Title);
+Assert.Equal(23, maximumPost!.Id);
+var title = context.Posts.Select(p => p.Title).MinBy(t => t);
+Assert.Equal("Post11", title);
+""");
+
     [Fact(Skip = "issue 33378")]
     public virtual Task ConcatOnEntitiesWithJson()
         => Test(
@@ -1494,6 +1640,13 @@ await using var context = new PrecompiledQueryContext(dbContextOptions);
         public string? Text { get; set; }
 
         public JsonBranch Inner { get; set; } = null!;
+    }
+
+    public class RequiredBlogDto
+    {
+        public int Id { get; init; }
+        public required string? Name { get; init; }
+        public RequiredBlogDto? Details { get; init; }
     }
 
     public class JsonBranch

@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.Build.Utilities;
 using Microsoft.Build.Framework;
 using Microsoft.NET.Sdk.WorkloadManifestReader;
@@ -62,8 +63,9 @@ internal abstract class WorkloadPackPackage : WorkloadPackageBase
     /// </summary>
     /// <param name="pack"></param>
     /// <returns>An enumerable of tuples. Each tuple contains the full path of the NuGet package and support platforms.</returns>
-    internal static IEnumerable<(string sourcePackage, string[] platforms)> GetSourcePackages(string packageSource, WorkloadPack pack)
+    internal static IEnumerable<(string sourcePackage, string[] platforms)> GetSourcePackages(string packageSource, WorkloadPack pack, string[]? supportedPlatforms = null)
     {
+        supportedPlatforms ??= CreateVisualStudioWorkload.SupportedPlatforms;
         if (pack.IsAlias && pack.AliasTo != null)
         {
             foreach (string rid in pack.AliasTo.Keys)
@@ -76,16 +78,16 @@ internal abstract class WorkloadPackPackage : WorkloadPackageBase
                     case "win10":
                     case "win":
                     case "any":
-                        yield return (sourcePackage, CreateVisualStudioWorkload.SupportedPlatforms);
+                        yield return (sourcePackage, supportedPlatforms);
                         break;
                     case "win-x64":
-                        yield return (sourcePackage, new[] { "x64" });
-                        break;
                     case "win-x86":
-                        yield return (sourcePackage, new[] { "x86" });
-                        break;
                     case "win-arm64":
-                        yield return (sourcePackage, new[] { "arm64" });
+                        string platform = rid.Substring("win-".Length);
+                        if (supportedPlatforms.Contains(platform))
+                        {
+                            yield return (sourcePackage, new[] { platform });
+                        }
                         break;
                     default:
                         // Unsupported RID.
@@ -96,7 +98,7 @@ internal abstract class WorkloadPackPackage : WorkloadPackageBase
         else
         {
             // For non-RID specific packs we'll produce MSIs for each supported platform.
-            yield return (Path.Combine(packageSource, $"{pack.Id}.{pack.Version}.nupkg"), CreateVisualStudioWorkload.SupportedPlatforms);
+            yield return (Path.Combine(packageSource, $"{pack.Id}.{pack.Version}.nupkg"), supportedPlatforms);
         }
     }
 

@@ -59,6 +59,18 @@ public static class ExecuteHelper
 
         if (timedOut || !process.WaitForExit(millisecondTimeout))
         {
+            ProcessHangDiagnostics.CollectOnTimeout(
+                process,
+                millisecondTimeout,
+                () => stdOutput + "--- stderr ---" + Environment.NewLine + stdError,
+                message =>
+                {
+                    // Test output is only reported when the test finishes, so also write to the console, which the
+                    // CI log shows live.
+                    Console.WriteLine(message);
+                    outputHelper.WriteLine(message);
+                });
+
             outputHelper.WriteLine($"Killing: {fileName} {args}");
             process.Kill(true);
             if (!process.WaitForExit(KillGraceMilliseconds))

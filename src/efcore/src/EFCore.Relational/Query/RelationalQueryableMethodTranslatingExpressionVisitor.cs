@@ -38,6 +38,9 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
     private Expression? _rootExpression;
     private bool _isRootOperator;
 
+    // The query the next TranslateExpression call's SQL goes into, when its caller knows; see TranslateExpressionInScope.
+    private SelectExpression? _translationScope;
+
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
     ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
@@ -764,6 +767,12 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         return source1;
     }
 
+    /// <summary>
+    ///     Whether the provider supports looking up the winning nullable MinBy or MaxBy key using INTERSECT.
+    /// </summary>
+    protected virtual bool SupportsExtremalKeyLookup
+        => false;
+
     /// <inheritdoc />
     protected override ShapedQueryExpression? TranslateFirstOrDefault(
         ShapedQueryExpression source,
@@ -784,13 +793,20 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
 
         var selectExpression = (SelectExpression)source.QueryExpression;
         if (selectExpression.Orderings.Count == 0
+            && selectExpression.Having == null
             && (selectExpression.Predicate == null
                 || (_subquery && IsFilteredOnlyByForeignKeyCorrelation(selectExpression))))
         {
             _queryCompilationContext.Logger.FirstWithoutOrderByAndFilterWarning();
         }
 
-        ApplyLimit(selectExpression, TranslateExpression(Expression.Constant(1))!);
+        var one = TranslateExpression(Expression.Constant(1))!;
+        if (SupportsExtremalKeyLookup && _isRootOperator && _queryCompilationContext.IsMinMaxBy == true)
+        {
+            selectExpression.TryApplyExtremalKeyLookup(_sqlExpressionFactory, one);
+        }
+
+        ApplyLimit(selectExpression, one);
 
         return source.ShaperExpression.Type != returnType
             ? source.UpdateShaperExpression(Expression.Convert(source.ShaperExpression, returnType))
@@ -942,8 +958,9 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
             {
                 // SQL applies OVER to the aggregate itself, so only an aggregate which translates to a bare function call can carry a
                 // window. An aggregate whose translation wraps the function - Sum and Average over a float become a CAST around it -
-                // keeps the regular GROUP BY translation, as does one the provider can't evaluate over a window.
-                if (_sqlTranslator.Translate(analyzer.Aggregates[i]) is not SqlFunctionExpression aggregate
+                // keeps the regular GROUP BY translation, as does one the provider can't evaluate over a window. The window is
+                // evaluated over this query's own rows, so the aggregate is translated in its scope (#27130).
+                if (_sqlTranslator.Translate(analyzer.Aggregates[i], selectExpression) is not SqlFunctionExpression aggregate
                     || !CanTranslateAggregateAsWindowFunction(aggregate))
                 {
                     return null;
@@ -1012,7 +1029,10 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
 
         return source.UpdateShaperExpression(
             new RelationalGroupByShaperExpression(
-                groupByShaper.KeySelector, elementShaper, groupByShaper.GroupingEnumerable, resultSelector));
+                groupByShaper.KeySelector, elementShaper, groupByShaper.GroupingEnumerable, resultSelector)
+            {
+                OwningSelectExpression = groupByShaper.OwningSelectExpression
+            });
     }
 
     /// <summary>
@@ -1065,7 +1085,8 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
                     selectExpression,
                     ReplacingExpressionVisitor.Replace(
                         orderingKeySelector.Parameters[0], groupByShaper.ElementSelector, orderingKeySelector.Body),
-                    allowOwnerJoin: false));
+                    allowOwnerJoin: false),
+                selectExpression);
             if (translation == null)
             {
                 return null;
@@ -1386,7 +1407,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         return null;
     }
 
-    private SqlExpression CreateJoinPredicate(
+    private SqlExpression? CreateJoinPredicate(
         ShapedQueryExpression outer,
         LambdaExpression outerKeySelector,
         ShapedQueryExpression inner,
@@ -1403,12 +1424,10 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         var innerNew = (NewExpression)innerKey;
 
         SqlExpression? result = null;
-        for (var i = 0; i < outerNew.Arguments.Count; i++)
+        var comparisonCount = 0;
+        if (!TryAddComparisons(outerNew, innerNew))
         {
-            var joinPredicate = CreateJoinPredicate(outerNew.Arguments[i], innerNew.Arguments[i]);
-            result = result == null
-                ? joinPredicate
-                : _sqlExpressionFactory.AndAlso(result, joinPredicate);
+            return null;
         }
 
         // In LINQ equijoins, null is not equal null, just like in SQL
@@ -1425,17 +1444,50 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         // To work around this, we add an always-true predicate here, and the AND will cause
         // SqlNullabilityProcessor.ProcessJoinPredicate() to go into the multiple-property anonymous type logic,
         // and not bypass null compensation.
-        if (outerNew.Arguments.Count == 1)
+        if (comparisonCount == 1)
         {
             result = _sqlExpressionFactory.AndAlso(
                 result!,
-                CreateJoinPredicate(Expression.Constant(true), Expression.Constant(true)));
+                CreateJoinPredicate(Expression.Constant(true), Expression.Constant(true))!);
         }
 
         return result ?? _sqlExpressionFactory.Constant(true);
 
-        SqlExpression CreateJoinPredicate(Expression outerKey, Expression innerKey)
-            => TranslateExpression(Infrastructure.ExpressionExtensions.CreateEqualsExpression(outerKey, innerKey))!;
+        // Anonymous types can be nested in the key selectors; flatten them, since a nested anonymous type can't be translated as a
+        // single comparison. Other constructed types (e.g. DateTimeOffset) are compared as a whole, as their equality isn't
+        // necessarily member-wise.
+        bool TryAddComparisons(NewExpression outer, NewExpression inner)
+        {
+            for (var i = 0; i < outer.Arguments.Count; i++)
+            {
+                if (outer.Arguments[i] is NewExpression nestedOuter
+                    && nestedOuter.Type.IsAnonymousType()
+                    && inner.Arguments[i] is NewExpression nestedInner)
+                {
+                    if (!TryAddComparisons(nestedOuter, nestedInner))
+                    {
+                        return false;
+                    }
+
+                    continue;
+                }
+
+                if (CreateJoinPredicate(outer.Arguments[i], inner.Arguments[i]) is not { } joinPredicate)
+                {
+                    return false;
+                }
+
+                result = result == null
+                    ? joinPredicate
+                    : _sqlExpressionFactory.AndAlso(result, joinPredicate);
+                comparisonCount++;
+            }
+
+            return true;
+        }
+
+        SqlExpression? CreateJoinPredicate(Expression outerKey, Expression innerKey)
+            => TranslateExpression(Infrastructure.ExpressionExtensions.CreateEqualsExpression(outerKey, innerKey));
     }
 
     /// <inheritdoc />
@@ -2707,7 +2759,19 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
     /// <returns>A <see cref="SqlExpression" /> which is translation of given expression or <see langword="null" />.</returns>
     protected virtual SqlExpression? TranslateExpression(Expression expression, bool applyDefaultTypeMapping = true)
     {
-        var translation = _sqlTranslator.Translate(expression, applyDefaultTypeMapping);
+        // Taken for this translation only, so that nothing translated from within it sees a scope that isn't its own.
+        var scope = _translationScope;
+        _translationScope = null;
+
+        SqlExpression? translation;
+        try
+        {
+            translation = _sqlTranslator.Translate(expression, scope, applyDefaultTypeMapping);
+        }
+        finally
+        {
+            _translationScope = scope;
+        }
 
         if (translation is null)
         {
@@ -2744,7 +2808,26 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
     protected virtual SqlExpression? TranslateLambdaExpression(
         ShapedQueryExpression shapedQueryExpression,
         LambdaExpression lambdaExpression)
-        => TranslateExpression(RemapLambdaBody(shapedQueryExpression, lambdaExpression));
+        => TranslateExpressionInScope(
+            RemapLambdaBody(shapedQueryExpression, lambdaExpression),
+            shapedQueryExpression.QueryExpression as SelectExpression);
+
+    // Translates through TranslateExpression, telling the SQL translator that the result goes into the given query, so that an
+    // aggregate over a grouping can tell whether SQL would evaluate it over that grouping (#27130).
+    private SqlExpression? TranslateExpressionInScope(Expression expression, SelectExpression? scope)
+    {
+        var previous = _translationScope;
+        _translationScope = scope;
+
+        try
+        {
+            return TranslateExpression(expression);
+        }
+        finally
+        {
+            _translationScope = previous;
+        }
+    }
 
     // Expanding a collection navigation produces a subquery filtered only by the correlation to the outer query, i.e. an equality
     // between the foreign key columns and the principal key columns, optionally with a null check on the principal key. That doesn't
@@ -2761,9 +2844,13 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         }
 
         var keyComparisons = new List<(ColumnExpression Outer, ColumnExpression Inner)>();
+        var nullChecks = new List<ColumnExpression>();
         if (!IsCorrelation(selectExpression.Predicate!)
             || keyComparisons.Count == 0
-            || keyComparisons[0].Inner.Column is not IColumn { Table: var dependentTable })
+            || keyComparisons[0].Inner.Column is not IColumn { Table: var dependentTable }
+            // A null check is only a navigation-generated guard if it is on one of the compared principal key columns.
+            // Any other one, e.g. c.City != null, is a user filter.
+            || nullChecks.Any(n => !keyComparisons.Any(c => c.Outer.TableAlias == n.TableAlias && c.Outer.Name == n.Name)))
         {
             return false;
         }
@@ -2784,6 +2871,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
                 {
                     OperatorType: ExpressionType.NotEqual, Left: ColumnExpression column, Right: SqlConstantExpression { Value: null }
                 }:
+                    nullChecks.Add(column);
                     return IsOuter(column);
 
                 case SqlBinaryExpression
@@ -2878,7 +2966,6 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         protected override Expression VisitExtension(Expression node)
             => node switch
             {
-                IncludeExpression { Navigation: ISkipNavigation or not INavigation } i => i,
                 IncludeExpression i => Visit(i.EntityExpression),
                 _ => base.VisitExtension(node)
             };
@@ -3563,9 +3650,22 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         }
 
         if (selector == null
-            || TranslateExpression(selector) is not { } translatedSelector)
+            || TranslateExpressionInScope(selector, selectExpression) is not { } translatedSelector)
         {
             return null;
+        }
+
+        // SQL evaluates an aggregate in the innermost query whose columns its argument references, so over a selector naming only
+        // columns of enclosing queries - Sum(e => outer.Value), or the fallback for a grouping aggregate that couldn't be folded -
+        // the aggregate would be computed by an enclosing query rather than over this one's rows (#27130). Projecting the selector
+        // out of a subquery first gives the aggregate a column of this query to be evaluated over.
+        if (RelationalSqlTranslatingExpressionVisitor.ReferencesOnlyOuterColumns(translatedSelector, selectExpression))
+        {
+            selectExpression.ReplaceProjection(
+                new Dictionary<ProjectionMember, Expression> { { new ProjectionMember(), translatedSelector } });
+            selectExpression.PushdownIntoSubquery();
+            translatedSelector = (SqlExpression)selectExpression.GetProjection(
+                new ProjectionBindingExpression(selectExpression, new ProjectionMember(), translatedSelector.Type));
         }
 
         var methodCall = Expression.Call(

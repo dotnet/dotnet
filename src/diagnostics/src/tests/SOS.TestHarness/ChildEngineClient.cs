@@ -17,15 +17,17 @@ namespace SOS.TestHarness;
 ///
 /// The child blocks on stdin between commands (no busy-wait), so idle clients are cheap.
 /// </summary>
-public sealed class ChildEngineClient : ILiveDebuggerHost
+public sealed class ChildEngineClient : ILiveDebuggerHost, IStartupDiagnosticHost
 {
     private readonly Process _process;
     private readonly StreamWriter _stdin;
     private readonly BlockingCollection<string> _lines = new();
     private readonly Thread _reader;
     private readonly Task<string> _stderr;
+    private readonly List<string> _startupDiagnostics = [];
 
     public string Name { get; }
+    IReadOnlyList<string> IStartupDiagnosticHost.StartupDiagnostics => _startupDiagnostics;
 
     private ChildEngineClient(
         string name,
@@ -34,7 +36,6 @@ public sealed class ChildEngineClient : ILiveDebuggerHost
         string? dacDir,
         Dac dac,
         Flavor flavor,
-        HostRuntime hostRuntime,
         IReadOnlyDictionary<string, string>? environmentVariables = null)
     {
         Name = name;
@@ -73,7 +74,6 @@ public sealed class ChildEngineClient : ILiveDebuggerHost
         }
 
         psi.Environment["_NT_SYMBOL_PATH"] = symbolPath;
-        psi.Environment[DbgEngHostBase.HostRuntimeEnvironmentVariable] = hostRuntime.ToString();
 
         if (mode == "live")
         {
@@ -128,9 +128,8 @@ public sealed class ChildEngineClient : ILiveDebuggerHost
         string hostName,
         string dumpPath,
         string? dacDir = null,
-        Dac dac = Dac.Legacy,
-        HostRuntime hostRuntime = HostRuntime.Managed) =>
-        new(hostName, "dump", new[] { dumpPath }, dacDir, dac, Flavor.Core, hostRuntime);
+        Dac dac = Dac.Legacy) =>
+        new(hostName, "dump", new[] { dumpPath }, dacDir, dac, Flavor.Core);
 
     /// <summary>A live child engine that launches the target (parked at the loader break, SOS loaded).</summary>
     public static ChildEngineClient ForLive(
@@ -139,9 +138,8 @@ public sealed class ChildEngineClient : ILiveDebuggerHost
         string? dacDir = null,
         Dac dac = Dac.Legacy,
         Flavor flavor = Flavor.Core,
-        HostRuntime hostRuntime = HostRuntime.Managed,
         IReadOnlyDictionary<string, string>? environmentVariables = null) =>
-        new(hostName, "live", new[] { exePath }, dacDir, dac, flavor, hostRuntime, environmentVariables);
+        new(hostName, "live", new[] { exePath }, dacDir, dac, flavor, environmentVariables);
 
     public void LoadSos()
     {
@@ -183,6 +181,13 @@ public sealed class ChildEngineClient : ILiveDebuggerHost
             if (line == EngineProtocol.Ready)
             {
                 return;
+            }
+
+            if (line.StartsWith(EngineProtocol.DiagnosticPrefix, StringComparison.Ordinal))
+            {
+                string diagnostic = line[EngineProtocol.DiagnosticPrefix.Length..];
+                _startupDiagnostics.Add(diagnostic);
+                Console.WriteLine(diagnostic);
             }
         }
     }

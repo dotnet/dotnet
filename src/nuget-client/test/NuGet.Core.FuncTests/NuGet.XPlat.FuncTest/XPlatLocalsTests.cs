@@ -57,6 +57,7 @@ namespace NuGet.XPlat.FuncTest
                 var mockHttpCacheDirectory = Directory.CreateDirectory(Path.Combine(mockBaseDirectory.Path, @"http-cache"));
                 var mockTmpCacheDirectory = Directory.CreateDirectory(Path.Combine(mockBaseDirectory.Path, @"temp"));
                 var mockPluginsCacheDirectory = Directory.CreateDirectory(Path.Combine(mockBaseDirectory.Path, @"plugins-cache"));
+                var mockHomeDirectory = Path.Combine(mockBaseDirectory.Path, "home");
 
                 DotnetCliUtil.CreateTestFiles(mockGlobalPackagesDirectory.FullName);
                 DotnetCliUtil.CreateTestFiles(mockHttpCacheDirectory.FullName);
@@ -73,6 +74,8 @@ namespace NuGet.XPlat.FuncTest
                         { "NUGET_PACKAGES", mockGlobalPackagesDirectory.FullName },
                         { "NUGET_HTTP_CACHE_PATH", mockHttpCacheDirectory.FullName },
                         { "NUGET_PLUGINS_CACHE_PATH", mockPluginsCacheDirectory.FullName },
+                        { "DOTNET_CLI_HOME", mockHomeDirectory },
+                        { "NUGET_SCRATCH", string.Empty },
                         { RuntimeEnvironmentHelper.IsWindows ? "TMP" : "TMPDIR", mockTmpCacheDirectory.FullName }
                     },
                     testOutputHelper: _testOutputHelper);
@@ -80,6 +83,13 @@ namespace NuGet.XPlat.FuncTest
 
                 // Assert
                 DotnetCliUtil.VerifyResultSuccess(result, string.Empty);
+                if (args.Contains("temp") || args.Contains("all"))
+                {
+                    var expectedTempPath = RuntimeEnvironmentHelper.IsLinux
+                        ? Path.Combine(mockHomeDirectory, ".nuget", "lock")
+                        : Path.Combine(mockTmpCacheDirectory.FullName, "NuGetScratch");
+                    Assert.Contains($"temp: {expectedTempPath}", result.Output);
+                }
             }
         }
 
@@ -116,10 +126,19 @@ namespace NuGet.XPlat.FuncTest
                 var mockPluginsCacheDirectory = Directory.CreateDirectory(Path.Combine(mockBaseDirectory.Path, @"plugins-cache"));
                 var mockTmpCacheDirectory = Directory.CreateDirectory(Path.Combine(mockTmpDirectory.FullName,
                     RuntimeEnvironmentHelper.IsLinux ? "NuGetScratch" + Environment.UserName : "NuGetScratch"));
+                var mockHomeDirectory = Path.Combine(mockBaseDirectory.Path, "home");
+                var tempCachePath = RuntimeEnvironmentHelper.IsLinux
+                    ? Directory.CreateDirectory(Path.Combine(mockHomeDirectory, ".nuget", "lock")).FullName
+                    : mockTmpCacheDirectory.FullName;
 
                 DotnetCliUtil.CreateTestFiles(mockGlobalPackagesDirectory.FullName);
                 DotnetCliUtil.CreateTestFiles(mockHttpCacheDirectory.FullName);
                 DotnetCliUtil.CreateTestFiles(mockTmpCacheDirectory.FullName);
+                if (RuntimeEnvironmentHelper.IsLinux)
+                {
+                    DotnetCliUtil.CreateTestFiles(tempCachePath);
+                    File.WriteAllText(Path.Combine(mockHomeDirectory, ".nuget", "sentinel.txt"), "keep");
+                }
                 DotnetCliUtil.CreateTestFiles(mockPluginsCacheDirectory.FullName);
 
                 var cacheType = args.Split(null)[1].StartsWith("-") ? args.Split(null)[2] : args.Split(null)[1];
@@ -134,7 +153,9 @@ namespace NuGet.XPlat.FuncTest
                         { "NUGET_PACKAGES", mockGlobalPackagesDirectory.FullName },
                         { "NUGET_HTTP_CACHE_PATH", mockHttpCacheDirectory.FullName },
                         { RuntimeEnvironmentHelper.IsWindows ? "TMP" : "TMPDIR", mockTmpDirectory.FullName },
-                        { "NUGET_PLUGINS_CACHE_PATH", mockPluginsCacheDirectory.FullName }
+                        { "NUGET_PLUGINS_CACHE_PATH", mockPluginsCacheDirectory.FullName },
+                        { "DOTNET_CLI_HOME", mockHomeDirectory },
+                        { "NUGET_SCRATCH", string.Empty }
                     },
                     testOutputHelper: _testOutputHelper);
                 // Unix uses TMPDIR as environment variable as opposed to TMP on windows
@@ -144,7 +165,7 @@ namespace NuGet.XPlat.FuncTest
                 {
                     DotnetCliUtil.VerifyClearSuccess(mockGlobalPackagesDirectory.FullName);
                     DotnetCliUtil.VerifyClearSuccess(mockHttpCacheDirectory.FullName);
-                    DotnetCliUtil.VerifyClearSuccess(mockTmpCacheDirectory.FullName);
+                    DotnetCliUtil.VerifyClearSuccess(tempCachePath);
                     DotnetCliUtil.VerifyClearSuccess(mockPluginsCacheDirectory.FullName);
 
                     // Assert clear message
@@ -161,7 +182,7 @@ namespace NuGet.XPlat.FuncTest
 
                     // Http cache and Temp cahce should be untouched
                     DotnetCliUtil.VerifyNoClear(mockHttpCacheDirectory.FullName);
-                    DotnetCliUtil.VerifyNoClear(mockTmpCacheDirectory.FullName);
+                    DotnetCliUtil.VerifyNoClear(tempCachePath);
                     DotnetCliUtil.VerifyNoClear(mockPluginsCacheDirectory.FullName);
 
                     // Assert clear message
@@ -175,7 +196,7 @@ namespace NuGet.XPlat.FuncTest
 
                     // Global packages cache and temp cache should be untouched
                     DotnetCliUtil.VerifyNoClear(mockGlobalPackagesDirectory.FullName);
-                    DotnetCliUtil.VerifyNoClear(mockTmpCacheDirectory.FullName);
+                    DotnetCliUtil.VerifyNoClear(tempCachePath);
                     DotnetCliUtil.VerifyNoClear(mockPluginsCacheDirectory.FullName);
 
                     // Assert clear message
@@ -185,7 +206,7 @@ namespace NuGet.XPlat.FuncTest
                 else if (cacheType == "temp")
                 {
                     // Temp cache should be cleared
-                    DotnetCliUtil.VerifyClearSuccess(mockTmpCacheDirectory.FullName);
+                    DotnetCliUtil.VerifyClearSuccess(tempCachePath);
 
                     // Global packages cache and Http cache should be un touched
                     DotnetCliUtil.VerifyNoClear(mockGlobalPackagesDirectory.FullName);
@@ -203,12 +224,74 @@ namespace NuGet.XPlat.FuncTest
                     // Global packages cache and Http cache should be un touched
                     DotnetCliUtil.VerifyNoClear(mockGlobalPackagesDirectory.FullName);
                     DotnetCliUtil.VerifyNoClear(mockHttpCacheDirectory.FullName);
-                    DotnetCliUtil.VerifyNoClear(mockTmpCacheDirectory.FullName);
+                    DotnetCliUtil.VerifyNoClear(tempCachePath);
 
                     // Assert clear message
                     DotnetCliUtil.VerifyResultSuccess(result, "Clearing NuGet plugins cache:");
                     DotnetCliUtil.VerifyResultSuccess(result, "Local resources cleared.");
                 }
+
+                if (RuntimeEnvironmentHelper.IsLinux)
+                {
+                    DotnetCliUtil.VerifyNoClear(mockTmpCacheDirectory.FullName);
+                    Assert.Equal("keep", File.ReadAllText(Path.Combine(mockHomeDirectory, ".nuget", "sentinel.txt")));
+                }
+
+                if (cacheType == "temp" || cacheType == "all")
+                {
+                    Assert.Contains($"Clearing NuGet Temp cache: {tempCachePath}", result.Output);
+                }
+            }
+        }
+
+        [Theory]
+        [InlineData("locals temp --list", false)]
+        [InlineData("locals all --list", false)]
+        [InlineData("locals temp --clear", true)]
+        [InlineData("locals all --clear", true)]
+        public void Locals_Temp_UsesScratchOverride(string args, bool clear)
+        {
+            using var testDirectory = TestDirectory.Create();
+            var scratchDirectory = Directory.CreateDirectory(Path.Combine(testDirectory, "scratch"));
+            var lockDirectory = Directory.CreateDirectory(Path.Combine(scratchDirectory.FullName, "lock"));
+            var homeDirectory = Path.Combine(testDirectory, "home");
+            var homeLockDirectory = Directory.CreateDirectory(Path.Combine(homeDirectory, ".nuget", "lock"));
+            DotnetCliUtil.CreateTestFiles(scratchDirectory.FullName);
+            DotnetCliUtil.CreateTestFiles(lockDirectory.FullName);
+            DotnetCliUtil.CreateTestFiles(homeLockDirectory.FullName);
+            var expectedTempPath = RuntimeEnvironmentHelper.IsLinux
+                ? lockDirectory.FullName
+                : scratchDirectory.FullName;
+
+            var result = CommandRunner.Run(
+                DotnetCli,
+                testDirectory,
+                $"{XplatDll} {args}",
+                environmentVariables: new Dictionary<string, string>
+                {
+                    { "NUGET_SCRATCH", scratchDirectory.FullName },
+                    { "DOTNET_CLI_HOME", homeDirectory },
+                    { "NUGET_PACKAGES", Path.Combine(testDirectory, "packages") },
+                    { "NUGET_HTTP_CACHE_PATH", Path.Combine(testDirectory, "http-cache") },
+                    { "NUGET_PLUGINS_CACHE_PATH", Path.Combine(testDirectory, "plugins-cache") }
+                },
+                testOutputHelper: _testOutputHelper);
+
+            DotnetCliUtil.VerifyResultSuccess(result,
+                clear ? $"Clearing NuGet Temp cache: {expectedTempPath}" : $"temp: {expectedTempPath}");
+            DotnetCliUtil.VerifyNoClear(homeLockDirectory.FullName);
+            if (clear)
+            {
+                DotnetCliUtil.VerifyClearSuccess(expectedTempPath);
+                if (RuntimeEnvironmentHelper.IsLinux)
+                {
+                    DotnetCliUtil.VerifyNoClear(scratchDirectory.FullName);
+                }
+            }
+            else
+            {
+                DotnetCliUtil.VerifyNoClear(scratchDirectory.FullName);
+                DotnetCliUtil.VerifyNoClear(lockDirectory.FullName);
             }
         }
 

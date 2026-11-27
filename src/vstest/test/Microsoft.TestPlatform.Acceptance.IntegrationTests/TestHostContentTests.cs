@@ -23,7 +23,7 @@ public class TestHostContentTests : AcceptanceTestBase
         var propsPath = Path.Combine(
             IntegrationTestEnvironment.RepoRootDirectory,
             "src", "package", "Microsoft.TestPlatform.TestHost", "Microsoft.TestPlatform.TestHost.props");
-        var projectPath = GetIsolatedTestAsset("TestHostContent.csproj", Core11TargetFramework);
+        var projectPath = GetIsolatedTestAsset("TestHostContent.csproj", Core12TargetFramework);
         var intermediatePath = Directory.CreateDirectory(Path.Combine(TempDirectory.Path, "obj")).FullName;
 
         // Import at the NuGet props hook, before the project properties and SDK framework inference.
@@ -38,7 +38,7 @@ public class TestHostContentTests : AcceptanceTestBase
             """;
 
         // Check single-target evaluation as well as MSBuild's dispatch to each inner build.
-        foreach (var framework in new[] { "net11.0", "net11.0-android", "net11.0-windows" })
+        foreach (var framework in new[] { "net12.0", "net12.0-android", "net12.0-windows" })
         {
             ExecuteApplication(
                 dotnetPath, $"{arguments} -p:SingleTargetFramework={framework}",
@@ -53,7 +53,7 @@ public class TestHostContentTests : AcceptanceTestBase
             out var multiTargetOutput, out var multiTargetError, out var multiTargetExitCode, workingDirectory: TempDirectory.Path);
 
         Assert.AreEqual(0, multiTargetExitCode, $"{multiTargetOutput}\n{multiTargetError}");
-        foreach (var framework in new[] { "net11.0", "net11.0-android", "net11.0-windows" })
+        foreach (var framework in new[] { "net12.0", "net12.0-android", "net12.0-windows" })
         {
             AssertContent(framework);
         }
@@ -61,12 +61,12 @@ public class TestHostContentTests : AcceptanceTestBase
         void AssertContent(string framework)
         {
             var hostName = platform == "x86" || platformTarget == "x86" ? "testhost.x86" : "testhost";
-            var expected = os == "Windows_NT" && framework != "net11.0-android"
+            var expected = os == "Windows_NT" && framework != "net12.0-android"
                 ? new[] { $"{hostName}.exe|PreserveNewest|False", $"{hostName}.dll|PreserveNewest|False" }
                 : Array.Empty<string>();
             var contentPath = Path.Combine(TempDirectory.Path, $"{framework}.content");
 
-            CollectionAssert.AreEqual(expected, File.ReadAllLines(contentPath), framework);
+            Assert.AreSequenceEqual(expected, File.ReadAllLines(contentPath), framework);
             File.Delete(contentPath);
         }
     }

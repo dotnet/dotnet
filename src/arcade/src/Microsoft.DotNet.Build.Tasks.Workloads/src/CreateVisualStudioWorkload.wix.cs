@@ -11,6 +11,9 @@ using Microsoft.Deployment.DotNet.Releases;
 using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
 using Microsoft.DotNet.Build.Tasks.Workloads.Swix;
 using Microsoft.NET.Sdk.WorkloadManifestReader;
+using NuGet.Packaging;
+using NuGet.Packaging.Core;
+using NuGet.Versioning;
 using static Microsoft.DotNet.Build.Tasks.Workloads.Msi.WorkloadManifestMsi;
 using Parallel = System.Threading.Tasks.Parallel;
 
@@ -130,8 +133,42 @@ public class CreateVisualStudioWorkload : VisualStudioWorkloadTaskBase
         set;
     } = false;
 
+    /// <summary>
+    /// A set of previously built workload pack MSI payload packages, e.g. <c>Microsoft.NET.Runtime.Emscripten.Node.win-x64.Msi.x64</c>.
+    /// When a package matching a workload pack's ID, version and platform is found, the MSI it contains is used for the
+    /// SWIX project instead of building a new MSI. No MSI item, payload package project or wixpack is produced for those packs.
+    /// This is only supported when <see cref="CreateWorkloadPackGroups"/> is false.
+    /// </summary>
+    public ITaskItem[] PrebuiltPackMsiPackages
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// Maps "{PackageId}|{NormalizedVersion}" of the prebuilt MSI payload packages to their paths.
+    /// </summary>
+    private readonly Dictionary<string, string> _prebuiltPackMsiPackages = new(StringComparer.OrdinalIgnoreCase);
+
     protected override bool ExecuteCore()
     {
+        if (PrebuiltPackMsiPackages?.Length > 0)
+        {
+            if (CreateWorkloadPackGroups)
+            {
+                Log.LogError($"{nameof(PrebuiltPackMsiPackages)} is not supported when {nameof(CreateWorkloadPackGroups)} is true.");
+                return false;
+            }
+
+            foreach (ITaskItem prebuiltPackage in PrebuiltPackMsiPackages)
+            {
+                string packagePath = prebuiltPackage.GetMetadata(Metadata.FullPath);
+                using PackageArchiveReader reader = new(packagePath);
+                PackageIdentity identity = reader.GetIdentity();
+                _prebuiltPackMsiPackages[GetPrebuiltPackMsiPackageKey(identity.Id, identity.Version)] = packagePath;
+            }
+        }
+
         // TODO: trim out duplicate manifests.
         List<WorkloadManifestPackage> manifestPackages = new();
         List<WorkloadManifestMsi> manifestMsisToBuild = new();
@@ -164,7 +201,8 @@ public class CreateVisualStudioWorkload : VisualStudioWorkloadTaskBase
             }
 
             Dictionary<string, WorkloadManifestMsi> manifestMsisByPlatform = new();
-            foreach (string platform in SupportedPlatforms)
+            string[] supportedPlatforms = WorkloadPackageBase.GetSupportedPlatforms(manifestPackage.SdkFeatureBand);
+            foreach (string platform in supportedPlatforms)
             {
                 WorkloadManifestMsi manifestMsi = new(manifestPackage, platform, BuildEngine, WixToolsetConfig, BaseIntermediateOutputPath, 
                     EnableSideBySideManifests, CreateWixPacks);
@@ -214,7 +252,6 @@ public class CreateVisualStudioWorkload : VisualStudioWorkloadTaskBase
                             GroupPackageId = packGroupId,
                             GroupPackageVersion = manifestPackage.PackageVersion.ToString()
                         };
-                        packGroupJsonList.Add(packGroupJson);
                     }
 
                     foreach (WorkloadPackId packId in wd.Packs)
@@ -230,7 +267,7 @@ public class CreateVisualStudioWorkload : VisualStudioWorkloadTaskBase
                             });
                         }
 
-                        foreach ((string sourcePackage, string[] platforms) in WorkloadPackPackage.GetSourcePackages(PackageSource, pack))
+                        foreach ((string sourcePackage, string[] platforms) in WorkloadPackPackage.GetSourcePackages(PackageSource, pack, supportedPlatforms))
                         {
                             if (!File.Exists(sourcePackage))
                             {
@@ -281,6 +318,15 @@ public class CreateVisualStudioWorkload : VisualStudioWorkloadTaskBase
 
                     if (CreateWorkloadPackGroups)
                     {
+                        if (packsInWorkloadByPlatform.Count == 0)
+                        {
+                            packGroupId = null;
+                        }
+                        else
+                        {
+                            packGroupJsonList.Add(packGroupJson);
+                        }
+
                         //  TODO: Support passing in data to skip creating pack groups for certain packs (possibly EMSDK, because it's large)
                         foreach (var kvp in packsInWorkloadByPlatform)
                         {
@@ -335,7 +381,7 @@ public class CreateVisualStudioWorkload : VisualStudioWorkloadTaskBase
 
         // Deduplicate packages and extract them. Building and extracting in parallel can cause issues as the same
         // source package can be shared across multiple workloads and platforms.
-        Parallel.ForEach(buildData.Values.Select(d => d.Package).Distinct(), package =>
+        Parallel.ForEach(buildData.Values.Where(d => !IsFullyPrebuilt(d)).Select(d => d.Package).Distinct(), package =>
         {
             Log.LogMessage(MessageImportance.Low, string.Format(Strings.BuildExtractingPackage, package.PackagePath));
             package.Extract();
@@ -348,23 +394,29 @@ public class CreateVisualStudioWorkload : VisualStudioWorkloadTaskBase
         {
             _ = Parallel.ForEach(buildData.Values, data =>
             {
-                // Extract the contents of the workload pack package.
-                Log.LogMessage(MessageImportance.Low, string.Format(Strings.BuildExtractingPackage, data.Package.PackagePath));
-                data.Package.Extract();
+                if (!IsFullyPrebuilt(data))
+                {
+                    // Extract the contents of the workload pack package.
+                    Log.LogMessage(MessageImportance.Low, string.Format(Strings.BuildExtractingPackage, data.Package.PackagePath));
+                    data.Package.Extract();
+                }
 
                 // Enumerate over the platforms and build each MSI once.
                 _ = Parallel.ForEach(data.FeatureBands.Keys, platform =>
                 {
-                    WorkloadPackMsi msi = new(data.Package, platform, BuildEngine, WixToolsetConfig, BaseIntermediateOutputPath, CreateWixPacks);
-                    ITaskItem msiOutputItem = msi.Build(MsiOutputPath);
-
-                    // Generate a .csproj to package the MSI and its manifest for CLI installs.
-                    MsiPayloadPackageProject csproj = new(msi.Metadata, msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, msi.NuGetPackageFiles);
-                    msiOutputItem.SetMetadata(Metadata.PackageProject, csproj.Create());
-
-                    lock (msiItems)
+                    if (!TryGetPrebuiltPackMsi(data.Package, platform, out ITaskItem msiOutputItem))
                     {
-                        msiItems.Add(msiOutputItem);
+                        WorkloadPackMsi msi = new(data.Package, platform, BuildEngine, WixToolsetConfig, BaseIntermediateOutputPath, CreateWixPacks);
+                        msiOutputItem = msi.Build(MsiOutputPath);
+
+                        // Generate a .csproj to package the MSI and its manifest for CLI installs.
+                        MsiPayloadPackageProject csproj = new(msi.Metadata, msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, msi.NuGetPackageFiles);
+                        msiOutputItem.SetMetadata(Metadata.PackageProject, csproj.Create());
+
+                        lock (msiItems)
+                        {
+                            msiItems.Add(msiOutputItem);
+                        }
                     }
 
                     foreach (ReleaseVersion sdkFeatureBand in data.FeatureBands[platform])
@@ -509,6 +561,59 @@ public class CreateVisualStudioWorkload : VisualStudioWorkloadTaskBase
 
         Msis = msiItems.ToArray();
         SwixProjects = swixProjectItems.ToArray();
+
+        return true;
+    }
+
+    private static string GetPrebuiltPackMsiPackageKey(string packageId, NuGetVersion version) =>
+        $"{packageId}|{version.ToNormalizedString()}";
+
+    private static string GetPrebuiltPackMsiPackageId(WorkloadPackageBase package, string platform) =>
+        $"{package.Id}.Msi.{platform}";
+
+    private bool IsFullyPrebuilt(BuildData data) =>
+        _prebuiltPackMsiPackages.Count > 0 &&
+        data.FeatureBands.Keys.All(platform => _prebuiltPackMsiPackages.ContainsKey(
+            GetPrebuiltPackMsiPackageKey(GetPrebuiltPackMsiPackageId(data.Package, platform), data.Package.PackageVersion)));
+
+    /// <summary>
+    /// Extracts the MSI from a prebuilt payload package matching the workload pack and platform and creates
+    /// an item with the same metadata as an MSI built by <see cref="WorkloadPackMsi"/>.
+    /// </summary>
+    private bool TryGetPrebuiltPackMsi(WorkloadPackPackage package, string platform, out ITaskItem msiItem)
+    {
+        msiItem = null;
+        string payloadPackageId = GetPrebuiltPackMsiPackageId(package, platform);
+
+        if (!_prebuiltPackMsiPackages.TryGetValue(GetPrebuiltPackMsiPackageKey(payloadPackageId, package.PackageVersion), out string packagePath))
+        {
+            return false;
+        }
+
+        using PackageArchiveReader reader = new(packagePath);
+        string[] msiFiles = reader.GetFiles("data").Where(f => f.EndsWith(".msi", StringComparison.OrdinalIgnoreCase)).ToArray();
+
+        if (msiFiles.Length != 1)
+        {
+            throw new Exception($"Expected exactly one MSI in the data folder of '{packagePath}', but found {msiFiles.Length}.");
+        }
+
+        string msiPath = Path.Combine(MsiOutputPath, "prebuilt", payloadPackageId, $"{package.PackageVersion}", Path.GetFileName(msiFiles[0]));
+        Directory.CreateDirectory(Path.GetDirectoryName(msiPath));
+
+        using (Stream source = reader.GetStream(msiFiles[0]))
+        using (FileStream destination = File.Create(msiPath))
+        {
+            source.CopyTo(destination);
+        }
+
+        Log.LogMessage(MessageImportance.High, $"Using prebuilt MSI from '{packagePath}' for {package.Id} ({platform}).");
+
+        msiItem = new TaskItem(msiPath);
+        msiItem.SetMetadata(Metadata.Platform, platform);
+        msiItem.SetMetadata(Metadata.Version, $"{package.MsiVersion}");
+        msiItem.SetMetadata(Metadata.SwixPackageId, package.SwixPackageId);
+        msiItem.SetMetadata(Metadata.PackageType, DefaultValues.WorkloadPackMsi);
 
         return true;
     }

@@ -249,7 +249,7 @@ replace them.
 Where `LogFileName` can be absolute or relative path. If the path is relative, it will be relative to
 the `TestResults` directory, created under current working directory. An explicitly named report is
 overwritten if it exists. When `LogFileName` is not given the default name is qualified by the target
-framework and an existing report is not overwritten - the next free `TestIds_net8.0(1).csv` is taken
+framework and an existing report is not overwritten - the next free `TestIds_net10.0(1).csv` is taken
 - so that a multi targeted project, or several projects of a solution sharing a results directory, do
 not overwrite each other's mappings.
 
@@ -259,8 +259,8 @@ not overwrite each other's mappings.
 vstest.console.exe Tests.dll /logger:testids
 ```
 
-The report will be `c:\tempDirectory\TestResults\TestIds_net8.0.csv` for a test assembly targeting
-`net8.0`. The path is printed at the end of the run.
+The report will be `c:\tempDirectory\TestResults\TestIds_net10.0.csv` for a test assembly targeting
+`net10.0`. The path is printed at the end of the run.
 
 ## Related links
 

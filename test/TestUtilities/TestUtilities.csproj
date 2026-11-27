@@ -10,4 +10,9 @@
     <PackageReference Include="xunit.v3.extensibility.core" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Shared with scenario-tests, which builds standalone and therefore owns the file. -->
+    <Compile Include="$(RepoRoot)src\scenario-tests\src\Microsoft.DotNet.ScenarioTests.Common\ProcessHangDiagnostics.cs" Link="ProcessHangDiagnostics.cs" />
+  </ItemGroup>
+
 </Project>

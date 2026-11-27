@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
+using Microsoft.DotNet.ScenarioTests.Common;
 using TestUtilities;
 using Xunit;
 
@@ -191,11 +193,15 @@ public class DockerHelper
 
         process.Start();
 
-        string output;
-        string error;
+        StringBuilder stdOutput = new();
+        StringBuilder stdError = new();
         try
         {
-            (output, error) = process.ReadAllText(timeout);
+            foreach (ProcessOutputLine line in process.ReadAllLines(timeout))
+            {
+                (line.StandardError ? stdError : stdOutput).AppendLine(line.Content);
+            }
+
             if (!process.WaitForExit(timeout))
             {
                 throw new TimeoutException();
@@ -203,23 +209,52 @@ public class DockerHelper
         }
         catch (TimeoutException)
         {
+            ProcessHangDiagnostics.CollectOnTimeout(
+                process,
+                (int)timeout.TotalMilliseconds,
+                () => stdOutput + "--- stderr ---" + Environment.NewLine + stdError,
+                message => outputHelper?.WriteLine(message),
+                CollectContainerDiagnostics);
             process.Kill(entireProcessTree: true);
-            throw new TimeoutException($"'{fileName} {args}' did not complete within {timeout.TotalMinutes} minutes.");
+            throw new TimeoutException($"'{fileName} {args}' did not complete within {timeout.TotalMinutes} minutes." +
+                $"{Environment.NewLine}{stdOutput}{Environment.NewLine}{stdError}");
         }
 
-        output = output.Trim();
+        string output = stdOutput.ToString().Trim();
         if (outputHelper != null && !string.IsNullOrWhiteSpace(output))
         {
             outputHelper.WriteLine(output);
         }
 
-        error = error.Trim();
+        string error = stdError.ToString().Trim();
         if (outputHelper != null && !string.IsNullOrWhiteSpace(error))
         {
             outputHelper.WriteLine(error);
         }
 
         return (process, output, error);
+    }
+
+    // The work of a hung `docker` command happens inside containers, outside the test host's process tree.
+    private static string CollectContainerDiagnostics()
+    {
+        const int MaxContainers = 5;
+        StringBuilder diagnostics = new();
+        diagnostics.AppendLine("docker ps -a:");
+        diagnostics.AppendLine(ProcessHangDiagnostics.RunCommand("docker", "ps -a --no-trunc"));
+
+        string[] runningContainers = ProcessHangDiagnostics.RunCommand("docker", "ps -q")
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(id => !id.StartsWith('('))
+            .ToArray();
+        foreach (string container in runningContainers.Take(MaxContainers))
+        {
+            diagnostics.AppendLine();
+            diagnostics.AppendLine($"docker top {container}:");
+            diagnostics.AppendLine(ProcessHangDiagnostics.RunCommand("docker", $"top {container} -eo pid,ppid,stat,etime,args"));
+        }
+
+        return diagnostics.ToString();
     }
 
     private static string GetDockerOS() => Execute("version -f \"{{ .Server.Os }}\"");
@@ -254,14 +289,18 @@ public class DockerHelper
         string userArg = runAsUser != null ? $" -u {runAsUser}" : string.Empty;
         string workdirArg = workdir == null ? string.Empty : $" -w {workdir}";
         string mountedDockerSocketArg = useMountedDockerSocket ? " -v /var/run/docker.sock:/var/run/docker.sock" : string.Empty;
-        if (silenceOutput)
+        string runArgs = $"run --name {name}{cleanupArg}{workdirArg}{userArg}{detachArg}{ttyArg}{mountedDockerSocketArg} {optionalRunArgs} {image} {command}";
+        try
         {
-            return Execute(
-                $"run --name {name}{cleanupArg}{workdirArg}{userArg}{detachArg}{ttyArg}{mountedDockerSocketArg} {optionalRunArgs} {image} {command}",
-                millisecondTimeout: BuildAndRunTimeoutMilliseconds);
+            return silenceOutput
+                ? Execute(runArgs, millisecondTimeout: BuildAndRunTimeoutMilliseconds)
+                : ExecuteWithLogging(runArgs, ignoreErrors: true, millisecondTimeout: BuildAndRunTimeoutMilliseconds);
         }
-        return ExecuteWithLogging(
-            $"run --name {name}{cleanupArg}{workdirArg}{userArg}{detachArg}{ttyArg}{mountedDockerSocketArg} {optionalRunArgs} {image} {command}", ignoreErrors: true,
-            millisecondTimeout: BuildAndRunTimeoutMilliseconds);
+        catch (TimeoutException)
+        {
+            // Killing the docker client leaves the container running (`--rm` only applies once it exits).
+            DeleteContainer(name);
+            throw;
+        }
     }
 }

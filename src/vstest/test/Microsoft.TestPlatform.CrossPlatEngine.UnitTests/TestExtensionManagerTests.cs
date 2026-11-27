@@ -36,7 +36,7 @@ public class TestExtensionManagerTests
 
         _testExtensionManager.UseAdditionalExtensions(extensions, true);
 
-        CollectionAssert.AreEquivalent(extensions, TestPluginCache.Instance.GetExtensionPaths(string.Empty));
+        Assert.AreSequenceEqual(extensions, TestPluginCache.Instance.GetExtensionPaths(string.Empty), SequenceOrder.InAnyOrder);
     }
 
     [TestMethod]

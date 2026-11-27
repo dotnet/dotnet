@@ -20,7 +20,7 @@ public class DiaSessionTests : AcceptanceTestBase
 #if NETFRAMEWORK
             "net481";
 #else
-            "net11.0";
+            "net12.0";
 #endif
         return currentTargetFrameWork;
     }
@@ -99,7 +99,7 @@ public class DiaSessionTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [Ignore] // TODO: This test tests against a time threshold, which makes it fail on server sometimes.
+    [Ignore("Tests against a time threshold, which makes it fail on server sometimes.")]
     public void DiaSessionPerfTest()
     {
         var currentTargetFrameWork = GetAndSetTargetFrameWork(_testEnvironment);
