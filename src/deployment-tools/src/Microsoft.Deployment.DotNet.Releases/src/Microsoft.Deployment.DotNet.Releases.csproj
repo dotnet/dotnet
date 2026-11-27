@@ -13,6 +13,10 @@
     <!-- Always produce this package in the .NET unified product build so that it may flow to downstream consumers. -->
     <IsPackable>true</IsPackable>
     <IsShipping>true</IsShipping>
+    <!-- This assembly ships in the Visual Studio SDK resolver and needs archived Windows PDBs. -->
+    <PublishWindowsPdb Condition="'$(TargetFramework)' == 'netstandard2.0' and
+                                 '$(OS)' == 'Windows_NT' and
+                                 '$(DotNetBuildSourceOnly)' != 'true'">true</PublishWindowsPdb>
     <PackageId>Microsoft.Deployment.DotNet.Releases</PackageId>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EnableXlfLocalization>true</EnableXlfLocalization>
