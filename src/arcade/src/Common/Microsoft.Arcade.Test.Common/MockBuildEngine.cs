@@ -23,6 +23,14 @@ public class MockBuildEngine : IBuildEngine
     public List<BuildMessageEventArgs> BuildMessageEvents = new List<BuildMessageEventArgs>();
     public List<BuildWarningEventArgs> BuildWarningEvents = new List<BuildWarningEventArgs>();
 
+    /// <summary>
+    /// Errors the task logged, joined into a single string so that test failure messages can
+    /// report why a task unexpectedly failed instead of only showing the boolean result.
+    /// </summary>
+    public string ErrorSummary => BuildErrorEvents.Count == 0
+        ? "(no errors were logged)"
+        : string.Join(Environment.NewLine, BuildErrorEvents.ConvertAll(e => e.Message));
+
     public bool BuildProjectFile(string projectFileName, string[] targetNames, IDictionary globalProperties, IDictionary targetOutputs)
     {
         throw new NotImplementedException();
