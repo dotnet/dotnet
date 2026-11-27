@@ -5,17 +5,37 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.Linq;
+using Microsoft.Arcade.Common;
 using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher.Model;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 
-public sealed class LocalTestResultsReader(
-    ILogger logger,
-    TestResultAttachmentMode attachmentMode = TestResultAttachmentMode.Failed)
+public sealed class LocalTestResultsReader
 {
-    private readonly ILogger _logger = logger;
-    private readonly TestResultAttachmentMode _attachmentMode = attachmentMode;
+    private readonly ILogger _logger;
+    private readonly TestResultAttachmentMode _attachmentMode;
+    private readonly IFileSystem _fileSystem;
+
+    public LocalTestResultsReader(ILogger logger)
+        : this(logger, TestResultAttachmentMode.Failed)
+    {
+    }
+
+    public LocalTestResultsReader(ILogger logger, TestResultAttachmentMode attachmentMode)
+        : this(logger, attachmentMode, new FileSystem())
+    {
+    }
+
+    public LocalTestResultsReader(
+        ILogger logger,
+        TestResultAttachmentMode attachmentMode,
+        IFileSystem fileSystem)
+    {
+        _logger = logger;
+        _attachmentMode = attachmentMode;
+        _fileSystem = fileSystem;
+    }
 
     public static bool LooksLikeTestResultFile(string path)
     {
@@ -63,7 +83,7 @@ public sealed class LocalTestResultsReader(
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         string rootName = await ReadRootNameAsync(filePath, cancellationToken);
-        string workItemName = new DirectoryInfo(Path.GetDirectoryName(filePath) ?? string.Empty).Name;
+        string workItemName = _fileSystem.GetFileName(_fileSystem.GetDirectoryName(filePath)) ?? string.Empty;
 
         switch (rootName)
         {
@@ -113,7 +133,7 @@ public sealed class LocalTestResultsReader(
         }
     }
 
-    private static async Task<string> ReadRootNameAsync(string filePath, CancellationToken cancellationToken)
+    private async Task<string> ReadRootNameAsync(string filePath, CancellationToken cancellationToken)
     {
         using XmlReader reader = CreateReader(filePath);
         while (await reader.ReadAsync())
@@ -128,7 +148,7 @@ public sealed class LocalTestResultsReader(
         return string.Empty;
     }
 
-    private static async IAsyncEnumerable<TestResult> ReadElementsAsync(
+    private async IAsyncEnumerable<TestResult> ReadElementsAsync(
         string filePath,
         string elementName,
         Func<XElement, TestResult> convert,
@@ -149,7 +169,7 @@ public sealed class LocalTestResultsReader(
         }
     }
 
-    private static async Task<Dictionary<string, TestDefinition>> ReadTrxDefinitionsAsync(
+    private async Task<Dictionary<string, TestDefinition>> ReadTrxDefinitionsAsync(
         string filePath,
         CancellationToken cancellationToken)
     {
@@ -282,8 +302,8 @@ public sealed class LocalTestResultsReader(
             attachments);
     }
 
-    private static XmlReader CreateReader(string filePath)
-        => XmlReader.Create(File.OpenRead(filePath), new XmlReaderSettings
+    private XmlReader CreateReader(string filePath)
+        => XmlReader.Create(_fileSystem.GetFileStream(filePath, FileMode.Open, FileAccess.Read), new XmlReaderSettings
         {
             Async = true,
             CloseInput = true,
