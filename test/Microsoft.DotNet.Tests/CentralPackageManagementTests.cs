@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
+using TestUtilities;
 using Xunit;
 
 namespace Microsoft.DotNet.Tests;
@@ -236,25 +237,15 @@ public class CentralPackageManagementTests
         return false;
     }
 
-    private static IEnumerable<string> EnumerateMSBuildFiles(string directory)
+    private IEnumerable<string> EnumerateMSBuildFiles(string directory)
     {
         // Use `git ls-files` to enumerate *checked-in* .targets/.props only.
         // This is the strongest possible filter against false positives: it
         // structurally eliminates restored NuGet packages (artifacts/.packages/),
         // build intermediates (bin/, obj/), and any other untracked output the
         // VMR build may have produced before the test runs.
-        var psi = new System.Diagnostics.ProcessStartInfo("git", "ls-files -- *.targets *.props")
-        {
-            WorkingDirectory = directory,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-        };
-
-        using var process = System.Diagnostics.Process.Start(psi)!;
-        string stdout = process.StandardOutput.ReadToEnd();
-        process.WaitForExit();
+        (System.Diagnostics.Process process, string stdout, _) = ExecuteHelper.ExecuteProcess("git", "ls-files -- *.targets *.props", OutputHelper,
+            configureCallback: p => p.StartInfo.WorkingDirectory = directory);
         if (process.ExitCode != 0)
         {
             yield break;

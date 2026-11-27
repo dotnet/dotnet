@@ -11,6 +11,8 @@ namespace TestUtilities;
 
 public static class ExecuteHelper
 {
+    public const int DefaultTimeoutMilliseconds = 60_000;
+    public const int LongRunningTimeoutMilliseconds = 600_000;
     private const int KillGraceMilliseconds = 30_000;
 
     public static (Process Process, string StdOut, string StdErr) ExecuteProcess(
@@ -20,7 +22,8 @@ public static class ExecuteHelper
         bool logOutput = false,
         bool excludeInfo = false,
         Action<Process>? configureCallback = null,
-        int millisecondTimeout = -1)
+        int millisecondTimeout = DefaultTimeoutMilliseconds,
+        Action<Process, ProcessOutputLine>? outputLineCallback = null)
     {
         if (!excludeInfo)
         {
@@ -29,7 +32,6 @@ public static class ExecuteHelper
 
         Process process = new()
         {
-            EnableRaisingEvents = true,
             StartInfo =
             {
                 FileName = fileName,
@@ -47,34 +49,25 @@ public static class ExecuteHelper
         }
 
         configureCallback?.Invoke(process);
-
-        StringBuilder stdOutput = new();
-        process.OutputDataReceived += new DataReceivedEventHandler(
-            (sender, e) =>
-            {
-                lock (stdOutput)
-                {
-                    stdOutput.AppendLine(e.Data);
-                }
-            });
-
-        StringBuilder stdError = new();
-        process.ErrorDataReceived += new DataReceivedEventHandler(
-            (sender, e) =>
-            {
-                lock (stdError)
-                {
-                    stdError.AppendLine(e.Data);
-                }
-            });
-
         process.Start();
 
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
-        process.WaitForExit(millisecondTimeout);
+        StringBuilder stdOutput = new();
+        StringBuilder stdError = new();
+        bool timedOut = false;
+        try
+        {
+            foreach (ProcessOutputLine line in process.ReadAllLines(TimeSpan.FromMilliseconds(millisecondTimeout)))
+            {
+                (line.StandardError ? stdError : stdOutput).AppendLine(line.Content);
+                outputLineCallback?.Invoke(process, line);
+            }
+        }
+        catch (TimeoutException)
+        {
+            timedOut = true;
+        }
 
-        if (!process.HasExited)
+        if (timedOut || !process.WaitForExit(millisecondTimeout))
         {
             outputHelper.WriteLine($"Process did not exit. Killing {fileName} {args} after waiting {millisecondTimeout} milliseconds.");
             process.Kill(true);
@@ -85,18 +78,8 @@ public static class ExecuteHelper
             }
         }
 
-        string output;
-        string error;
-
-        lock (stdOutput)
-        {
-            output = stdOutput.ToString().Trim();
-        }
-
-        lock (stdError)
-        {
-            error = stdError.ToString().Trim();
-        }
+        string output = stdOutput.ToString().Trim();
+        string error = stdError.ToString().Trim();
 
         if (logOutput)
         {
@@ -114,9 +97,10 @@ public static class ExecuteHelper
         return (process, output, error);
     }
 
-    public static string ExecuteProcessValidateExitCode(string fileName, string args, ITestOutputHelper outputHelper, string additionalOutput = "")
+    public static string ExecuteProcessValidateExitCode(string fileName, string args, ITestOutputHelper outputHelper, string additionalOutput = "",
+        int millisecondTimeout = DefaultTimeoutMilliseconds)
     {
-        (Process Process, string StdOut, string StdErr) result = ExecuteHelper.ExecuteProcess(fileName, args, outputHelper);
+        (Process Process, string StdOut, string StdErr) result = ExecuteHelper.ExecuteProcess(fileName, args, outputHelper, millisecondTimeout: millisecondTimeout);
         ValidateExitCode(result, additionalOutput: additionalOutput);
 
         return result.StdOut;

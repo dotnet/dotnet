@@ -10,12 +10,11 @@ namespace Microsoft.DotNet.ScenarioTests.Common;
 
 public static class ExecuteHelper
 {
-    // Grace period to wait for a killed process tree to fully exit. A parameterless
-    // WaitForExit() after Kill(true) blocks until the redirected stdout/stderr pipes
-    // reach EOF; a surviving grandchild (e.g. the web app spawned by `dotnet run`) that
-    // inherited those handles can keep them open indefinitely, hanging the test until the
-    // pipeline task timeout. Bounding the wait lets the run fail fast instead.
+    // Grace period to wait for a process to exit after it has been killed, so a kill that
+    // doesn't take effect fails the test instead of hanging it until the pipeline timeout.
     public const int KillGraceMilliseconds = 30_000;
+    public const int DefaultTimeoutMilliseconds = 60_000;
+    public const int LongRunningTimeoutMilliseconds = 600_000;
 
     public static (Process Process, string StdOut, string StdErr) ExecuteProcess(
         string fileName,
@@ -23,13 +22,13 @@ public static class ExecuteHelper
         ITestOutputHelper outputHelper,
         bool logOutput = false,
         Action<Process>? configure = null,
-        int millisecondTimeout = -1)
+        int millisecondTimeout = DefaultTimeoutMilliseconds,
+        Action<Process, ProcessOutputLine>? onOutputLine = null)
     {
         outputHelper.WriteLine($"Executing: {fileName} {args}");
 
         Process process = new()
         {
-            EnableRaisingEvents = true,
             StartInfo =
             {
                 FileName = fileName,
@@ -40,33 +39,25 @@ public static class ExecuteHelper
         };
 
         configure?.Invoke(process);
+        process.Start();
 
         StringBuilder stdOutput = new();
-        process.OutputDataReceived += new DataReceivedEventHandler(
-            (sender, e) =>
-            {
-                lock (stdOutput)
-                {
-                    stdOutput.AppendLine(e.Data);
-                }
-            });
-
         StringBuilder stdError = new();
-        process.ErrorDataReceived += new DataReceivedEventHandler(
-            (sender, e) =>
+        bool timedOut = false;
+        try
+        {
+            foreach (ProcessOutputLine line in process.ReadAllLines(TimeSpan.FromMilliseconds(millisecondTimeout)))
             {
-                lock (stdError)
-                {
-                    stdError.AppendLine(e.Data);
-                }
-            });
+                (line.StandardError ? stdError : stdOutput).AppendLine(line.Content);
+                onOutputLine?.Invoke(process, line);
+            }
+        }
+        catch (TimeoutException)
+        {
+            timedOut = true;
+        }
 
-        process.Start();
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
-        process.WaitForExit(millisecondTimeout);
-
-        if (!process.HasExited)
+        if (timedOut || !process.WaitForExit(millisecondTimeout))
         {
             outputHelper.WriteLine($"Killing: {fileName} {args}");
             process.Kill(true);
@@ -82,21 +73,13 @@ public static class ExecuteHelper
             throw new InvalidOperationException(msg);
         }
 
-        string output;
-        lock (stdOutput)
-        {
-            output = stdOutput.ToString().Trim();
-        }
+        string output = stdOutput.ToString().Trim();
         if (logOutput && !string.IsNullOrWhiteSpace(output))
         {
             outputHelper.WriteLine(output);
         }
 
-        string error;
-        lock (stdError)
-        {
-            error = stdError.ToString().Trim();
-        }
+        string error = stdError.ToString().Trim();
         if (logOutput && !string.IsNullOrWhiteSpace(error))
         {
             outputHelper.WriteLine(error);

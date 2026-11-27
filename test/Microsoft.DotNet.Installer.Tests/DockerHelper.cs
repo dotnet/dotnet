@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
+using TestUtilities;
 using Xunit;
 
 namespace Microsoft.DotNet.Installer.Tests;
@@ -19,6 +19,9 @@ public class DockerHelper
     public static string ContainerWorkDir => IsLinuxContainerModeEnabled ? "/sandbox" : "c:\\sandbox";
     public static bool IsLinuxContainerModeEnabled => string.Equals(DockerOS, "linux", StringComparison.OrdinalIgnoreCase);
     public static string TestArtifactsDir { get; } = Path.Combine(Directory.GetCurrentDirectory(), "TestAppArtifacts");
+
+    // `docker build` installs the packages under test and `docker run` executes the whole scenario-tests suite.
+    private const int BuildAndRunTimeoutMilliseconds = 30 * 60 * 1000;
 
     private ITestOutputHelper OutputHelper { get; set; }
 
@@ -55,7 +58,8 @@ public class DockerHelper
         string dockerfileArg = dockerfile == null ? string.Empty : $" -f {dockerfile}";
         string pullArg = pull ? " --pull" : string.Empty;
 
-        ExecuteWithLogging($"build -t {tag}{targetArg}{buildArgsOption}{dockerfileArg}{pullArg}{platformOption} {contextDir}");
+        ExecuteWithLogging($"build -t {tag}{targetArg}{buildArgsOption}{dockerfileArg}{pullArg}{platformOption} {contextDir}",
+            millisecondTimeout: BuildAndRunTimeoutMilliseconds);
     }
 
 
@@ -100,16 +104,17 @@ public class DockerHelper
     }
 
     private static string Execute(
-        string args, bool ignoreErrors = false, bool autoRetry = false, ITestOutputHelper? outputHelper = null)
+        string args, bool ignoreErrors = false, bool autoRetry = false, ITestOutputHelper? outputHelper = null, int millisecondTimeout = ExecuteHelper.DefaultTimeoutMilliseconds)
     {
+        TimeSpan timeout = TimeSpan.FromMilliseconds(millisecondTimeout);
         (Process Process, string StdOut, string StdErr) result;
         if (autoRetry)
         {
-            result = ExecuteWithRetry(args, outputHelper!, ExecuteProcess);
+            result = ExecuteWithRetry(args, outputHelper!, (a, o) => ExecuteProcess("docker", a, o, timeout));
         }
         else
         {
-            result = ExecuteProcess(args, outputHelper!);
+            result = ExecuteProcess("docker", args, outputHelper!, timeout);
         }
 
         if (!ignoreErrors && result.Process.ExitCode != 0)
@@ -124,16 +129,13 @@ public class DockerHelper
         return result.StdOut;
     }
 
-    private static (Process Process, string StdOut, string StdErr) ExecuteProcess(
-        string args, ITestOutputHelper outputHelper) => ExecuteProcess("docker", args, outputHelper);
-
-    private string ExecuteWithLogging(string args, bool ignoreErrors = false, bool autoRetry = false)
+    private string ExecuteWithLogging(string args, bool ignoreErrors = false, bool autoRetry = false, int millisecondTimeout = ExecuteHelper.DefaultTimeoutMilliseconds)
     {
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
 
         OutputHelper.WriteLine($"Executing: docker {args}");
-        string result = Execute(args, outputHelper: OutputHelper, ignoreErrors: ignoreErrors, autoRetry: autoRetry);
+        string result = Execute(args, outputHelper: OutputHelper, ignoreErrors: ignoreErrors, autoRetry: autoRetry, millisecondTimeout: millisecondTimeout);
 
         stopwatch.Stop();
         OutputHelper.WriteLine($"Execution Elapsed Time: {stopwatch.Elapsed}");
@@ -174,11 +176,10 @@ public class DockerHelper
     }
 
     private static (Process Process, string StdOut, string StdErr) ExecuteProcess(
-    string fileName, string args, ITestOutputHelper outputHelper)
+    string fileName, string args, ITestOutputHelper outputHelper, TimeSpan timeout)
     {
         Process process = new Process
         {
-            EnableRaisingEvents = true,
             StartInfo =
             {
                 FileName = fileName,
@@ -188,24 +189,31 @@ public class DockerHelper
             }
         };
 
-        StringBuilder stdOutput = new StringBuilder();
-        process.OutputDataReceived += new DataReceivedEventHandler((sender, e) => stdOutput.AppendLine(e.Data));
-
-        StringBuilder stdError = new StringBuilder();
-        process.ErrorDataReceived += new DataReceivedEventHandler((sender, e) => stdError.AppendLine(e.Data));
-
         process.Start();
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
-        process.WaitForExit();
 
-        string output = stdOutput.ToString().Trim();
+        string output;
+        string error;
+        try
+        {
+            (output, error) = process.ReadAllText(timeout);
+            if (!process.WaitForExit(timeout))
+            {
+                throw new TimeoutException();
+            }
+        }
+        catch (TimeoutException)
+        {
+            process.Kill(entireProcessTree: true);
+            throw new TimeoutException($"'{fileName} {args}' did not complete within {timeout.TotalMinutes} minutes.");
+        }
+
+        output = output.Trim();
         if (outputHelper != null && !string.IsNullOrWhiteSpace(output))
         {
             outputHelper.WriteLine(output);
         }
 
-        string error = stdError.ToString().Trim();
+        error = error.Trim();
         if (outputHelper != null && !string.IsNullOrWhiteSpace(error))
         {
             outputHelper.WriteLine(error);
@@ -249,9 +257,11 @@ public class DockerHelper
         if (silenceOutput)
         {
             return Execute(
-                $"run --name {name}{cleanupArg}{workdirArg}{userArg}{detachArg}{ttyArg}{mountedDockerSocketArg} {optionalRunArgs} {image} {command}");
+                $"run --name {name}{cleanupArg}{workdirArg}{userArg}{detachArg}{ttyArg}{mountedDockerSocketArg} {optionalRunArgs} {image} {command}",
+                millisecondTimeout: BuildAndRunTimeoutMilliseconds);
         }
         return ExecuteWithLogging(
-            $"run --name {name}{cleanupArg}{workdirArg}{userArg}{detachArg}{ttyArg}{mountedDockerSocketArg} {optionalRunArgs} {image} {command}", ignoreErrors: true);
+            $"run --name {name}{cleanupArg}{workdirArg}{userArg}{detachArg}{ttyArg}{mountedDockerSocketArg} {optionalRunArgs} {image} {command}", ignoreErrors: true,
+            millisecondTimeout: BuildAndRunTimeoutMilliseconds);
     }
 }

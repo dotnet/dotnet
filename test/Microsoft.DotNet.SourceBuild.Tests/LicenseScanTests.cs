@@ -156,6 +156,9 @@ public class LicenseScanTests : TestBase
         // Indicates how long until a timeout occurs for scanning a given file
         const int FileScanTimeoutSeconds = 1800;
 
+        // Whole-scan bound; large repos (e.g. runtime) have taken nearly four hours in successful runs.
+        const int ScanTimeoutMilliseconds = 6 * 60 * 60 * 1000;
+
         // Number of parallel processes scancode should use. Large, text-heavy repos can
         // deadlock scancode's multiprocessing pool at the end of a scan, so the pipeline
         // scans them serially by passing 0. Default to 4 when not specified by the pipeline.
@@ -178,7 +181,8 @@ public class LicenseScanTests : TestBase
         ExecuteHelper.ExecuteProcessValidateExitCode(
             "scancode",
             $"--license --processes {processCount} --timeout {FileScanTimeoutSeconds} --strip-root --only-findings {ignoreOptions} --json-pp {scancodeResultsPath} {Config.LicenseScanPath}",
-            OutputHelper);
+            OutputHelper,
+            millisecondTimeout: ScanTimeoutMilliseconds);
 
         JsonDocument doc = JsonDocument.Parse(File.ReadAllText(scancodeResultsPath));
         LicenseScanDocument? scancodeResults = doc.Deserialize<LicenseScanDocument>();
