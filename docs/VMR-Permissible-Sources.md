@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document provides guidelines on the types of source code that are permissible in the VMR. It explains how the VMR detects binaries and licenses, and it outlines the steps to be taken when a new binary or license is encountered.
+This document provides guidelines on the types of source code that are permissible in the VMR. It explains how the VMR detects binaries and licenses, it outlines the steps to be taken when a new binary or license is encountered, and it describes how to keep files out of the VMR entirely by [cloaking](#cloaking) them.
 
 ## Binaries
 
@@ -85,7 +85,7 @@ If these binaries are permitted for source-build, add the binaries and/or releva
 
 The VMR does not permit code and binaries licensed under non-OSS licenses. For a list of approved OSS licenses, you can check out the [OSI-approved list of licenses](https://opensource.org/licenses/alphabetical).
 
-When a non-OSS license is detected, the offending code and binaries must be cloaked from the VMR. See [the VMR](./VMR-Design-And-Operation.md#repository-source-mappings) and [source-build documentation](https://github.com/dotnet/source-build/blob/main/Documentation/sourcebuild-in-repos/new-repo.md#cloaking-filtering-the-repository-sources) on cloaking.
+When a non-OSS license is detected, the offending code and binaries must be cloaked from the VMR. See [Cloaking](#cloaking) for how to do this.
 
 ### Detection
 
@@ -94,3 +94,61 @@ Licenses are detected by the [license scan test](https://github.com/dotnet/dotne
 Common cases for adding a license to [`LicenseExclusions.txt`](https://github.com/dotnet/dotnet/blob/main/test/Microsoft.DotNet.SourceBuild.Tests/assets/LicenseScanTests/LicenseExclusions.txt) include false positives, licenses related to test data, or needing to get a clean scan result with a relevant backport issue to remove the offending license later.
 
 To have a license be added to the list of exclusions in [`LicenseExclusions.txt`](https://github.com/dotnet/dotnet/blob/main/test/Microsoft.DotNet.SourceBuild.Tests/assets/LicenseScanTests/LicenseExclusions.txt), open a PR, include a link to the relevant issue above the exclusion, and tag [@dotnet/source-build](https://github.com/orgs/dotnet/teams/source-build) as a reviewer.
+
+## Cloaking
+
+### What is cloaking
+
+Cloaking is the process of filtering files out when the sources of a development repository are synchronized into the VMR. A cloaked file continues to exist in its development repository, but it is never copied into the VMR, and changes to it never flow into the VMR. Backflow does not touch cloaked files either, so they are not deleted from the development repository when the VMR flows back.
+
+Cloaking rules are defined as `exclude` globs of the repository's entry in [`src/source-mappings.json`](../src/source-mappings.json). The paths are relative to the root of the development repository, not to the VMR. For example, the following entry cloaks a file of the `aspnetcore` repository that would otherwise end up at `src/aspnetcore/src/submodules/.../EditorUserSettings.asset` in the VMR:
+
+```json
+{
+  "name": "aspnetcore",
+  "defaultRemote": "https://github.com/dotnet/aspnetcore",
+  "exclude": [
+    "src/submodules/MessagePack-CSharp/src/MessagePack.UnityClient/UserSettings/EditorUserSettings.asset"
+  ]
+}
+```
+
+For the full list of source mapping options, including defaults that apply to all repositories, see [Repository Source Mappings](./VMR-Full-Code-Flow.md#repository-source-mappings).
+
+### When to cloak
+
+Cloak a file or directory when it must not be part of the VMR in any build scenario. Common reasons are:
+
+- **Non-OSS licenses** - Code, binaries or license files under a license that is not OSS-approved (see [License Policy](#license-policy)). For example, `vstest` cloaks `src/package/licenses/LICENSE_VS.txt`.
+- **Binaries that are not needed to build the VMR** - Binaries that are not allowed for source-build and are not required by any VMR build, such as certificates and private keys (`.pfx` files in `source-build-assets`) or editor and IDE artifacts.
+- **Files that break the VMR build or its infrastructure** - For example, `roslyn` cloaks the `SignatureCycle2.exe` test resource because it blocked signing of the VMR source archive.
+
+### Cloaking vs. allowing binaries
+
+Cloaking and the binary allow-lists described in [Binary Policy](#binary-policy) solve different problems:
+
+| | Allow-listed in `allowed-vmr-binaries.txt` | Cloaked in `source-mappings.json` |
+|---|---|---|
+| Present in the VMR git repository | Yes | No |
+| Available to Microsoft (non-source-build) builds | Yes | No |
+| Available to source-build | Only if also in `allowed-sb-binaries.txt` | No |
+
+Prefer the allow-lists for OSS binaries that are needed by some VMR build. Use cloaking when the file must not be in the VMR at all, or when nothing in the VMR needs it.
+
+### How to cloak a file
+
+1. Add the path or a glob pattern to the `exclude` list of the repository's entry in [`src/source-mappings.json`](../src/source-mappings.json). As with the binary allow-lists, prefer targeting a single file or a specific pattern over broad globs.
+1. Delete the file from the VMR in the same PR. Adding an exclusion prevents future synchronization of the file, but codeflow does not reliably remove a file that is already in the VMR.
+1. If anything in the VMR build references the cloaked file (for example a test project that embeds it as a resource), update it so that the build succeeds without the file.
+1. Include a link to the relevant issue in the PR description.
+1. Repeat the change for every release branch of the VMR that contains the file. In older release branches such as `release/9.0.1xx`, the VMR's `src/source-mappings.json` is synchronized from [`src/VirtualMonoRepo/source-mappings.json`](https://github.com/dotnet/sdk/blob/release/9.0.1xx/src/VirtualMonoRepo/source-mappings.json) in the `dotnet/sdk` repository, so the exclusion must be added there, while the file is still deleted from the VMR directly.
+
+### Validation
+
+The [CloakedFileScan](https://github.com/dotnet/dotnet/tree/main/eng/tools/CloakedFileScan) tool reports any file in the VMR that matches a cloaking rule in `src/source-mappings.json`. It runs in the `Scan` stage of the official VMR pipeline. Because that stage does not run in public PR validation, run the tool locally from the VMR root before submitting a cloaking PR:
+
+```bash
+./eng/common/dotnet.sh run --project eng/tools/CloakedFileScan/CloakedFileScan.csproj
+```
+
+The tool exits with a non-zero exit code and lists the offending files if any cloaked file is still present.
