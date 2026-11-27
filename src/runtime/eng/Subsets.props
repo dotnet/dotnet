@@ -104,8 +104,8 @@
     <DefaultHostSubsets Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(DefaultHostSubsets)+host.pretest+host.tests</DefaultHostSubsets>
     <DefaultHostSubsets Condition="'$(RuntimeFlavor)' != '$(PrimaryRuntimeFlavor)' or '$(TargetsMobile)' == 'true'"></DefaultHostSubsets>
     <DefaultHostSubsets Condition="'$(RuntimeFlavor)' != '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true'">host.native</DefaultHostSubsets>
-    <!-- When we're building all runtime packs, make sure that we build the correct host components to ship. -->
-    <DefaultHostSubsets Condition="'$(DotNetBuildAllRuntimePacks)' == 'true' and '$(TargetsLinuxBionic)' == 'true' and '$(CoreCLRSupported)' == 'true'">host.native+host.pkg</DefaultHostSubsets>
+    <!-- Make sure that we build the correct host components to ship for linux-bionic. -->
+    <DefaultHostSubsets Condition="'$(TargetsLinuxBionic)' == 'true' and '$(CoreCLRSupported)' == 'true'">host.native+host.pkg</DefaultHostSubsets>
 
     <DefaultPacksSubsets>packs.product</DefaultPacksSubsets>
     <DefaultPacksSubsets Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(DefaultPacksSubsets)+packs.installers</DefaultPacksSubsets>
@@ -659,23 +659,11 @@
   <Choose>
     <When Condition="$(_subset.Contains('+packs.product+'))">
       <PropertyGroup>
-        <_BuildCoreCLRRuntimePack Condition="'$(RuntimeFlavor)' == 'CoreCLR' and '$(CoreCLRSupported)' == 'true'">true</_BuildCoreCLRRuntimePack>
-        <_BuildHostPack Condition="'$(RuntimeFlavor)' == '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true' and '$(CoreCLRSupported)' == 'true'">true</_BuildHostPack>
-        <_BuildCdacPack Condition="'$(_CDacToolsBuilt)' == 'true' and '$(RuntimeFlavor)' == 'CoreCLR' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true' and ('$(TargetOS)' == 'windows' or '$(TargetOS)' == 'osx' or '$(TargetOS)' == 'linux')">true</_BuildCdacPack>
-        <_BuildBundle Condition="'$(RuntimeFlavor)' == '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true' and '$(CoreCLRSupported)' == 'true'">true</_BuildBundle>
-      </PropertyGroup>
-
-      <PropertyGroup Condition="'$(DotNetBuildAllRuntimePacks)' == 'true' and '$(DotNetBuildSourceOnly)' != 'true'">
-        <_BuildCoreCLRRuntimePack Condition="'$(CoreCLRSupported)' == 'true' and '$(TargetsWasm)' != 'true'">true</_BuildCoreCLRRuntimePack>
-      </PropertyGroup>
-
-      <PropertyGroup Condition="'$(DotNetBuildAllRuntimePacks)' == 'true' and '$(DotNetBuildSourceOnly)' == 'true'">
-        <_BuildCoreCLRRuntimePack>true</_BuildCoreCLRRuntimePack>
-      </PropertyGroup>
-
-      <PropertyGroup Condition="'$(DotNetBuildAllRuntimePacks)' == 'true'">
+        <_BuildCoreCLRRuntimePack Condition="'$(CoreCLRSupported)' == 'true' and ('$(RuntimeFlavor)' == 'CoreCLR' or '$(TargetsWasm)' != 'true')">true</_BuildCoreCLRRuntimePack>
+        <_BuildCoreCLRRuntimePack Condition="'$(DotNetBuildSourceOnly)' == 'true'">true</_BuildCoreCLRRuntimePack>
         <_BuildNativeAOTRuntimePack Condition="'$(NativeAOTSupported)' == 'true'">true</_BuildNativeAOTRuntimePack>
         <_BuildHostPack Condition="'$(TargetsMobile)' != 'true' and '$(CoreCLRSupported)' == 'true'">true</_BuildHostPack>
+        <_BuildCdacPack Condition="'$(_CDacToolsBuilt)' == 'true' and '$(RuntimeFlavor)' == 'CoreCLR' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true' and ('$(TargetOS)' == 'windows' or '$(TargetOS)' == 'osx' or '$(TargetOS)' == 'linux')">true</_BuildCdacPack>
         <_BuildBundle Condition="'$(TargetsMobile)' != 'true' and '$(CoreCLRSupported)' == 'true'">true</_BuildBundle>
       </PropertyGroup>
 
