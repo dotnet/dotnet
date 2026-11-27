@@ -99,7 +99,7 @@ public partial class HelixApi : IHelixApi
 
     private static HttpPipeline CreatePipeline(HelixApiOptions options)
     {
-        return HttpPipelineBuilder.Build(options, Array.Empty<HttpPipelinePolicy>(), Array.Empty<HttpPipelinePolicy>(), new HelixApiResponseClassifier());
+        return HttpPipelineBuilder.Build(options, Array.Empty<HttpPipelinePolicy>(), Array.Empty<HttpPipelinePolicy>(), new HttpPipelineTransportOptions() { IsClientRedirectEnabled = true }, new HelixApiResponseClassifier());
     }
 
     public HttpPipeline Pipeline
