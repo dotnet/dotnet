@@ -65,7 +65,7 @@ To use an Azure Pool provider, you need to specify both the name of the pool pro
 ``` yaml
   pool:
     name: NetCore1ESPool-Internal
-    demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
+    demands: ImageOverride -equals build.azurelinux.3.amd64
 ```          
 
 ### dnceng/internal pools:

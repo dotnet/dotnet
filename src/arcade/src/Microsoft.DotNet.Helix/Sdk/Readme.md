@@ -292,7 +292,7 @@ Supported docker tags include anything publicly available on dockerhub.io, as we
 ```
 ({Optional Queue Alias}){Helix Queue Id}@{DockerTag}
 ```
-As an example, to run a typical Helix work item targeting an Alpine 3.9 docker image on a Ubuntu 16.04 host, the queue Id used would be `(Alpine.39.Amd64)ubuntu.1604.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.9-helix-bfcd90a-20200123191053`.
+As an example, to run a typical Helix work item targeting an Alpine 3.24 Docker image on an Azure Linux 4 host, the queue Id used would be `(Alpine.324.Amd64)azurelinux.4.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.24-helix-amd64`.
 Anywhere a container registry is left out, dockerhub.io is assumed; generally execution is done only on MCR images controlled by the .NET Team, as this allows fine control over the user inside the container and its permissions.
 #### Limitations:
 - Windows Docker machines will always be set in Windows container mode, as it is non-trivial to reliably switch between these formats.  In general you should use OSX or Linux machines for your non-Windows Docker needs, and a matching RS* level of Windows for the Server used (i.e. to run Nano RS5, you need to run on Server RS5 currently)
@@ -367,7 +367,7 @@ Given a local folder `$(TestFolder)` containing `runtests.cmd`, this will run `r
       The project is built once per entry in this list with <HelixTargetQueue> set to the current list element value.
       Note that all payloads sent need to be able to run on all variations included.
     -->
-    <HelixTargetQueues>Ubuntu.1804.Amd64.Open;Ubuntu.1604.Amd64.Open;(Alpine.39.Amd64)Ubuntu.1804.Amd64.Open@mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.9-helix-bfcd90a-20200123191053</HelixTargetQueues>
+    <HelixTargetQueues>AzureLinux.4.Amd64.Open;(Alpine.324.Amd64)azurelinux.4.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.24-helix-amd64</HelixTargetQueues>
 
     <!-- 'true' to download dotnet cli and add it to the path for every workitem. Default 'false' -->
     <IncludeDotNetCli>true</IncludeDotNetCli>
