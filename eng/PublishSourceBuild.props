@@ -92,6 +92,7 @@
   </Target>
 
   <PropertyGroup>
+    <TarDirectoryDeterministicTimestamp Condition="'$(DeterministicTimestamp)' != 'true' and '$(DeterministicTimestamp)' != 'false'">$(DeterministicTimestamp)</TarDirectoryDeterministicTimestamp>
     <SharedComponentFilterMode>$(SharedComponentFilter_NonToolingOnly)</SharedComponentFilterMode>
     <CreatePrivateSourceBuiltArtifactsArchiveDependsOn>DiscoverArtifacts;GetOutputsForCreatePrivateSourceBuiltArtifactsArchive</CreatePrivateSourceBuiltArtifactsArchiveDependsOn>
     <CreatePrivateSourceBuiltArtifactsArchiveDependsOn Condition="Exists('$(SharedComponentsArtifactsPath)')">
@@ -148,13 +149,19 @@
                                ExtraProperties="@(ExtraPackageVersionPropsPackageInfo)"
                                VersionPropsFlowType="AllPackages"
                                OutputPath="$(AllPackageVersionsPropsName)"
-                               PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)" />
+                               PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)"
+                               Deterministic="$(Deterministic)"
+                               DeterministicTimestamp="$(DeterministicTimestamp)" />
 
     <!-- Ensure the target parent dir has been created. -->
     <MakeDir Directories="$(SourceBuiltAssetsDir)" />
 
-    <Exec Command="tar --numeric-owner --owner=2001 --group=2001 -czhf $(SourceBuiltTarballName) $([System.IO.Path]::GetFileName('$(SourceBuiltVersionName)')) *"
-          WorkingDirectory="$(SourceBuiltLayoutDir)" />
+    <TarDirectory SourceDirectory="$(SourceBuiltLayoutDir)"
+                  DestinationFile="$(SourceBuiltTarballName)"
+                  Compression="GZip"
+                  Format="Gnu"
+                  Overwrite="true"
+                  DeterministicTimestamp="$(TarDirectoryDeterministicTimestamp)" />
 
     <Message Importance="High" Text="Packaged source-built artifacts to $(SourceBuiltTarballName)" />
 
