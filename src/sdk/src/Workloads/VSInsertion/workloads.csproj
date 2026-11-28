@@ -215,29 +215,25 @@
     packages for the current emsdk version, CreateVisualStudioWorkload uses the MSIs from those packages for the VS drop
     instead of building new ones, and we publish the existing packages so the content is identical.
 
-    The restore runs out of proc so that a missing package (i.e. the first build with a new emsdk version) isn't an error.
+    A missing package (i.e. the first build with a new emsdk version) isn't an error, see emsdk-msis.proj.
   -->
   <Target Name="_GetPublishedEmsdkWorkloadMsis"
           DependsOnTargets="_GetEmsdkWorkloadMsiPackages"
           Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true'">
     <PropertyGroup>
-      <_EmsdkMsisRestoreProject>$(MSBuildThisFileDirectory)emsdk-msis.proj</_EmsdkMsisRestoreProject>
-      <_EmsdkMsisRestoreIntermediatePath>$(WorkloadIntermediateOutputPath)emsdk-msis</_EmsdkMsisRestoreIntermediatePath>
-      <_EmsdkMsisRestoreArgs>-p:EmsdkMsiPackageIds=&quot;@(EmsdkWorkloadMsiPackages, '|')&quot;</_EmsdkMsisRestoreArgs>
-      <_EmsdkMsisRestoreArgs>$(_EmsdkMsisRestoreArgs) -p:EmsdkMsiPackageVersion=$(MicrosoftNETRuntimeEmscriptenInternalPackageVersion)</_EmsdkMsisRestoreArgs>
-      <_EmsdkMsisRestoreArgs>$(_EmsdkMsisRestoreArgs) -p:TargetFramework=$(TargetFramework)</_EmsdkMsisRestoreArgs>
-      <_EmsdkMsisRestoreArgs>$(_EmsdkMsisRestoreArgs) -p:ImportDirectoryBuildProps=false -p:ImportDirectoryBuildTargets=false -p:ImportDirectoryPackagesProps=false</_EmsdkMsisRestoreArgs>
-      <_EmsdkMsisRestoreArgs>$(_EmsdkMsisRestoreArgs) -p:BaseIntermediateOutputPath=&quot;$(_EmsdkMsisRestoreIntermediatePath)&quot;</_EmsdkMsisRestoreArgs>
-      <_EmsdkMsisRestoreArgs>$(_EmsdkMsisRestoreArgs) -p:RestorePackagesPath=&quot;$(NuGetPackageRoot.TrimEnd('\/'))&quot;</_EmsdkMsisRestoreArgs>
-      <_EmsdkMsisRestoreArgs Condition="'$(RestoreConfigFile)' != ''">$(_EmsdkMsisRestoreArgs) -p:RestoreConfigFile=&quot;$(RestoreConfigFile)&quot;</_EmsdkMsisRestoreArgs>
+      <_EmsdkMsisRestoreProperties>MSBuildRestoreSessionId=$([System.Guid]::NewGuid())</_EmsdkMsisRestoreProperties>
+      <_EmsdkMsisRestoreProperties>$(_EmsdkMsisRestoreProperties);EmsdkMsiPackageIds=@(EmsdkWorkloadMsiPackages, '|')</_EmsdkMsisRestoreProperties>
+      <_EmsdkMsisRestoreProperties>$(_EmsdkMsisRestoreProperties);EmsdkMsiPackageVersion=$(MicrosoftNETRuntimeEmscriptenInternalPackageVersion)</_EmsdkMsisRestoreProperties>
+      <_EmsdkMsisRestoreProperties>$(_EmsdkMsisRestoreProperties);TargetFramework=$(TargetFramework)</_EmsdkMsisRestoreProperties>
+      <_EmsdkMsisRestoreProperties>$(_EmsdkMsisRestoreProperties);ImportDirectoryBuildProps=false;ImportDirectoryBuildTargets=false;ImportDirectoryPackagesProps=false</_EmsdkMsisRestoreProperties>
+      <_EmsdkMsisRestoreProperties>$(_EmsdkMsisRestoreProperties);BaseIntermediateOutputPath=$(WorkloadIntermediateOutputPath)emsdk-msis/</_EmsdkMsisRestoreProperties>
+      <_EmsdkMsisRestoreProperties>$(_EmsdkMsisRestoreProperties);RestorePackagesPath=$(NuGetPackageRoot)</_EmsdkMsisRestoreProperties>
+      <_EmsdkMsisRestoreProperties Condition="'$(RestoreConfigFile)' != ''">$(_EmsdkMsisRestoreProperties);RestoreConfigFile=$(RestoreConfigFile)</_EmsdkMsisRestoreProperties>
     </PropertyGroup>
 
-    <Exec Command="&quot;$(DotNetTool)&quot; restore &quot;$(_EmsdkMsisRestoreProject)&quot; $(_EmsdkMsisRestoreArgs)"
-          IgnoreExitCode="true"
-          IgnoreStandardErrorWarningFormat="true"
-          StandardOutputImportance="normal">
-      <Output TaskParameter="ExitCode" PropertyName="_EmsdkMsisRestoreExitCode" />
-    </Exec>
+    <MSBuild Projects="$(MSBuildThisFileDirectory)emsdk-msis.proj"
+             Targets="TryRestore"
+             Properties="$(_EmsdkMsisRestoreProperties)" />
 
     <ItemGroup>
       <!-- The global packages folder uses lowercase names, restore the casing of the locally built packages. -->
@@ -246,7 +242,7 @@
     </ItemGroup>
 
     <Message Importance="high"
-             Text="emsdk workload MSI packages for $(MicrosoftNETRuntimeEmscriptenInternalPackageVersion) are not published yet (restore exit code $(_EmsdkMsisRestoreExitCode)), building them."
+             Text="emsdk workload MSI packages for $(MicrosoftNETRuntimeEmscriptenInternalPackageVersion) are not published yet, building them."
              Condition="'@(_PublishedEmsdkWorkloadMsis)' == ''" />
     <Message Importance="high"
              Text="Using previously published emsdk workload MSI package %(_PublishedEmsdkWorkloadMsis.DestinationFile)."
