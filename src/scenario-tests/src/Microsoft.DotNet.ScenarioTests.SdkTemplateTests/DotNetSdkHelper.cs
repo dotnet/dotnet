@@ -58,24 +58,25 @@ internal partial class DotNetSdkHelper
         _binlogDir = binlogDir;
     }
 
-    private void ExecuteCmd(string args, string workingDirectory, Action<Process>? additionalProcessConfigCallback = null, int expectedExitCode = 0, int millisecondTimeout = -1, string? culture = null)
+    private void ExecuteCmd(string args, string workingDirectory, Action<Process>? additionalProcessConfigCallback = null, int expectedExitCode = 0, int millisecondTimeout = ExecuteHelper.DefaultTimeoutMilliseconds, string? culture = null, Action<Process, ProcessOutputLine>? onOutputLine = null)
     {
         if (!string.IsNullOrEmpty(SdkVersion) && !File.Exists(Path.Combine(workingDirectory, "global.json")))
         {
             ExecuteCmdImpl($"new globaljson --sdk-version {SdkVersion}", workingDirectory);
         }
 
-        ExecuteCmdImpl(args, workingDirectory, additionalProcessConfigCallback, expectedExitCode, millisecondTimeout, culture);
+        ExecuteCmdImpl(args, workingDirectory, additionalProcessConfigCallback, expectedExitCode, millisecondTimeout, culture, onOutputLine);
     }
 
-    private void ExecuteCmdImpl(string args, string workingDirectory, Action<Process>? additionalProcessConfigCallback = null, int expectedExitCode = 0, int millisecondTimeout = -1, string? culture = null)
+    private void ExecuteCmdImpl(string args, string workingDirectory, Action<Process>? additionalProcessConfigCallback = null, int expectedExitCode = 0, int millisecondTimeout = ExecuteHelper.DefaultTimeoutMilliseconds, string? culture = null, Action<Process, ProcessOutputLine>? onOutputLine = null)
     {
         (Process Process, string StdOut, string StdErr) executeResult = ExecuteHelper.ExecuteProcess(
             DotNetExecutablePath,
             args,
             _outputHelper,
             configure: (process) => configureProcess(process, workingDirectory),
-            millisecondTimeout: millisecondTimeout);
+            millisecondTimeout: millisecondTimeout,
+            onOutputLine: onOutputLine);
 
         ExecuteHelper.ValidateExitCode(executeResult, expectedExitCode);
 
@@ -125,7 +126,7 @@ internal partial class DotNetSdkHelper
     }
 
     public void ExecuteBuild(string projectDirectory, string? culture = null) =>
-        ExecuteCmd($"build {GetBinLogOption(projectDirectory, "build")}", projectDirectory, culture: culture);
+        ExecuteCmd($"build {GetBinLogOption(projectDirectory, "build")}", projectDirectory, culture: culture, millisecondTimeout: ExecuteHelper.LongRunningTimeoutMilliseconds);
 
     /// <summary>
     /// Create a new .NET project and return the path to the created project folder.
@@ -142,7 +143,7 @@ internal partial class DotNetSdkHelper
             options += $" {customArgs}";
         }
 
-        ExecuteCmd($"new {projectType} {options}", projectDirectory, culture: culture);
+        ExecuteCmd($"new {projectType} {options}", projectDirectory, culture: culture, millisecondTimeout: ExecuteHelper.LongRunningTimeoutMilliseconds);
 
         return projectDirectory;
     }
@@ -192,14 +193,16 @@ internal partial class DotNetSdkHelper
             {
                 ExecuteCmd(
                 args: $"publish {options} {GetBinLogOption(projectDirectory, "publish", binlogDifferentiator)} --framework " + item,
-                workingDirectory: projectDirectory);
+                workingDirectory: projectDirectory,
+                millisecondTimeout: ExecuteHelper.LongRunningTimeoutMilliseconds);
             }
         }
         else
         {
             ExecuteCmd(
                 args: $"publish {options} {GetBinLogOption(projectDirectory, "publish", binlogDifferentiator)}",
-                workingDirectory: projectDirectory);
+                workingDirectory: projectDirectory,
+                millisecondTimeout: ExecuteHelper.LongRunningTimeoutMilliseconds);
         }
     }
 
@@ -209,12 +212,12 @@ internal partial class DotNetSdkHelper
         {
             foreach (var item in frameworks)
             {
-                ExecuteCmd($"run {GetBinLogOption(projectDirectory, "run")} --framework " + item, projectDirectory, culture: culture);
+                ExecuteCmd($"run {GetBinLogOption(projectDirectory, "run")} --framework " + item, projectDirectory, culture: culture, millisecondTimeout: ExecuteHelper.LongRunningTimeoutMilliseconds);
             }
         }
         else
         {
-            ExecuteCmd($"run {GetBinLogOption(projectDirectory, "run")}", projectDirectory, culture: culture);
+            ExecuteCmd($"run {GetBinLogOption(projectDirectory, "run")}", projectDirectory, culture: culture, millisecondTimeout: ExecuteHelper.LongRunningTimeoutMilliseconds);
         }
     }
 
@@ -227,21 +230,15 @@ internal partial class DotNetSdkHelper
         ExecuteCmd(
             $"run {GetBinLogOption(projectDirectory, "run")}",
             projectDirectory,
-            additionalProcessConfigCallback: processConfigCallback,
             expectedExitCode: exitCode,
-            millisecondTimeout: 60000);
-
-        void processConfigCallback(Process process)
-        {
-            process.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
+            millisecondTimeout: 60000,
+            onOutputLine: (process, line) =>
             {
-                if (e.Data?.Contains("Application started. Press Ctrl+C to shut down.") ?? false)
+                if (line.Content.Contains("Application started. Press Ctrl+C to shut down."))
                 {
                     process.Kill(true);
-                    process.WaitForExit(ExecuteHelper.KillGraceMilliseconds);
                 }
             });
-        }
     }
 
     public void ExecuteRunUIApp(string projectDirectory, string[]? frameworks = null)
@@ -294,7 +291,7 @@ internal partial class DotNetSdkHelper
     }
 
     public void ExecuteTest(string projectDirectory) =>
-        ExecuteCmd($"test {GetBinLogOption(projectDirectory, "test")}", workingDirectory: projectDirectory);
+        ExecuteCmd($"test {GetBinLogOption(projectDirectory, "test")}", workingDirectory: projectDirectory, millisecondTimeout: ExecuteHelper.LongRunningTimeoutMilliseconds);
 
     private string GetBinLogOption(string projectDirectory, string command, string? differentiator = null)
     {
@@ -349,64 +346,59 @@ internal partial class DotNetSdkHelper
 
     public void ExecuteWorkloadInstall(string projectDirectory, string workloadIds)
     {
-        ExecuteCmd($"workload install {workloadIds} --skip-manifest-update", projectDirectory);
+        ExecuteCmd($"workload install {workloadIds} --skip-manifest-update", projectDirectory, millisecondTimeout: ExecuteHelper.LongRunningTimeoutMilliseconds);
     }
 
     public string ExecuteWorkloadList(string projectDirectory, string workloadIds, bool shouldBeInstalled, 
         string originalSource = "", bool firstRun = false)
     {
-        ExecuteCmd($"workload list", projectDirectory, additionalProcessConfigCallback: processConfigCallback);
-
-        void processConfigCallback(Process process)
+        string output = "";
+        ExecuteCmd($"workload list", projectDirectory, onOutputLine: (process, line) =>
         {
-            string output = "";
-            process.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
+            if (line.StandardError)
             {
-                if (e.Data is null)
-                {
-                    return;
-                }
+                return;
+            }
 
-                output += e.Data;
-                if (!output.Contains("find additional workloads to install."))
-                {
-                    return;
-                }
+            output += line.Content;
+            if (!output.Contains("find additional workloads to install."))
+            {
+                return;
+            }
 
-                if (output.Contains(workloadIds))
+            if (output.Contains(workloadIds))
+            {
+                if (!shouldBeInstalled)
                 {
-                    if (!shouldBeInstalled)
+                    if (firstRun)
                     {
-                        if (firstRun)
-                        {
-                            originalSource = output;
-                        }
-                        else if(output != originalSource)
-                        {
-                            _outputHelper.WriteLine("output is " + output);
-                            _outputHelper.WriteLine("originalSource is " + originalSource);
-                            throw new Exception($"{workloadIds} shouldn't be installed but was found.");
-                        }
+                        originalSource = output;
                     }
-                    _outputHelper.WriteLine($"{workloadIds} is installed");
+                    else if(output != originalSource)
+                    {
+                        _outputHelper.WriteLine("output is " + output);
+                        _outputHelper.WriteLine("originalSource is " + originalSource);
+                        throw new Exception($"{workloadIds} shouldn't be installed but was found.");
+                    }
                 }
-                else
+                _outputHelper.WriteLine($"{workloadIds} is installed");
+            }
+            else
+            {
+                if (shouldBeInstalled)
                 {
-                    if (shouldBeInstalled)
-                    {
-                        throw new Exception($"{workloadIds} should be installed but wasn't found.");
-                    }
-                    _outputHelper.WriteLine($"{workloadIds} is not installed");
+                    throw new Exception($"{workloadIds} should be installed but wasn't found.");
                 }
-            });
-        }
+                _outputHelper.WriteLine($"{workloadIds} is not installed");
+            }
+        });
 
         return originalSource;
     }
 
     public void ExecuteWorkloadUninstall(string projectDirectory, string workloadIds)
     {
-        ExecuteCmd($"workload uninstall {workloadIds}", projectDirectory);
+        ExecuteCmd($"workload uninstall {workloadIds}", projectDirectory, millisecondTimeout: ExecuteHelper.LongRunningTimeoutMilliseconds);
     }
 
     public void ExecuteAddMultiTFM(string projectName, string projectDirectory, DotNetLanguage language, string[] frameworks)

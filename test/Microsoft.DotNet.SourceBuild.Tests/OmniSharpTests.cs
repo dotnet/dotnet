@@ -52,6 +52,7 @@ public class OmniSharpTests : SdkTests
             OutputHelper,
             logOutput: true,
             millisecondTimeout: 5000,
+            isTimeoutExpected: true,
             // Set the working directory to the OmniSharp directory to allow OmniSharp to find the custom config file
             configureCallback: (process) => DotNetHelper.ConfigureProcess(process, OmniSharpDirectory));
 

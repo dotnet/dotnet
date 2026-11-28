@@ -19,23 +19,16 @@ using System.Threading.Tasks;
 namespace Microsoft.DotNet.ScenarioTests.Common;
 
 /// <summary>
-/// Waits for a child process and, when it is still running after a threshold, records what it and its
-/// descendants are doing before continuing to wait. Test jobs intermittently hang on a child process that
-/// never exits and are killed by the pipeline timeout with no information about what was stuck; these
-/// diagnostics (process tree, holders of the inherited stdout/stderr pipes, the build servers/nodes the
-/// child may be waiting on, a full process list, and dumps of the stuck .NET processes) are written next to
-/// the job logs so the hang can be root-caused.
-/// The wait semantics are unchanged: diagnostics are collected once, without extending the original deadline.
+/// Records what a child process that did not complete within its timeout and its descendants are doing, before the
+/// caller kills it. Test jobs intermittently hang on a child process that never exits; these diagnostics (process
+/// tree, holders of the inherited stdout/stderr pipes, the build servers/nodes the child may be waiting on, a full
+/// process list, and dumps of the stuck .NET processes) are written next to the job logs so the hang can be root-caused.
 /// This file is shared: the VMR's test/TestUtilities compiles it from here (src/scenario-tests builds standalone).
 /// </summary>
 public static class ProcessHangDiagnostics
 {
-    public const string ThresholdMinutesEnvironmentVariable = "TEST_HANG_DIAGNOSTICS_THRESHOLD_MINUTES";
     public const string DirectoryEnvironmentVariable = "TEST_HANG_DIAGNOSTICS_DIR";
 
-    // Individual `dotnet` commands in these tests take seconds (the slowest whole SourceBuild test is ~1.5 minutes), so
-    // a command still running after 10 minutes is stuck. Callers with legitimately long commands pass a larger value.
-    public const int DefaultThresholdMinutes = 10;
     private const int MaxDumps = 6;
     private const int DumpTimeoutMilliseconds = 120_000;
     private const int MaxCollectionMilliseconds = 10 * 60_000;
@@ -51,93 +44,24 @@ public static class ProcessHangDiagnostics
     private static int s_dumpCount;
 
     /// <summary>
-    /// Same semantics as <see cref="Process.WaitForExit(int)"/>, plus diagnostics when the process outlives the threshold.
+    /// Collects diagnostics for a process that did not complete within <paramref name="waitedMilliseconds"/>.
+    /// Call it before killing the process; collection is bounded and never throws.
     /// </summary>
     /// <param name="collectAdditionalDiagnostics">Optional caller-specific diagnostics appended to the report, e.g. container state.</param>
-    /// <param name="thresholdMinutes">How long the process may run before diagnostics are collected; <see cref="ThresholdMinutesEnvironmentVariable"/> overrides it.</param>
-    public static bool WaitForExit(
+    public static void CollectOnTimeout(
         Process process,
-        int millisecondTimeout,
+        int waitedMilliseconds,
         Func<string> getOutputSoFar,
         Action<string> log,
-        Func<string>? collectAdditionalDiagnostics = null,
-        int thresholdMinutes = DefaultThresholdMinutes)
+        Func<string>? collectAdditionalDiagnostics = null)
     {
-        int thresholdMilliseconds = GetThresholdMilliseconds(thresholdMinutes);
-        if (thresholdMilliseconds <= 0 || (millisecondTimeout != Timeout.Infinite && millisecondTimeout <= thresholdMilliseconds))
-        {
-            return process.WaitForExit(millisecondTimeout);
-        }
-
-        Stopwatch stopwatch = Stopwatch.StartNew();
-        if (millisecondTimeout == Timeout.Infinite ? WaitForExitAndOutput(process, thresholdMilliseconds) : process.WaitForExit(thresholdMilliseconds))
-        {
-            return true;
-        }
-
-        // Collection runs in the background and is bounded by the caller's original deadline, so it never extends
-        // the timeout; its steps are individually bounded and stop at the same deadline.
-        int collectionMilliseconds = millisecondTimeout == Timeout.Infinite
-            ? MaxCollectionMilliseconds
-            : Math.Min(MaxCollectionMilliseconds, GetRemainingMilliseconds(millisecondTimeout, stopwatch));
-        CancellationTokenSource collectionCts = new(collectionMilliseconds);
-        Task collection = Task.Run(() =>
-        {
-            try
-            {
-                CollectDiagnostics(process, thresholdMilliseconds, getOutputSoFar, SafeLog, collectAdditionalDiagnostics, collectionCts.Token);
-            }
-            finally
-            {
-                collectionCts.Dispose();
-            }
-        });
-        collection.Wait(collectionMilliseconds);
-
-        return process.WaitForExit(millisecondTimeout == Timeout.Infinite ? Timeout.Infinite : GetRemainingMilliseconds(millisecondTimeout, stopwatch));
-
-        // The test may have finished (and its output helper become unusable) by the time a background message is logged.
-        void SafeLog(string message)
-        {
-            try
-            {
-                log(message);
-            }
-            catch (Exception)
-            {
-            }
-        }
-    }
-
-    private static int GetRemainingMilliseconds(int millisecondTimeout, Stopwatch stopwatch) =>
-        (int)Math.Max(0, millisecondTimeout - stopwatch.ElapsedMilliseconds);
-
-    // An infinite WaitForExit also waits for the redirected stdout/stderr to reach EOF; WaitForExitAsync has the same
-    // behavior and can be bounded, which catches descendants that keep the inherited pipes open after the process exits.
-    private static bool WaitForExitAndOutput(Process process, int millisecondTimeout)
-    {
-        using CancellationTokenSource cts = new(millisecondTimeout);
-        try
-        {
-            process.WaitForExitAsync(cts.Token).GetAwaiter().GetResult();
-            return true;
-        }
-        catch (OperationCanceledException)
-        {
-            return false;
-        }
-    }
-
-    private static int GetThresholdMilliseconds(int thresholdMinutes)
-    {
-        string? value = Environment.GetEnvironmentVariable(ThresholdMinutesEnvironmentVariable);
-        int minutes = int.TryParse(value, out int parsed) ? parsed : thresholdMinutes;
-        return minutes <= 0 ? 0 : (int)Math.Min(int.MaxValue, minutes * 60_000L);
+        using CancellationTokenSource collectionCts = new(MaxCollectionMilliseconds);
+        CollectDiagnostics(process, waitedMilliseconds, getOutputSoFar, log, collectAdditionalDiagnostics, collectionCts.Token);
     }
 
     private static void CollectDiagnostics(
         Process process,
-        int thresholdMilliseconds,
+        int waitedMilliseconds,
         Func<string> getOutputSoFar,
         Action<string> log,
         Func<string>? collectAdditionalDiagnostics,
@@ -154,7 +78,7 @@ public static class ProcessHangDiagnostics
             report.AppendLine($"Command: {process.StartInfo.FileName} {process.StartInfo.Arguments}");
             report.AppendLine($"Working directory: {process.StartInfo.WorkingDirectory}");
             report.AppendLine($"Test host pid: {Environment.ProcessId}, child pid: {process.Id}");
-            report.AppendLine($"Collected at (UTC): {DateTime.UtcNow:O}, after waiting {thresholdMilliseconds / 60_000} minutes.");
+            report.AppendLine($"Collected at (UTC): {DateTime.UtcNow:O}, after waiting {TimeSpan.FromMilliseconds(waitedMilliseconds)}.");
             bool exited = process.HasExited;
             report.AppendLine(exited
                 ? $"The process has EXITED (exit code {process.ExitCode}) but its redirected stdout/stderr did not reach EOF: another process still holds the inherited pipes (see 'Pipe holders')."
@@ -224,7 +148,7 @@ public static class ProcessHangDiagnostics
             }
 
             File.WriteAllText(reportPath, report.ToString());
-            log($"Process {process.Id} ({process.StartInfo.FileName} {process.StartInfo.Arguments}) has not completed after {thresholdMilliseconds / 60_000} minutes. Hang diagnostics: {reportPath}");
+            log($"Process {process.Id} ({process.StartInfo.FileName} {process.StartInfo.Arguments}) did not complete within {TimeSpan.FromMilliseconds(waitedMilliseconds)}. Hang diagnostics: {reportPath}");
 
             StringBuilder dumps = new("Dumps:" + Environment.NewLine);
             foreach (int pid in dumpCandidates.Distinct())

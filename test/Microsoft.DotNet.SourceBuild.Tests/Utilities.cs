@@ -22,7 +22,8 @@ public static class Utilities
     {
         // TarFile doesn't properly handle hard links (https://github.com/dotnet/runtime/pull/85378#discussion_r1221817490),
         // use 'tar' instead.
-        ExecuteHelper.ExecuteProcessValidateExitCode("tar", $"xzf {tarballPath} -C {outputDir}", outputHelper);
+        ExecuteHelper.ExecuteProcessValidateExitCode("tar", $"xzf {tarballPath} -C {outputDir}", outputHelper,
+            millisecondTimeout: ExecuteHelper.LongRunningTimeoutMilliseconds);
     }
 
     public static void ExtractTarball(string tarballPath, string outputDir, string targetFilePath)

@@ -86,14 +86,16 @@ internal partial class DotNetHelper
     }
 
     public void ExecuteCmd(string args, string? workingDirectory = null, Action<Process>? processConfigCallback = null,
-        int? expectedExitCode = 0, int millisecondTimeout = -1)
+        int? expectedExitCode = 0, int millisecondTimeout = ExecuteHelper.DefaultTimeoutMilliseconds,
+        Action<Process, ProcessOutputLine>? outputLineCallback = null)
     {
         (Process Process, string StdOut, string StdErr) executeResult = ExecuteHelper.ExecuteProcess(
             DotNetPath,
             args,
             OutputHelper,
             configureCallback: (process) => configureProcess(process, workingDirectory ?? ProjectsDirectory),
-            millisecondTimeout: millisecondTimeout);
+            millisecondTimeout: millisecondTimeout,
+            outputLineCallback: outputLineCallback);
 
         if (expectedExitCode != null)
         {
@@ -126,7 +128,8 @@ internal partial class DotNetHelper
     public void ExecuteBuild(string projectName)
     {
         string options = GetRestoreAdditionalProjectSourcesPropertyOption() ?? string.Empty;
-        ExecuteCmd($"build {options} {GetBinLogOption(projectName, "build")}", GetProjectDirectory(projectName));
+        ExecuteCmd($"build {options} {GetBinLogOption(projectName, "build")}", GetProjectDirectory(projectName),
+            millisecondTimeout: ExecuteHelper.LongRunningTimeoutMilliseconds);
     }
 
     /// <summary>
@@ -145,7 +148,7 @@ internal partial class DotNetHelper
             options += $" {customArgs}";
         }
 
-        ExecuteCmd($"new {projectType} {options}");
+        ExecuteCmd($"new {projectType} {options}", millisecondTimeout: ExecuteHelper.LongRunningTimeoutMilliseconds);
 
         return projectDirectory;
     }
@@ -174,7 +177,8 @@ internal partial class DotNetHelper
 
         ExecuteCmd(
             $"publish {options} {GetBinLogOption(projectName, "publish", binlogDifferentiator)} -o {publishDir}",
-            projDir);
+            projDir,
+            millisecondTimeout: ExecuteHelper.LongRunningTimeoutMilliseconds);
 
         if (template == DotNetTemplate.Console)
         {
@@ -212,9 +216,10 @@ internal partial class DotNetHelper
         ExecuteCmd(
             args,
             workingDirectory,
-            processConfigCallback: validator.Validate,
+            processConfigCallback: validator.Configure,
             expectedExitCode: expectedExitCode,
-            millisecondTimeout: 30000);
+            millisecondTimeout: 30000,
+            outputLineCallback: validator.Validate);
         Assert.True(validator.IsValidated);
         if (validator.ValidationException is not null)
         {
@@ -280,38 +285,39 @@ internal partial class DotNetHelper
             return port;
         }
 
-        public void Validate(Process process)
+        private readonly int _port = GetAvailablePort();
+
+        public void Configure(Process process) =>
+            process.StartInfo.EnvironmentVariables.Add("ASPNETCORE_HTTP_PORTS", _port.ToString());
+
+        public void Validate(Process process, ProcessOutputLine line)
         {
-            int port = GetAvailablePort();
-            process.StartInfo.EnvironmentVariables.Add("ASPNETCORE_HTTP_PORTS", port.ToString());
-            process.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
+            try
             {
-                try
+                if (line.Content.Contains("Application started. Press Ctrl+C to shut down."))
                 {
-                    if (e.Data?.Contains("Application started. Press Ctrl+C to shut down.") ?? false)
+                    _outputHelper.WriteLine("Detected app has started. Sending web request to validate...");
+
+                    // This runs on the thread that reads the app's output, so bound it well below ExecuteWeb's timeout.
+                    using HttpClient httpClient = new() { Timeout = TimeSpan.FromSeconds(15) };
+                    string url = $"http://localhost:{_port}";
+                    if (_template == DotNetTemplate.WebApi)
                     {
-                        _outputHelper.WriteLine("Detected app has started. Sending web request to validate...");
-
-                        using HttpClient httpClient = new();
-                        string url = $"http://localhost:{port}";
-                        if (_template == DotNetTemplate.WebApi)
-                        {
-                            url += "/WeatherForecast";
-                        }
-
-                        using HttpResponseMessage resultMsg = httpClient.GetAsync(new Uri(url)).Result;
-                        _outputHelper.WriteLine($"Status code returned: {resultMsg.StatusCode}");
-                        resultMsg.EnsureSuccessStatusCode();
-                        IsValidated = true;
-
-                        ExecuteHelper.ExecuteProcessValidateExitCode("kill", $"-s TERM {process.Id}", _outputHelper);
+                        url += "/WeatherForecast";
                     }
+
+                    using HttpResponseMessage resultMsg = httpClient.GetAsync(new Uri(url)).Result;
+                    _outputHelper.WriteLine($"Status code returned: {resultMsg.StatusCode}");
+                    resultMsg.EnsureSuccessStatusCode();
+                    IsValidated = true;
+
+                    ExecuteHelper.ExecuteProcessValidateExitCode("kill", $"-s TERM {process.Id}", _outputHelper);
                 }
-                catch (Exception ex)
-                {
-                    ValidationException = ex;
-                }
-            });
+            }
+            catch (Exception ex)
+            {
+                ValidationException = ex;
+            }
         }
     }
 }
