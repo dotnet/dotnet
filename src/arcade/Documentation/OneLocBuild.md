@@ -171,6 +171,21 @@ requires the use of any of the more complex LocProject.json features as describe
 you will need to check in and maintain the LocProject.json file manually. To still use this template for running the task,
 set the `SkipLocProjectJsonGeneration` parameter to `true`.
 
+Repositories can also generate a custom LocProject.json during the build. Use `preSteps` to run the generator and
+`LocProjectPath` to point to its output:
+
+```yaml
+- template: /eng/common/templates-official/job/onelocbuild.yml
+  parameters:
+    SkipLocProjectJsonGeneration: true
+    LocProjectPath: Localize/LocProject.json
+    preSteps:
+    - powershell: ./generate-locproject.ps1 Localize/LocProject.json
+      displayName: Generate custom LocProject.json
+```
+
+Steps in `preSteps` don't inherit the template's `condition` parameter, so set their conditions explicitly if needed.
+
 ## OneLocBuild Template Parameters
 
 The most basic structure for calling the OneLocBuild template is:
@@ -199,6 +214,8 @@ The parameters that can be passed to the template are as follows:
 | `MirrorBranch` | `'main'` | The branch on GitHub to make a PR to (only used when using a mirrored repository). |
 | `UseCheckedInLocProjectJson` | `false` | When set to `true`, instructs the LocProject.json generation script to use build-time validation rather than build-time generation, as described above. |
 | `SkipLocProjectJsonGeneration` | `false` | When set to `true`, skips the LocProject.json generation in favor of using a checked-in LocProject.json.
+| `LocProjectPath` | `eng/Localize/LocProject.json` | The path to the LocProject.json file, relative to `$(System.DefaultWorkingDirectory)`. A custom path requires `SkipLocProjectJsonGeneration` to be `true`. |
+| `preSteps` | `[]` | Steps that run before LocProject.json is generated and the OneLocBuild task runs, for example to generate a custom LocProject.json. |
 | `LanguageSet` | `VS_Main_Languages` | This defines the `LanguageSet` of the LocProject.json as described in the [OneLocBuild task documentation](https://dev.azure.com/ceapex/CEINTL/_wiki/wikis/CEINTL.wiki/107/Localization-with-OneLocBuild-Task?anchor=languageset%2C-languages-(required)). |
 | `LclSource` | `LclFilesInRepo` | This passes the `LclSource` input to the OneLocBuild task as described in [its documentation](https://dev.azure.com/ceapex/CEINTL/_wiki/wikis/CEINTL.wiki/107/Localization-with-OneLocBuild-Task?anchor=languageset%2C-languages-(required)). For most repos, this should be set to `LclFilesfromPackage`. |
 | `LclPackageId` | `''` | When `LclSource` is set to `LclFilesfromPackage`, this passes in the package ID as described in the [OneLocBuild task documentation](https://dev.azure.com/ceapex/CEINTL/_wiki/wikis/CEINTL.wiki/107/Localization-with-OneLocBuild-Task?anchor=scenario-2%3A-lcl-files-from-a-package). |
