@@ -3,7 +3,7 @@
 This document contains terminology used in the Unified Build effort.
 
 - **Build** – The processes in which artifacts are produced, given a set of input resources (e.g. source code, packages, input libraries etc.) and an environment (e.g. docker host, VM, local machine).
-- **Cloaking** – Process of filtering files when copying/ingesting them into the VMR. This is better described in the document describing the Unified Build (part about source-mapping.json).
+- **Cloaking** – Process of filtering files when copying/ingesting them into the VMR. See [Cloaking](./VMR-Permissible-Sources.md#cloaking) for when and how to cloak files, and [Repository Source Mappings](./VMR-Full-Code-Flow.md#repository-source-mappings) for the `source-mappings.json` format.
 - **Development Repository** - A repository which exists only a development area for a section of code. It does not produce official build artifacts.
 - **Incoherency** - A state of the traditional product build graph in which multiple versions of the same component are transitively referenced, and where the difference in those versions does or could have meaningful impact on product functionality. For instance, if two `dotnet/runtime` versions are referenced within the same SDK, one may be packaged with the SDK, but the other may have been what `dotnet/aspnetcore` was built against. If there are meaningful differences between those two runtimes, `dotnet/aspnetcore` may not operate as expected.
 - **Publishing** – The processes in which artifacts produced by the Build and information about the Build are propagated for consumption outside the build (e.g. publishing packages to a feed).

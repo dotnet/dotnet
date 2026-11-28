@@ -317,7 +317,7 @@ For simplicity, let's consider the following:
 - The last SHA of the counterpart repository that we have synchronized from is stored in the VMR/individual repository:
   - In the VMR, this information is in the `source-manifest.json` file.
   - In individual repositories, the source VMR SHA is in the `Version.Details.xml` file.
-- The algorithm works symmetrically in both directions with the exception of some of the files being cloaked on the way to the VMR. The cloaking mechanism is described [here](./VMR-Design-And-Operation.md#repository-source-mappings).
+- The algorithm works symmetrically in both directions with the exception of some of the files being cloaked on the way to the VMR. The cloaking mechanism is described in [Repository Source Mappings](#repository-source-mappings) and [Cloaking](./VMR-Permissible-Sources.md#cloaking).
 - The algorithm won't contain steps for opening a pull request but rather focuses on preparing the commits/PR branches locally.
 - The code doesn't take into account the case that a PR might already exists and we are updating it. This situation is described in the [Updating PRs](#updating-prs) section.
 
